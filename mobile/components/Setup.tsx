@@ -1,24 +1,36 @@
-import {View, Text, TextInput, StyleSheet, Button} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, Button} from 'react-native';
 import styles from '../styles/styles';
 
 const Setup = ({navigation, route}: any) => {
-  const { ownerEmail } = route.params;
-  // console.log('props: ', ownerEmail);
-  // console.log('props2: ', route.params)
-  // const [state, setState] = useState(navigation.navigation)
-  const onAddUserPress = () => {
-    navigation.navigate('AddUser', {ownerEmail: route.params.ownerEmail});
+  const onPress = (type: string) => {
+    switch (type) {
+      case 'user':
+        navigation.navigate('AddUser', {ownerEmail: route.params.ownerEmail});
+        break;
+      case 'activity':
+        navigation.navigate('AddActivity');
+        break;
+      default:
+        console.log('null');
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.setup_container}>
         <View style={styles.setup_btn}>
-          <Button title="Add User" onPress={onAddUserPress} color="#fff" />
+          <Button
+            title="Add User"
+            onPress={() => onPress('user')}
+            color="#fff"
+          />
         </View>
         <View style={styles.setup_btn}>
-          <Button title="Add Activity" color="#fff" />
+          <Button
+            title="Add Activity"
+            color="#fff"
+            onPress={() => onPress('activity')}
+          />
         </View>
       </View>
     </View>
