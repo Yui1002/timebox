@@ -24,7 +24,6 @@ export const common_styles = StyleSheet.create({
   text_decoration: {
     textDecorationColor: '#000',
     textDecorationLine: 'underline',
-    cursor: 'ponter',
   },
   divider: {
     marginTop: 10,
@@ -49,6 +48,36 @@ export const sign_in_styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     width: '90%',
+  },
+});
+
+export const add_user_styles = StyleSheet.create({
+  container: {
+    marginBottom: 30,
+  },
+  dropDownContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  dropDown: {
+    width: '44%',
+    marginRight: 6,
+  },
+  editBtn: {
+    width: '80%',
+    height: 20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 4,
+    marginBottom: 4,
+    borderRadius: 20,
+    backgroundColor: '#2089DC',
+  },
+  editBtnText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#fff',
+    lineHeight: 20,
   },
 });
 
@@ -167,7 +196,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     height: 40,
     borderRadius: 20,
-    marginTop: 20,
+    marginTop: 100,
     backgroundColor: '#2089DC',
   },
   setup_container: {
@@ -202,6 +231,7 @@ const styles = StyleSheet.create({
   },
   list_user_box_text: {
     fontSize: 10,
+    textAlign: 'center',
   },
   list_user_box: {
     flex: 1,

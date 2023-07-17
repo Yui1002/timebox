@@ -1,6 +1,6 @@
 import {View, Text, TextInput, Button, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles from '../styles/styles';
+import styles, {add_user_styles, common_styles} from '../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
@@ -48,7 +48,7 @@ const AddUser = ({route}: any) => {
     }
 
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/addUser`, {
+      const response = await axios.post(`${LOCAL_HOST_URL}/user`, {
         firstName: firstName,
         lastName: lastName,
         username: username,
@@ -103,9 +103,13 @@ const AddUser = ({route}: any) => {
       : setStatusError(true);
   };
 
+  const editUser = () => {
+    console.log('i wanna edit');
+  };
+
   return (
     <View style={styles.container}>
-      <View>
+      <View style={add_user_styles.container}>
         <Text style={styles.title}>List User</Text>
         {users.length < 1 ? (
           <View>
@@ -132,10 +136,15 @@ const AddUser = ({route}: any) => {
               <View style={styles.list_user_headerBox}>
                 <Text style={styles.list_user_box_text}>status</Text>
               </View>
+              <View style={styles.list_user_headerBox}>
+                <Text style={styles.list_user_box_text}>edit</Text>
+              </View>
             </View>
             <View>
               {users.map(user => (
-                <View style={styles.list_user_previewContainer}>
+                <View
+                  key={user.user_name}
+                  style={styles.list_user_previewContainer}>
                   <View style={styles.list_user_box}>
                     <Text style={styles.list_user_box_text}>
                       {user.first_name}
@@ -161,6 +170,12 @@ const AddUser = ({route}: any) => {
                   </View>
                   <View style={styles.list_user_box}>
                     <Text style={styles.list_user_box_text}>{user.status}</Text>
+                  </View>
+                  <View style={styles.list_user_box}>
+                    <View style={add_user_styles.editBtn}>
+                      <Text style={add_user_styles.editBtnText}>Edit</Text>
+                      {/* <Button title="Edit" color="#fff" onPress={editUser} style={add_user_styles.editBtn}/> */}
+                    </View>
                   </View>
                 </View>
               ))}
@@ -201,28 +216,30 @@ const AddUser = ({route}: any) => {
             style={styles.add_user_name}
             onChangeText={text => setRate(Number(text))}
             autoCorrect={false}
+            keyboardType="numeric"
           />
         </View>
-        <View>
-          <Text>rate type *</Text>
-          <DropDownPicker
-            open={rateTypeOpen}
-            value={rateType}
-            items={constant.rateType}
-            setOpen={() => setRateTypeOpen(!rateTypeOpen)}
-            setValue={val => setRateType(val)}
-            // setItems={item => setItems(item)}
-          />
-        </View>
-        <View>
-          <Text>status</Text>
-          <DropDownPicker
-            open={statusOpen}
-            value={status}
-            items={constant.status}
-            setOpen={() => setStatusOpen(!statusOpen)}
-            setValue={val => setStatus(val)}
-          />
+        <View style={add_user_styles.dropDownContainer}>
+          <View style={add_user_styles.dropDown}>
+            <Text>rate type *</Text>
+            <DropDownPicker
+              open={rateTypeOpen}
+              value={rateType}
+              items={constant.rateType}
+              setOpen={() => setRateTypeOpen(!rateTypeOpen)}
+              setValue={val => setRateType(val)}
+            />
+          </View>
+          <View style={add_user_styles.dropDown}>
+            <Text>status</Text>
+            <DropDownPicker
+              open={statusOpen}
+              value={status}
+              items={constant.status}
+              setOpen={() => setStatusOpen(!statusOpen)}
+              setValue={val => setStatus(val)}
+            />
+          </View>
         </View>
 
         <View style={styles.add_user_btn}>
