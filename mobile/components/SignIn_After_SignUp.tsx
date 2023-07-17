@@ -88,7 +88,7 @@ const SignIn_After_SignUp = ({navigation, route}: any) => {
           )}
           {authType === 'OTP' && (
             <View>
-              <Text style={sign_in_styles.authentication}>Send code</Text>
+              <Text style={common_styles.text_decoration}>Send code</Text>
             </View>
           )}
         </View>

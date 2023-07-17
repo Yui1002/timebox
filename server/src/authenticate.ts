@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const auth = (req: any, res: any, next: any) => {
-    console.log('req.session: ', req.session)
     next();
     // console.log('request: ', req)
     // const authHeader = req.headers.authorization;

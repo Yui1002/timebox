@@ -113,7 +113,6 @@ class Repositories {
     try {
         const sql = "SELECT owner_password FROM owners WHERE email_address = $1;";
         const data = await client.query(sql, [email]);
-        console.log('data: ', data)
         return data.rows[0].owner_password;
     } catch (err) {
         return err;

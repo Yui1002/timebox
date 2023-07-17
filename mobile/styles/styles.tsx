@@ -21,6 +21,14 @@ export const common_styles = StyleSheet.create({
     fontSize: 10,
     color: 'red',
   },
+  text_decoration: {
+    textDecorationColor: '#000',
+    textDecorationLine: 'underline',
+    cursor: 'ponter',
+  },
+  divider: {
+    marginTop: 10,
+  },
 });
 
 export const starter_styles = StyleSheet.create({
@@ -41,10 +49,6 @@ export const sign_in_styles = StyleSheet.create({
     height: 40,
     borderWidth: 1,
     width: '90%',
-  },
-  authentication: {
-    textDecorationColor: '#000',
-    textDecorationLine: 'underline',
   },
 });
 

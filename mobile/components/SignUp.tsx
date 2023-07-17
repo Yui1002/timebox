@@ -4,7 +4,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 import validator from 'validator';
-import styles from '../styles/styles';
+import styles, {common_styles} from '../styles/styles';
 
 const rules = [
   {label: 'One uppercase', pattern: new RegExp(/.*[A-Z]/)},
@@ -248,6 +248,16 @@ const SignUp = ({navigation}: any) => {
         {isDuplicate && (
           <Text style={styles.register_error}>This email already exists.</Text>
         )}
+      </View>
+      <View style={common_styles.divider}>
+        <Text>
+          Already have an account?{' '}
+          <Text
+            style={common_styles.text_decoration}
+            onPress={() => navigation.navigate('SignIn')}>
+            Sign In
+          </Text>
+        </Text>
       </View>
     </View>
   );

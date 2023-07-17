@@ -58,7 +58,6 @@ const AddUser = ({route}: any) => {
         updateDate: new Date(),
         ownerEmail: route.params.ownerEmail,
       });
-      console.log(response.status);
       getUsers(route.params.ownerEmail);
     } catch (err) {
       setIsDuplicate(true);

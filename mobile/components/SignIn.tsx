@@ -120,7 +120,7 @@ const SignIn = ({navigation}: any) => {
           )}
           {authStyle === 'OTP' && (
             <View>
-              <Text style={sign_in_styles.authentication}>Send code</Text>
+              <Text style={common_styles.text_decoration}>Send code</Text>
             </View>
           )}
         </View>
@@ -132,6 +132,24 @@ const SignIn = ({navigation}: any) => {
           onPress={isEmailChecked ? onSubmit : onNextPress}
         />
       </View>
+      <View>
+        <Text>
+          New user?{' '}
+          <Text
+            style={common_styles.text_decoration}
+            onPress={() => navigation.navigate('SignUp')}>
+            Sign Up
+          </Text>
+        </Text>
+      </View>
+      {isEmailChecked && (
+        <View style={common_styles.divider}>
+          <Text>
+            Forgot password?{' '}
+            <Text style={common_styles.text_decoration}>Reset password</Text>
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
