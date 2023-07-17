@@ -109,7 +109,7 @@ const SignUp = ({navigation}: any) => {
       });
       if (response.status === 200) {
         const authType = passwordSelected ? 'password' : 'OTP';
-        navigation.navigate('SignIn', {authType: authType});
+        navigation.navigate('SignIn_After_SignUp', {authType: authType});
       }
     } catch (e) {
       setIsDuplicate(true);

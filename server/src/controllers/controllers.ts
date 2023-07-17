@@ -36,15 +36,19 @@ class Controllers {
             }
             // const token = await this.models.generateToken(req.body.email);
             // res.status(200).json({ status: 'success', message: 'User Logged In', data: {Accesstoken: token}})
-            // if email and password match, establish a session 
+            // if email and password match, establish a session
             const session = req.session;
             session.userId = req.body.email;
             res.status(200).send('successfully login')
         }
     }
 
+    async getAuthType(req: any, res: any) {
+        const authType = await this.models.getOwnerAuthType(req.params.email);
+        res.send(authType);
+    }
+
     async getUsers(req: any, res:any) {
-        console.log('helooo')
         const users = await this.models.getUsers(req.params.email);
         res.send(users);
     }

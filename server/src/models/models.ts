@@ -49,6 +49,17 @@ class Models {
         return await this.repositories.getOwnerId(email);
     }
 
+    async getOwnerAuthType(email: string) {
+        const response = await this.repositories.getOwnerAuthType(email);
+        let authType: string;
+        if (!response) {
+            authType = 'OTP';
+        } else {
+            authType = 'password';
+        }
+        return authType;
+    }
+
     async getUsers(email: string) {
         const ownerId = await this.getOwnerId(email);
         return await this.repositories.getUsers(ownerId);

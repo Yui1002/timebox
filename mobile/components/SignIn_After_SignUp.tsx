@@ -5,13 +5,12 @@ import axios from 'axios';
 import validator from 'validator';
 import {LOCAL_HOST_URL} from '../config.js';
 
-const SignIn = ({navigation}: any) => {
+const SignIn_After_SignUp = ({navigation, route}: any) => {
+  const {authType} = route.params;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authStyle, setAuthStyle] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [signInError, setSignInError] = useState(false);
 
   const onEmailChange = (email: string) => {
@@ -29,38 +28,9 @@ const SignIn = ({navigation}: any) => {
   };
 
   const validatePassword = () => {
-    authStyle === 'password' && password.length < 1
+    authType === 'password' && password.length < 1
       ? setPasswordError(true)
       : setPasswordError(false);
-  };
-
-  const onNextPress = async () => {
-    validateEmail();
-    if (emailError) {
-      return;
-    }
-    checkAuthType();
-  };
-
-  const checkAuthType = async () => {
-    try {
-      const response = await axios.get(`${LOCAL_HOST_URL}/authType/${email}`);
-      switch (response.data) {
-        case 'OTP':
-          setAuthStyle('OTP');
-          setIsEmailChecked(true);
-          break;
-        case 'password':
-          setAuthStyle('password');
-          setIsEmailChecked(true);
-          break;
-        default:
-          setAuthStyle('');
-          setIsEmailChecked(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   const onSubmit = async () => {
@@ -70,7 +40,7 @@ const SignIn = ({navigation}: any) => {
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/signin`, {
         email: email,
-        password: authStyle === 'password' ? password : null,
+        password: authType === 'password' ? password : null,
       });
       if (response.status === 200) {
         navigation.navigate('Setup', {ownerEmail: email});
@@ -100,10 +70,8 @@ const SignIn = ({navigation}: any) => {
             </Text>
           )}
         </View>
-      </View>
-      {(authStyle === 'OTP' || authStyle === 'password') && (
         <View>
-          {authStyle === 'password' && (
+          {authType === 'password' && (
             <View>
               <Text>Password *</Text>
               <TextInput
@@ -118,22 +86,23 @@ const SignIn = ({navigation}: any) => {
               )}
             </View>
           )}
-          {authStyle === 'OTP' && (
+          {authType === 'OTP' && (
             <View>
               <Text style={sign_in_styles.authentication}>Send code</Text>
             </View>
           )}
         </View>
-      )}
-      <View style={common_styles.btn}>
-        <Button
-          title={isEmailChecked ? 'Sign In' : 'Next'}
-          color="#fff"
-          onPress={isEmailChecked ? onSubmit : onNextPress}
-        />
       </View>
+      <View style={common_styles.btn}>
+        <Button title="Sign In" color="#fff" onPress={onSubmit} />
+      </View>
+      {signInError && (
+        <Text style={common_styles.error_message}>
+          User does not exist or password is incorrect
+        </Text>
+      )}
     </View>
   );
 };
 
-export default SignIn;
+export default SignIn_After_SignUp;
