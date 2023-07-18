@@ -8,7 +8,7 @@ const Setup = ({navigation, route}: any) => {
         navigation.navigate('AddUser', {ownerEmail: route.params.ownerEmail});
         break;
       case 'activity':
-        navigation.navigate('AddActivity');
+        navigation.navigate('AddActivity', {ownerEmail: route.params.ownerEmail});
         break;
       default:
         console.log('null');

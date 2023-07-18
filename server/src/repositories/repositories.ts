@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import { OwnerInterface } from "../interfaces/OwnerInterface";
 import { UserInterface } from "../interfaces/UserInterface";
+import { ActivityInterface } from "../interfaces/ActivityInterface";
 
 const pool = new Pool({
   user: process.env.USER,
@@ -136,6 +137,21 @@ class Repositories {
     }
   }
 
+  async getActivities(ownerId: string) {
+    const client = await pool.connect();
+
+    try {
+      const sql =
+        "SELECT activity_name, status FROM activities WHERE owner_id = $1;";
+      const data = await client.query(sql, [ownerId]);
+      return data.rows;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
   async getOwnerPassword(email: string) {
     const client = await pool.connect();
 
@@ -148,6 +164,22 @@ class Repositories {
       return err;
     } finally {
       client.release();
+    }
+  }
+
+  async addActivity(activity: ActivityInterface) {
+    const uuid = uuidv4();
+    const client = await pool.connect();
+
+    try {
+        const sql = "INSERT INTO public.activities (activity_id, owner_id, activity_name, rate, rate_type, end_time_required, status, update_date, update_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";
+        const { ownerId, name, rate, rateType, endTimeRequired, status, updateDate, updateBy } = activity;
+        const data = await client.query(sql, [uuid, ownerId, name, rate, rateType, endTimeRequired, status, updateDate, updateBy]);
+        return data.rowCount;
+    } catch (err) {
+        return err;
+    } finally {
+        client.release();
     }
   }
 }

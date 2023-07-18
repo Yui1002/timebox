@@ -1,6 +1,7 @@
 import Repositories from "../repositories/repositories";
 import { OwnerInterface } from "../interfaces/OwnerInterface";
 import { UserInterface } from "../interfaces/UserInterface";
+import { ActivityInterface } from "../interfaces/ActivityInterface";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
@@ -65,12 +66,24 @@ class Models {
         return await this.repositories.getUsers(ownerId);
     }
 
+    async getActivities(email: string) {
+        const ownerId = await this.getOwnerId(email);
+        return await this.repositories.getActivities(ownerId);
+    }
+
     async addUser(user: UserInterface) {
         // need to get the belonged owner from the owner's email
         const ownerId = await this.getOwnerId(user.ownerEmail);
         user.ownerId = ownerId;
         user.updateBy = user.ownerEmail;
         return await this.repositories.addUser(user);
+    }
+
+    async addActivity(activity: ActivityInterface) {
+        const ownerId = await this.getOwnerId(activity.ownerEmail);
+        activity.ownerId = ownerId;
+        activity.updateBy = activity.ownerEmail;
+        return await this.repositories.addActivity(activity);
     }
 }
 

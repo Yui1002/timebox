@@ -53,6 +53,12 @@ class Controllers {
         res.send(users);
     }
 
+    async getActivities(req: any, res: any) {
+        console.log(req.params.email)
+        const activities = await this.models.getActivities(req.params.email);
+        res.send(activities);
+    }
+
     async addUser(req: any, res: any) {
         const isRegistered = await this.models.isUserRegistered(req.body.username);
         if (isRegistered) {
@@ -60,6 +66,15 @@ class Controllers {
         } else {
             const response = await this.models.addUser(req.body);
             Number(response) > 0 ? res.sendStatus(200) : res.sendStatus(400);
+        }
+    }
+
+    async addActivity(req: any, res: any) {
+        const response = await this.models.addActivity(req.body);
+        if (response === 1) {
+            res.status(200).send('Activity registered successfully');
+        } else {
+            res.status(400).send('Failed to register activity');
         }
     }
 }

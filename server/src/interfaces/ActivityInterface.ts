@@ -1,10 +1,11 @@
-export interface Activity {
+export interface ActivityInterface {
     ownerId: number,
-    activityName: string,
+    name: string,
     rate: number,
     rateType: string,
     endTimeRequired: boolean,
     status: string,
     updateDate: Date,
-    updateBy: string
+    updateBy: string,
+    ownerEmail: string
 }

@@ -1,21 +1,79 @@
-import {View, Text, TextInput, StyleSheet, Button} from 'react-native';
+import {View, Text, TextInput, Button} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles, {add_user_styles} from '../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import constant from '../parameters/constant';
+import axios from 'axios';
+import {LOCAL_HOST_URL} from '../config';
 
-const AddActivity = () => {
+const AddActivity = ({route}: any) => {
   const [activities, setActivities] = useState([]);
   const [activity, setActivity] = useState('');
-  const [endTime, setEndTime] = useState('No');
+  const [endTimeRequired, setEndTimeRequired] = useState('No');
   const [rate, setRate] = useState(0);
   const [rateType, setRateType] = useState('');
   const [status, setStatus] = useState('');
   const [endTimeOpen, setEndTimeOpen] = useState(false);
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
+  const [error, setError] = useState(false);
 
-  const addActivity = () => {};
+  useEffect(() => {
+    getActivities(route.params.ownerEmail);
+  }, []);
+
+  const validateForm = () => {
+    const isActivityValid = activity.length > 0;
+    const isRateValid = typeof rate === 'number' && rate > -1;
+    const isRateTypeValid = rateType === 'Hourly' || rateType === 'Daily';
+    const isStatusValid = status === 'Active' || status === 'Inactive';
+    const isTrackEndValid =
+      endTimeRequired === 'Yes' || endTimeRequired === 'No';
+
+    if (
+      !isActivityValid ||
+      !isRateValid ||
+      !isRateTypeValid ||
+      !isStatusValid ||
+      !isTrackEndValid
+    ) {
+      setError(true);
+      return false;
+    } else {
+      setError(false);
+      return true;
+    }
+  };
+
+  const getActivities = async (ownerEmail: string) => {
+    try {
+      const response = await axios.get(
+        `${LOCAL_HOST_URL}/activities/${ownerEmail}`,
+      );
+      setActivities(response.data);
+    } catch (err) {
+      console.log('error in getting activities: ', err);
+    }
+  };
+
+  const addActivity = async () => {
+    try {
+      if (validateForm()) {
+        const response = await axios.post(`${LOCAL_HOST_URL}/activity`, {
+          name: activity,
+          rate: rate,
+          rateType: rateType,
+          status: status,
+          endTimeRequired: endTimeRequired,
+          updateDate: new Date(),
+          ownerEmail: route.params.ownerEmail,
+        });
+        getActivities(route.params.ownerEmail);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -36,11 +94,22 @@ const AddActivity = () => {
               </View>
             </View>
             <View>
-              {activities.map(user => (
-                <View>
-                    <Text></Text>
-                </View>
-              ))}
+              {activities.map((val, index) => {
+                console.log('index: ', index)
+                console.log('val: ', val)
+                return (
+                  <View key={index} style={styles.list_user_previewContainer}>
+                    <View style={styles.list_user_box}>
+                      <Text style={styles.list_user_box_text}>{val.activity_name}</Text>
+                    </View>
+                    <View style={styles.list_user_box}>
+                      <Text style={styles.list_user_box_text}>
+                        {val.status}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
           </View>
         )}
@@ -63,7 +132,11 @@ const AddActivity = () => {
             autoCorrect={false}
           />
         </View>
-        <View style={[add_user_styles.dropDown, {marginBottom: rateTypeOpen ? 100 : 10}]}>
+        <View
+          style={[
+            add_user_styles.dropDown,
+            {marginBottom: rateTypeOpen ? 100 : 10},
+          ]}>
           <Text>rate type *</Text>
           <DropDownPicker
             open={rateTypeOpen}
@@ -74,18 +147,26 @@ const AddActivity = () => {
             dropDownDirection="BOTTOM"
           />
         </View>
-        <View style={[add_user_styles.dropDown, {marginBottom: endTimeOpen ? 100 : 10}]}>
+        <View
+          style={[
+            add_user_styles.dropDown,
+            {marginBottom: endTimeOpen ? 100 : 10},
+          ]}>
           <Text>Track End Time? *</Text>
           <DropDownPicker
             open={endTimeOpen}
-            value={endTime}
+            value={endTimeRequired}
             items={constant.trackEndTime}
             setOpen={() => setEndTimeOpen(!endTimeOpen)}
-            setValue={val => setEndTime(val)}
+            setValue={val => setEndTimeRequired(val)}
             dropDownDirection="BOTTOM"
           />
         </View>
-        <View style={[add_user_styles.dropDown, {marginBottom: statusOpen ? 100 : 10}]}>
+        <View
+          style={[
+            add_user_styles.dropDown,
+            {marginBottom: statusOpen ? 100 : 10},
+          ]}>
           <Text>Status *</Text>
           <DropDownPicker
             open={statusOpen}
