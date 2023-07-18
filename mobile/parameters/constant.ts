@@ -1,11 +1,15 @@
 const dropdownOptions = {
   rateType: [
-    {label: 'Hourly', value: 'hourly'},
-    {label: 'Daily', value: 'daily'},
+    {label: 'Hourly', value: 'Hourly'},
+    {label: 'Daily', value: 'Daily'},
   ],
   status: [
-    {label: 'Active', value: 'active'},
-    {label: 'Inactive', value: 'inactive'},
+    {label: 'Active', value: 'Active'},
+    {label: 'Inactive', value: 'Inactive'},
+  ],
+  trackEndTime: [
+    {label: 'Yes', value: 'Yes'},
+    {label: 'No', value: 'No'},
   ],
 };
 

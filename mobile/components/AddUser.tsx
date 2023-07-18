@@ -241,7 +241,6 @@ const AddUser = ({route}: any) => {
             />
           </View>
         </View>
-
         <View style={styles.add_user_btn}>
           <Button title="Add" color="#fff" onPress={addUser} />
         </View>

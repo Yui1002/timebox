@@ -110,6 +110,7 @@ const SignIn = ({navigation}: any) => {
                 style={sign_in_styles.input_field}
                 onChangeText={text => onPasswordChange(text)}
                 autoCorrect={false}
+                secureTextEntry={true}
               />
               {passwordError && (
                 <Text style={common_styles.error_message}>

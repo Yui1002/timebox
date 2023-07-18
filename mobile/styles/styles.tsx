@@ -81,6 +81,36 @@ export const add_user_styles = StyleSheet.create({
   },
 });
 
+export const dropdown_styles = StyleSheet.create({
+  btn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ddd',
+    height: 50,
+    width: '100%',
+    paddingHorizontal: 10,
+    zIndex: 1,
+  },
+  btnText: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  dropdown: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    width: '50%',
+    shadowColor: '#000000',
+    shadowRadius: 4,
+    shadowOffset: {height: 4, width: 0},
+    shadowOpacity: 0.5,
+  },
+  item: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     margin: '5%',
@@ -196,7 +226,6 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     height: 40,
     borderRadius: 20,
-    marginTop: 100,
     backgroundColor: '#2089DC',
   },
   setup_container: {
