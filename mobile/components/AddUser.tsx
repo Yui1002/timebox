@@ -5,6 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 import constant from '../parameters/constant';
+import EditUser from './EditUser';
 
 const AddUser = ({route}: any) => {
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
@@ -23,6 +24,7 @@ const AddUser = ({route}: any) => {
   const [statusError, setStatusError] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [users, setUsers] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     getUsers(route.params.ownerEmail);
@@ -104,7 +106,8 @@ const AddUser = ({route}: any) => {
   };
 
   const editUser = () => {
-    console.log('i wanna edit');
+    console.log('edit button pressed');
+    setModalVisible(true);
   };
 
   return (
@@ -173,7 +176,11 @@ const AddUser = ({route}: any) => {
                   </View>
                   <View style={styles.list_user_box}>
                     <View style={add_user_styles.editBtn}>
-                      <Text style={add_user_styles.editBtnText}>Edit</Text>
+                      <Text
+                        style={add_user_styles.editBtnText}
+                        onPress={editUser}>
+                        Edit
+                      </Text>
                       {/* <Button title="Edit" color="#fff" onPress={editUser} style={add_user_styles.editBtn}/> */}
                     </View>
                   </View>
@@ -250,6 +257,12 @@ const AddUser = ({route}: any) => {
           <Text style={styles.register_error}>This user already exists.</Text>
         )}
       </View>
+      {modalVisible && (
+        <EditUser
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+      )}
     </View>
   );
 };

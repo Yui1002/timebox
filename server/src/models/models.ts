@@ -85,6 +85,11 @@ class Models {
         activity.updateBy = activity.ownerEmail;
         return await this.repositories.addActivity(activity);
     }
+
+    async checkEmailExists(email: string) {
+        const response = await this.repositories.checkEmailExists(email);
+        return response > 0;
+    }
 }
 
 export default Models;

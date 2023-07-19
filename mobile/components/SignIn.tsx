@@ -1,5 +1,5 @@
 import {View, Text, TextInput, Button} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {common_styles, sign_in_styles} from '../styles/styles';
 import axios from 'axios';
 import validator from 'validator';
@@ -8,8 +8,9 @@ import {LOCAL_HOST_URL} from '../config.js';
 const SignIn = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authStyle, setAuthStyle] = useState('');
+  const [authType, setAuthType] = useState('');
   const [emailError, setEmailError] = useState(false);
+  const [isEmailExists, setIsEmailExists] = useState<boolean | undefined>(undefined);
   const [passwordError, setPasswordError] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [signInError, setSignInError] = useState(false);
@@ -24,19 +25,32 @@ const SignIn = ({navigation}: any) => {
     validatePassword();
   };
 
-  const validateEmail = () => {
+  const validateEmail = (): void => {
     !validator.isEmail(email) ? setEmailError(true) : setEmailError(false);
   };
 
-  const validatePassword = () => {
-    authStyle === 'password' && password.length < 1
+  const checkEmailExists = async (): Promise<void> => {
+    try {
+      await axios.get(`${LOCAL_HOST_URL}/email/${email}`);
+      setIsEmailExists(true);
+    } catch (err) {
+      setIsEmailExists(false);
+    }
+  };
+
+  const validatePassword = (): void => {
+    authType === 'password' && password.length < 1
       ? setPasswordError(true)
       : setPasswordError(false);
   };
 
   const onNextPress = async () => {
     validateEmail();
-    if (emailError) {
+    checkEmailExists();
+
+    console.log('email exitsts', isEmailExists)
+
+    if (emailError || !isEmailExists) {
       return;
     }
     checkAuthType();
@@ -47,15 +61,15 @@ const SignIn = ({navigation}: any) => {
       const response = await axios.get(`${LOCAL_HOST_URL}/authType/${email}`);
       switch (response.data) {
         case 'OTP':
-          setAuthStyle('OTP');
+          setAuthType('OTP');
           setIsEmailChecked(true);
           break;
         case 'password':
-          setAuthStyle('password');
+          setAuthType('password');
           setIsEmailChecked(true);
           break;
         default:
-          setAuthStyle('');
+          setAuthType('');
           setIsEmailChecked(false);
       }
     } catch (err) {
@@ -64,22 +78,28 @@ const SignIn = ({navigation}: any) => {
   };
 
   const onSubmit = async () => {
-    validateEmail();
     validatePassword();
-
-    try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/signin`, {
-        email: email,
-        password: authStyle === 'password' ? password : null,
-      });
-      if (response.status === 200) {
-        navigation.navigate('Setup', {ownerEmail: email});
-      }
-    } catch (err) {
-      setSignInError(true);
-    } finally {
-      setSignInError(false);
+    if (passwordError) {
+      return;
     }
+    submitSignin();
+  };
+
+  const submitSignin = () => {
+    axios
+      .post(`${LOCAL_HOST_URL}/signin`, {
+        email: email,
+        password: authType === 'password' ? password : null,
+      })
+      .then(() => {
+        navigation.navigate('Setup', {ownerEmail: email});
+      })
+      .catch(() => {
+        setSignInError(true);
+      })
+      .finally(() => {
+        setSignInError(false);
+      });
   };
 
   return (
@@ -94,16 +114,19 @@ const SignIn = ({navigation}: any) => {
             autoCorrect={false}
             autoCapitalize="none"
           />
-          {emailError && (
+          {isEmailExists === false && (
+            <Text style={common_styles.error_message}>Email is not found</Text>
+          )}
+          {emailError && isEmailExists && (
             <Text style={common_styles.error_message}>
               Invalid email format
             </Text>
           )}
         </View>
       </View>
-      {(authStyle === 'OTP' || authStyle === 'password') && (
+      {isEmailChecked && (authType === 'OTP' || authType === 'password') && (
         <View>
-          {authStyle === 'password' && (
+          {authType === 'password' && (
             <View>
               <Text>Password *</Text>
               <TextInput
@@ -119,7 +142,7 @@ const SignIn = ({navigation}: any) => {
               )}
             </View>
           )}
-          {authStyle === 'OTP' && (
+          {authType === 'OTP' && (
             <View>
               <Text style={common_styles.text_decoration}>Send code</Text>
             </View>
@@ -133,6 +156,7 @@ const SignIn = ({navigation}: any) => {
           onPress={isEmailChecked ? onSubmit : onNextPress}
         />
       </View>
+      <View>{signInError && <Text>Incorrect password</Text>}</View>
       <View>
         <Text>
           New user?{' '}

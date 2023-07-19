@@ -77,6 +77,16 @@ class Controllers {
             res.status(400).send('Failed to register activity');
         }
     }
+
+    async checkEmailExists(req: any, res: any) {
+        const response = await this.models.checkEmailExists(req.params.email);
+        console.log('response@ ', response)
+        if (response) {
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(400);
+        }
+    }
 }
 
 export default Controllers;

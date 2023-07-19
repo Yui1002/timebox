@@ -95,8 +95,6 @@ const AddActivity = ({route}: any) => {
             </View>
             <View>
               {activities.map((val, index) => {
-                console.log('index: ', index)
-                console.log('val: ', val)
                 return (
                   <View key={index} style={styles.list_user_previewContainer}>
                     <View style={styles.list_user_box}>

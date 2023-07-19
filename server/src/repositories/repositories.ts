@@ -182,6 +182,21 @@ class Repositories {
         client.release();
     }
   }
+
+  async checkEmailExists(email: string) {
+    const client = await pool.connect();
+
+    try {
+        const sql = "SELECT * FROM public.owners WHERE email_address = $1;";
+        const data = await client.query(sql, [email]);
+        console.log(data.rowCount);
+        return data.rowCount;
+    } catch (err) {
+        return err;
+    } finally {
+        client.release();
+    }
+  }
 }
 
 export default Repositories;
