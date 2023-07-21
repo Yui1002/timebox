@@ -10,15 +10,9 @@ const SignIn_Password = ({navigation, route}: any) => {
   const [isPasswordValid, setIsPasswordValid] = useState<boolean | undefined>(
     undefined,
   );
-  const [signInError, setSignInError] = useState(false);
-
-  const validatePassword = (): boolean => {
-    return password.length > 0;
-  };
 
   const onSubmit = async () => {
-    if (authType === 'password' && !validatePassword()) {
-      setIsPasswordValid(false);
+    if (authType === 'password' && password.length < 1) {
       return;
     }
     submitSignin();
@@ -31,11 +25,11 @@ const SignIn_Password = ({navigation, route}: any) => {
         password: authType === 'password' ? password : null,
       })
       .then(() => {
+        setIsPasswordValid(true);
         navigation.navigate('Setup', {ownerEmail});
       })
       .catch(() => {
-        console.log('error');
-        setSignInError(true);
+        setIsPasswordValid(false);
       });
   };
 
@@ -66,7 +60,7 @@ const SignIn_Password = ({navigation, route}: any) => {
         )}
       </View>
       <View>
-        {signInError && (
+        {isPasswordValid === false && (
           <Text style={common_styles.error_message}>Incorrect password</Text>
         )}
       </View>
