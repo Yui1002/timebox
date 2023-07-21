@@ -10,7 +10,8 @@ const SignIn = ({navigation}: any) => {
   const [password, setPassword] = useState('');
   const [authType, setAuthType] = useState('');
   const [emailError, setEmailError] = useState(false);
-  const [isEmailExists, setIsEmailExists] = useState<boolean | undefined>(undefined);
+  // const [isEmailExists, setIsEmailExists] = useState<boolean | undefined>(undefined);
+  const [isEmailExists, setIsEmailExists] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [signInError, setSignInError] = useState(false);
@@ -29,13 +30,18 @@ const SignIn = ({navigation}: any) => {
     !validator.isEmail(email) ? setEmailError(true) : setEmailError(false);
   };
 
-  const checkEmailExists = async (): Promise<void> => {
-    try {
-      await axios.get(`${LOCAL_HOST_URL}/email/${email}`);
-      setIsEmailExists(true);
-    } catch (err) {
-      setIsEmailExists(false);
-    }
+  const checkEmailExists = async (): Promise<boolean> => {
+    return axios
+      .get(`${LOCAL_HOST_URL}/email/${email}`)
+      .then(res => {
+        if (res.status === 200) {
+          return true;
+        }
+        return false;
+      })
+      .catch(() => {
+        return false;
+      });
   };
 
   const validatePassword = (): void => {
@@ -46,9 +52,12 @@ const SignIn = ({navigation}: any) => {
 
   const onNextPress = async () => {
     validateEmail();
-    checkEmailExists();
-
-    console.log('email exitsts', isEmailExists)
+    const isEmailExists = await checkEmailExists();
+    if (!isEmailExists) {
+      setIsEmailExists(false);
+    } else {
+      setIsEmailExists(true);
+    }
 
     if (emailError || !isEmailExists) {
       return;

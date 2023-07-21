@@ -84,7 +84,7 @@ class Controllers {
         if (response) {
             res.sendStatus(200);
         } else {
-            res.sendStatus(400);
+            res.sendStatus(401);
         }
     }
 }

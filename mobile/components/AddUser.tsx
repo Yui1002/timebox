@@ -111,7 +111,7 @@ const AddUser = ({route}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { opacity: modalVisible ? 0.2 : 1.0}]}>
       <View style={add_user_styles.container}>
         <Text style={styles.title}>List User</Text>
         {users.length < 1 ? (
@@ -248,7 +248,7 @@ const AddUser = ({route}: any) => {
             />
           </View>
         </View>
-        <View style={styles.add_user_btn}>
+        <View style={[styles.add_user_btn, {marginTop: 20}]}>
           <Button title="Add" color="#fff" onPress={addUser} />
         </View>
       </View>
@@ -259,6 +259,12 @@ const AddUser = ({route}: any) => {
       </View>
       {modalVisible && (
         <EditUser
+          firstName={firstName}
+          lastName={lastName}
+          username={username}
+          rate={rate}
+          rateType={rateType}
+          status={status}
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
         />

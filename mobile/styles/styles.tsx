@@ -119,10 +119,13 @@ export const edit_user_styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
-    backgroundColor: 'white',
+    width: '80%',
+    height: '50%',
+    position: 'relative',
+    margin: 10,
+    backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 35,
+    // padding: 35,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -133,7 +136,44 @@ export const edit_user_styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-})
+  close: {
+    width: '100%',
+    height: '14%',
+    // backgroundColor: 'lightblue',
+  },
+  closeIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    fontSize: 20,
+    fontWeight: 'bold',
+    width: '10%',
+    height: '100%',
+    margin: 8,
+  },
+  first_last_name_input: {
+    width: '100%',
+    height: '20%',
+    display: 'flex',
+    flexDirection: 'row',
+    // backgroundColor: 'skyblue',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  first_name_input: {
+    width: '45%',
+    padding: 4,
+  },
+  last_name_input: {
+    width: '45%',
+    padding: 4,
+  },
+  input_box: {
+    height: 40,
+    borderWidth: 1,
+    width: '100%',
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
