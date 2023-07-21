@@ -1,4 +1,4 @@
-import SignIn from '../components/SignIn';
+import SignIn from '../components/SignIn_Email';
 
 jest.mock('axios');
 import axios from 'axios';

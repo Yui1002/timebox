@@ -5,7 +5,8 @@ export const common_styles = StyleSheet.create({
     margin: '5%',
   },
   sub_container: {
-    marginBottom: 10,
+    marginTop: 4,
+    marginBottom: 4,
   },
   btn: {
     width: '44%',
@@ -18,7 +19,7 @@ export const common_styles = StyleSheet.create({
     backgroundColor: '#2089DC',
   },
   error_message: {
-    fontSize: 10,
+    fontSize: 12,
     color: 'red',
   },
   text_decoration: {

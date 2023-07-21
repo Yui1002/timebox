@@ -1,11 +1,11 @@
-import {View, Text, TextInput, StyleSheet, Button} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {View, Text, Button} from 'react-native';
+import React from 'react';
 import {common_styles, starter_styles} from '../styles/styles';
 
 const Starter = ({navigation}: any) => {
   const onPress = (type: string) => {
     if (type === 'sign in') {
-      navigation.navigate('SignIn');
+      navigation.navigate('SignIn_Email');
     } else if (type === 'sign up') {
       navigation.navigate('SignUp');
     }
