@@ -12,7 +12,7 @@ import SignIn_Email from './components/SignIn_Email';
 import SignIn_Password from './components/SignIn_Password';
 import SignIn_After_SignUp from './components/SignIn_After_SignUp';
 import Setup from './components/Setup';
-import AddUser from './components/AddUser';
+import Users from './components/Users';
 import Starter from './components/Starter';
 import AddActivity from './components/AddActivity';
 
@@ -53,9 +53,9 @@ function App(): JSX.Element {
           options={{title: 'Setup'}}
         />
         <Stack.Screen
-          name="AddUser"
-          component={AddUser}
-          options={{title: 'AddUser'}}
+          name="Users"
+          component={Users}
+          options={{title: 'Users'}}
         />
         <Stack.Screen
           name="AddActivity"

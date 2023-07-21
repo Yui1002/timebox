@@ -4,7 +4,7 @@ import {common_styles, sign_in_styles} from '../styles/styles';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 
-const SignIn_Password = ({navigation, route}: any) => {
+const SignIn_Password = ({route, navigation}: any) => {
   const {ownerEmail, authType} = route.params;
   const [password, setPassword] = useState('');
   const [isPasswordValid, setIsPasswordValid] = useState<boolean | undefined>(
@@ -26,7 +26,7 @@ const SignIn_Password = ({navigation, route}: any) => {
       })
       .then(() => {
         setIsPasswordValid(true);
-        navigation.navigate('Setup', {ownerEmail});
+        navigation.navigate('Setup', {ownerEmail: ownerEmail});
       })
       .catch(() => {
         setIsPasswordValid(false);

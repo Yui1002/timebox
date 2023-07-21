@@ -23,12 +23,12 @@ const AddUser = ({route}: any) => {
   const [rateTypeError, setRateTypeError] = useState(false);
   const [statusError, setStatusError] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
-  const [users, setUsers] = useState([]);
+  // const [users, setUsers] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    getUsers(route.params.ownerEmail);
-  }, []);
+  // useEffect(() => {
+  //   getUsers(route.params.ownerEmail);
+  // }, []);
 
   const addUser = async () => {
     validateFirstName();
@@ -60,7 +60,7 @@ const AddUser = ({route}: any) => {
         updateDate: new Date(),
         ownerEmail: route.params.ownerEmail,
       });
-      getUsers(route.params.ownerEmail);
+      // getUsers(route.params.ownerEmail);
     } catch (err) {
       setIsDuplicate(true);
     } finally {
@@ -68,14 +68,14 @@ const AddUser = ({route}: any) => {
     }
   };
 
-  const getUsers = async (ownerEmail: string) => {
-    try {
-      const response = await axios.get(`${LOCAL_HOST_URL}/users/${ownerEmail}`);
-      setUsers(response.data);
-    } catch (err) {
-      console.log('error in getting users: ', err);
-    }
-  };
+  // const getUsers = async (ownerEmail: string) => {
+  //   try {
+  //     const response = await axios.get(`${LOCAL_HOST_URL}/users/${ownerEmail}`);
+  //     setUsers(response.data);
+  //   } catch (err) {
+  //     console.log('error in getting users: ', err);
+  //   }
+  // };
 
   const validateFirstName = () => {
     firstName.length < 1 ? setFirstNameError(true) : setFirstNameError(false);
@@ -106,90 +106,11 @@ const AddUser = ({route}: any) => {
   };
 
   const editUser = () => {
-    console.log('edit button pressed');
     setModalVisible(true);
   };
 
   return (
     <View style={[styles.container, { opacity: modalVisible ? 0.2 : 1.0}]}>
-      <View style={add_user_styles.container}>
-        <Text style={styles.title}>List User</Text>
-        {users.length < 1 ? (
-          <View>
-            <Text>No user found</Text>
-          </View>
-        ) : (
-          <View style={styles.list_user_container}>
-            <View style={styles.list_user_previewContainer}>
-              <View style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>first name</Text>
-              </View>
-              <View style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>last name</Text>
-              </View>
-              <View style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>username</Text>
-              </View>
-              <View style={[styles.list_user_headerBox, {flexBasis: 2}]}>
-                <Text style={styles.list_user_box_text}>rate</Text>
-              </View>
-              <View style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>rate type</Text>
-              </View>
-              <View style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>status</Text>
-              </View>
-              <View style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>edit</Text>
-              </View>
-            </View>
-            <View>
-              {users.map(user => (
-                <View
-                  key={user.user_name}
-                  style={styles.list_user_previewContainer}>
-                  <View style={styles.list_user_box}>
-                    <Text style={styles.list_user_box_text}>
-                      {user.first_name}
-                    </Text>
-                  </View>
-                  <View style={styles.list_user_box}>
-                    <Text style={styles.list_user_box_text}>
-                      {user.last_name}
-                    </Text>
-                  </View>
-                  <View style={styles.list_user_box}>
-                    <Text style={styles.list_user_box_text}>
-                      {user.user_name}
-                    </Text>
-                  </View>
-                  <View style={[styles.list_user_box, {flexBasis: 2}]}>
-                    <Text style={styles.list_user_box_text}>{user.rate}</Text>
-                  </View>
-                  <View style={styles.list_user_box}>
-                    <Text style={styles.list_user_box_text}>
-                      {user.rate_type}
-                    </Text>
-                  </View>
-                  <View style={styles.list_user_box}>
-                    <Text style={styles.list_user_box_text}>{user.status}</Text>
-                  </View>
-                  <View style={styles.list_user_box}>
-                    <View style={add_user_styles.editBtn}>
-                      <Text
-                        style={add_user_styles.editBtnText}
-                        onPress={editUser}>
-                        Edit
-                      </Text>
-                      {/* <Button title="Edit" color="#fff" onPress={editUser} style={add_user_styles.editBtn}/> */}
-                    </View>
-                  </View>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-      </View>
       <View>
         <Text style={styles.title}>Add User</Text>
         <View>

@@ -189,7 +189,6 @@ class Repositories {
     try {
         const sql = "SELECT * FROM public.owners WHERE email_address = $1;";
         const data = await client.query(sql, [email]);
-        console.log(data.rowCount);
         return data.rowCount;
     } catch (err) {
         return err;

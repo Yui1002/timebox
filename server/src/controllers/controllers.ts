@@ -7,10 +7,6 @@ class Controllers {
         this.models = new Models();
     }
 
-    async welcome(req: any, res: any) {
-        res.status(200).send('welcome')
-    }
-
     async registerOwner(req: any, res: any) {
         const isRegistered = await this.models.isOwnerRegistered(req.body.email);
         if (isRegistered) {
@@ -49,12 +45,13 @@ class Controllers {
     }
 
     async getUsers(req: any, res:any) {
+        console.log(req.params.email)
         const users = await this.models.getUsers(req.params.email);
+        console.log('users: ', users)
         res.send(users);
     }
 
     async getActivities(req: any, res: any) {
-        console.log(req.params.email)
         const activities = await this.models.getActivities(req.params.email);
         res.send(activities);
     }
@@ -80,7 +77,6 @@ class Controllers {
 
     async checkEmailExists(req: any, res: any) {
         const response = await this.models.checkEmailExists(req.params.email);
-        console.log('response@ ', response)
         if (response) {
             res.sendStatus(200);
         } else {

@@ -25,7 +25,6 @@ const EditUser = ({
   modalVisible,
   setModalVisible,
 }: Props) => {
-  console.log('first name: ', firstName);
   const [updatedFirstName, setUpdatedFirstName] = useState(firstName);
   const [updatedLastName, setUpdatedLastName] = useState(lastName);
   const [updatedUsername, setUpdatedUsername] = useState(username);

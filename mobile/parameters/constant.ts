@@ -11,6 +11,15 @@ const dropdownOptions = {
     {label: 'Yes', value: 'Yes'},
     {label: 'No', value: 'No'},
   ],
+  listUserCategories: [
+    {label: 'firstName', value: 'first name'},
+    {label: 'lastName', value: 'last name'},
+    {label: 'username', value: 'username'},
+    {label: 'rate', value: 'rate'},
+    {label: 'rateType', value: 'rate type'},
+    {label: 'status', value: 'status'},
+    {label: 'edit', value: 'edit'},
+  ],
 };
 
 export default dropdownOptions;
