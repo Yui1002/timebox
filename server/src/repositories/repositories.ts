@@ -137,6 +137,32 @@ class Repositories {
     }
   }
 
+  async updateUser(req: any, userId: string) {
+    const client = await pool.connect();
+    try {
+        const sql = "UPDATE public.users set first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
+        const data = await client.query(sql, [req.firstName, req.lastName, req.username, req.rate, req.rateType, req.status, req.upateDate, userId]);
+        return data.rowCount;
+    } catch (err) {
+        return err;
+    } finally {
+        client.release();
+    }
+  }
+
+  async getUserId(username: string) {
+    const client = await pool.connect();
+    try {
+        const sql = "SELECT user_id FROM public.users WHERE user_name=$1;";
+        const data = await client.query(sql, [username]);
+        return data.rows[0].user_id;
+    } catch (err) {
+        return err;
+    } finally {
+        client.release();
+    }
+  }
+
   async getActivities(ownerId: string) {
     const client = await pool.connect();
 

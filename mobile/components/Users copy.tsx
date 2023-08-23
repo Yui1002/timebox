@@ -19,10 +19,18 @@ const Users = ({route}: any) => {
     try {
       const response = await axios.get(`${LOCAL_HOST_URL}/users/${ownerEmail}`);
       const data = await response.data;
+      assignIndex(data);
       setUsers(data);
     } catch (err) {
       setUsers([]);
     }
+  };
+
+  const assignIndex = users => {
+    users.forEach((user, index) => {
+      user['id'] = index;
+    });
+    return users;
   };
 
   return (

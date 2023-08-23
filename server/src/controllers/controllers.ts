@@ -45,9 +45,7 @@ class Controllers {
     }
 
     async getUsers(req: any, res:any) {
-        console.log(req.params.email)
         const users = await this.models.getUsers(req.params.email);
-        console.log('users: ', users)
         res.send(users);
     }
 
@@ -64,6 +62,11 @@ class Controllers {
             const response = await this.models.addUser(req.body);
             Number(response) > 0 ? res.sendStatus(200) : res.sendStatus(400);
         }
+    }
+
+    async updateUser(req: any, res: any) {
+        const response = await this.models.updateUser(req.body);
+        console.log('response: ', response);
     }
 
     async addActivity(req: any, res: any) {

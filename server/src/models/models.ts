@@ -80,6 +80,11 @@ class Models {
         return await this.repositories.addUser(user);
     }
 
+    async updateUser(req: any) {
+        const userId = await this.repositories.getUserId(req.originalUsername);
+        return await this.repositories.updateUser(req, userId)
+    }
+
     async addActivity(activity: ActivityInterface) {
         const ownerId = await this.getOwnerId(activity.ownerEmail);
         activity.ownerId = ownerId;

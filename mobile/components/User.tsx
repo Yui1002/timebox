@@ -1,41 +1,38 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, Button, Modal} from 'react-native';
 import styles, {add_user_styles} from '../styles/styles';
-import ListUser from './ListUser';
-import AddUser from './AddUser';
-import {LOCAL_HOST_URL} from '../config.js';
-import axios from 'axios';
+import EditUser from './EditUser';
 
 const User = ({user}) => {
-  const editUser = () => {};
+  const {first_name, last_name, user_name, rate, rate_type, status} = user;
+  const [open, setOpen] = useState(false);
 
   return (
-    <View key={user.user_name} style={styles.list_user_previewContainer}>
+    <View style={styles.list_user_previewContainer}>
       <View style={styles.list_user_box}>
-        <Text style={styles.list_user_box_text}>{user.first_name}</Text>
+        <Text style={styles.list_user_box_text}>{first_name}</Text>
       </View>
       <View style={styles.list_user_box}>
-        <Text style={styles.list_user_box_text}>{user.last_name}</Text>
+        <Text style={styles.list_user_box_text}>{last_name}</Text>
       </View>
       <View style={styles.list_user_box}>
-        <Text style={styles.list_user_box_text}>{user.user_name}</Text>
+        <Text style={styles.list_user_box_text}>{user_name}</Text>
       </View>
       <View style={[styles.list_user_box, {flexBasis: 2}]}>
-        <Text style={styles.list_user_box_text}>{user.rate}</Text>
+        <Text style={styles.list_user_box_text}>{rate}</Text>
       </View>
       <View style={styles.list_user_box}>
-        <Text style={styles.list_user_box_text}>{user.rate_type}</Text>
+        <Text style={styles.list_user_box_text}>{rate_type}</Text>
       </View>
       <View style={styles.list_user_box}>
-        <Text style={styles.list_user_box_text}>{user.status}</Text>
+        <Text style={styles.list_user_box_text}>{status}</Text>
       </View>
       <View style={styles.list_user_box}>
-        <View style={add_user_styles.editBtn}>
-          <Text style={add_user_styles.editBtnText} onPress={editUser}>
-            Edit
-          </Text>
-        </View>
+        <Button color="blue" title="Edit" onPress={() => setOpen(true)} />
       </View>
+      <Modal visible={open} onRequestClose={() => setOpen(false)}>
+        <EditUser user={user} setOpen={setOpen} />
+      </Modal>
     </View>
   );
 };

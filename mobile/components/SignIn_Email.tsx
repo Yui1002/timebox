@@ -36,7 +36,6 @@ const SignIn_Email = ({navigation}: any) => {
     }
     setIsEmailValid(true);
     const authType = await checkAuthType();
-    console.log('email: ', email)
     navigation.navigate('SignIn_Password', {
       ownerEmail: email,
       authType: authType,

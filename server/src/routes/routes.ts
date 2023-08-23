@@ -17,6 +17,7 @@ class Routes {
         app.post('/activity', this.controllers.addActivity.bind(this.controllers));
         app.get('/activities/:email', this.controllers.getActivities.bind(this.controllers));
         app.get('/email/:email', this.controllers.checkEmailExists.bind(this.controllers));
+        app.post('/updateUser', this.controllers.updateUser.bind(this.controllers))
     }
 }
 

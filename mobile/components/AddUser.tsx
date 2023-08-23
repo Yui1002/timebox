@@ -5,112 +5,72 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 import constant from '../parameters/constant';
-import EditUser from './EditUser';
 
-const AddUser = ({route}: any) => {
-  const [rateTypeOpen, setRateTypeOpen] = useState(false);
-  const [statusOpen, setStatusOpen] = useState(false);
+const AddUser = ({ownerEmail, getUsers}) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [rate, setRate] = useState(0);
   const [rateType, setRateType] = useState(null);
-  const [status, setStatus] = useState(null);
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [rateError, setRateError] = useState(false);
   const [rateTypeError, setRateTypeError] = useState(false);
-  const [statusError, setStatusError] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
-  // const [users, setUsers] = useState([]);
+  const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // useEffect(() => {
-  //   getUsers(route.params.ownerEmail);
-  // }, []);
-
   const addUser = async () => {
-    validateFirstName();
-    validateLastName();
-    validateUsername();
-    validateRate();
-    validateRateType();
-    validateStatus();
+    console.log('before validate');
+    validateInput();
+    console.log('after validate');
 
     if (
       firstNameError ||
       lastNameError ||
       usernameError ||
       rateError ||
-      rateTypeError ||
-      statusError
+      rateTypeError
     ) {
       return;
     }
 
+    submitUser();
+  };
+
+  const submitUser = async () => {
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/user`, {
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        rate: rate,
-        rateType: rateType,
-        status: status,
+        firstName,
+        lastName,
+        username,
+        rate,
+        rateType,
+        status: 'active',
         updateDate: new Date(),
-        ownerEmail: route.params.ownerEmail,
+        ownerEmail: ownerEmail,
       });
-      // getUsers(route.params.ownerEmail);
     } catch (err) {
       setIsDuplicate(true);
+      getUsers();
     } finally {
       setIsDuplicate(false);
     }
   };
 
-  // const getUsers = async (ownerEmail: string) => {
-  //   try {
-  //     const response = await axios.get(`${LOCAL_HOST_URL}/users/${ownerEmail}`);
-  //     setUsers(response.data);
-  //   } catch (err) {
-  //     console.log('error in getting users: ', err);
-  //   }
-  // };
-
-  const validateFirstName = () => {
+  const validateInput = () => {
     firstName.length < 1 ? setFirstNameError(true) : setFirstNameError(false);
-  };
-
-  const validateLastName = () => {
     lastName.length < 1 ? setLastNameError(true) : setLastNameError(false);
-  };
-
-  const validateUsername = () => {
     username.length < 1 ? setUsernameError(true) : setUsernameError(false);
-  };
-
-  const validateRate = () => {
     typeof rate !== 'number' ? setRateError(true) : setRateError(false);
-  };
-
-  const validateRateType = () => {
-    rateType === 'hourly' || rateType === 'daily'
+    rateType === 'Hourly' || rateType === 'Daily'
       ? setRateTypeError(false)
       : setRateTypeError(true);
   };
 
-  const validateStatus = () => {
-    status === 'active' || status === 'inactive'
-      ? setStatusError(false)
-      : setStatusError(true);
-  };
-
-  const editUser = () => {
-    setModalVisible(true);
-  };
-
   return (
-    <View style={[styles.container, { opacity: modalVisible ? 0.2 : 1.0}]}>
+    <View style={{opacity: modalVisible ? 0.2 : 1.0}}>
       <View>
         <Text style={styles.title}>Add User</Text>
         <View>
@@ -158,16 +118,6 @@ const AddUser = ({route}: any) => {
               setValue={val => setRateType(val)}
             />
           </View>
-          <View style={add_user_styles.dropDown}>
-            <Text>status</Text>
-            <DropDownPicker
-              open={statusOpen}
-              value={status}
-              items={constant.status}
-              setOpen={() => setStatusOpen(!statusOpen)}
-              setValue={val => setStatus(val)}
-            />
-          </View>
         </View>
         <View style={[styles.add_user_btn, {marginTop: 20}]}>
           <Button title="Add" color="#fff" onPress={addUser} />
@@ -178,18 +128,6 @@ const AddUser = ({route}: any) => {
           <Text style={styles.register_error}>This user already exists.</Text>
         )}
       </View>
-      {modalVisible && (
-        <EditUser
-          firstName={firstName}
-          lastName={lastName}
-          username={username}
-          rate={rate}
-          rateType={rateType}
-          status={status}
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-        />
-      )}
     </View>
   );
 };
