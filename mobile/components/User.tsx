@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, Button, Modal} from 'react-native';
-import styles, {add_user_styles} from '../styles/styles';
+import styles, {add_user_styles, edit_user_styles} from '../styles/styles';
 import EditUser from './EditUser';
 
 const User = ({user}) => {
@@ -30,9 +30,11 @@ const User = ({user}) => {
       <View style={styles.list_user_box}>
         <Button color="blue" title="Edit" onPress={() => setOpen(true)} />
       </View>
-      <Modal visible={open} onRequestClose={() => setOpen(false)}>
-        <EditUser user={user} setOpen={setOpen} />
-      </Modal>
+      <View style={edit_user_styles.centeredView}>
+        <Modal visible={open} onRequestClose={() => setOpen(false)}>
+          <EditUser user={user} setOpen={setOpen} />
+        </Modal>
+      </View>
     </View>
   );
 };
