@@ -336,13 +336,28 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: '#ccc',
     flexGrow: 1,
-    flexBasis: 20,
+    flexBasis: 48,
   },
   list_user_previewContainer: {
     flexDirection: 'row',
     borderLeftWidth: 1,
     borderLeftColor: '#ccc',
   },
+  list_user_btn: {
+    width: '80%',
+    height: '80%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    borderRadius: 20,
+    backgroundColor: '#2089DC',
+  },
+  list_user_btn_text: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+  }
 });
 
 export default styles;

@@ -29,7 +29,7 @@ const EditUser = ({user, setOpen}) => {
 
   const updateUser = () => {
     axios
-      .post(`${LOCAL_HOST_URL}/editUser`, {
+      .post(`${LOCAL_HOST_URL}/updateUser`, {
         firstName: updatedFirstName,
         lastName: updatedLastName,
         username: updatedUsername,
@@ -39,7 +39,9 @@ const EditUser = ({user, setOpen}) => {
         updateDate: new Date(),
         originalUsername: user.username,
       })
-      .then(() => {})
+      .then(() => {
+        
+      })
       .catch(() => {});
   };
 

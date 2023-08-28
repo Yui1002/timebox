@@ -66,7 +66,7 @@ class Controllers {
 
     async updateUser(req: any, res: any) {
         const response = await this.models.updateUser(req.body);
-        console.log('response: ', response);
+        res.status(200).send('Successfully updated');
     }
 
     async addActivity(req: any, res: any) {

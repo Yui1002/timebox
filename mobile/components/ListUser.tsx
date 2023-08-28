@@ -7,11 +7,9 @@ import User from './User';
 
 interface Props {
   users: UserInterface[];
-  modalVisible: boolean;
-  setModalVisible: () => void;
 }
 
-const ListUser = ({users, modalVisible, setModalVisible}: Props) => {
+const ListUser = ({users, getUsers, open, setOpen}: Props) => {
   return (
     <View style={add_user_styles.container}>
       <Text style={styles.title}>List User</Text>
@@ -29,12 +27,7 @@ const ListUser = ({users, modalVisible, setModalVisible}: Props) => {
             ))}
           </View>
           {users.map((user, index) => (
-            <User
-              key={index}
-              user={user}
-              // modalVisible={modalVisible}
-              // setModalVisible={setModalVisible}
-            />
+            <User key={index} user={user} open={open} setOpen={setOpen} />
           ))}
         </View>
       )}

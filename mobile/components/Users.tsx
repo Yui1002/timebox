@@ -9,7 +9,7 @@ import axios from 'axios';
 const Users = ({route}: any) => {
   const ownerEmail = route.params.ownerEmail;
   const [users, setUsers] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getUsers();
@@ -26,11 +26,12 @@ const Users = ({route}: any) => {
   };
 
   return (
-    <View style={[styles.container, {opacity: modalVisible ? 0.2 : 1.0}]}>
+    <View style={[styles.container, {opacity: open ? 0.2 : 1.0}]}>
       <ListUser
         users={users}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
+        getUsers={getUsers}
+        open={open}
+        setOpen={setOpen}
       />
       <AddUser ownerEmail={ownerEmail} getUsers={getUsers} />
     </View>
