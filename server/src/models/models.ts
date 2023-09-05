@@ -63,7 +63,6 @@ class Models {
 
     async getUsers(email: string) {
         const ownerId = await this.getOwnerId(email);
-        console.log(ownerId)
         return await this.repositories.getUsers(ownerId);
     }
 

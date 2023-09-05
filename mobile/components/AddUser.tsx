@@ -22,9 +22,7 @@ const AddUser = ({ownerEmail, getUsers}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const addUser = async () => {
-    console.log('before validate');
     validateInput();
-    console.log('after validate');
 
     if (
       firstNameError ||
@@ -40,8 +38,8 @@ const AddUser = ({ownerEmail, getUsers}) => {
   };
 
   const submitUser = async () => {
-    try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/user`, {
+    axios
+      .post(`${LOCAL_HOST_URL}/user`, {
         firstName,
         lastName,
         username,
@@ -50,13 +48,14 @@ const AddUser = ({ownerEmail, getUsers}) => {
         status: 'active',
         updateDate: new Date(),
         ownerEmail: ownerEmail,
+      })
+      .then(() => {
+        getUsers();
+        setIsDuplicate(false);
+      })
+      .catch(() => {
+        setIsDuplicate(true);
       });
-    } catch (err) {
-      setIsDuplicate(true);
-      getUsers();
-    } finally {
-      setIsDuplicate(false);
-    }
   };
 
   const validateInput = () => {
