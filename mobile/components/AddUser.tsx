@@ -21,6 +21,8 @@ const AddUser = ({ownerEmail, getUsers}) => {
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
+  console.log('yes')
+
   const addUser = async () => {
     validateInput();
 
