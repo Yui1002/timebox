@@ -254,7 +254,7 @@ const SignUp = ({navigation}: any) => {
           Already have an account?{' '}
           <Text
             style={common_styles.text_decoration}
-            onPress={() => navigation.navigate('SignIn')}>
+            onPress={() => navigation.navigate('SignIn_Email')}>
             Sign In
           </Text>
         </Text>

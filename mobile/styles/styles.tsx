@@ -338,6 +338,21 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexBasis: 48,
   },
+  // submit: {
+  //   marginRight: 40,
+  //   marginLeft: 40,
+  //   marginTop: 10,
+  //   paddingTop: 20,
+  //   paddingBottom: 20,
+  //   backgroundColor: '#68a0cf',
+  //   borderRadius: 10,
+  //   borderWidth: 1,
+  //   borderColor: '#fff',
+  // },
+  // submitText: {
+  //   color: '#fff',
+  //   textAlign: 'center',
+  // },
   list_user_previewContainer: {
     flexDirection: 'row',
     borderLeftWidth: 1,

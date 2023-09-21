@@ -15,6 +15,7 @@ import Setup from './components/Setup';
 import Users from './components/Users';
 import Starter from './components/Starter';
 import AddActivity from './components/AddActivity';
+import HomePage_User from './components/HomePage_User';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -25,27 +26,27 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Starter"
           component={Starter}
-          options={{title: 'Starter'}}
+          options={{title: 'Back'}}
         />
         <Stack.Screen
           name="SignUp"
           component={SignUp}
-          options={{title: 'SignUp'}}
+          options={{title: 'Sign Up'}}
         />
         <Stack.Screen
           name="SignIn_Email"
           component={SignIn_Email}
-          options={{title: 'SignIn - Email'}}
+          options={{title: 'Sign In'}}
         />
         <Stack.Screen
           name="SignIn_Password"
           component={SignIn_Password}
-          options={{title: 'SignIn - Password'}}
+          options={{title: 'Sign In'}}
         />
         <Stack.Screen
           name="SignIn_After_SignUp"
           component={SignIn_After_SignUp}
-          options={{title: 'SignIn'}}
+          options={{title: 'Back'}}
         />
         <Stack.Screen
           name="Setup"
@@ -61,6 +62,11 @@ function App(): JSX.Element {
           name="AddActivity"
           component={AddActivity}
           options={{title: 'AddActivity'}}
+        />
+        <Stack.Screen
+          name="HomePage_User"
+          component={HomePage_User}
+          options={{title: 'Home Page'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

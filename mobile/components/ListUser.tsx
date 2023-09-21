@@ -5,10 +5,9 @@ import {UserInterface} from '../interfaces/UserInterface';
 import constant from '../parameters/constant';
 import User from './User';
 
-const ListUser = ({users, getUsers}) => {
+const ListUser = ({users, getUsers, setIsTransparent}) => {
   return (
     <View style={add_user_styles.container}>
-      <Text style={styles.title}>List User</Text>
       {users && users.length < 1 ? (
         <View>
           <Text>No user found</Text>
@@ -23,7 +22,12 @@ const ListUser = ({users, getUsers}) => {
             ))}
           </View>
           {users.map((user, index) => (
-            <User key={index} user={user} getUsers={getUsers} />
+            <User
+              key={index}
+              user={user}
+              getUsers={getUsers}
+              setIsTransparent={setIsTransparent}
+            />
           ))}
         </View>
       )}

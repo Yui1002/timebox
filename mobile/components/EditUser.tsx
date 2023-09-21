@@ -6,7 +6,7 @@ import constant from '../parameters/constant';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 
-const EditUser = ({user, setOpen, getUsers}) => {
+const EditUser = ({user, setOpen, getUsers, setIsTransparent}) => {
   const [updatedFirstName, setUpdatedFirstName] = useState(user.first_name);
   const [updatedLastName, setUpdatedLastName] = useState(user.last_name);
   const [updatedUsername, setUpdatedUsername] = useState(user.user_name);
@@ -31,8 +31,14 @@ const EditUser = ({user, setOpen, getUsers}) => {
       .then(() => {
         setOpen(false);
         getUsers();
+        setIsTransparent(false);
       })
       .catch(() => {});
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+    setIsTransparent(false);
   };
 
   return (
@@ -41,7 +47,8 @@ const EditUser = ({user, setOpen, getUsers}) => {
         <View style={edit_user_styles.close}>
           <Text
             style={edit_user_styles.closeIcon}
-            onPress={() => setOpen(false)}>
+            // onPress={() => setOpen(false)}>
+            onPress={closeModal}>
             &#x2717;
           </Text>
         </View>

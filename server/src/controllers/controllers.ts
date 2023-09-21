@@ -44,6 +44,11 @@ class Controllers {
         res.send(authType);
     }
 
+    async getUser(req: any, res: any) {
+        const user = await this.models.getUser(req.params.username);
+        res.send(user);
+    }
+
     async getUsers(req: any, res:any) {
         const users = await this.models.getUsers(req.params.email);
         res.send(users);
@@ -85,6 +90,10 @@ class Controllers {
         } else {
             res.sendStatus(401);
         }
+    }
+
+    async startRecord(req: any, res: any) {
+        const response = await this.models.startRecord()
     }
 }
 

@@ -122,6 +122,20 @@ class Repositories {
     }
   }
 
+  async getUser(username: string) {
+    const client = await pool.connect();
+
+    try {
+      const sql = "SELECT * FROM users WHERE user_name=$1;";
+      const data = await client.query(sql, [username]);
+      return data.rows;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
   async getUsers(ownerId: string) {
     const client = await pool.connect();
 
@@ -222,6 +236,19 @@ class Repositories {
         return err;
     } finally {
         client.release();
+    }
+  }
+  
+  async startRecord() {
+    const client = await pool.connect();
+    const uuid = uuidv4();
+
+    try {
+      const sql = ""
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
     }
   }
 }

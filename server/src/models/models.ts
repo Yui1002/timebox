@@ -66,6 +66,10 @@ class Models {
         return await this.repositories.getUsers(ownerId);
     }
 
+    async getUser(username: string) {
+        return await this.repositories.getUser(username);
+    }
+
     async getActivities(email: string) {
         const ownerId = await this.getOwnerId(email);
         return await this.repositories.getActivities(ownerId);
