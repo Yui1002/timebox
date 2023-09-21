@@ -93,7 +93,7 @@ class Controllers {
     }
 
     async startRecord(req: any, res: any) {
-        const response = await this.models.startRecord()
+        // co/nst response = await this.models.startRecord()
     }
 }
 

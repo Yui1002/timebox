@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import styles from '../styles/styles';
-import ListUser from './ListUser';
+import ListUser from './ListUsers';
 import AddUser from './AddUser';
 import {LOCAL_HOST_URL} from '../config.js';
 import axios from 'axios';

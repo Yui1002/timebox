@@ -14,7 +14,7 @@ import SignIn_After_SignUp from './components/SignIn_After_SignUp';
 import Setup from './components/Setup';
 import Users from './components/Users';
 import Starter from './components/Starter';
-import AddActivity from './components/AddActivity';
+import Activities from './components/Activities';
 import HomePage_User from './components/HomePage_User';
 
 function App(): JSX.Element {
@@ -59,9 +59,9 @@ function App(): JSX.Element {
           options={{title: 'Users'}}
         />
         <Stack.Screen
-          name="AddActivity"
-          component={AddActivity}
-          options={{title: 'AddActivity'}}
+          name="Activities"
+          component={Activities}
+          options={{title: 'Activities'}}
         />
         <Stack.Screen
           name="HomePage_User"

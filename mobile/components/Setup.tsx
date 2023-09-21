@@ -9,7 +9,7 @@ const Setup = ({route, navigation}: any) => {
         navigation.navigate('Users', {ownerEmail: ownerEmail});
         break;
       case 'activity':
-        navigation.navigate('AddActivity', {
+        navigation.navigate('Activities', {
           ownerEmail: route.params.ownerEmail,
         });
         break;

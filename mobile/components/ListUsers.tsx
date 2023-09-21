@@ -5,7 +5,7 @@ import {UserInterface} from '../interfaces/UserInterface';
 import constant from '../parameters/constant';
 import User from './User';
 
-const ListUser = ({users, getUsers, setIsTransparent}) => {
+const ListUsers = ({users, getUsers, setIsTransparent}) => {
   return (
     <View style={add_user_styles.container}>
       {users && users.length < 1 ? (
@@ -35,4 +35,4 @@ const ListUser = ({users, getUsers, setIsTransparent}) => {
   );
 };
 
-export default ListUser;
+export default ListUsers;

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
 import styles from '../styles/styles';
-import ListUser from './ListUser';
+import ListUsers from './ListUsers';
 import AddUser from './AddUser';
 import {LOCAL_HOST_URL} from '../config.js';
 import axios from 'axios';
@@ -13,8 +13,6 @@ const Users = ({route, navigation}: any) => {
   const [users, setUsers] = useState([]);
   const [showBar, setShowBar] = useState(false);
   const [isTransparent, setIsTransparent] = useState(false);
-
-  console.log('isTransparent: ', isTransparent);
 
   useEffect(() => {
     getUsers();
@@ -41,7 +39,7 @@ const Users = ({route, navigation}: any) => {
 
   const onPress = () => {
     navigation.navigate('HomePage_User');
-  }
+  };
 
   return (
     <NativeBaseProvider>
@@ -54,13 +52,12 @@ const Users = ({route, navigation}: any) => {
           getUsers={getUsers}
           setShowBar={setShowBar}
         />
-        <ListUser
+        <ListUsers
           users={users}
           getUsers={getUsers}
           setIsTransparent={setIsTransparent}
         />
       </View>
-
     </NativeBaseProvider>
   );
 };

@@ -184,7 +184,7 @@ class Repositories {
 
     try {
       const sql =
-        "SELECT activity_name, status FROM activities WHERE owner_id = $1;";
+        "SELECT activity_id, activity_name, status FROM activities WHERE owner_id = $1;";
       const data = await client.query(sql, [ownerId]);
       return data.rows;
     } catch (err) {
@@ -238,7 +238,7 @@ class Repositories {
         client.release();
     }
   }
-  
+
   async startRecord() {
     const client = await pool.connect();
     const uuid = uuidv4();
