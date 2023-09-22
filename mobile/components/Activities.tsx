@@ -39,7 +39,7 @@ const Activities = ({route, navigation}: any) => {
         <AddActivity ownerEmail={ownerEmail} getActivities={getActivities} />
       </Box>
       <Box>
-        <ListActivities activities={activities} getActivities={getActivities} />
+        {/* <ListActivities activities={activities} getActivities={getActivities} /> */}
       </Box>
     </NativeBaseProvider>
   );

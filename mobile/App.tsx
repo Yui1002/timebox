@@ -14,8 +14,8 @@ import SignIn_After_SignUp from './components/SignIn_After_SignUp';
 import Setup from './components/Setup';
 import Users from './components/Users';
 import Starter from './components/Starter';
-import Activities from './components/Activities';
 import HomePage_User from './components/HomePage_User';
+import Activities from './components/Activities';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();

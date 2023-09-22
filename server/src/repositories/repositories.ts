@@ -209,14 +209,28 @@ class Repositories {
     }
   }
 
+//   export interface ActivityInterface {
+//     ownerId: number,
+//     name: string,
+//     rate: number,
+//     rateType: string,
+//     endTimeRequired: boolean,
+//     status: string,
+//     updateDate: Date,
+//     updateBy: string,
+//     ownerEmail: string
+// }
+
   async addActivity(activity: ActivityInterface) {
     const uuid = uuidv4();
     const client = await pool.connect();
 
+    console.log('activity: ', activity)
+
     try {
         const sql = "INSERT INTO public.activities (activity_id, owner_id, activity_name, rate, rate_type, end_time_required, status, update_date, update_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";
-        const { ownerId, name, rate, rateType, endTimeRequired, status, updateDate, updateBy } = activity;
-        const data = await client.query(sql, [uuid, ownerId, name, rate, rateType, endTimeRequired, status, updateDate, updateBy]);
+        const { ownerId, activityName, rate, rateType, endTimeRequired, status, updateDate, updateBy } = activity;
+        const data = await client.query(sql, [uuid, ownerId, activityName, rate, rateType, endTimeRequired, status, updateDate, updateBy]);
         return data.rowCount;
     } catch (err) {
         return err;

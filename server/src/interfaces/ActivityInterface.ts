@@ -1,6 +1,6 @@
 export interface ActivityInterface {
     ownerId: number,
-    name: string,
+    activityName: string,
     rate: number,
     rateType: string,
     endTimeRequired: boolean,
