@@ -1,16 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
 import styles from '../styles/styles';
 import AddActivity from './AddActivity';
 import ListActivities from './ListActivities';
 import {LOCAL_HOST_URL} from '../config.js';
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
-import {NativeBaseProvider, Checkbox, Box} from 'native-base';
+import {
+  NativeBaseProvider,
+  Checkbox,
+  Box,
+  Alert,
+  VStack,
+  HStack,
+  IconButton,
+  Text,
+} from 'native-base';
 
 const Activities = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
   const [activities, setActivities] = useState([]);
+  const [showSuccess, setShowSuccess] = useState({status: '', title: ''});
 
   useEffect(() => {
     getActivities();
@@ -28,18 +36,36 @@ const Activities = ({route, navigation}: any) => {
     }
   };
 
+  setTimeout(() => setShowSuccess({status: '', title: ''}), 3000);
+
   return (
     <NativeBaseProvider>
       <Box style={styles.container}>
+        {showSuccess.status === 'success' && (
+          <Alert w="100%" status={showSuccess.status}>
+            <VStack space={2} flexShrink={1} w="100%">
+              <HStack space={2} flexShrink={1}>
+                <Alert.Icon mt="1" />
+                <Text fontSize="md" color="coolGray.800">
+                  {showSuccess.title}
+                </Text>
+              </HStack>
+            </VStack>
+          </Alert>
+        )}
         <Text>Home</Text>
         <Text style={styles.title}>Activities</Text>
         <Checkbox>Make this page start</Checkbox>
       </Box>
       <Box>
-        <AddActivity ownerEmail={ownerEmail} getActivities={getActivities} />
+        <AddActivity
+          ownerEmail={ownerEmail}
+          getActivities={getActivities}
+          setShowSuccess={setShowSuccess}
+        />
       </Box>
       <Box>
-        {/* <ListActivities activities={activities} getActivities={getActivities} /> */}
+        <ListActivities activities={activities} getActivities={getActivities} />
       </Box>
     </NativeBaseProvider>
   );

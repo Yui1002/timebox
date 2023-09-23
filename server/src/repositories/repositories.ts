@@ -184,10 +184,24 @@ class Repositories {
 
     try {
       const sql =
-        "SELECT activity_id, activity_name, status FROM activities WHERE owner_id = $1;";
+        "SELECT activity_id, activity_name, status FROM public.activities WHERE owner_id = $1;";
       const data = await client.query(sql, [ownerId]);
       return data.rows;
     } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async getSpecificActivity(activity: string, ownerId: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT activity_id FROM public.activities WHERE owner_id = $1 AND activity_name = $2;";
+      const data = await client.query(sql, [ownerId, activity]);
+      return data.rows;
+    } catch (err) {
+      console.log(err)
       return err;
     } finally {
       client.release();
@@ -209,23 +223,9 @@ class Repositories {
     }
   }
 
-//   export interface ActivityInterface {
-//     ownerId: number,
-//     name: string,
-//     rate: number,
-//     rateType: string,
-//     endTimeRequired: boolean,
-//     status: string,
-//     updateDate: Date,
-//     updateBy: string,
-//     ownerEmail: string
-// }
-
   async addActivity(activity: ActivityInterface) {
     const uuid = uuidv4();
     const client = await pool.connect();
-
-    console.log('activity: ', activity)
 
     try {
         const sql = "INSERT INTO public.activities (activity_id, owner_id, activity_name, rate, rate_type, end_time_required, status, update_date, update_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";

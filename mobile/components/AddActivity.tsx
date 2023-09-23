@@ -7,19 +7,26 @@ import {
   Input,
   Select,
   Checkbox,
+  Text,
 } from 'native-base';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 
-const AddActivity = ({ownerEmail, getActivities}) => {
+const AddActivity = ({ownerEmail, getActivities, setShowSuccess}) => {
   const [showModal, setShowModal] = useState(false);
   const [activityName, setActivityName] = useState('');
   const [rate, setRate] = useState(0);
   const [rateType, setRateType] = useState(null);
   const [endTimeRequired, setEndTimeRequired] = useState(false);
+  const [isDuplicated, setIsDuplicated] = useState(false);
 
   const addActivity = async () => {
     // prevent from adding duplicate value
+    const isActivityValid = await duplicateActivity();
+    if (!isActivityValid) {
+      setIsDuplicated(true);
+      return;
+    }
 
     axios
       .post(`${LOCAL_HOST_URL}/activity`, {
@@ -32,13 +39,27 @@ const AddActivity = ({ownerEmail, getActivities}) => {
         updateDate: new Date(),
       })
       .then(res => {
-        // if successful, let the user know that data is added successfully
-        console.log('successfully added')
+        setShowModal(false);
+        setShowSuccess({
+          status: 'success',
+          title: 'New activity has been added!',
+        });
       })
       .catch(() => {
-        // otherwise, let the user know that data is not added
-        console.log('failed')
+        setShowSuccess({
+          status: 'fail',
+          title: 'Something is wrong. Try again.',
+        });
+      });
+  };
+
+  const duplicateActivity = () => {
+    return axios
+      .get(`${LOCAL_HOST_URL}/activity/${ownerEmail}/${activityName}`)
+      .then(res => {
+        return res.data.length === 0;
       })
+      .catch(err => {});
   };
 
   return (
@@ -55,6 +76,9 @@ const AddActivity = ({ownerEmail, getActivities}) => {
                 onChangeText={val => setActivityName(val)}
                 autoCapitalize="none"
               />
+              {isDuplicated && (
+                <Text color="red">This activity is already registered</Text>
+              )}
             </FormControl>
             <FormControl>
               <FormControl.Label>Rate</FormControl.Label>

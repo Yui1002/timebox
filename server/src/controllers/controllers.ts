@@ -59,6 +59,12 @@ class Controllers {
         res.send(activities);
     }
 
+    async getSpecificActivity(req: any, res: any) {
+        const { name, email } = req.params;
+        const activity = await this.models.getSpecificActivity(name, email);
+        res.send(activity);
+    }
+
     async addUser(req: any, res: any) {
         const isRegistered = await this.models.isUserRegistered(req.body.username);
         if (isRegistered) {

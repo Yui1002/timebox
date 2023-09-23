@@ -75,6 +75,11 @@ class Models {
         return await this.repositories.getActivities(ownerId);
     }
 
+    async getSpecificActivity(activity: string, email: string) {
+        const ownerId = await this.getOwnerId(email);
+        return await this.repositories.getSpecificActivity(activity, ownerId);
+    }
+
     async addUser(user: UserInterface) {
         // need to get the belonged owner from the owner's email
         const ownerId = await this.getOwnerId(user.ownerEmail);
