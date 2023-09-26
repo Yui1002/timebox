@@ -41,12 +41,15 @@ const AddActivity = ({ownerEmail, getActivities, setShowSuccess}) => {
       .then(res => {
         setShowModal(false);
         setShowSuccess({
+          category: 'add activity',
           status: 'success',
           title: 'New activity has been added!',
         });
+        getActivities();
       })
       .catch(() => {
         setShowSuccess({
+          category: 'add activity',
           status: 'fail',
           title: 'Something is wrong. Try again.',
         });
@@ -81,7 +84,7 @@ const AddActivity = ({ownerEmail, getActivities, setShowSuccess}) => {
               )}
             </FormControl>
             <FormControl>
-              <FormControl.Label>Rate</FormControl.Label>
+              <FormControl.Label>Rate($)</FormControl.Label>
               <Input
                 keyboardType="numeric"
                 onChangeText={val => setRate(val)}

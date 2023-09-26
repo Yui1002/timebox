@@ -104,6 +104,11 @@ class Models {
         const response = await this.repositories.checkEmailExists(email);
         return response > 0;
     }
+
+    async deleteActivity(email: string, name: string) {
+        const ownerId = await this.getOwnerId(email);
+        return await this.repositories.deleteActivity(ownerId, name);
+    }
 }
 
 export default Models;

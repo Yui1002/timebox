@@ -11,14 +11,17 @@ import {
   Alert,
   VStack,
   HStack,
-  IconButton,
   Text,
 } from 'native-base';
 
 const Activities = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
   const [activities, setActivities] = useState([]);
-  const [showSuccess, setShowSuccess] = useState({status: '', title: ''});
+  const [showSuccess, setShowSuccess] = useState({
+    category: '',
+    status: '',
+    title: '',
+  });
 
   useEffect(() => {
     getActivities();
@@ -36,23 +39,37 @@ const Activities = ({route, navigation}: any) => {
     }
   };
 
-  setTimeout(() => setShowSuccess({status: '', title: ''}), 3000);
+  setTimeout(() => setShowSuccess({category: '', status: '', title: ''}), 3000);
 
   return (
     <NativeBaseProvider>
       <Box style={styles.container}>
-        {showSuccess.status === 'success' && (
-          <Alert w="100%" status={showSuccess.status}>
-            <VStack space={2} flexShrink={1} w="100%">
-              <HStack space={2} flexShrink={1}>
-                <Alert.Icon mt="1" />
-                <Text fontSize="md" color="coolGray.800">
-                  {showSuccess.title}
-                </Text>
-              </HStack>
-            </VStack>
-          </Alert>
-        )}
+        {showSuccess.category === 'add activity' &&
+          showSuccess.status === 'success' && (
+            <Alert w="100%" status={showSuccess.status}>
+              <VStack space={2} flexShrink={1} w="100%">
+                <HStack space={2} flexShrink={1}>
+                  <Alert.Icon mt="1" />
+                  <Text fontSize="md" color="coolGray.800">
+                    {showSuccess.title}
+                  </Text>
+                </HStack>
+              </VStack>
+            </Alert>
+          )}
+        {showSuccess.category === 'delete activity' &&
+          showSuccess.status === 'success' && (
+            <Alert w="100%" status={showSuccess.status}>
+              <VStack space={2} flexShrink={1} w="100%">
+                <HStack space={2} flexShrink={1}>
+                  <Alert.Icon mt="1" />
+                  <Text fontSize="md" color="coolGray.800">
+                    {showSuccess.title}
+                  </Text>
+                </HStack>
+              </VStack>
+            </Alert>
+          )}
         <Text>Home</Text>
         <Text style={styles.title}>Activities</Text>
         <Checkbox>Make this page start</Checkbox>
@@ -65,7 +82,12 @@ const Activities = ({route, navigation}: any) => {
         />
       </Box>
       <Box>
-        <ListActivities activities={activities} getActivities={getActivities} />
+        <ListActivities
+          ownerEmail={ownerEmail}
+          activities={activities}
+          getActivities={getActivities}
+          setShowSuccess={setShowSuccess}
+        />
       </Box>
     </NativeBaseProvider>
   );

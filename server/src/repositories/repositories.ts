@@ -265,6 +265,20 @@ class Repositories {
       client.release();
     }
   }
+
+  async deleteActivity(ownerId: string, activityName: string) {
+    const client = await pool.connect();
+
+    try {
+      const sql = "DELETE FROM public.activities WHERE owner_id = $1 AND activity_name = $2;";
+      const data = await client.query(sql, [ownerId, activityName]);
+      return data.rowCount;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
 }
 
 export default Repositories;

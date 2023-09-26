@@ -1,19 +1,9 @@
-import {View, Text} from 'react-native';
-import React from 'react';
-import styles, {add_user_styles} from '../styles/styles';
-import {UserInterface} from '../interfaces/UserInterface';
-import constant from '../parameters/constant';
-import User from './User';
-import {
-  NativeBaseProvider,
-  FlatList,
-  HStack,
-  VStack,
-  Box,
-  Spacer,
-} from 'native-base';
+import React, {useState} from 'react';
+import styles from '../styles/styles';
+import {Box, Text} from 'native-base';
+import Activity from './Activity';
 
-const ListActivities = ({activities, getActivities}) => {
+const ListActivities = ({ownerEmail, activities, getActivities, setShowSuccess}) => {
   return (
     <Box style={styles.container}>
       {activities && activities.length < 1 ? (
@@ -22,53 +12,14 @@ const ListActivities = ({activities, getActivities}) => {
         </Box>
       ) : (
         <Box style={styles.list_user_container}>
-          <FlatList
-            ListHeaderComponent={
-              <View style={{flex: 1}}>
-                <Text>Your activities</Text>
-              </View>
-            }
-            data={activities}
-            renderItem={({item}) => {
-              return (
-                <Box
-                  width="80%"
-                  marginLeft="auto"
-                  marginRight="auto"
-                  key={item.index}
-                  borderBottomWidth="1"
-                  _dark={{
-                    borderColor: 'muted.50',
-                  }}
-                  borderColor="muted.800"
-                  py="2">
-                  <HStack space={[2, 3]} justifyContent="space-between">
-                    <VStack>
-                      <Text
-                        _dark={{
-                          color: 'warmGray.50',
-                        }}
-                        color="coolGray.800"
-                        bold>
-                        {item.activity_name}
-                      </Text>
-                    </VStack>
-                    <Spacer />
-                    <Text
-                      fontSize="xs"
-                      _dark={{
-                        color: 'warmGray.50',
-                      }}
-                      color="coolGray.800"
-                      alignSelf="flex-start">
-                      {item.status}
-                    </Text>
-                  </HStack>
-                </Box>
-              );
-            }}
-            keyExtractor={item => item.id}
-          />
+          {activities.map(activity => (
+            <Activity
+              ownerEmail={ownerEmail}
+              activity={activity}
+              getActivities={getActivities}
+              setShowSuccess={setShowSuccess}
+            />
+          ))}
         </Box>
       )}
     </Box>

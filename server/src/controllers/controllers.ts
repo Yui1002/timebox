@@ -101,6 +101,17 @@ class Controllers {
     async startRecord(req: any, res: any) {
         // co/nst response = await this.models.startRecord()
     }
+
+    async deleteActivity(req: any, res:any) {
+        const { email, name } = req.params;
+        const response = await this.models.deleteActivity(email, name);
+        if (response === 1) {
+            console.log('here');
+            res.status(200).send('The activity has been deleted successfully');
+        } else {
+            res.status(400).send('Failed to delete the activity');
+        }
+    }
 }
 
 export default Controllers;
