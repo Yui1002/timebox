@@ -1,18 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
 import styles from '../styles/styles';
 import ListUsers from './ListUsers';
 import AddUser from './AddUser';
 import {LOCAL_HOST_URL} from '../config.js';
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
-import {NativeBaseProvider, Checkbox} from 'native-base';
+import {NativeBaseProvider, Checkbox, Box, Text} from 'native-base';
 
 const Users = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
   const [users, setUsers] = useState([]);
   const [showBar, setShowBar] = useState(false);
-  const [isTransparent, setIsTransparent] = useState(false);
+  const [showSuccess, setShowSuccess] = useState({
+    category: '',
+    status: '',
+    title: '',
+  });
 
   useEffect(() => {
     getUsers();
@@ -43,7 +46,7 @@ const Users = ({route, navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      <View style={styles.container}>
+      <Box style={styles.container}>
         <Text onPress={onPress}>Home</Text>
         <Text style={styles.title}>Users</Text>
         <Checkbox>Make this page start</Checkbox>
@@ -51,13 +54,13 @@ const Users = ({route, navigation}: any) => {
           ownerEmail={ownerEmail}
           getUsers={getUsers}
           setShowBar={setShowBar}
+          setShowSuccess={setShowSuccess}
         />
         <ListUsers
           users={users}
           getUsers={getUsers}
-          setIsTransparent={setIsTransparent}
         />
-      </View>
+      </Box>
     </NativeBaseProvider>
   );
 };

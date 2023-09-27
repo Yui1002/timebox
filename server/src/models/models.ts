@@ -109,6 +109,18 @@ class Models {
         const ownerId = await this.getOwnerId(email);
         return await this.repositories.deleteActivity(ownerId, name);
     }
+
+    async getActivityId(email: string, activityName: string) {
+        const ownerId = await this.getOwnerId(email);
+        return await this.repositories.getActivityId(ownerId, activityName);
+    }
+
+    // async editActivity(email: string, activityName: string) {
+    async editActivity(req: any) {
+        const { ownerEmail, originalActivityName } = req;
+        const activityId = await this.getActivityId(ownerEmail, originalActivityName);
+        return await this.repositories.editActivity(req, activityId)
+    }
 }
 
 export default Models;

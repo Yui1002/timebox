@@ -12,10 +12,13 @@ import {
   VStack,
   HStack,
   Text,
+  Toast,
+  Select
 } from 'native-base';
 
 const Activities = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
+  console.log('owner emaillll: ', ownerEmail)
   const [activities, setActivities] = useState([]);
   const [showSuccess, setShowSuccess] = useState({
     category: '',
@@ -24,6 +27,7 @@ const Activities = ({route, navigation}: any) => {
   });
 
   useEffect(() => {
+    console.log('rendered')
     getActivities();
   }, []);
 
@@ -39,10 +43,12 @@ const Activities = ({route, navigation}: any) => {
     }
   };
 
-  setTimeout(() => setShowSuccess({category: '', status: '', title: ''}), 3000);
-
   return (
     <NativeBaseProvider>
+      {/* <Select>
+        <Select.Item label="yes" value="yes" />
+        <Select.Item label="no" value="no" />
+      </Select> */}
       <Box style={styles.container}>
         {showSuccess.category === 'add activity' &&
           showSuccess.status === 'success' && (
@@ -70,6 +76,24 @@ const Activities = ({route, navigation}: any) => {
               </VStack>
             </Alert>
           )}
+        {showSuccess.category === 'edit activity' &&
+          showSuccess.status === 'success' &&
+          Toast.show({
+            description: `${showSuccess.title}`,
+          })}
+        {/* {showSuccess.category === 'edit activity' &&
+          showSuccess.status === 'success' && (
+            <Alert w="100%" status={showSuccess.status}>
+              <VStack space={2} flexShrink={1} w="100%">
+                <HStack space={2} flexShrink={1}>
+                  <Alert.Icon mt="1" />
+                  <Text fontSize="md" color="coolGray.800">
+                    {showSuccess.title}
+                  </Text>
+                </HStack>
+              </VStack>
+            </Alert>
+          )} */}
         <Text>Home</Text>
         <Text style={styles.title}>Activities</Text>
         <Checkbox>Make this page start</Checkbox>
@@ -81,14 +105,14 @@ const Activities = ({route, navigation}: any) => {
           setShowSuccess={setShowSuccess}
         />
       </Box>
-      <Box>
+      {/* <Box>
         <ListActivities
           ownerEmail={ownerEmail}
           activities={activities}
           getActivities={getActivities}
           setShowSuccess={setShowSuccess}
         />
-      </Box>
+      </Box> */}
     </NativeBaseProvider>
   );
 };

@@ -5,6 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
 import constant from '../parameters/constant';
+import {Select, FormControl, Center, Box} from 'native-base';
 
 const AddUserPopup = ({ownerEmail, getUsers, setOpen, setShowBar}) => {
   const [firstName, setFirstName] = useState('');

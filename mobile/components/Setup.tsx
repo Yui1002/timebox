@@ -3,6 +3,7 @@ import styles from '../styles/styles';
 
 const Setup = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
+ 
   const onPress = (type: string) => {
     switch (type) {
       case 'user':

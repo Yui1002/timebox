@@ -14,15 +14,22 @@ import {
 } from 'native-base';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../config.js';
+import EditActivity from './EditActivity';
 
 const Activity = ({ownerEmail, activity, getActivities, setShowSuccess}) => {
   const [actionOpen, setActionOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const cancelRef = useRef(null);
 
   const openDeleteDialog = () => {
     setActionOpen(false);
     setDeleteDialogOpen(true);
+  };
+
+  const openEditDialog = () => {
+    setActionOpen(false);
+    setEditModalOpen(true);
   };
 
   const deleteActivity = (name: string) => {
@@ -64,8 +71,7 @@ const Activity = ({ownerEmail, activity, getActivities, setShowSuccess}) => {
             _dark={{
               color: 'warmGray.50',
             }}
-            color="coolGray.800"
-            bold>
+            color="coolGray.800">
             {activity.activity_name}
           </Text>
         </VStack>
@@ -94,7 +100,15 @@ const Activity = ({ownerEmail, activity, getActivities, setShowSuccess}) => {
       </HStack>
       <Actionsheet isOpen={actionOpen} onClose={() => setActionOpen(false)}>
         <Actionsheet.Content>
-          <Actionsheet.Item>Edit</Actionsheet.Item>
+          <Actionsheet.Item onPress={openEditDialog}>Edit</Actionsheet.Item>
+          <EditActivity
+            editModalOpen={editModalOpen}
+            setEditModalOpen={setEditModalOpen}
+            activity={activity}
+            ownerEmail={ownerEmail}
+            setShowSuccess={setShowSuccess}
+            getActivities={getActivities}
+          />
           <Divider borderColor="gray.300" />
           <Actionsheet.Item onPress={openDeleteDialog}>Delete</Actionsheet.Item>
         </Actionsheet.Content>
@@ -111,7 +125,10 @@ const Activity = ({ownerEmail, activity, getActivities, setShowSuccess}) => {
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
-              <Button variant="unstyled" colorScheme="coolGray">
+              <Button
+                variant="unstyled"
+                colorScheme="coolGray"
+                onPress={() => setDeleteDialogOpen(false)}>
                 Cancel
               </Button>
               <Button

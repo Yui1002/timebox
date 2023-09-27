@@ -21,6 +21,7 @@ class Routes {
         app.get('/email/:email', this.controllers.checkEmailExists.bind(this.controllers));
         app.post('/updateUser', this.controllers.updateUser.bind(this.controllers));
         app.delete('/activity/:email/:name', this.controllers.deleteActivity.bind(this.controllers));
+        app.post('/edit/activity', this.controllers.editActivity.bind(this.controllers));
 
         // record time
         app.post('/startRecord', this.controllers.startRecord.bind(this.controllers));

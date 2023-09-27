@@ -108,6 +108,20 @@ class Repositories {
     }
   }
 
+  async getActivityId(ownerId: string, activityName: string) {
+    const client = await pool.connect();
+
+    try {
+      const sql = "SELECT activity_id FROM public.activities WHERE activity_name = $1 AND owner_id = $2;";
+      const data = await client.query(sql, [activityName, ownerId]);
+      return data.rows[0].activity_id;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
   async getOwnerAuthType(email: string) {
     const client = await pool.connect();
 
@@ -153,8 +167,6 @@ class Repositories {
 
   async updateUser(req: any, userId: string) {
     const client = await pool.connect();
-    console.log('req: ', req);
-    console.log('userId: ', typeof userId);
     try {
         const sql = "UPDATE public.users SET first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
         const data = await client.query(sql, [req.firstName, req.lastName, req.username, req.rate, req.rateType, req.status, req.updateDate, userId]);
@@ -184,7 +196,7 @@ class Repositories {
 
     try {
       const sql =
-        "SELECT activity_id, activity_name, status FROM public.activities WHERE owner_id = $1;";
+        "SELECT activity_id, activity_name, rate, rate_type, end_time_required, status FROM public.activities WHERE owner_id = $1;";
       const data = await client.query(sql, [ownerId]);
       return data.rows;
     } catch (err) {
@@ -274,6 +286,23 @@ class Repositories {
       const data = await client.query(sql, [ownerId, activityName]);
       return data.rowCount;
     } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async editActivity(req: any, activityId: string) {
+    const client = await pool.connect();
+    const { activityName, rate, rateType, endTimeRequired, status, updateDate } = req;
+
+    try {
+      const sql = "UPDATE public.activities SET activity_name = $1, rate = $2, rate_type = $3, end_time_required = $4, status = $5, update_date = $6 WHERE activity_id = $7;";
+      const data = await client.query(sql, [activityName, rate, rateType, endTimeRequired, status, updateDate, activityId]);
+      console.log('row count: ', data.rowCount)
+      return data.rowCount;
+    } catch (err) {
+      console.log(err);
       return err;
     } finally {
       client.release();
