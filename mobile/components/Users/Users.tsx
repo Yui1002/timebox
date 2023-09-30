@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import styles from '../styles/styles';
+// import styles from '../../styles/styles';
 import ListUsers from './ListUsers';
 import AddUser from './AddUser';
-import {LOCAL_HOST_URL} from '../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
 import {NativeBaseProvider, Checkbox, Box, Text} from 'native-base';
@@ -46,9 +46,9 @@ const Users = ({route, navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      <Box style={styles.container}>
+      <Box>
         <Text onPress={onPress}>Home</Text>
-        <Text style={styles.title}>Users</Text>
+        <Text>Users</Text>
         <Checkbox>Make this page start</Checkbox>
         <AddUser
           ownerEmail={ownerEmail}

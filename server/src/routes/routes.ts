@@ -1,16 +1,18 @@
 import Controllers from "../controllers/controllers";
-import {auth} from '../authenticate';
+import AuthenticationControllers from '../controllers/authenticationControllers';
 
 class Routes {
     controllers: Controllers;
+    authControllers: AuthenticationControllers;
 
     constructor() {
         this.controllers = new Controllers();
+        this.authControllers = new AuthenticationControllers();
     }
 
     applyRouting(app: any) {
-        app.post('/register', this.controllers.registerOwner.bind(this.controllers));
-        app.post('/signin', this.controllers.signInOwner.bind(this.controllers));
+        app.post('/signUp', this.authControllers.signUpOwner.bind(this.controllers));
+        app.post('/signIn', this.authControllers.signInOwner.bind(this.controllers));
         app.get('/authType/:email', this.controllers.getAuthType.bind(this.controllers));
         app.get('/users/:email', this.controllers.getUsers.bind(this.controllers));
         app.get('/user/:username', this.controllers.getUser.bind(this.controllers));

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, Button, Modal} from 'react-native';
-import styles, {edit_user_styles} from '../styles/styles';
+import styles from '../../styles/styles';
 import EditUser from './EditUser';
 
 const User = ({user, getUsers, setIsTransparent}) => {
@@ -56,7 +56,12 @@ const User = ({user, getUsers, setIsTransparent}) => {
       </View>
       <View style={edit_user_styles.centeredView}>
         <Modal visible={open} onRequestClose={() => setOpen(false)}>
-          <EditUser user={user} setOpen={setOpen} getUsers={getUsers} setIsTransparent={setIsTransparent} />
+          <EditUser
+            user={user}
+            setOpen={setOpen}
+            getUsers={getUsers}
+            setIsTransparent={setIsTransparent}
+          />
         </Modal>
       </View>
     </View>

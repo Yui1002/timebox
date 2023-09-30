@@ -2,7 +2,7 @@ import {View, Button, Modal} from 'react-native';
 // import {Box, Center, FormControl, Modal, Text, Input, Button, Checkbox, Select} from 'native-base';
 import React, {useState} from 'react';
 import AddUserPopup from './AddUserPopup';
-import styles from '../styles/styles';
+import styles from '../../styles/styles';
 import axios from 'axios';
 
 const AddUser = ({ownerEmail, getUsers, setShowBar}) => {

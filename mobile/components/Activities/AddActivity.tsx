@@ -10,7 +10,7 @@ import {
   Text,
 } from 'native-base';
 import axios from 'axios';
-import {LOCAL_HOST_URL} from '../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 
 const AddActivity = ({ownerEmail, getActivities, setShowSuccess}) => {
   const [showModal, setShowModal] = useState(false);

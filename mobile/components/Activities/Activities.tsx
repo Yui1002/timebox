@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import styles from '../styles/styles';
+// import styles from '../styles/styles';
+import styles from '../../styles/styles';
 import AddActivity from './AddActivity';
 import ListActivities from './ListActivities';
-import {LOCAL_HOST_URL} from '../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 import axios from 'axios';
 import {
   NativeBaseProvider,
@@ -45,10 +46,6 @@ const Activities = ({route, navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      {/* <Select>
-        <Select.Item label="yes" value="yes" />
-        <Select.Item label="no" value="no" />
-      </Select> */}
       <Box style={styles.container}>
         {showSuccess.category === 'add activity' &&
           showSuccess.status === 'success' && (

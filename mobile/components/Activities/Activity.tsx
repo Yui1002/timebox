@@ -13,7 +13,7 @@ import {
   Divider,
 } from 'native-base';
 import axios from 'axios';
-import {LOCAL_HOST_URL} from '../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 import EditActivity from './EditActivity';
 
 const Activity = ({ownerEmail, activity, getActivities, setShowSuccess}) => {

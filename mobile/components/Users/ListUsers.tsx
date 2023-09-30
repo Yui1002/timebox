@@ -1,8 +1,8 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import styles, {add_user_styles} from '../styles/styles';
+import styles from '../../styles/styles';
 import {UserInterface} from '../interfaces/UserInterface';
-import constant from '../parameters/constant';
+import constant from '../../parameters/constant';
 import User from './User';
 
 const ListUsers = ({users, getUsers, setIsTransparent}) => {

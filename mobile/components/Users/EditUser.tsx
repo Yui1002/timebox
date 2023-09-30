@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {View, Button, Text, TextInput} from 'react-native';
-import styles, {edit_user_styles} from '../styles/styles';
+import styles from '../../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';
-import constant from '../parameters/constant';
+import constant from '../../parameters/constant';
 import axios from 'axios';
-import {LOCAL_HOST_URL} from '../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 
 const EditUser = ({user, setOpen, getUsers, setIsTransparent}) => {
   const [updatedFirstName, setUpdatedFirstName] = useState(user.first_name);

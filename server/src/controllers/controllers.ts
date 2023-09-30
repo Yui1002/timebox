@@ -7,34 +7,27 @@ class Controllers {
         this.models = new Models();
     }
 
-    async registerOwner(req: any, res: any) {
+    async signUpOwner(req: any, res: any) {
         const isRegistered = await this.models.isOwnerRegistered(req.body.email);
         if (isRegistered) {
-            res.status(400).send('Owner is already registered');
+            res.status(400).json({error: 'This email is already used'});
         } else {
-            const response = await this.models.registerOwner(req.body);
-            // const token = await this.models.generateToken(req.body.email);
-            // res.cookie("token", token, {maxAge: 300000})
-            // Number(response) > 0 ? res.status(200).json({ status: 'success', message: 'User Registered', data: {Accesstoken: token}}) : res.sendStatus(400);
-            Number(response) > 0 ? res.sendStatus(200) : res.sendStatus(400);
+            const response = await this.models.signUpOwner(req.body);
+            response ? res.sendStatus(200) : res.status(400).json({error: 'Failed to sign up'});
         }
     }
 
     async signInOwner(req: any, res: any) {
-        const isRegistered = await this.models.isOwnerRegistered(req.body.email);
+        const {email, password} = req.body;
+        const isRegistered = await this.models.isOwnerRegistered(email);
         if (!isRegistered) {
-            res.status(400).send('Owner does not exist');
+            res.status(400).json({error: 'Incorrect email address or password'});
         } else {
-            const isPasswordMatch = await this.models.isPasswordMatch(req.body.email, req.body.password);
+            const isPasswordMatch = await this.models.isPasswordMatch(email, password);
             if (!isPasswordMatch) {
-                res.status(400).send('Password does not match');
+                res.status(400).json({error: 'Incorrect email address or password'});
                 return;
             }
-            // const token = await this.models.generateToken(req.body.email);
-            // res.status(200).json({ status: 'success', message: 'User Logged In', data: {Accesstoken: token}})
-            // if email and password match, establish a session
-            const session = req.session;
-            session.userId = req.body.email;
             res.status(200).send('successfully login')
         }
     }

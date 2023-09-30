@@ -5,17 +5,16 @@
  * @format
  */
 
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import SignUp from './components/SignUp';
-import SignIn_Email from './components/SignIn_Email';
-import SignIn_Password from './components/SignIn_Password';
-import SignIn_After_SignUp from './components/SignIn_After_SignUp';
+import SignUp from './components/Authentication/SignUp';
+import SignIn from './components/Authentication/SignIn';
 import Setup from './components/Setup';
-import Users from './components/Users';
+import Users from './components/Users/Users';
 import Starter from './components/Starter';
 import HomePage_User from './components/HomePage_User';
-import Activities from './components/Activities';
+import Activities from './components/Activities/Activities';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -26,7 +25,7 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Starter"
           component={Starter}
-          options={{title: 'Back'}}
+          options={{title: 'Time Tracker'}}
         />
         <Stack.Screen
           name="SignUp"
@@ -34,19 +33,9 @@ function App(): JSX.Element {
           options={{title: 'Sign Up'}}
         />
         <Stack.Screen
-          name="SignIn_Email"
-          component={SignIn_Email}
+          name="SignIn"
+          component={SignIn}
           options={{title: 'Sign In'}}
-        />
-        <Stack.Screen
-          name="SignIn_Password"
-          component={SignIn_Password}
-          options={{title: 'Sign In'}}
-        />
-        <Stack.Screen
-          name="SignIn_After_SignUp"
-          component={SignIn_After_SignUp}
-          options={{title: 'Back'}}
         />
         <Stack.Screen
           name="Setup"

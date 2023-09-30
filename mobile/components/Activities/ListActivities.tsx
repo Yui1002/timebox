@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import styles from '../styles/styles';
+import styles from '../../styles/styles';
 import {Box, Text} from 'native-base';
 import Activity from './Activity';
 

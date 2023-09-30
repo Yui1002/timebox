@@ -1,10 +1,10 @@
 import {View, Text, TextInput, Button, FlatList} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import styles, {edit_user_styles, common_styles} from '../styles/styles';
+import styles, {edit_user_styles, common_styles} from '../../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import axios from 'axios';
-import {LOCAL_HOST_URL} from '../config.js';
-import constant from '../parameters/constant';
+import { LOCAL_HOST_URL } from '../../config.js';
+import constant from '../../parameters/constant';
 import {Select, FormControl, Center, Box} from 'native-base';
 
 const AddUserPopup = ({ownerEmail, getUsers, setOpen, setShowBar}) => {

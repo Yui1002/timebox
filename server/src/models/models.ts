@@ -15,8 +15,7 @@ class Models {
     }
 
     async isOwnerRegistered(email: string) {
-        const dataCount = await this.repositories.isOwnerRegistered(email);
-        return dataCount > 0;
+        return await this.repositories.isOwnerRegistered(email);
     }
 
     async isUserRegistered(username: string) {
@@ -30,7 +29,7 @@ class Models {
         return isMatch;
     }
 
-    async registerOwner(owner: OwnerInterface) {
+    async signUpOwner(owner: OwnerInterface) {
         if (owner.password !== null) {
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(owner.password, saltRounds);
