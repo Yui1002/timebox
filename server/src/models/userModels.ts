@@ -30,9 +30,19 @@ class UserModels {
         return await this.repositories.addUser(user);
     }
 
-    async updateUser(req: any) {
+    async editUser(req: any) {
         const userId = await this.repositories.getUserId(req.originalUsername);
-        return await this.repositories.updateUser(req, userId)
+        return await this.repositories.editUser(req, userId)
+    }
+
+    async isUserRegistered(ownerEmail: string, username: string) {
+        const ownerId = await this.getOwnerId(ownerEmail);
+        return await this.repositories.isUserRegistered(ownerId, username);
+    }
+
+    async deleteUser(ownerEmail: string, username: string) {
+        const ownerId = await this.getOwnerId(ownerEmail);
+        return await this.repositories.deleteUser(ownerId, username);
     }
 }
 

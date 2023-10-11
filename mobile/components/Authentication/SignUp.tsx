@@ -21,8 +21,6 @@ const passwordRules = {
   minNumbers: 1,
 };
 
-console.log('here in signup');
-
 const SignUp = ({navigation}: any) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

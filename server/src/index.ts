@@ -1,7 +1,9 @@
 import express from 'express';
 const app = express();
 const port = 3000;
-import Routes from './routes/routes';
+import UserRoutes from './routes/userRoutes';
+import ActivityRoutes from './routes/acitivityRoutes';
+import AuthRoutes from './routes/authRoutes';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
@@ -18,7 +20,11 @@ app.use(session({
     cookie: { httpOnly: true, secure: false, maxAge: 1000 * 60 * 60 * 0.5 }
 }))
 
-const routes = new Routes();
-routes.applyRouting(app);
+const authRoutes = new AuthRoutes();
+const userRoutes = new UserRoutes();
+const activityRoutes = new ActivityRoutes();
+authRoutes.applyRouting(app);
+userRoutes.applyRouting(app);
+activityRoutes.applyRouting(app);
 
 app.listen(port, () => {console.log(`Listening on port ${port}`)});

@@ -19,7 +19,6 @@ import {
 
 const Activities = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
-  console.log('owner emaillll: ', ownerEmail)
   const [activities, setActivities] = useState([]);
   const [showSuccess, setShowSuccess] = useState({
     category: '',
@@ -28,7 +27,6 @@ const Activities = ({route, navigation}: any) => {
   });
 
   useEffect(() => {
-    console.log('rendered')
     getActivities();
   }, []);
 

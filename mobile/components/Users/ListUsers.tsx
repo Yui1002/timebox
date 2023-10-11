@@ -1,37 +1,38 @@
-import {View, Text} from 'react-native';
+// import {View, Text} from 'react-native';
 import React from 'react';
-import styles from '../../styles/styles';
-import {UserInterface} from '../interfaces/UserInterface';
+// import styles from '../../styles/styles';
+// import {UserInterface} from '../interfaces/UserInterface';
 import constant from '../../parameters/constant';
 import User from './User';
+import {Box, Text} from 'native-base';
 
 const ListUsers = ({users, getUsers, setIsTransparent}) => {
   return (
-    <View style={add_user_styles.container}>
+    <Box>
       {users && users.length < 1 ? (
-        <View>
+        <Box>
           <Text>No user found</Text>
-        </View>
+        </Box>
       ) : (
-        <View style={styles.list_user_container}>
-          <View style={styles.list_user_previewContainer}>
+        <Box>
+          <Box>
             {constant.listUserCategories.map((c, index) => (
-              <View key={index} style={styles.list_user_headerBox}>
-                <Text style={styles.list_user_box_text}>{c.value}</Text>
-              </View>
+              <Box key={index}>
+                <Text>{c.value}</Text>
+              </Box>
             ))}
-          </View>
+          </Box>
           {users.map((user, index) => (
             <User
               key={index}
               user={user}
               getUsers={getUsers}
-              setIsTransparent={setIsTransparent}
+              // setIsTransparent={setIsTransparent}
             />
           ))}
-        </View>
+        </Box>
       )}
-    </View>
+    </Box>
   );
 };
 

@@ -138,7 +138,6 @@ class ActivityRepositories {
     try {
       const sql = "UPDATE public.activities SET activity_name = $1, rate = $2, rate_type = $3, end_time_required = $4, status = $5, update_date = $6 WHERE activity_id = $7;";
       const data = await client.query(sql, [activityName, rate, rateType, endTimeRequired, status, updateDate, activityId]);
-      console.log('row count: ', data.rowCount)
       return data.rowCount;
     } catch (err) {
       console.log(err);

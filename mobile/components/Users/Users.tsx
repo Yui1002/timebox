@@ -1,65 +1,67 @@
 import React, {useEffect, useState} from 'react';
-// import styles from '../../styles/styles';
-import ListUsers from './ListUsers';
 import AddUser from './AddUser';
-import { LOCAL_HOST_URL } from '../../config.js';
+import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import Snackbar from 'react-native-snackbar';
-import {NativeBaseProvider, Checkbox, Box, Text} from 'native-base';
+import {
+  NativeBaseProvider,
+  Box,
+  Text,
+  Heading,
+  ScrollView,
+  VStack,
+  HStack,
+} from 'native-base';
+import User from './User';
 
 const Users = ({route, navigation}: any) => {
   const ownerEmail = route.params.ownerEmail;
   const [users, setUsers] = useState([]);
-  const [showBar, setShowBar] = useState(false);
-  const [showSuccess, setShowSuccess] = useState({
-    category: '',
-    status: '',
-    title: '',
-  });
 
   useEffect(() => {
     getUsers();
   }, []);
 
-  useEffect(() => {
-    if (showBar) {
-      Snackbar.show({
-        text: 'Successfully a new user added!',
-        duration: Snackbar.LENGTH_LONG,
+  const getUsers = () => {
+    axios
+      .get(`${LOCAL_HOST_URL}/users/${ownerEmail}`)
+      .then(res => {
+        setUsers(res.data);
+      })
+      .catch(() => {
+        setUsers([]);
       });
-    }
-  }, [showBar]);
-
-  const getUsers = async () => {
-    try {
-      const response = await axios.get(`${LOCAL_HOST_URL}/users/${ownerEmail}`);
-      const data = await response.data;
-      setUsers(data);
-    } catch (err) {
-      setUsers([]);
-    }
-  };
-
-  const onPress = () => {
-    navigation.navigate('HomePage_User');
   };
 
   return (
     <NativeBaseProvider>
-      <Box>
-        <Text onPress={onPress}>Home</Text>
-        <Text>Users</Text>
-        <Checkbox>Make this page start</Checkbox>
-        <AddUser
-          ownerEmail={ownerEmail}
-          getUsers={getUsers}
-          setShowBar={setShowBar}
-          setShowSuccess={setShowSuccess}
-        />
-        <ListUsers
-          users={users}
-          getUsers={getUsers}
-        />
+      <Box m="5%">
+        <Text underline onPress={() => navigation.navigate('HomePage_User')}>
+          Home
+        </Text>
+        <HStack space={2} justifyContent="space-between" alignItems="start">
+          <Heading size="lg">Users</Heading>
+          <AddUser ownerEmail={ownerEmail} getUsers={getUsers} />
+        </HStack>
+        <Box mt="8">
+          {users && users.length < 1 ? (
+            <Box>
+              <Text>No user found</Text>
+            </Box>
+          ) : (
+            <ScrollView h="400">
+              <VStack flex="1">
+                {users.map((user, index) => (
+                  <User
+                    key={index}
+                    user={user}
+                    getUsers={getUsers}
+                    ownerEmail={ownerEmail}
+                  />
+                ))}
+              </VStack>
+            </ScrollView>
+          )}
+        </Box>
       </Box>
     </NativeBaseProvider>
   );
