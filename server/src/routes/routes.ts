@@ -19,7 +19,8 @@ class Routes {
         app.post('/signIn', this.authControllers.signInOwner.bind(this.authControllers));
         app.post('/user/reset', this.authControllers.sendResetPasswordCode.bind(this.authControllers));
         app.post('/user/code', this.authControllers.validateCode.bind(this.authControllers));
-        app.post('/user/password', this.authControllers.setNewPassword.bind(this.authControllers));
+        app.post('/user/validate/password', this.authControllers.validatePassword.bind(this.authControllers));
+        app.post('/user/reset/password', this.authControllers.resetPassword.bind(this.authControllers));
 
         // user routes
         app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));

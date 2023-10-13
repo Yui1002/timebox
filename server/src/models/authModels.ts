@@ -46,7 +46,7 @@ class AutheModels {
       from: process.env.MAIL_USER,
       to: ownerEmail,
       subject: "Sending Reset Password Code",
-      text: `Enter the following code when prompted: ${code}`,
+      text: `Enter the following code when prompted: ${code}. It will be expired in 10 minutes.`,
     };
 
     try {
@@ -75,22 +75,18 @@ class AutheModels {
     return isCodeMatch;
   }
 
-  async setNewPassword(req: any) {
+  async isPasswordSame(req: any) {
+    const { ownerEmail, newPassword } = req;
+    const ownerId = await this.repositories.getOwnerId(ownerEmail);
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    return await this.repositories.isPasswordSame(ownerId, hashedNewPassword);
+  }
+
+  async resetPassword(req: any) {
     const {newPassword, ownerEmail} = req;
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
-    // decode encrypted password 
-    const originalPassword = await this.repositories.getOwnerPassword(ownerEmail);
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-    if (originalPassword === hashedPassword) {
-      // user typed in the prev password
-      return { error: 'You cannot set the previous password'};
-    }
-    const response = await this.repositories.setNewPassword(ownerId, hashedPassword)
-    // compare and see if the new pw is same pw as prev one
-    // if yes return false
-    // otherwise encrypt the new pw
-    // store to db 
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    return await this.repositories.resetPassword(ownerId, hashedPassword)
   }
 }
 

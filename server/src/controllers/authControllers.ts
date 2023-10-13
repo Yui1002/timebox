@@ -54,11 +54,21 @@ class AuthControllers {
       res.status(400).json({ error: "Code does not match" });
       return;
     }
-    res.status(200)
+    res.sendStatus(200)
   }
 
-  async setNewPassword(req: any, res: any) {
-    const response = await this.models.setNewPassword(req.body);
+  async validatePassword(req: any, res: any) {
+    const isPasswordSame = await this.models.isPasswordSame(req.body);
+    if (isPasswordSame) {
+      res.status(400).json({ error: "You cannot use the previous password"});
+      return;
+    }
+    res.status(200);
+  }
+
+  async resetPassword(req: any, res: any) {
+    const response = await this.models.resetPassword(req.body);
+    response ? res.status(200).send('Password has been reset!') : res.status(400).send('Failed to reset password');
   }
 }
 

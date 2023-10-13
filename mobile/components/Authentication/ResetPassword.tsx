@@ -10,9 +10,7 @@ import {
   Button,
   Heading,
   Text,
-  Divider,
-  Alert,
-  HStack,
+  Toast,
 } from 'native-base';
 
 const passwordRules = {
@@ -24,26 +22,41 @@ const passwordRules = {
 
 const ResetPassword = ({route, navigation}: any) => {
   const ownerEmail = route.params.email;
-  const [code, setCode] = useState();
-  const [newPassword, setNewPassword] = useState();
+  const [code, setCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [codeErrors, setCodeErrors] = useState({});
   const [newPasswordErrors, setNewPasswordErrors] = useState({});
 
-  const resetPassword = () => {
-    console.log('clicked');
-    if (!isCodeEmpty() || !validatePassword()) {
+  const validateForm = async () => {
+    if (!validateCode() || !isPasswordEmpty() || !isPasswordStrong()) {
       return;
     }
-    validateCode();
-
-    // new password is not sames as previous one
+    const isCodeValid = await isCodeMatch();
+    const isPasswordValid = await validateNewPassword();
+    if (!isCodeValid || !isPasswordValid) {
+      return;
+    }
+    resetNewPassword();
   };
 
-  const isCodeEmpty = () => {
-    if (code === undefined) {
+  // initial check
+  const validateCode = () => {
+    if (!code.length) {
       setCodeErrors({
         ...codeErrors,
         msg: 'Reset Password Code is required',
+      });
+      return false;
+    } else if (code.length !== 6) {
+      setCodeErrors({
+        ...codeErrors,
+        msg: 'Password Code must be 6 digits',
+      });
+      return false;
+    } else if (!code.match('^[0-9]+$')) {
+      setCodeErrors({
+        ...codeErrors,
+        msg: 'Password Code must be number',
       });
       return false;
     }
@@ -51,34 +64,20 @@ const ResetPassword = ({route, navigation}: any) => {
     return true;
   };
 
-  const validateCode = () => {
-    // check if the code matches with the one in db
-    axios
-      .post(`${LOCAL_HOST_URL}/user/code`, {
-        code,
-        ownerEmail,
-        submittedDate: new Date(),
-      })
-      .then(() => {
-        console.log('successfully validated code');
-      })
-      .catch((err) => {
-        const errMsg = err.response.data.error;
-        setCodeErrors({
-          ...codeErrors,
-          msg: errMsg,
-        });
-      });
-  };
-
-  const validatePassword = () => {
-    if (newPassword === undefined) {
+  const isPasswordEmpty = () => {
+    if (!newPassword.length) {
       setNewPasswordErrors({
         ...newPasswordErrors,
         msg: 'New password is required',
       });
       return false;
-    } else if (!validator.isStrongPassword(newPassword, passwordRules)) {
+    }
+    setNewPasswordErrors({});
+    return true;
+  };
+
+  const isPasswordStrong = () => {
+    if (!validator.isStrongPassword(newPassword, passwordRules)) {
       setNewPasswordErrors({
         ...newPasswordErrors,
         msg: 'Password is weak',
@@ -89,17 +88,65 @@ const ResetPassword = ({route, navigation}: any) => {
     return true;
   };
 
+  const isCodeMatch = async () => {
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/user/code`, {
+        code,
+        ownerEmail,
+        submittedDate: new Date(),
+      });
+      return true;
+    } catch (err) {
+      setCodeErrors({
+        ...codeErrors,
+        msg: err.response.data.error,
+      });
+      return false;
+    }
+  };
+
+  const validateNewPassword = async () => {
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/user/validate/password`, {
+        ownerEmail,
+        newPassword,
+      });
+      return true;
+    } catch (err) {
+      setNewPasswordErrors({
+        ...newPasswordErrors,
+        msg: err.response.data.error,
+      });
+      return false;
+    }
+  };
+
   const resetNewPassword = () => {
-    axios.post(`${LOCAL_HOST_URL}/user/password`, {
-      newPassword,
-      ownerEmail,
-    })
-  }
+    axios
+      .post(`${LOCAL_HOST_URL}/user/reset/password`, {
+        newPassword,
+        ownerEmail,
+      })
+      .then(() => {
+        Toast.show({
+          description: 'Password has been successfully reset!',
+          placement: 'top',
+        });
+        navigation.navigate('Setup', {ownerEmail});
+      })
+      .catch(err => {
+        console.log(err);
+        Toast.show({
+          description: 'Failed to reset password. Try again.',
+          placement: 'top',
+        });
+      });
+  };
 
   return (
     <NativeBaseProvider>
       <Box m="5%">
-        <Heading size="lg">Forgot Password</Heading>
+        <Heading size="lg">Reset Password</Heading>
         <Box alignItems="center">
           <Box w="100%" maxWidth="300px" my="8">
             <FormControl isRequired isInvalid={'msg' in codeErrors}>
@@ -127,7 +174,7 @@ const ResetPassword = ({route, navigation}: any) => {
               </FormControl.HelperText>
             </FormControl>
           </Box>
-          <Button onPress={resetPassword} w="250">
+          <Button onPress={validateForm} w="250">
             Reset Password
           </Button>
         </Box>

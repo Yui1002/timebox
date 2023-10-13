@@ -122,12 +122,24 @@ class AuthRepositories {
     }
   }
 
+  async isPasswordSame(ownerId: string, password: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT COUNT (*) FROM owners WHERE owner_id = $1 AND owner_password = $2;";
+      const data = await client.query(sql, [ownerId, password]);
+      return data.rowCount > 0; // password is same
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
 
-  async setNewPassword(ownerId: string, newPassword: string) {
+  async resetPassword(ownerId: string, newPassword: string) {
     const client = await pool.connect();
     try {
       const sql = "UPDATE owners SET owner_password = $1 WHERE owner_id = $2;";
-      const data = await client.query(sql, [newPassword, ownerId]);
+      await client.query(sql, [newPassword, ownerId]);
       return true;
     } catch (err) {
       return err;
