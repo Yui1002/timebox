@@ -15,6 +15,8 @@ import Users from './components/Users/Users';
 import Starter from './components/Starter';
 import HomePage_User from './components/HomePage_User';
 import Activities from './components/Activities/Activities';
+import ForgotPassword from './components/Authentication/ForgotPassword';
+import ResetPassword from './components/Authentication/ResetPassword';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -36,6 +38,16 @@ function App(): JSX.Element {
           name="SignIn"
           component={SignIn}
           options={{title: 'Sign In'}}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPassword}
+          options={{title: 'Forgot Password'}}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{title: 'Reset Password'}}
         />
         <Stack.Screen
           name="Setup"

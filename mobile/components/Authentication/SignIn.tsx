@@ -10,7 +10,8 @@ import {
   Heading,
   Text,
   Divider,
-  Alert
+  Alert,
+  HStack,
 } from 'native-base';
 
 const SignIn = ({navigation}: any) => {
@@ -92,7 +93,9 @@ const SignIn = ({navigation}: any) => {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              <FormControl.ErrorMessage>{emailErrors.msg}</FormControl.ErrorMessage>
+              <FormControl.ErrorMessage>
+                {emailErrors.msg}
+              </FormControl.ErrorMessage>
             </FormControl>
             <FormControl isRequired isInvalid={'msg' in passwordErrors}>
               <FormControl.Label>Password</FormControl.Label>
@@ -102,7 +105,9 @@ const SignIn = ({navigation}: any) => {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              <FormControl.ErrorMessage>{passwordErrors.msg}</FormControl.ErrorMessage>
+              <FormControl.ErrorMessage>
+                {passwordErrors.msg}
+              </FormControl.ErrorMessage>
             </FormControl>
           </Box>
           <Button onPress={() => signIn()} w="150">
@@ -115,15 +120,26 @@ const SignIn = ({navigation}: any) => {
             bg: 'muted.400',
           }}
         />
-        <Box>
-          <Text fontSize="xs">New user?</Text>
-          <Text
-            underline
-            fontSize="sm"
-            onPress={() => navigation.navigate('SignUp')}>
-            Sign Up
-          </Text>
-        </Box>
+        <HStack space={2} justifyContent="space-between">
+          <Box>
+            <Text fontSize="xs">New user?</Text>
+            <Text
+              underline
+              fontSize="sm"
+              onPress={() => navigation.navigate('SignUp')}>
+              Sign Up
+            </Text>
+          </Box>
+          <Box>
+            <Text fontSize="xs">Forget Password?</Text>
+            <Text
+              underline
+              fontSize="sm"
+              onPress={() => navigation.navigate('ForgotPassword')}>
+              Reset password
+            </Text>
+          </Box>
+        </HStack>
       </Box>
     </NativeBaseProvider>
   );
