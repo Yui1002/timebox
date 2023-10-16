@@ -59,6 +59,7 @@ class AuthControllers {
 
   async validatePassword(req: any, res: any) {
     const isPasswordSame = await this.models.isPasswordSame(req.body);
+    console.log('is pass same: ', isPasswordSame)
     if (isPasswordSame) {
       res.status(400).json({ error: "You cannot use the previous password"});
       return;

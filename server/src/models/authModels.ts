@@ -77,9 +77,12 @@ class AutheModels {
 
   async isPasswordSame(req: any) {
     const { ownerEmail, newPassword } = req;
-    const ownerId = await this.repositories.getOwnerId(ownerEmail);
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    return await this.repositories.isPasswordSame(ownerId, hashedNewPassword);
+    const hashedOriginalPassword = await this.repositories.getOwnerPassword(ownerEmail);
+    console.log('new: ', hashedNewPassword);
+    console.log('original: ', hashedOriginalPassword);
+    const isMatch = await bcrypt.compare(hashedOriginalPassword, hashedNewPassword);
+    return isMatch;
   }
 
   async resetPassword(req: any) {

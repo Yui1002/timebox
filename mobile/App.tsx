@@ -27,47 +27,31 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Starter"
           component={Starter}
-          options={{title: 'Time Tracker'}}
+          options={{title: ''}}
         />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{title: 'Sign Up'}}
-        />
-        <Stack.Screen
-          name="SignIn"
-          component={SignIn}
-          options={{title: 'Sign In'}}
-        />
+        <Stack.Screen name="SignUp" component={SignUp} options={{title: ''}} />
+        <Stack.Screen name="SignIn" component={SignIn} options={{title: ''}} />
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}
-          options={{title: 'Forgot Password'}}
+          options={{title: ''}}
         />
         <Stack.Screen
           name="ResetPassword"
           component={ResetPassword}
-          options={{title: 'Reset Password'}}
+          options={{title: ''}}
         />
-        <Stack.Screen
-          name="Setup"
-          component={Setup}
-          options={{title: 'Setup'}}
-        />
-        <Stack.Screen
-          name="Users"
-          component={Users}
-          options={{title: 'Users'}}
-        />
+        <Stack.Screen name="Setup" component={Setup} options={{title: ''}} />
+        <Stack.Screen name="Users" component={Users} options={{title: ''}} />
         <Stack.Screen
           name="Activities"
           component={Activities}
-          options={{title: 'Activities'}}
+          options={{title: ''}}
         />
         <Stack.Screen
           name="HomePage_User"
           component={HomePage_User}
-          options={{title: 'Home Page'}}
+          options={{title: ''}}
         />
       </Stack.Navigator>
     </NavigationContainer>

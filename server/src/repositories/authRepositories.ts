@@ -30,7 +30,6 @@ class AuthRepositories {
   async registerOwner(owner: OwnerInterface) {
     const client = await pool.connect();
     const uuid = uuidv4();
-
     try {
       const sql =
         "INSERT INTO public.owners (owner_id, first_name, last_name, email_address, status, create_date, owner_password) VALUES ($1, $2, $3, $4, $5, $6, $7);";
@@ -53,7 +52,6 @@ class AuthRepositories {
 
   async getOwnerPassword(email: string) {
     const client = await pool.connect();
-
     try {
       const sql =
         "SELECT owner_password FROM public.owners WHERE email_address = $1;";
@@ -83,7 +81,6 @@ class AuthRepositories {
 
   async getOwnerId(email: string) {
     const client = await pool.connect();
-
     try {
       const sql =
         "SELECT owner_id FROM owners WHERE email_address = $1;";
@@ -122,18 +119,19 @@ class AuthRepositories {
     }
   }
 
-  async isPasswordSame(ownerId: string, password: string) {
-    const client = await pool.connect();
-    try {
-      const sql = "SELECT COUNT (*) FROM owners WHERE owner_id = $1 AND owner_password = $2;";
-      const data = await client.query(sql, [ownerId, password]);
-      return data.rowCount > 0; // password is same
-    } catch (err) {
-      return err;
-    } finally {
-      client.release();
-    }
-  }
+  // async isPasswordSame(ownerId: string, password: string) {
+  //   console.log('pass: ', password);
+  //   const client = await pool.connect();
+  //   try {
+  //     const sql = "SELECT COUNT (*) FROM owners WHERE owner_id = $1 AND owner_password = $2;";
+  //     const data = await client.query(sql, [ownerId, password]);
+  //     return data.rowCount > 0; // password is same
+  //   } catch (err) {
+  //     return err;
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
 
   async resetPassword(ownerId: string, newPassword: string) {
     const client = await pool.connect();
