@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 // import styles from '../styles/styles';
 import styles from '../../styles/styles';
 import AddActivity from './AddActivity';
@@ -16,9 +16,10 @@ import {
   Toast,
   Select
 } from 'native-base';
+import {UserContext} from '../../context/UserContext';
 
-const Activities = ({route, navigation}: any) => {
-  const ownerEmail = route.params.ownerEmail;
+const Activities = () => {
+  const ownerEmail = useContext(UserContext);
   const [activities, setActivities] = useState([]);
   const [showSuccess, setShowSuccess] = useState({
     category: '',

@@ -1,16 +1,19 @@
 import AuthControllers from "../controllers/authControllers";
 import UserControllers from "../controllers/userControllers";
 import ActivityControllers from "../controllers/activityControllers";
+import Middleware from '../middleware/middleware';
 
 class Routes {
     authControllers: AuthControllers;
     userControllers: UserControllers;
     activityControllers: ActivityControllers;
+    middlewares: Middleware;
 
     constructor() {
         this.authControllers = new AuthControllers();
         this.userControllers = new UserControllers();
         this.activityControllers = new ActivityControllers();
+        this.middlewares = new Middleware();
     }
 
     applyRouting(app: any) {
@@ -23,7 +26,7 @@ class Routes {
         app.post('/user/reset/password', this.authControllers.resetPassword.bind(this.authControllers));
 
         // user routes
-        app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
+        app.get('/users/:email', this.middlewares.validateToken, this.userControllers.getUsers.bind(this.userControllers));
         app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
         app.post('/user', this.userControllers.addUser.bind(this.userControllers));
         app.post('/edit/user', this.userControllers.editUser.bind(this.userControllers));

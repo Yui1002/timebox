@@ -1,15 +1,17 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {NativeBaseProvider, Button, HStack} from 'native-base';
+import {UserContext} from '../context/UserContext';
 
-const Setup = ({route, navigation}: any) => {
-  const ownerEmail = route.params.ownerEmail;
+const Setup = ({navigation}: any) => {
+  const ownerEmail = useContext(UserContext);
+  console.log('owner email in setup: ', ownerEmail);
 
   const navigateToUser = () => {
-    navigation.navigate('Users', {ownerEmail});
+    navigation.navigate('Users');
   };
 
   const navigateToActivity = () => {
-    navigation.navigate('Activities', {ownerEmail});
+    navigation.navigate('Activities');
   };
 
   return (

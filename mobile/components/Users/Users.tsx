@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import AddUser from './AddUser';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
@@ -12,9 +12,10 @@ import {
   HStack,
 } from 'native-base';
 import User from './User';
+import {UserContext} from '../../context/UserContext';
 
-const Users = ({route, navigation}: any) => {
-  const ownerEmail = route.params.ownerEmail;
+const Users = ({navigation}: any) => {
+  const ownerEmail = useContext(UserContext);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

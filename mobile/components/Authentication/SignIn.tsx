@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {
@@ -13,39 +13,41 @@ import {
   Alert,
   HStack,
 } from 'native-base';
+import * as Keychain from 'react-native-keychain';
 
 const SignIn = ({navigation}: any) => {
-  const [email, setEmail] = useState();
+  const emailRef = useRef(null);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState();
   const [emailErrors, setEmailErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
   const [signInErrors, setSignInErrors] = useState({});
 
-  const signIn = () => {
+  const signIn = async () => {
     if (!validateEmail() || !validatePassword()) {
       return;
     }
 
-    axios
-      .post(`${LOCAL_HOST_URL}/signIn`, {
+    try {
+      emailRef.current = email;
+      const res = await axios.post(`${LOCAL_HOST_URL}/signIn`, {
         email,
         password,
-      })
-      .then(() => {
-        setSignInErrors({});
-        navigation.navigate('Setup', {ownerEmail: email});
-      })
-      .catch(error => {
-        const errMsg = error.response.data.error;
-        setSignInErrors({
-          ...signInErrors,
-          msg: errMsg,
-        });
       });
+      await Keychain.setGenericPassword(email, res.data.token);
+      setSignInErrors({});
+      navigation.navigate('Setup', {ownerEmail: email});
+    } catch (error) {
+      const errMsg = error.response.data.error;
+      setSignInErrors({
+        ...signInErrors,
+        msg: errMsg,
+      });
+    }
   };
 
   const validateEmail = (): boolean => {
-    if (email === undefined) {
+    if (email.length < 1) {
       setEmailErrors({
         ...emailErrors,
         msg: 'Email is required',

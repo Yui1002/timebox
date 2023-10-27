@@ -1,4 +1,7 @@
 import AutheModels from "../models/authModels";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 class AuthControllers {
   models: AutheModels;
@@ -25,16 +28,23 @@ class AuthControllers {
     if (!isRegistered) {
       res.status(400).json({ error: "Incorrect email address or password" });
     } else {
-      const isPasswordMatch = await this.models.isPasswordMatch(
-        email,
-        password
-      );
+      const isPasswordMatch = await this.models.isPasswordMatch(email, password);
       if (!isPasswordMatch) {
         res.status(400).json({ error: "Incorrect email address or password" });
         return;
       }
-      res.status(200).send("successfully login");
+      const token = this.generateToken(email);
+      console.log('token generated: ', token);
+      res.status(200).json({token});
+      // res.cookie('token', token, { httpOnly: true} ).sendStatus(200);
     }
+  }
+
+  generateToken = (email: string) => {
+      const token = jwt.sign({email}, process.env.TOKEN_KEY, {
+        expiresIn: '1h',
+      });
+      return token;
   }
 
   async sendResetPasswordCode(req: any, res: any) {

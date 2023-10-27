@@ -29,9 +29,15 @@ const Starter = ({navigation}: any) => {
           opacity="50"
         />
         <VStack alignItems="center" position="absolute" top="50">
-          <Heading size="xl" my="10">Time Tracker</Heading>
-          <Button onPress={navigateToSignIn} w="150" borderRadius="40" my="5">Sign In</Button>
-          <Button onPress={navigateToSignUp} w="150" borderRadius="40" my="5">Sign Up</Button>
+          <Heading size="xl" my="10">
+            Time Tracker
+          </Heading>
+          <Button onPress={navigateToSignIn} w="150" borderRadius="40" my="5">
+            Sign In
+          </Button>
+          <Button onPress={navigateToSignUp} w="150" borderRadius="40" my="5">
+            Sign Up
+          </Button>
         </VStack>
       </Center>
     </NativeBaseProvider>
