@@ -17,6 +17,7 @@ import HomePage_User from './components/HomePage_User';
 import Activities from './components/Activities/Activities';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
+import OTP from './components/Authentication/OTP';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -39,6 +40,7 @@ function App(): JSX.Element {
           component={SignIn}
           options={{title: 'Sign In'}}
         />
+        <Stack.Screen name='OTP' component={OTP} options={{title: 'OTP'}}/>
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}

@@ -33,8 +33,20 @@ class AuthControllers {
         res.status(400).json({ error: "Incorrect email address or password" });
         return;
       }
-      res.status(200).send("successfully login");
+      return res.status(200).send('Email and password match')
     }
+  }
+
+  async issueOTP(req: any, res: any) {
+    console.log('issue token here')
+    console.log(req.body)
+    const OTP = await this.models.issueOTP(req.body.email);
+    console.log('otp in controllers: ', OTP)
+    if (!OTP) {
+      res.status(400).json({ error: 'Failed to issue an OTP' })
+      return;
+    }
+    res.status(200).json({ OTP });
   }
 
   async sendResetPasswordCode(req: any, res: any) {
@@ -69,6 +81,11 @@ class AuthControllers {
   async resetPassword(req: any, res: any) {
     const response = await this.models.resetPassword(req.body);
     response ? res.status(200).send('Password has been reset!') : res.status(400).send('Failed to reset password');
+  }
+
+  async validateOTP(req: any, res:any) {
+    const isOTPValid = await this.models.validateOTP(req.body);
+    isOTPValid ? res.status(200).json({ msg: 'OTP is valid' }) : res.status(400).json({ msg: 'OTP is not valid' });
   }
 }
 

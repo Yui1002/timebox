@@ -61,6 +61,35 @@ class AutheModels {
     }
   }
 
+  async issueOTP(ownerEmail: string) {
+    console.log('owner email: ', ownerEmail)
+    // generate OTP
+    const OTP = Math.floor(100000 + Math.random() * 900000);
+    console.log('generated otp: ', OTP)
+    const ownerId = await this.repositories.getOwnerId(ownerEmail);
+    console.log('owner id: ', ownerId)
+
+    // store OTP
+    await this.repositories.storeOTP(ownerId, OTP.toString(), new Date());
+
+    // send OTP
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: ownerEmail,
+      subject: "Sending One Time Password",
+      text: `Enter the following code when prompted: ${OTP}. It will be expired in 10 minutes.`,
+    };
+
+    try {
+      const result = await transporter.sendMail(mailOptions);
+      return OTP;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      transporter.close()
+    }
+  }
+
   async validateCodeExpiration(req: any) {
     const { ownerEmail, submittedDate } = req;
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
@@ -87,6 +116,12 @@ class AutheModels {
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     return await this.repositories.resetPassword(ownerId, hashedPassword)
+  }
+
+  async validateOTP(req: any) {
+    const {ownerEmail, OTP} = req;
+    const ownerId = await this.repositories.getOwnerId(ownerEmail);
+    return await this.repositories.validateOTP(ownerId, OTP)
   }
 }
 

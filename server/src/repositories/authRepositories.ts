@@ -6,11 +6,11 @@ dotenv.config();
 import { OwnerInterface } from "../interfaces/OwnerInterface";
 
 const pool = new Pool({
-  user: process.env.USER,
-  host: process.env.HOST,
-  database: process.env.DATABASE,
-  password: process.env.PASSWORD,
-  port: Number(process.env.PORT),
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: Number(process.env.DB_PORT),
 });
 
 class AuthRepositories {
@@ -147,6 +147,38 @@ class AuthRepositories {
       client.release();
     }
   }
+
+  async storeOTP(ownerId: string, OTP: string, createDate: Date) {
+    const client = await pool.connect();
+    try {
+      const sql = "INSERT INTO otps (owner_id, otp, create_date) VALUES ($1, $2, $3);";
+      await client.query(sql, [ownerId, OTP, createDate]);
+      return true
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async validateOTP(ownerId: string, OTP: string) {
+    const client = await pool.connect();
+    try {
+      const sql1 = "SELECT create_date FROM otps WHERE owner_id = $1;";
+      const data1 = await client.query(sql1, [ownerId]);
+      const createDate = data1.rows[0].create_date;
+      const sql2 = "SELECT COUNT (*) FROM otps WHERE owner_id = $1 AND otp = $2 AND NOW() < ($3::timestamp + '10 Minutes'::INTERVAL);";
+      const data2 = await client.query(sql2, [ownerId, OTP, createDate]);
+      return data2.rowCount > 0; // 0 = invalid, 1 = valid
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
 }
+
+
 
 export default AuthRepositories;
