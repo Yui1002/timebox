@@ -19,6 +19,7 @@ class Routes {
         app.post('/signIn', this.authControllers.signInOwner.bind(this.authControllers));
         app.post('/OTP/create', this.authControllers.issueOTP.bind(this.authControllers));
         app.post('/OTP/validate', this.authControllers.validateOTP.bind(this.authControllers));
+        app.post('/OTP/resend', this.authControllers.resendOTP.bind(this.authControllers));
         app.post('/user/reset', this.authControllers.sendResetPasswordCode.bind(this.authControllers));
         app.post('/user/code', this.authControllers.validateCode.bind(this.authControllers));
         app.post('/user/validate/password', this.authControllers.validatePassword.bind(this.authControllers));

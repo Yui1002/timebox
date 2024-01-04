@@ -148,11 +148,11 @@ class AuthRepositories {
     }
   }
 
-  async storeOTP(ownerId: string, OTP: string, createDate: Date) {
+  async storeOTP(ownerId: string, OTP: string) {
     const client = await pool.connect();
     try {
-      const sql = "INSERT INTO otps (owner_id, otp, create_date) VALUES ($1, $2, $3);";
-      await client.query(sql, [ownerId, OTP, createDate]);
+      const sql = "INSERT INTO otps (owner_id, otp, create_date) VALUES ($1, $2, NOW());";
+      await client.query(sql, [ownerId, OTP]);
       return true
     } catch (err) {
       return err;
@@ -174,6 +174,19 @@ class AuthRepositories {
       return err;
     } finally {
       client.release();
+    }
+  }
+
+  async updateOTP(ownerId: string, OTP: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "UPDATE otps SET otp = $1, create_date = NOW() WHERE owner_id = $2;";
+      await client.query(sql, [OTP, ownerId]);
+      return true
+    } catch (err) {
+      return err;
+    } finally {
+      client.release()
     }
   }
 

@@ -75,6 +75,17 @@ const OTP = ({ route, navigation }: any) => {
         }
     }
 
+    const resendOTP = () => {
+        try {
+            axios.post(`${LOCAL_HOST_URL}/OTP/resend`, {ownerEmail})
+            .then(() => {
+                
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <NativeBaseProvider>
             <Box m="5%">
@@ -101,9 +112,7 @@ const OTP = ({ route, navigation }: any) => {
                     <Text fontSize="xs">
                         <Text
                             underline
-                            onPress={() => {
-                                navigation.navigate('SignIn');
-                            }}>
+                            onPress={resendOTP}>
                             Resend OTP code
                         </Text>
                     </Text>

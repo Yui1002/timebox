@@ -62,15 +62,12 @@ class AutheModels {
   }
 
   async issueOTP(ownerEmail: string) {
-    console.log('owner email: ', ownerEmail)
     // generate OTP
-    const OTP = Math.floor(100000 + Math.random() * 900000);
-    console.log('generated otp: ', OTP)
+    const OTP = this.generateOTP();
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
-    console.log('owner id: ', ownerId)
 
     // store OTP
-    await this.repositories.storeOTP(ownerId, OTP.toString(), new Date());
+    await this.repositories.storeOTP(ownerId, OTP);
 
     // send OTP
     const mailOptions = {
@@ -88,6 +85,10 @@ class AutheModels {
     } finally {
       transporter.close()
     }
+  }
+
+  generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
   async validateCodeExpiration(req: any) {
@@ -122,6 +123,13 @@ class AutheModels {
     const {ownerEmail, OTP} = req;
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
     return await this.repositories.validateOTP(ownerId, OTP)
+  }
+
+  async resendOTP(req: any) {
+    const {ownerEmail} = req;
+    const OTP = this.generateOTP();
+    const ownerId = await this.repositories.getOwnerId(ownerEmail);
+    return await this.repositories.updateOTP(ownerId, OTP);
   }
 }
 
