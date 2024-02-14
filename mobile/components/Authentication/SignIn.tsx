@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 import {
   NativeBaseProvider,
   Box,
@@ -14,7 +14,7 @@ import {
   HStack,
 } from 'native-base';
 
-const SignIn = ({navigation}: any) => {
+const SignIn = ({ navigation }: any) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [emailErrors, setEmailErrors] = useState({});
@@ -31,10 +31,10 @@ const SignIn = ({navigation}: any) => {
         email,
         password,
       })
-      .then(() => {
+      .then(async () => {
         setSignInErrors({});
-        // navigation.navigate('Setup', {ownerEmail: email});
-        navigation.navigate('OTP', {ownerEmail: email})
+        const OTP = sendOTP();
+        await OTP ? navigation.navigate('OTP', { ownerEmail: email }) : console.log('something wrong with OTP')
       })
       .catch(error => {
         const errMsg = error.response.data.error;
@@ -79,6 +79,14 @@ const SignIn = ({navigation}: any) => {
       </Alert>
     );
   };
+
+  const sendOTP = async () => {
+    const res = await axios.post(`${LOCAL_HOST_URL}/OTP/send`, {
+      email: email,
+    })
+    const OTP = await res.data.OTP;
+    return OTP;
+  }
 
   return (
     <NativeBaseProvider>

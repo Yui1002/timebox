@@ -16,30 +16,9 @@ const OTP = ({ route, navigation }: any) => {
     const [OTP, setOTP] = useState('')
     const [OTPErrors, setOTPErrors] = useState({})
 
-    useEffect(() => {
-        console.log('here in use effect')
-        try {
-            axios.post(`${LOCAL_HOST_URL}/OTP/create`, {
-                email: ownerEmail,
-            })
-            .then((res) => {
-                console.log('res: ', res)
-            })
-
-        } catch (err) {
-            console.log(err);
-        }
-    })
-
     // initial check
     const validateOTP = () => {
-        if (!OTP.length) {
-            setOTPErrors({
-                ...OTPErrors,
-                msg: 'OTP code is required',
-            });
-            return false;
-        } else if (OTP.length !== 6) {
+        if (OTP.length !== 6) {
             setOTPErrors({
                 ...OTPErrors,
                 msg: 'OTP code must be 6 digits',
@@ -66,8 +45,8 @@ const OTP = ({ route, navigation }: any) => {
             axios.post(`${LOCAL_HOST_URL}/OTP/validate`, {
                 ownerEmail, OTP
             })
-            .then(() => {
-
+            .then((res) => {
+                navigation.navigate('Setup', { ownerEmail })
             })
         } catch (err) {
             console.log(err);

@@ -164,9 +164,11 @@ class AuthRepositories {
   async validateOTP(ownerId: string, OTP: string) {
     const client = await pool.connect();
     try {
+      // get create_date of the owner
       const sql1 = "SELECT create_date FROM otps WHERE owner_id = $1;";
       const data1 = await client.query(sql1, [ownerId]);
       const createDate = data1.rows[0].create_date;
+      // check if the otp is not expired
       const sql2 = "SELECT COUNT (*) FROM otps WHERE owner_id = $1 AND otp = $2 AND NOW() < ($3::timestamp + '10 Minutes'::INTERVAL);";
       const data2 = await client.query(sql2, [ownerId, OTP, createDate]);
       return data2.rowCount > 0; // 0 = invalid, 1 = valid

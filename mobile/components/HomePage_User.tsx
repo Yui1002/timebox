@@ -35,7 +35,6 @@ const HomePage_User = () => {
   };
 
   const submitUsername = () => {
-    console.log(errors);
     if (!validateUsername()) {
       return;
     }

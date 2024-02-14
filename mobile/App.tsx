@@ -22,6 +22,10 @@ import OTP from './components/Authentication/OTP';
 function App(): JSX.Element {
   const Stack = createStackNavigator();
 
+  const isSignedIn = () =. {
+    
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>

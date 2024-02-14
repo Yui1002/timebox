@@ -24,6 +24,7 @@ class AuthControllers {
     const isRegistered = await this.models.isOwnerRegistered(email);
     if (!isRegistered) {
       res.status(400).json({ error: "Incorrect email address or password" });
+      return;
     } else {
       const isPasswordMatch = await this.models.isPasswordMatch(
         email,
@@ -33,7 +34,18 @@ class AuthControllers {
         res.status(400).json({ error: "Incorrect email address or password" });
         return;
       }
-      return res.status(200).send('Email and password match')
+
+      const token = this.models.generateJWTToken(email);
+
+      let options = {
+        maxAge: 1000 * 60 * 10,
+        httpOnly: true, 
+        sameSite: "none", 
+        secure: true 
+      }
+
+      res.cookie('token', token, options);
+      return res.status(200).json({ message: 'success', token })
     }
   }
 
@@ -69,7 +81,7 @@ class AuthControllers {
   async validatePassword(req: any, res: any) {
     const isPasswordSame = await this.models.isPasswordSame(req.body);
     if (isPasswordSame) {
-      res.status(400).json({ error: "You cannot use the previous password"});
+      res.status(400).json({ error: "You cannot use the previous password" });
       return;
     }
     res.status(200);
@@ -80,9 +92,9 @@ class AuthControllers {
     response ? res.status(200).send('Password has been reset!') : res.status(400).send('Failed to reset password');
   }
 
-  async validateOTP(req: any, res:any) {
+  async validateOTP(req: any, res: any) {
     const isOTPValid = await this.models.validateOTP(req.body);
-    isOTPValid ? res.status(200).json({ msg: 'OTP is valid' }) : res.status(400).json({ msg: 'OTP is not valid' });
+    isOTPValid ? res.status(200) : res.status(400);
   }
 
   async resendOTP(req: any, res: any) {

@@ -46,7 +46,7 @@ const SignUp = ({navigation}: any) => {
       })
       .then(res => {
         setSignUpErrors({});
-        navigation.navigate('SignIn');
+        navigation.navigate('SignIn', {ownerEmail: email});
       })
       .catch(error => {
         const errMsg = error.response.data.error;
@@ -54,7 +54,10 @@ const SignUp = ({navigation}: any) => {
           ...signUpErrors,
           msg: errMsg,
         });
-      });
+      })
+      .finally(() => {
+        
+      })
   };
 
   const validateEmail = (): boolean => {

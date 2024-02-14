@@ -2,6 +2,7 @@ import pkg from "pg";
 import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
+import { Error } from "../interfaces/ErrorInterface"
 dotenv.config();
 import { ActivityInterface } from "../interfaces/ActivityInterface";
 
@@ -86,18 +87,27 @@ class ActivityRepositories {
     }
   }
 
-  async getOwnerPassword(email: string) {
-    const client = await pool.connect();
+  // async getOwnerPassword(email: string) {
+  //   const client = await pool.connect();
 
-    try {
-      const sql =
-        "SELECT owner_password FROM public.owners WHERE email_address = $1;";
-      const data = await client.query(sql, [email]);
-      return data.rows[0].owner_password;
-    } catch (err) {
-      return err;
-    } finally {
-      client.release();
+  //   try {
+  //     const sql =
+  //       "SELECT owner_password FROM public.owners WHERE email_address = $1;";
+  //     const data = await client.query(sql, [email]);
+  //     return data.rows[0].owner_password;
+  //   } catch (err) {
+  //     return err;
+  //   } finally {
+  //     client.release();
+  //   }
+  // }
+  async getOwnerPassword(email: string) {
+    const sql = "SELECT owner_password FROM public.owners WHERE email_address = $1;"
+    const [result, error] = await this.queryAsync(sql, email)
+    if (error) {
+      return error;
+    } else {
+      return result.rows[0].owner_password
     }
   }
 
@@ -142,6 +152,21 @@ class ActivityRepositories {
     } catch (err) {
       console.log(err);
       return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  //executes async
+  //returns generic query result
+  //if error occurs, returns null for return and an error object instead
+  async queryAsync(sql: string, ...bindingParams: string[]): Promise<[pkg.QueryResult<any>, Error]> {
+    const client = await pool.connect();
+    try {
+      const result = await client.query(sql, bindingParams)
+      return [result, null]
+    } catch (err) {
+      return [null, new Error(err, 500)]
     } finally {
       client.release();
     }

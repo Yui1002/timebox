@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 import nodemailer from "nodemailer";
+import jwt from 'jsonwebtoken';
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -26,8 +27,7 @@ class AutheModels {
 
   async isPasswordMatch(email: string, password: string) {
     const hashedPassword = await this.repositories.getOwnerPassword(email);
-    const isMatch = await bcrypt.compare(password, hashedPassword);
-    return isMatch;
+    return await bcrypt.compare(password, hashedPassword);
   }
 
   async signUpOwner(owner: OwnerInterface) {
@@ -78,7 +78,7 @@ class AutheModels {
     };
 
     try {
-      const result = await transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
       return OTP;
     } catch (err) {
       console.log(err);
@@ -130,6 +130,16 @@ class AutheModels {
     const OTP = this.generateOTP();
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
     return await this.repositories.updateOTP(ownerId, OTP);
+  }
+
+  async generateJWTToken(email: string) {
+    const data = {
+      signInTime: Date.now(),
+      email
+    }
+
+    const token = jwt.sign(data, process.env.JWT_SECRET)
+    return token;
   }
 }
 
