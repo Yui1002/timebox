@@ -10,6 +10,7 @@ import {
     Heading,
     Text,
 } from 'native-base';
+import CookieManager from '@react-native-cookies/cookies';
 
 const OTP = ({ route, navigation }: any) => {
     const ownerEmail = route.params.ownerEmail;
@@ -46,6 +47,8 @@ const OTP = ({ route, navigation }: any) => {
                 ownerEmail, OTP
             })
             .then((res) => {
+                console.log(res.data);
+                CookieManager.set('http://localhost:3000', setCookie(), true)
                 navigation.navigate('Setup', { ownerEmail })
             })
         } catch (err) {
@@ -62,6 +65,15 @@ const OTP = ({ route, navigation }: any) => {
             })
         } catch (err) {
             console.log(err);
+        }
+    }
+
+    const setCookie = () => {
+        return {
+            name: 'clinclonCookie',
+            value: 'myValue',
+            version: '1',
+            expires: new Date(new Date().getTime() + 10*60000).toLocaleString(),
         }
     }
 

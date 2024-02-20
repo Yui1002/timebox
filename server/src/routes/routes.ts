@@ -17,13 +17,14 @@ class Routes {
         // auth routes
         app.post('/signUp', this.authControllers.signUpOwner.bind(this.authControllers));
         app.post('/signIn', this.authControllers.signInOwner.bind(this.authControllers));
-        app.post('/OTP/send', this.authControllers.issueOTP.bind(this.authControllers));
+        app.post('/OTP/send', this.authControllers.handleOTP.bind(this.authControllers));
         app.post('/OTP/validate', this.authControllers.validateOTP.bind(this.authControllers));
         app.post('/OTP/resend', this.authControllers.resendOTP.bind(this.authControllers));
         app.post('/user/reset', this.authControllers.sendResetPasswordCode.bind(this.authControllers));
         app.post('/user/code', this.authControllers.validateCode.bind(this.authControllers));
         app.post('/user/validate/password', this.authControllers.validatePassword.bind(this.authControllers));
         app.post('/user/reset/password', this.authControllers.resetPassword.bind(this.authControllers));
+        app.post('/user/check/signin', this.authControllers.isSignedIn.bind(this.authControllers));
 
         // user routes
         app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));

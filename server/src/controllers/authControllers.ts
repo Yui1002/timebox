@@ -2,9 +2,16 @@ import AutheModels from "../models/authModels";
 
 class AuthControllers {
   models: AutheModels;
+  cookieOptions: object
 
   constructor() {
     this.models = new AutheModels();
+    this.cookieOptions = {
+      maxAge: 1000 * 60 * 10, // 10 minutes
+      httpOnly: true,
+      sameSite: "none",
+      secure: true
+    }
   }
 
   async signUpOwner(req: any, res: any) {
@@ -25,32 +32,18 @@ class AuthControllers {
     if (!isRegistered) {
       res.status(400).json({ error: "Incorrect email address or password" });
       return;
-    } else {
-      const isPasswordMatch = await this.models.isPasswordMatch(
-        email,
-        password
-      );
-      if (!isPasswordMatch) {
-        res.status(400).json({ error: "Incorrect email address or password" });
-        return;
-      }
-
-      const token = this.models.generateJWTToken(email);
-
-      let options = {
-        maxAge: 1000 * 60 * 10,
-        httpOnly: true, 
-        sameSite: "none", 
-        secure: true 
-      }
-
-      res.cookie('token', token, options);
-      return res.status(200).json({ message: 'success', token })
     }
+    const isPasswordMatch = await this.models.isPasswordMatch(email, password);
+    if (!isPasswordMatch) {
+      res.status(400).json({ error: "Incorrect email address or password" });
+      return;
+    }
+    res.sendStatus(200);
   }
 
-  async issueOTP(req: any, res: any) {
-    const OTP = await this.models.issueOTP(req.body.email);
+  async handleOTP(req: any, res: any) {
+    console.log('handle otp')
+    const OTP = await this.models.handleOTP(req.body.email);
     if (!OTP) {
       res.status(400).json({ error: 'Failed to issue an OTP' })
       return;
@@ -58,10 +51,26 @@ class AuthControllers {
     res.status(200).json({ OTP });
   }
 
+  async validateOTP(req: any, res: any) {
+    const isOTPValid = await this.models.validateOTP(req.body);
+    if (isOTPValid) {
+      const token = await this.models.generateJWTToken(req.body.ownerEmail);
+      console.log('token: ', token)
+      // res.cookie('token', token, this.cookieOptions);
+      res.status(200).json({ token });
+      return;
+    }
+     res.sendStatus(400);
+  }
+
+  async resendOTP(req: any, res: any) {
+    await this.models.resendOTP(req.body);
+  }
+
   async sendResetPasswordCode(req: any, res: any) {
     const { email } = req.body;
     const response = await this.models.sendResetPasswordCode(email);
-    response ? res.sendStatus(200) : res.sendStatus(400);
+    response ? res.status(200) : res.status(400);
   }
 
   async validateCode(req: any, res: any) {
@@ -92,14 +101,15 @@ class AuthControllers {
     response ? res.status(200).send('Password has been reset!') : res.status(400).send('Failed to reset password');
   }
 
-  async validateOTP(req: any, res: any) {
-    const isOTPValid = await this.models.validateOTP(req.body);
-    isOTPValid ? res.status(200) : res.status(400);
-  }
 
-  async resendOTP(req: any, res: any) {
-    const response = await this.models.resendOTP(req.body);
+
+  async isSignedIn(req: any, res: any) {
+    console.log('cookie', req.cookie) // undefined
+    console.log('token in cookies', req.cookies.token)
+    return req.cookies.token
   }
 }
 
 export default AuthControllers;
+
+// OTP OK => cannot go back

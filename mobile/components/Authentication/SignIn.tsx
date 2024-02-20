@@ -21,28 +21,21 @@ const SignIn = ({ navigation }: any) => {
   const [passwordErrors, setPasswordErrors] = useState({});
   const [signInErrors, setSignInErrors] = useState({});
 
-  const signIn = () => {
+  const signIn = async () => {
     if (!validateEmail() || !validatePassword()) {
       return;
     }
 
-    axios
-      .post(`${LOCAL_HOST_URL}/signIn`, {
-        email,
-        password,
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/signIn`, {
+        email, password
       })
-      .then(async () => {
-        setSignInErrors({});
-        const OTP = sendOTP();
-        await OTP ? navigation.navigate('OTP', { ownerEmail: email }) : console.log('something wrong with OTP')
-      })
-      .catch(error => {
-        const errMsg = error.response.data.error;
-        setSignInErrors({
-          ...signInErrors,
-          msg: errMsg,
-        });
-      });
+      setSignInErrors({});
+      const OTP = sendOTP();
+      await OTP ? navigation.navigate('OTP', { ownerEmail: email }) : console.log('something wrong with OTP')
+    } catch (err) {
+        console.log('error: ', err)
+    }
   };
 
   const validateEmail = (): boolean => {
@@ -84,8 +77,8 @@ const SignIn = ({ navigation }: any) => {
     const res = await axios.post(`${LOCAL_HOST_URL}/OTP/send`, {
       email: email,
     })
-    const OTP = await res.data.OTP;
-    return OTP;
+    console.log(res)
+    return await res.data.OTP;
   }
 
   return (

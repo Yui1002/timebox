@@ -16,9 +16,13 @@ const transporter = nodemailer.createTransport({
 
 class AutheModels {
   repositories: AuthRepositories;
+  saltRounds: number;
+  codeExpTime: number;
 
   constructor() {
     this.repositories = new AuthRepositories();
+    this.saltRounds = 10;
+    this.codeExpTime = 10;
   }
 
   async isOwnerRegistered(email: string) {
@@ -32,63 +36,64 @@ class AutheModels {
 
   async signUpOwner(owner: OwnerInterface) {
     if (owner.password !== null) {
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(owner.password, saltRounds);
+      const hashedPassword = await bcrypt.hash(owner.password, this.saltRounds);
       owner.password = hashedPassword;
     }
     return await this.repositories.registerOwner(owner);
   }
 
   async sendResetPasswordCode(ownerEmail: string) {
-    const code = Math.floor(100000 + Math.random() * 900000);
-
-    const mailOptions = {
-      from: process.env.MAIL_USER,
-      to: ownerEmail,
-      subject: "Sending Reset Password Code",
-      text: `Enter the following code when prompted: ${code}. It will be expired in 10 minutes.`,
-    };
+    const code = this.generateOTP();
+    const mailOptions = this.setMailOptions(process.env.MAIL_USER, ownerEmail, "Sending Reset Password Code", code.toString(), this.codeExpTime)
 
     try {
-      const result = await transporter.sendMail(mailOptions);
+      await transporter.sendMail(mailOptions);
       const ownerId = await this.repositories.getOwnerId(ownerEmail);
-      return await this.repositories.storeResetPasswordCode(code, ownerId);
+      return await this.repositories.storeResetPasswordCode(Number(code), ownerId);
     } catch (err) {
-      console.log(err);
       return err;
     } finally {
       transporter.close();
     }
   }
 
-  async issueOTP(ownerEmail: string) {
-    // generate OTP
+  // ----------- OTP handling -----------------
+  async handleOTP(ownerEmail: string) {
     const OTP = this.generateOTP();
+    console.log('generated otp ', OTP)
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
-
-    // store OTP
-    await this.repositories.storeOTP(ownerId, OTP);
-
-    // send OTP
-    const mailOptions = {
-      from: process.env.MAIL_USER,
-      to: ownerEmail,
-      subject: "Sending One Time Password",
-      text: `Enter the following code when prompted: ${OTP}. It will be expired in 10 minutes.`,
-    };
-
-    try {
-      await transporter.sendMail(mailOptions);
-      return OTP;
-    } catch (err) {
-      console.log(err);
-    } finally {
-      transporter.close()
-    }
+    await this.storeOTP(ownerId, OTP);
+    await this.emailOTP(ownerEmail, OTP);
+    return OTP;
   }
 
   generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  async storeOTP(ownerId: string, OTP: string) {
+    return await this.repositories.storeOTP(ownerId, OTP);
+  }
+
+  async emailOTP(email: string, code: string) {
+    const mailOptions = this.setMailOptions(process.env.MAIL_USER, email, "Sending One Time Password", code, this.codeExpTime)
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (err) {
+      return err;
+    } finally {
+      transporter.close();
+    }
+  }
+  // -----------------------------------------
+
+  setMailOptions(from: string, to: string, subject: string, code: string, expirationTime: number) {
+    return {
+      from: `${from}`,
+      to: `${to}`,
+      subject: `${subject}`,
+      text: `Enter the following code when prompted: ${code}. It will be expired in ${expirationTime} minutes.`
+    };
   }
 
   async validateCodeExpiration(req: any) {
@@ -137,7 +142,6 @@ class AutheModels {
       signInTime: Date.now(),
       email
     }
-
     const token = jwt.sign(data, process.env.JWT_SECRET)
     return token;
   }

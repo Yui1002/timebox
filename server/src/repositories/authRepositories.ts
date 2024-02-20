@@ -153,6 +153,7 @@ class AuthRepositories {
     try {
       const sql = "INSERT INTO otps (owner_id, otp, create_date) VALUES ($1, $2, NOW());";
       await client.query(sql, [ownerId, OTP]);
+      console.log('success storing')
       return true
     } catch (err) {
       return err;

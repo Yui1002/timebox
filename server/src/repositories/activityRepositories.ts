@@ -157,9 +157,9 @@ class ActivityRepositories {
     }
   }
 
-  //executes async
-  //returns generic query result
-  //if error occurs, returns null for return and an error object instead
+  // executes async
+  // returns generic query result
+  // if error occurs, returns null for return and an error object instead
   async queryAsync(sql: string, ...bindingParams: string[]): Promise<[pkg.QueryResult<any>, Error]> {
     const client = await pool.connect();
     try {

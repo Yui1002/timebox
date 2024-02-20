@@ -5,7 +5,8 @@
  * @format
  */
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import CookieManager from '@react-native-cookies/cookies'
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignUp from './components/Authentication/SignUp';
@@ -18,12 +19,24 @@ import Activities from './components/Activities/Activities';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import OTP from './components/Authentication/OTP';
+import {LOCAL_HOST_URL} from './config.js';
+import axios from 'axios';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
+  // if user has already signed in, navigate to home page, otherwise navigate to sign in page
 
-  const isSignedIn = () =. {
-    
+  useEffect(() => {
+    isSignedIn()
+  })
+
+  const isSignedIn = () => {
+    try {
+      const cookie = CookieManager.get('http://localhost:3000', true)
+      console.log('cookie exists? ', cookie)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
