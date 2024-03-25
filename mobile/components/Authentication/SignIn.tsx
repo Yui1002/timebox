@@ -36,11 +36,11 @@ const SignIn = ({navigation}: any) => {
         navigation.navigate('Setup', {ownerEmail: email});
       })
       .catch(error => {
-        const errMsg = error.response.data.error;
-        setSignInErrors({
-          ...signInErrors,
-          msg: errMsg,
-        });
+        // const errMsg = error.response.data.error;
+        // setSignInErrors({
+        //   ...signInErrors,
+        //   msg: errMsg,
+        // });
       });
   };
 
