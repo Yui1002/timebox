@@ -68,12 +68,12 @@ const AddUser = ({ownerEmail, getUsers}) => {
   return (
     <Center>
       <Button onPress={() => setShowModal(true)} size="md" borderRadius="40">
-        Add User
+        Add a Nanny
       </Button>
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
-          <Modal.Header>Add User</Modal.Header>
+          <Modal.Header>Add a Nanny</Modal.Header>
           <Modal.Body>
             <FormControl isRequired>
               <FormControl.Label>First Name</FormControl.Label>

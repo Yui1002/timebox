@@ -10,7 +10,7 @@ import {
 
 const Starter = ({navigation}: any) => {
   const navigateToAdminSignIn = () => {
-    navigation.navigate('SignIn');
+    navigation.navigate('SignIn_Admin');
   };
 
   const navigateToNannySignIn = () => {

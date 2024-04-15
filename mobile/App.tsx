@@ -9,7 +9,7 @@ import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignUp from './components/Authentication/SignUp';
-import SignIn from './components/Authentication/SignIn';
+import SignIn_Admin from './components/Authentication/SignIn_Admin';
 import Setup from './components/Setup';
 import Users from './components/Users/Users';
 import Start from './components/Start';
@@ -19,6 +19,7 @@ import Activities from './components/Activities/Activities';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
+import Home_admin from './components/Home_admin';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -42,9 +43,9 @@ function App(): JSX.Element {
           options={{title: 'Sign Up'}}
         />
         <Stack.Screen
-          name="SignIn"
-          component={SignIn}
-          options={{title: 'Sign In'}}
+          name="SignIn_Admin"
+          component={SignIn_Admin}
+          options={{title: 'SignIn_Admin'}}
         />
         <Stack.Screen
           name="SignIn_Nanny"
@@ -65,6 +66,11 @@ function App(): JSX.Element {
           name="Setup"
           component={Setup}
           options={{title: 'Setup'}}
+        />
+        <Stack.Screen
+          name="Home_admin"
+          component={Home_admin}
+          options={{title: 'Home'}}
         />
         <Stack.Screen
           name="Users"

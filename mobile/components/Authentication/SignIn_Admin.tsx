@@ -14,7 +14,7 @@ import {
   HStack,
 } from 'native-base';
 
-const SignIn = ({navigation}: any) => {
+const SignIn_Admin = ({navigation}: any) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [emailErrors, setEmailErrors] = useState({});
@@ -34,7 +34,7 @@ const SignIn = ({navigation}: any) => {
       })
       .then(() => {
         setSignInErrors({});
-        navigation.navigate('HomePage_User', {ownerEmail: email});
+        navigation.navigate('Home_admin', {ownerEmail: email});
       })
       .catch(error => {
         // const errMsg = error.response.data.error;
@@ -146,4 +146,4 @@ const SignIn = ({navigation}: any) => {
   );
 };
 
-export default SignIn;
+export default SignIn_Admin;
