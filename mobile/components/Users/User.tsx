@@ -1,4 +1,5 @@
 import React, {useState, useRef} from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   Box,
   Text,
@@ -17,12 +18,13 @@ import EditUser from './EditUser';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
-const User = ({user, getUsers, ownerEmail}) => {
+const User = ({navigation, user, getUsers, ownerEmail}: any) => {
   const {first_name, last_name, user_name, rate, rate_type, status} = user;
   const [actionOpen, setActionOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const cancelRef = useRef(null);
+  const { navigate } = useNavigation();
 
   const openDeleteDialog = () => {
     setActionOpen(false);
@@ -54,6 +56,10 @@ const User = ({user, getUsers, ownerEmail}) => {
         setDeleteDialogOpen(false);
       });
   };
+
+  const showRecord = () => {
+    navigate('History')
+  }
 
   return (
     <Box width="100%" borderBottomWidth="1" borderColor="muted.800" py="1.5">
@@ -100,6 +106,8 @@ const User = ({user, getUsers, ownerEmail}) => {
           />
           <Divider borderColor="gray.300" />
           <Actionsheet.Item onPress={openDeleteDialog}>Delete</Actionsheet.Item>
+          <Divider borderColor="gray.300" />
+          <Actionsheet.Item onPress={showRecord}>Show record</Actionsheet.Item>
         </Actionsheet.Content>
       </Actionsheet>
       <AlertDialog

@@ -20,6 +20,7 @@ import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 import Home_admin from './components/Home_admin';
+import History from './components/Users/History';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -76,6 +77,11 @@ function App(): JSX.Element {
           name="Users"
           component={Users}
           options={{title: 'Users'}}
+        />
+        <Stack.Screen
+          name="History"
+          component={History}
+          options={{title: 'History'}}
         />
         <Stack.Screen
           name="Activities"

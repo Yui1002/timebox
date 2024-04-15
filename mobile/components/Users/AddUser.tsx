@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Center,
   Button,
@@ -20,6 +20,7 @@ const AddUser = ({ownerEmail, getUsers}) => {
   const [rateType, setRateType] = useState(null);
 
   const addUser = async () => {
+    console.log(firstName)
     if (await isUserRegistered()) {
       Toast.show({
         description: 'Username is already registered',
@@ -52,7 +53,10 @@ const AddUser = ({ownerEmail, getUsers}) => {
           description: 'Something is wrong. Try again.',
           placement: 'top',
         });
-      });
+      })
+      .finally(() => {
+        clearForm();
+      })
   };
 
   const isUserRegistered = async () => {
@@ -64,6 +68,14 @@ const AddUser = ({ownerEmail, getUsers}) => {
       return res.data;
     } catch (err) {}
   };
+
+  const clearForm = () => {
+    setFirstName('');
+    setLastName('');
+    setUsername('');
+    setRate(0);
+    setRateType(null);
+  }
 
   return (
     <Center>
