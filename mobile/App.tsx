@@ -12,11 +12,13 @@ import SignUp from './components/Authentication/SignUp';
 import SignIn from './components/Authentication/SignIn';
 import Setup from './components/Setup';
 import Users from './components/Users/Users';
+import Start from './components/Start';
 import Starter from './components/Starter';
 import HomePage_User from './components/HomePage_User';
 import Activities from './components/Activities/Activities';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
+import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -24,6 +26,11 @@ function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Start"
+          component={Start}
+          options={{title: 'Time Tracker'}}
+        />
         <Stack.Screen
           name="Starter"
           component={Starter}
@@ -38,6 +45,11 @@ function App(): JSX.Element {
           name="SignIn"
           component={SignIn}
           options={{title: 'Sign In'}}
+        />
+        <Stack.Screen
+          name="SignIn_Nanny"
+          component={SignIn_Nanny}
+          options={{title: 'Sign In_Nanny'}}
         />
         <Stack.Screen
           name="ForgotPassword"

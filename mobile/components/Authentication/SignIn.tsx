@@ -22,6 +22,7 @@ const SignIn = ({navigation}: any) => {
   const [signInErrors, setSignInErrors] = useState({});
 
   const signIn = () => {
+    // check both email and pw is not empty
     if (!validateEmail() || !validatePassword()) {
       return;
     }
@@ -83,7 +84,7 @@ const SignIn = ({navigation}: any) => {
     <NativeBaseProvider>
       {signInErrors.msg && alertSignUpFailure()}
       <Box m="5%">
-        <Heading size="lg">Sign In</Heading>
+        <Heading size="lg">Sign In - Admin</Heading>
         <Box alignItems="center">
           <Box w="100%" maxWidth="300px" my="8">
             <FormControl isRequired isInvalid={'msg' in emailErrors}>
