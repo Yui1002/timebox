@@ -33,7 +33,7 @@ const SignIn = ({navigation}: any) => {
       })
       .then(() => {
         setSignInErrors({});
-        navigation.navigate('Setup', {ownerEmail: email});
+        navigation.navigate('HomePage_User', {ownerEmail: email});
       })
       .catch(error => {
         // const errMsg = error.response.data.error;

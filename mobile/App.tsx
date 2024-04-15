@@ -67,7 +67,7 @@ function App(): JSX.Element {
         <Stack.Screen
           name="HomePage_User"
           component={HomePage_User}
-          options={{title: 'Home Page'}}
+          options={{title: 'Home'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
