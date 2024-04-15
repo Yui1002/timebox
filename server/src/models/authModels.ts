@@ -24,6 +24,10 @@ class AutheModels {
     return await this.repositories.isOwnerRegistered(email);
   }
 
+  async isNannyRegistered(username: string) {
+    return await this.repositories.isNannyRegistered(username);
+  }
+
   async isPasswordMatch(email: string, password: string) {
     const hashedPassword = await this.repositories.getOwnerPassword(email);
     const isMatch = await bcrypt.compare(password, hashedPassword);

@@ -27,6 +27,19 @@ class AuthRepositories {
     }
   }
 
+  async isNannyRegistered(username: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT * FROM public.users WHERE user_name = $1;";
+      const data = await client.query(sql, [username]);
+      return data.rowCount > 0;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
   async registerOwner(owner: OwnerInterface) {
     const client = await pool.connect();
     const uuid = uuidv4();

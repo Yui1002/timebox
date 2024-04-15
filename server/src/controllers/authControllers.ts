@@ -37,6 +37,16 @@ class AuthControllers {
     }
   }
 
+  async signInNanny(req: any, res: any) {
+    const { username } = req.body;
+    const isNannyRegistered = await this.models.isNannyRegistered(username);
+    if (!isNannyRegistered) {
+      res.status(400).json({ error: "Incorrect username" });
+      return;
+    }
+    res.status(200).send("successfully login");
+  }
+
   async sendResetPasswordCode(req: any, res: any) {
     const { email } = req.body;
     const response = await this.models.sendResetPasswordCode(email);
