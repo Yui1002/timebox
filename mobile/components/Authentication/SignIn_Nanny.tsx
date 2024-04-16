@@ -22,14 +22,11 @@ const SignIn_Nanny = ({navigation}: any) => {
     if (!validateUsername()) {
       return;
     }
-
-    console.log('not empty')
     axios
       .post(`${LOCAL_HOST_URL}/signIn_nanny`, { username })
       .then(() => {
-        console.log('ok')
         setSignInErrors({});
-        navigation.navigate('Home_nanny')
+        navigation.navigate('Home_nanny', {username})
       })
       .catch(error => {
         // const errMsg = error.response.data.error;
