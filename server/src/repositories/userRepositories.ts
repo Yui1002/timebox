@@ -139,6 +139,16 @@ class UserRepositories {
       client.release();
     }
   }
+
+  async startRecord(userId: string, ) {
+    const client = await pool.connect();
+    const uuid = uuidv4();
+
+    try {
+      const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, CURRENT_TIME, $7, $8, CURRENT_TIMESTAMP, $10);";
+      const data = await client.query(sql, [uuid, null, userId, 1, ])
+    }
+  }
 }
 
 export default UserRepositories;

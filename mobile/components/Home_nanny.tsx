@@ -25,6 +25,7 @@ const Home_nanny = ({route}: any) => {
 
   const startRecord = () => {
     const now = new Date();
+    axios.post(`${LOCAL_HOST_URL}/startRecord`)
   };
 
   return (

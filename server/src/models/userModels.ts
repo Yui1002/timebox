@@ -44,6 +44,11 @@ class UserModels {
     const ownerId = await this.getOwnerId(ownerEmail);
     return await this.repositories.deleteUser(ownerId, username);
   }
+
+  async startRecord(username: string) {
+    const userId = await this.repositories.getUserId(username);
+    return await this.repositories.startRecord(userId, )
+  }
 }
 
 export default UserModels;

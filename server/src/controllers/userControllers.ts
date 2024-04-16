@@ -38,6 +38,11 @@ class UserControllers {
     const response = await this.models.deleteUser(email, username);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
+
+  async startRecord(req: any, res: any) {
+    const { username } = req.body;
+    const response = await this.models.startRecord(username)
+  }
 }
 
 export default UserControllers;
