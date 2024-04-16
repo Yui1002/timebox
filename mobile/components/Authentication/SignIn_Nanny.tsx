@@ -23,12 +23,13 @@ const SignIn_Nanny = ({navigation}: any) => {
       return;
     }
 
+    console.log('not empty')
     axios
       .post(`${LOCAL_HOST_URL}/signIn_nanny`, { username })
       .then(() => {
+        console.log('ok')
         setSignInErrors({});
-        // navigation.navigate('HomePage_User', {ownerEmail: email});
-        navigation.navigate('HomePage_User')
+        navigation.navigate('Home_nanny')
       })
       .catch(error => {
         // const errMsg = error.response.data.error;

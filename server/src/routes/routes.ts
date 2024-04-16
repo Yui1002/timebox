@@ -17,7 +17,7 @@ class Routes {
         // auth routes
         app.post('/signUp', this.authControllers.signUpOwner.bind(this.authControllers));
         app.post('/signIn', this.authControllers.signInOwner.bind(this.authControllers));
-        app.post('signIn_nanny', this.authControllers.signInNanny.bind(this.authControllers));
+        app.post('/signIn_nanny', this.authControllers.signInNanny.bind(this.authControllers));
         app.post('/user/reset', this.authControllers.sendResetPasswordCode.bind(this.authControllers));
         app.post('/user/code', this.authControllers.validateCode.bind(this.authControllers));
         app.post('/user/validate/password', this.authControllers.validatePassword.bind(this.authControllers));

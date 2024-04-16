@@ -19,7 +19,7 @@ import {
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../config.js';
 
-const HomePage_User = () => {
+const Home_nanny = () => {
   const [errors, setErrors] = useState({});
   const [dataFound, setDataFound] = useState(false);
   const [username, setUsername] = useState('');
@@ -148,4 +148,4 @@ const HomePage_User = () => {
   );
 };
 
-export default HomePage_User;
+export default Home_nanny;

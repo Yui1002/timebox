@@ -14,7 +14,7 @@ import Setup from './components/Setup';
 import Users from './components/Users/Users';
 import Start from './components/Start';
 import Starter from './components/Starter';
-import HomePage_User from './components/HomePage_User';
+import Home_nanny from './components/Home_nanny';
 import Activities from './components/Activities/Activities';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
@@ -89,8 +89,8 @@ function App(): JSX.Element {
           options={{title: 'Activities'}}
         />
         <Stack.Screen
-          name="HomePage_User"
-          component={HomePage_User}
+          name="Home_nanny"
+          component={Home_nanny}
           options={{title: 'Home'}}
         />
       </Stack.Navigator>

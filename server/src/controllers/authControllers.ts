@@ -39,6 +39,7 @@ class AuthControllers {
 
   async signInNanny(req: any, res: any) {
     const { username } = req.body;
+    console.log('username: ', username)
     const isNannyRegistered = await this.models.isNannyRegistered(username);
     if (!isNannyRegistered) {
       res.status(400).json({ error: "Incorrect username" });
