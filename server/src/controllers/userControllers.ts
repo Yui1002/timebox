@@ -53,7 +53,9 @@ class UserControllers {
 
   async getHistory(req: any, res: any) {
     const { username } = req.params;
-    const response = await this.models.getHistory(username);
+    const history = await this.models.getHistory(username);
+    console.log('history: ', history)
+    res.send(history);
   }
 }
 

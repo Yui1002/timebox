@@ -170,10 +170,12 @@ class UserRepositories {
     }
   }
 
-  async getHistory() {
+  async getHistory(userId: string) {
     const client = await pool.connect();
     try {
-      const sql = "SELECT "
+      const sql = "SELECT record_date, record_time FROM time_record WHERE user_id = $1;";
+      const data = await client.query(sql, [userId]);
+      return data.rows;
     } catch (err) {
       return err;
     } finally {
