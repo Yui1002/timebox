@@ -20,7 +20,6 @@ const AddUser = ({ownerEmail, getUsers}) => {
   const [rateType, setRateType] = useState(null);
 
   const addUser = async () => {
-    console.log(firstName)
     if (await isUserRegistered()) {
       Toast.show({
         description: 'Username is already registered',

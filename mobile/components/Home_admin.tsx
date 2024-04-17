@@ -21,9 +21,7 @@ import { LOCAL_HOST_URL } from '../config.js';
 import Users from './Users/Users';
 
 const Home_admin = ({route}: any) => {
-    console.log('route in home', route)
   const email = route.params.ownerEmail;
-  console.log(email)
   const [errors, setErrors] = useState({});
 
   return (

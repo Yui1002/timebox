@@ -41,9 +41,7 @@ class UserControllers {
 
   async startRecord(req: any, res: any) {
     const { username } = req.body;
-    console.log('username: ', username);
     const response = await this.models.startRecord(username);
-    console.log('response: ', response)
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 

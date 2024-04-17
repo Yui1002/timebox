@@ -158,10 +158,16 @@ class UserRepositories {
   async endRecord(userId: string) {
     const client = await pool.connect();
     const uuid = uuidv4();
-    return 1;
-    // try {
-    //   const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4)"
-    // }
+    try {
+      const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, CURRENT_TIME, $5, $6, CURRENT_TIMESTAMP, $7);";
+      await client.query(sql, [uuid, null, userId, 2, null, null, userId]);
+      return true;
+    } catch (err) {
+      console.log(err)
+      return err;
+    } finally {
+      client.release();
+    }
   }
 }
 

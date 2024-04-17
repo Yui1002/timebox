@@ -23,36 +23,28 @@ const Home_nanny = ({ route }: any) => {
   const startRecord = () => {
     axios.post(`${LOCAL_HOST_URL}/startRecord`, { username })
       .then(() => {
-        // alert shows up 'record time successfully'
-        // setRecordResult({
-        //   status: true,
-        //   msg: 'Start time successfully recorded!'
-        // });
-        Toast.show({
-          description: 'Start time recorded!',
-          placement: 'top'
-        })
+        renderResult('start', true);
       })
       .catch((err) => {
-        Toast.show({
-          description: 'Failed to record. Please try again!',
-          placement: 'top'
-        })
-        // setRecordResult({
-        //   status: false,
-        //   msg: 'Failed to record. Please try again!'
-        // })
+        renderResult('start', false);
       })
   };
 
   const endRecord = () => {
     axios.post(`${LOCAL_HOST_URL}/endRecord`, { username })
     .then(() => {
-
+      renderResult('end', true);
     })
     .catch ((err) => {
-      console.log(err);
+      renderResult('end', false);
     })
+  }
+
+  const renderResult = (type: string, isSuccess: boolean) => {
+    return Toast.show({
+      description: isSuccess ? `${type} time recorded!` : 'Failed t orecord. Please try again!',
+      placement: 'top'
+    });
   }
 
   return (
@@ -85,7 +77,7 @@ const Home_nanny = ({ route }: any) => {
           <Box w="4%"></Box>
           <Box w="46%">
             <Text style={{ marginBottom: 4 }}>End</Text>
-            <Button style={{ width: '80%' }}>Record</Button>
+            <Button style={{ width: '80%' }} onPress={endRecord}>Record</Button>
           </Box>
         </Box>
 
