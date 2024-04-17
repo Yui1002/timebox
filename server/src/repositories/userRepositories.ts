@@ -169,6 +169,17 @@ class UserRepositories {
       client.release();
     }
   }
+
+  async getHistory() {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT "
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
 }
 
 export default UserRepositories;

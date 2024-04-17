@@ -12,11 +12,18 @@ import {
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
 
-const History = () => {
+const History = ({ route }: any) => {
+  const username = route.params.username;
 
   const getHistory = () => {
     // get the history of the user
-    // axios.get(`${LOCAL_HOST_URL}/history`)
+    axios.get(`${LOCAL_HOST_URL}/history/${username}`)
+    .then(() => {
+      
+    })
+    .catch ((err) => {
+      console.log(err);
+    })
   }
 
   return (

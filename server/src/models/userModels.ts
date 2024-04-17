@@ -54,6 +54,11 @@ class UserModels {
     const userId = await this.repositories.getUserId(username);
     return await this.repositories.endRecord(userId)
   }
+
+  async getHistory(username: string) {
+    const userId = await this.repositories.getUserId(username);
+    return await this.repositories.getHistory(userId);
+  }
 }
 
 export default UserModels;

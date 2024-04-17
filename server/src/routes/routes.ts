@@ -26,6 +26,7 @@ class Routes {
         // user routes
         app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
         app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
+        app.get('/history/:username', this.userControllers.getHistory.bind(this.userControllers));
         app.post('/user', this.userControllers.addUser.bind(this.userControllers));
         app.post('/edit/user', this.userControllers.editUser.bind(this.userControllers));
         app.post('/user/duplicate', this.userControllers.isUserRegistered.bind(this.userControllers));

@@ -50,6 +50,11 @@ class UserControllers {
     const response = await this.models.endRecord(username);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
+
+  async getHistory(req: any, res: any) {
+    const { username } = req.params;
+    const response = await this.models.getHistory(username);
+  }
 }
 
 export default UserControllers;

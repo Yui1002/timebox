@@ -15,9 +15,11 @@ import {
 } from 'native-base';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../config.js';
+import moment from 'moment';
 
 const Home_nanny = ({ route }: any) => {
   const username = route.params.username;
+  const currentDate = new Date();
   const [recordResult, setRecordResult] = useState({status: false, msg: ''});
 
   const startRecord = () => {
@@ -51,6 +53,7 @@ const Home_nanny = ({ route }: any) => {
     <NativeBaseProvider>
       <Box style={styles.container}>
         <Heading size="md">Hello {username} !</Heading>
+        <Text>{moment().format('LLLL')}</Text>
         {(recordResult.status || !recordResult.status) && (recordResult.msg !== '') &&
           <Alert status={recordResult.status ? 'success' : 'false'}>
             <VStack space={2} flexShrink={1} w="100%">

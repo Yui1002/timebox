@@ -58,7 +58,7 @@ const User = ({navigation, user, getUsers, ownerEmail}: any) => {
   };
 
   const showRecord = () => {
-    navigate('History')
+    navigate('History', {username: user_name})
   }
 
   return (
