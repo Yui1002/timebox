@@ -47,7 +47,13 @@ class UserModels {
 
   async startRecord(username: string) {
     const userId = await this.repositories.getUserId(username);
-    return await this.repositories.startRecord(userId, )
+    console.log('user id: ', userId)
+    return await this.repositories.startRecord(userId)
+  }
+
+  async endRecord(username: string) {
+    const userId = await this.repositories.getUserId(username);
+    return await this.repositories.endRecord(userId)
   }
 }
 

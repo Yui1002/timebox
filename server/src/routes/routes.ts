@@ -31,6 +31,7 @@ class Routes {
         app.post('/user/duplicate', this.userControllers.isUserRegistered.bind(this.userControllers));
         app.delete('/user/:username/:email', this.userControllers.deleteUser.bind(this.userControllers));
         app.post('/startRecord', this.userControllers.startRecord.bind(this.userControllers));
+        app.post('/endRecord', this.userControllers.endRecord.bind(this.userControllers));
 
         // activity routes
         app.post('/activity', this.activityControllers.addActivity.bind(this.activityControllers));
