@@ -6,10 +6,13 @@ import {
   FlatList,
   Text,
   VStack,
-  Spacer,
+  HStack,
 } from 'native-base';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
+import moment from 'moment'
+
+console.log('time: ', moment('11:00:35.642444').format('hh:mm:ss'))
 
 const History = ({ route }: any) => {
   const username = route.params.username;
@@ -17,7 +20,7 @@ const History = ({ route }: any) => {
 
   useEffect(() => {
     getHistory();
-  }, [history]);
+  }, []);
 
   const getHistory = () => {
     axios.get(`${LOCAL_HOST_URL}/history/${username}`)
@@ -33,33 +36,36 @@ const History = ({ route }: any) => {
     <NativeBaseProvider>
       <Box m="5%">
         <Heading size="lg">History</Heading>
-        <Text>Last 7 days history</Text>
-        <Box>
-          <FlatList data={history} renderItem={({
-            item
-          }) => <Box borderBottomWidth="1" _dark={{
-            borderColor: "muted.50"
-          }} borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
-              <VStack>
-                <Text _dark={{
-                  color: "warmGray.50"
-                }} color="coolGray.800" bold>
-                  {item.record_date}
-                </Text>
-                <Text color="coolGray.600" _dark={{
-                  color: "warmGray.200"
-                }}>
-                  {item.record_time}
-                </Text>
-              </VStack>
-              <Spacer />
-              <Text fontSize="xs" _dark={{
-                color: "warmGray.50"
-              }} color="coolGray.800" alignSelf="flex-start">
-                {item.record_time}
-              </Text>
-            </Box>} keyExtractor={item => item.record_time} />
-        </Box>
+        {history.length !== 0 ? <Box>
+          <Text>Last 7 days history</Text>
+          <Box>
+            <HStack space={3} justifyContent='space-between'>
+              <Text>Date</Text>
+              <Text>Start</Text>
+              <Text>End</Text>
+            </HStack>
+            <FlatList data={history} renderItem={({
+              item
+            }) => <Box borderBottomWidth="1" _dark={{
+              borderColor: "muted.50"
+            }} borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
+                {/* <VStack> */}
+                <HStack space={3} justifyContent='space-between'>
+                  <Text>
+                    {`${new Date(item.record_date).getMonth() + 1}/${new Date(item.record_date).getDate()}/${new Date(item.record_date).getFullYear()}`}
+                  </Text>
+                  <Text>
+                    {item.record_time.substring(0, 5)}
+                  </Text>
+                  <Text>
+                    {item.record_time.substring(0, 5)}
+                  </Text>
+                </HStack>
+              </Box>} keyExtractor={item => item.record_time} />
+
+          </Box>
+        </Box> : <Text>No history shown</Text>}
+
       </Box>
     </NativeBaseProvider>
   );
