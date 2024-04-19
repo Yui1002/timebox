@@ -1,4 +1,4 @@
-import {View, Text, TextInput, Button, FlatList} from 'react-native';
+import {View, Text, TextInput, Button} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles, {edit_user_styles, common_styles} from '../../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';

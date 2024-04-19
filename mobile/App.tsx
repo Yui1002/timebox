@@ -22,6 +22,8 @@ import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 import Home_admin from './components/Home_admin';
 import History from './components/Users/History';
 import AddNanny from './components/Users/AddNanny';
+import EditNanny from './components/Users/EditNanny';
+import User from './components/Users/User';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -98,6 +100,16 @@ function App(): JSX.Element {
           name="AddNanny"
           component={AddNanny}
           options={{title: 'Add Nanny'}}
+        />
+        <Stack.Screen
+          name="EditNanny"
+          component={EditNanny}
+          options={{title: 'Edit Nanny'}}
+        />
+        <Stack.Screen
+          name="User"
+          component={User}
+          options={{title: 'User'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

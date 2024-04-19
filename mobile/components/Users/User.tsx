@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   Box,
@@ -13,28 +13,20 @@ import {
   AlertDialog,
   Button,
   Toast,
+  Menu,
+  Pressable,
 } from 'native-base';
-import EditUser from './EditUser';
+import EditNanny from './EditNanny';
 import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
+import { LOCAL_HOST_URL } from '../../config.js';
 
-const User = ({navigation, user, getUsers, ownerEmail}: any) => {
-  const {first_name, last_name, user_name, rate, rate_type, status} = user;
-  const [actionOpen, setActionOpen] = useState(false);
+
+const User = ({ user, getUsers, ownerEmail }: any) => {
+  const navigation = useNavigation();
+  const cancelRef = React.useRef(null);
+  // console.log('navigation: ', navigation)
+  const { first_name, last_name, user_name, rate, rate_type, status } = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const cancelRef = useRef(null);
-  const { navigate } = useNavigation();
-
-  const openDeleteDialog = () => {
-    setActionOpen(false);
-    setDeleteDialogOpen(true);
-  };
-
-  const openEditDialog = () => {
-    setActionOpen(false);
-    setEditModalOpen(true);
-  };
 
   const deleteUser = () => {
     axios
@@ -57,10 +49,6 @@ const User = ({navigation, user, getUsers, ownerEmail}: any) => {
       });
   };
 
-  const showRecord = () => {
-    navigate('History', {username: user_name})
-  }
-
   return (
     <Box width="100%" borderBottomWidth="1" borderColor="muted.800" py="1.5">
       <HStack space={[2, 3]}>
@@ -78,11 +66,13 @@ const User = ({navigation, user, getUsers, ownerEmail}: any) => {
         <VStack>
           <Text fontSize="xs">{status}</Text>
         </VStack>
-        <IconButton
-          onPress={() => setActionOpen(true)}
-          p="0"
-          icon={<HamburgerIcon size={6} />}
-        />
+        <Menu w='190' trigger={triggerProps => {
+          return <Pressable accessibilityLabel='More options menu' {...triggerProps}><HamburgerIcon size={6} /></Pressable>
+        }}>
+          <Menu.Item onPress={() => navigation.navigate("EditNanny", { user, getUsers, ownerEmail })}>Edit</Menu.Item>
+          <Menu.Item onPress={() => setDeleteDialogOpen(true)}>Delete</Menu.Item>
+          <Menu.Item onPress={() => navigation.navigate("History", { usename: user_name })}>Show record</Menu.Item>
+        </Menu>
       </HStack>
       <HStack justifyContent="space-between">
         <VStack>
@@ -94,31 +84,15 @@ const User = ({navigation, user, getUsers, ownerEmail}: any) => {
           </Text>
         </VStack>
       </HStack>
-      <Actionsheet isOpen={actionOpen} onClose={() => setActionOpen(false)}>
-        <Actionsheet.Content>
-          <Actionsheet.Item onPress={openEditDialog}>Edit</Actionsheet.Item>
-          <EditUser
-            editModalOpen={editModalOpen}
-            setEditModalOpen={setEditModalOpen}
-            user={user}
-            ownerEmail={ownerEmail}
-            getUsers={getUsers}
-          />
-          <Divider borderColor="gray.300" />
-          <Actionsheet.Item onPress={openDeleteDialog}>Delete</Actionsheet.Item>
-          <Divider borderColor="gray.300" />
-          <Actionsheet.Item onPress={showRecord}>Show record</Actionsheet.Item>
-        </Actionsheet.Content>
-      </Actionsheet>
       <AlertDialog
         leastDestructiveRef={cancelRef}
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}>
         <AlertDialog.Content>
           <AlertDialog.CloseButton />
-          <AlertDialog.Header>Delete Activity</AlertDialog.Header>
+          <AlertDialog.Header>Delete Nanny</AlertDialog.Header>
           <AlertDialog.Body>
-            Are you sure to delete the activity?
+            Are you sure to delete the nanny?
           </AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
