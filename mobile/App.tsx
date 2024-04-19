@@ -21,6 +21,7 @@ import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 import Home_admin from './components/Home_admin';
 import History from './components/Users/History';
+import AddNanny from './components/Users/AddNanny';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -92,6 +93,11 @@ function App(): JSX.Element {
           name="Home_nanny"
           component={Home_nanny}
           options={{title: 'Home'}}
+        />
+        <Stack.Screen
+          name="AddNanny"
+          component={AddNanny}
+          options={{title: 'Add Nanny'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

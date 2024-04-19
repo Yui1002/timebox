@@ -7,17 +7,27 @@ import {
   Input,
   Select,
   Toast,
+  Checkbox,
+  HStack,
 } from 'native-base';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
 const AddUser = ({ownerEmail, getUsers}) => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
   const [showModal, setShowModal] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
   const [rate, setRate] = useState(0);
   const [rateType, setRateType] = useState(null);
+  const [workingHours, setWorkingHours] = useState('');
+
+  const validateInput = () => {
+    if (!firstName.length || !lastName.length || !username.length) {
+      return false;
+    }
+  }
 
   const addUser = async () => {
     if (await isUserRegistered()) {
@@ -120,6 +130,12 @@ const AddUser = ({ownerEmail, getUsers}) => {
                 <Select.Item label="hourly" value="hourly" />
                 <Select.Item label="daily" value="daily" />
               </Select>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Working Days</FormControl.Label>
+              <HStack space={5}>
+                {days.map(d => <Checkbox value={d}>{d}</Checkbox>)}
+              </HStack>
             </FormControl>
             <Button mt="4" onPress={() => addUser()}>
               Add

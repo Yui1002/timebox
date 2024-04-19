@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AddUser from './AddUser';
 import { LOCAL_HOST_URL } from '../../config.js';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import {
   NativeBaseProvider,
   Box,
@@ -10,10 +11,12 @@ import {
   ScrollView,
   VStack,
   HStack,
+  Button,
 } from 'native-base';
 import User from './User';
 
 const Users = ({ email }: any) => {
+  const { navigate } = useNavigation();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -35,7 +38,10 @@ const Users = ({ email }: any) => {
     <Box m="5%">
       <HStack space={2} justifyContent="space-between" alignItems="start">
         <Heading size="lg">Nannies</Heading>
-        <AddUser ownerEmail={email} getUsers={getUsers} />
+        <Button onPress={() => navigate('AddNanny')} size="md" borderRadius="40">
+          Add a Nanny
+        </Button>
+        {/* <AddUser ownerEmail={email} getUsers={getUsers} /> */}
       </HStack>
       <Box mt="8">
         {users && users.length < 1 ? (
