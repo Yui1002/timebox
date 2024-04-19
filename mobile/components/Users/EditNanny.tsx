@@ -59,7 +59,8 @@ const EditNanny = ({route}: any) => {
           <Input
             onChangeText={val => setFirstName(val)}
             defaultValue={first_name}
-            autoCapitalize="none"
+            autoCapitalize="words"
+            autoCorrect={false}
           />
         </FormControl>
         <FormControl>
@@ -67,7 +68,8 @@ const EditNanny = ({route}: any) => {
           <Input
             onChangeText={val => setLastName(val)}
             defaultValue={last_name}
-            autoCapitalize="none"
+            autoCapitalize="words"
+            autoCorrect={false}
           />
         </FormControl>
         <FormControl isRequired>
@@ -76,6 +78,7 @@ const EditNanny = ({route}: any) => {
             onChangeText={val => setUsername(val)}
             defaultValue={user_name}
             autoCapitalize="none"
+            autoCorrect={false}
           />
         </FormControl>
         <FormControl>

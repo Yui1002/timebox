@@ -107,14 +107,16 @@ const AddNanny = ({ ownerEmail }: any) => {
                     <FormControl.Label>First Name</FormControl.Label>
                     <Input
                         onChangeText={val => setFirstName(val)}
-                        autoCapitalize="none"
+                        autoCapitalize="words"
+                        autoCorrect={false}
                     />
                 </FormControl>
                 <FormControl isRequired>
                     <FormControl.Label>Last Name</FormControl.Label>
                     <Input
                         onChangeText={val => setLastName(val)}
-                        autoCapitalize="none"
+                        autoCapitalize="words"
+                        autoCorrect={false}
                     />
                 </FormControl>
                 <FormControl isRequired>
@@ -122,6 +124,7 @@ const AddNanny = ({ ownerEmail }: any) => {
                     <Input
                         onChangeText={val => setUsername(val)}
                         autoCapitalize="none"
+                        autoCorrect={false}
                     />
                 </FormControl>
                 <FormControl>
