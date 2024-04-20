@@ -22,7 +22,6 @@ import Users from './Users/Users';
 
 const Home_admin = ({route}: any) => {
   const email = route.params.ownerEmail;
-  const [errors, setErrors] = useState({});
 
   return (
     <NativeBaseProvider>

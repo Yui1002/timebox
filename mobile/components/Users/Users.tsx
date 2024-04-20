@@ -4,9 +4,6 @@ import { LOCAL_HOST_URL } from '../../config.js';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import {
-  useSafeArea,
-  View,
-  NativeBaseProvider,
   Box,
   Text,
   Heading,
@@ -16,7 +13,6 @@ import {
   Button,
 } from 'native-base';
 import User from './User';
-import AddNanny from './AddNanny';
 
 const Users = ({ email }: any) => {
   const { navigate } = useNavigation();

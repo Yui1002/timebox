@@ -24,7 +24,6 @@ import { LOCAL_HOST_URL } from '../../config.js';
 const User = ({ user, getUsers, ownerEmail }: any) => {
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
-  // console.log('navigation: ', navigation)
   const { first_name, last_name, user_name, rate, rate_type, status } = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 

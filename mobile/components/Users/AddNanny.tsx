@@ -15,6 +15,7 @@ import {
     Heading,
     Text,
     FlatList,
+    CheckIcon,
 } from 'native-base';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
@@ -28,10 +29,9 @@ const AddNanny = ({ ownerEmail }: any) => {
     const [username, setUsername] = useState('');
     const [rate, setRate] = useState(0);
     const [rateType, setRateType] = useState(null);
-    const [startOpen, setStartOpen] = useState(false);
-    const [endOpen, setEndOpen] = useState(false);
-    const [startTime, setStartTime] = useState('')
+    const [workingDays, setWorkingDays] = useState([]);
     const [endTime, setEndTime] = useState('')
+    const [AMOrPM, setAMOrPM] = useState('');
 
 
     const validateInput = () => {
@@ -95,99 +95,92 @@ const AddNanny = ({ ownerEmail }: any) => {
         setRateType(null);
     }
 
-    const renderTimePicker = () => [
-
-    ]
+    const onDayChange = (val) => {
+        setWorkingDays(d => [...d, val])
+    }
 
     return (
         <NativeBaseProvider>
             <Box m='5%'>
-                {/* <ScrollView> */}
-                <FormControl isRequired>
-                    <FormControl.Label>First Name</FormControl.Label>
-                    <Input
-                        onChangeText={val => setFirstName(val)}
-                        autoCapitalize="words"
-                        autoCorrect={false}
-                    />
-                </FormControl>
-                <FormControl isRequired>
-                    <FormControl.Label>Last Name</FormControl.Label>
-                    <Input
-                        onChangeText={val => setLastName(val)}
-                        autoCapitalize="words"
-                        autoCorrect={false}
-                    />
-                </FormControl>
+                {/* <ScrollView nestedScrollEnabled={true}> */}
+                <HStack space={2} justifyContent="center">
+                    <FormControl isRequired w='50%'>
+                        <FormControl.Label>First Name</FormControl.Label>
+                        <Input
+                            onChangeText={val => setFirstName(val)}
+                            autoCapitalize="words"
+                            autoCorrect={false}
+                        />
+                    </FormControl>
+                    <FormControl isRequired w='50%'>
+                        <FormControl.Label>Last Name</FormControl.Label>
+                        <Input
+                            onChangeText={val => setLastName(val)}
+                            autoCapitalize="words"
+                            autoCorrect={false}
+                        />
+                    </FormControl>
+                </HStack>
                 <FormControl isRequired>
                     <FormControl.Label>User Name</FormControl.Label>
                     <Input
                         onChangeText={val => setUsername(val)}
                         autoCapitalize="none"
-                        autoCorrect={false}
                     />
                 </FormControl>
-                <FormControl>
-                    <FormControl.Label>Rate($)</FormControl.Label>
-                    <Input
-                        keyboardType="numeric"
-                        onChangeText={val => setRate(val)}
-                    />
-                </FormControl>
-                <FormControl>
-                    <FormControl.Label>Rate Type</FormControl.Label>
-                    <Select onValueChange={val => setRateType(val)}>
-                        <Select.Item label="hourly" value="hourly" />
-                        <Select.Item label="daily" value="daily" />
-                    </Select>
-                </FormControl>
+                <HStack space={2} justifyContent="center">
+                    <FormControl w='50%'>
+                        <FormControl.Label>Rate($)</FormControl.Label>
+                        <Input
+                            keyboardType="numeric"
+                            onChangeText={val => setRate(val)}
+                        />
+                    </FormControl>
+                    <FormControl w='50%'>
+                        <FormControl.Label>Rate Type</FormControl.Label>
+                        <Select onValueChange={val => setRateType(val)}>
+                            <Select.Item label="hourly" value="hourly" />
+                            <Select.Item label="daily" value="daily" />
+                        </Select>
+                    </FormControl>
+
+                </HStack>
                 <FormControl>
                     <FormControl.Label>Working Days</FormControl.Label>
                     <VStack space={5}>
-                        {days.map(d =>
-                        <HStack space={3} justifyContent='justify-content'>
-                            <Checkbox value={d} onChange={() => setStartOpen(true)}>{d}</Checkbox>
-                            {/* <Button size='sm' variant='link' onPress={() => setStartOpen(true)}>Pick start time</Button> */}
-                            <DatePicker
-                                modal
-                                date={new Date()}
-                                open={startOpen}
-                                mode='time'
-                                onConfirm={(time) => {
-                                    setStartOpen(false)
-                                    setStartTime(time)
-                                }}
-                                onCancel={() => {
-                                    setStartOpen(false)
-                                }}
-                            />
-                            {/* <Button size='sm' variant='link' onPress={() => setEndOpen(true)}>Pick end time</Button> */}
-                        </HStack>)}
+                        <ScrollView>
+                            {days.map(d =>
+                                <HStack space={3} justifyContent='justify-content'>
+                                    <Checkbox value={d} onChange={() => onDayChange(d)}>{d}</Checkbox>
+                                </HStack>)}
+                        </ScrollView>
                     </VStack>
+                </FormControl>
+                <FormControl>
+                    <FormControl.Label>Working Hours</FormControl.Label>
+                    <HStack space={6} justifyContent='center'>
+                        <Input variant="underlined" />
+                        <Text>:</Text>
+                        <Input variant="underlined" />
+                        <Text>~</Text>
+                        <Input variant="underlined"/>
+                        <Text>:</Text>
+                        <Input variant="underlined" />
+                        <Select accessibilityLabel="Choose AM or PM" placeholder="Choose AM or PM" _selectedItem={{
+                            bg: "teal.600",
+                            endIcon: <CheckIcon size="2" />
+                        }} mt={1} onValueChange={val => setAMOrPM(val)}>
+                            <Select.Item label="AM" value="ux" />
+                            <Select.Item label="PM" value="web" />
+                        </Select>
+                    </HStack>
                 </FormControl>
                 <Button mt="4" onPress={() => addUser()}>
                     Add
                 </Button>
-                {/* <DatePicker
-                                        modal
-                                        date={new Date()}
-                                        open={startOpen}
-                                        mode='time'
-                                        onConfirm={(time) => {
-                                            setStartOpen(false)
-                                            setStartTime(time)
-                                        }} 
-                                        onCancel={() => {
-                                            setStartOpen(false)
-                                        }} 
-                                    /> */}
-                {/* </ScrollView> */}
             </Box>
         </NativeBaseProvider>
     );
 };
 
-
-
-{/* <FlatList data={days} renderItem={({item}) => <HStack><Text>hey</Text></HStack>}/> */ }
 export default AddNanny;
