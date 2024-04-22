@@ -37,7 +37,7 @@ const Users = ({ email }: any) => {
     <Box m="5%">
       <HStack space={2} justifyContent="space-between" alignItems="start">
         <Heading size="lg">Nannies</Heading>
-        <Button onPress={() => navigate('AddNanny')} size="md" borderRadius="40">
+        <Button onPress={() => navigate('AddNanny_1', {ownerEmail: email})} size="md" borderRadius="40">
           Add a Nanny
         </Button>
       </HStack>

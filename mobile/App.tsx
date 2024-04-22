@@ -21,7 +21,8 @@ import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 import Home_admin from './components/Home_admin';
 import History from './components/Users/History';
-import AddNanny from './components/Users/AddNanny';
+import AddNanny_1 from './components/Users/AddNanny_1';
+import AddNanny_2 from './components/Users/AddNanny_2';
 import EditNanny from './components/Users/EditNanny';
 import User from './components/Users/User';
 
@@ -97,8 +98,13 @@ function App(): JSX.Element {
           options={{title: 'Home'}}
         />
         <Stack.Screen
-          name="AddNanny"
-          component={AddNanny}
+          name="AddNanny_1"
+          component={AddNanny_1}
+          options={{title: 'Add Nanny'}}
+        />
+        <Stack.Screen
+          name="AddNanny_2"
+          component={AddNanny_2}
           options={{title: 'Add Nanny'}}
         />
         <Stack.Screen

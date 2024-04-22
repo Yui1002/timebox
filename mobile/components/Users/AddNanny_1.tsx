@@ -22,17 +22,15 @@ import { LOCAL_HOST_URL } from '../../config.js';
 import { ScrollView } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker'
 
-const AddNanny = ({ ownerEmail }: any) => {
+// const AddNanny_1 = ({ ownerEmail }: any) => {
+const AddNanny_1 = ({ route, navigation }: any) => {
+    const ownerEmail = route.params.ownerEmail;
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [username, setUsername] = useState('');
     const [rate, setRate] = useState(0);
     const [rateType, setRateType] = useState(null);
-    const [workingDays, setWorkingDays] = useState([]);
-    const [AMOrPM, setAMOrPM] = useState('');
-    const [open, setOpen] = useState(false);
-    const [date, setDate] = useState(new Date())
     const [startTimeOpen, setStartTimeOpen] = useState(false);
     const [endTimeOpen, setEndTimeOpen] = useState(false);
     const [startTime, setStartTime] = useState(undefined);
@@ -42,44 +40,45 @@ const AddNanny = ({ ownerEmail }: any) => {
         if (!firstName.length || !lastName.length || !username.length) {
             return false;
         }
+        
     }
 
-    const addUser = async () => {
-        if (await isUserRegistered()) {
-            Toast.show({
-                description: 'Username is already registered',
-                placement: 'top',
-            });
-            return;
-        }
+    // const addUser = async () => {
+    //     if (await isUserRegistered()) {
+    //         Toast.show({
+    //             description: 'Username is already registered',
+    //             placement: 'top',
+    //         });
+    //         return;
+    //     }
 
-        axios
-            .post(`${LOCAL_HOST_URL}/user`, {
-                firstName,
-                lastName,
-                username,
-                rate,
-                rateType,
-                status: 'active',
-                updateDate: new Date(),
-                ownerEmail: ownerEmail,
-            })
-            .then(res => {
-                Toast.show({
-                    description: 'New user has been added!',
-                    placement: 'top',
-                });
-            })
-            .catch(() => {
-                Toast.show({
-                    description: 'Something is wrong. Try again.',
-                    placement: 'top',
-                });
-            })
-            .finally(() => {
-                clearForm();
-            })
-    };
+    //     axios
+    //         .post(`${LOCAL_HOST_URL}/user`, {
+    //             firstName,
+    //             lastName,
+    //             username,
+    //             rate,
+    //             rateType,
+    //             status: 'active',
+    //             updateDate: new Date(),
+    //             ownerEmail: ownerEmail,
+    //         })
+    //         .then(res => {
+    //             Toast.show({
+    //                 description: 'New user has been added!',
+    //                 placement: 'top',
+    //             });
+    //         })
+    //         .catch(() => {
+    //             Toast.show({
+    //                 description: 'Something is wrong. Try again.',
+    //                 placement: 'top',
+    //             });
+    //         })
+    //         .finally(() => {
+    //             clearForm();
+    //         })
+    // };
 
     const isUserRegistered = async () => {
         try {
@@ -91,14 +90,6 @@ const AddNanny = ({ ownerEmail }: any) => {
         } catch (err) { }
     };
 
-    const clearForm = () => {
-        setFirstName('');
-        setLastName('');
-        setUsername('');
-        setRate(0);
-        setRateType(null);
-    }
-
     const onDayChange = (val) => {
         setWorkingDays(d => [...d, val])
     }
@@ -107,24 +98,6 @@ const AddNanny = ({ ownerEmail }: any) => {
         <NativeBaseProvider>
             <Box m='5%'>
                 {/* <ScrollView nestedScrollEnabled={true}> */}
-                <HStack space={2} justifyContent="center">
-                    <FormControl isRequired w='50%'>
-                        <FormControl.Label>First Name</FormControl.Label>
-                        <Input
-                            onChangeText={val => setFirstName(val)}
-                            autoCapitalize="words"
-                            autoCorrect={false}
-                        />
-                    </FormControl>
-                    <FormControl isRequired w='50%'>
-                        <FormControl.Label>Last Name</FormControl.Label>
-                        <Input
-                            onChangeText={val => setLastName(val)}
-                            autoCapitalize="words"
-                            autoCorrect={false}
-                        />
-                    </FormControl>
-                </HStack>
                 <FormControl isRequired>
                     <FormControl.Label>User Name</FormControl.Label>
                     <Input
@@ -149,7 +122,7 @@ const AddNanny = ({ ownerEmail }: any) => {
                     </FormControl>
 
                 </HStack>
-                <FormControl>
+                {/* <FormControl>
                     <FormControl.Label>Working Days</FormControl.Label>
                     <VStack space={5}>
                         <ScrollView>
@@ -188,7 +161,7 @@ const AddNanny = ({ ownerEmail }: any) => {
                         modal
                         mode='time'
                         open={startTimeOpen}
-                        date={date}
+                        date={new Date()}
                         onConfirm={(time) => {
                             console.log("time: ", time)
                             setStartTimeOpen(false)
@@ -202,7 +175,7 @@ const AddNanny = ({ ownerEmail }: any) => {
                         modal
                         mode='time'
                         open={endTimeOpen}
-                        date={date}
+                        date={new Date()}
                         onConfirm={(time) => {
                             setEndTimeOpen(false)
                             setEndTime(time)
@@ -211,13 +184,13 @@ const AddNanny = ({ ownerEmail }: any) => {
                             setEndTimeOpen(false)
                         }}
                     />
-                </FormControl>
-                <Button mt="4" onPress={() => addUser()}>
-                    Add
+                </FormControl> */}
+                <Button mt="4" onPress={() => navigation.navigate('AddNanny_2')}>
+                    Next
                 </Button>
             </Box>
         </NativeBaseProvider>
     );
 };
 
-export default AddNanny;
+export default AddNanny_1;
