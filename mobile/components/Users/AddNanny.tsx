@@ -30,9 +30,13 @@ const AddNanny = ({ ownerEmail }: any) => {
     const [rate, setRate] = useState(0);
     const [rateType, setRateType] = useState(null);
     const [workingDays, setWorkingDays] = useState([]);
-    const [endTime, setEndTime] = useState('')
     const [AMOrPM, setAMOrPM] = useState('');
-
+    const [open, setOpen] = useState(false);
+    const [date, setDate] = useState(new Date())
+    const [startTimeOpen, setStartTimeOpen] = useState(false);
+    const [endTimeOpen, setEndTimeOpen] = useState(false);
+    const [startTime, setStartTime] = useState(undefined);
+    const [endTime, setEndTime] = useState(undefined);
 
     const validateInput = () => {
         if (!firstName.length || !lastName.length || !username.length) {
@@ -158,22 +162,55 @@ const AddNanny = ({ ownerEmail }: any) => {
                 </FormControl>
                 <FormControl>
                     <FormControl.Label>Working Hours</FormControl.Label>
-                    <HStack space={6} justifyContent='center'>
-                        <Input variant="underlined" />
-                        <Text>:</Text>
-                        <Input variant="underlined" />
-                        <Text>~</Text>
-                        <Input variant="underlined"/>
-                        <Text>:</Text>
-                        <Input variant="underlined" />
-                        <Select accessibilityLabel="Choose AM or PM" placeholder="Choose AM or PM" _selectedItem={{
-                            bg: "teal.600",
-                            endIcon: <CheckIcon size="2" />
-                        }} mt={1} onValueChange={val => setAMOrPM(val)}>
-                            <Select.Item label="AM" value="ux" />
-                            <Select.Item label="PM" value="web" />
-                        </Select>
+                    <HStack space={2} justifyContent='space-around'>
+                        {startTime
+                            ?
+                            <Box>
+                                <Text>start</Text>
+                                <Text>{`${startTime.getHours()}:${startTime.getMinutes()}`}</Text>
+                                <Button variant='link' onPress={() => setStartTimeOpen(true)}>Change time</Button>
+                            </Box>
+                            :
+                            <Button variant='link' onPress={() => setStartTimeOpen(true)}>Pick start time</Button>
+                        }
+                        {endTime
+                            ?
+                            <Box>
+                                <Text>end</Text>
+                                <Text>{`${endTime.getHours()}:${endTime.getMinutes()}`}</Text>
+                                <Button variant='link' onPress={() => setEndTimeOpen(true)}>Change time</Button>
+                            </Box>
+                            :
+                            <Button variant='link' onPress={() => setEndTimeOpen(true)}>Pick end time</Button>
+                        }
                     </HStack>
+                    <DatePicker
+                        modal
+                        mode='time'
+                        open={startTimeOpen}
+                        date={date}
+                        onConfirm={(time) => {
+                            console.log("time: ", time)
+                            setStartTimeOpen(false)
+                            setStartTime(time)
+                        }}
+                        onCancel={() => {
+                            setStartTimeOpen(false)
+                        }}
+                    />
+                    <DatePicker
+                        modal
+                        mode='time'
+                        open={endTimeOpen}
+                        date={date}
+                        onConfirm={(time) => {
+                            setEndTimeOpen(false)
+                            setEndTime(time)
+                        }}
+                        onCancel={() => {
+                            setEndTimeOpen(false)
+                        }}
+                    />
                 </FormControl>
                 <Button mt="4" onPress={() => addUser()}>
                     Add
