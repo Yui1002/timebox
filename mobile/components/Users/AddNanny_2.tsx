@@ -24,7 +24,8 @@ import { LOCAL_HOST_URL } from '../../config.js';
 import { ScrollView } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker'
 
-const AddNanny_2 = ({ ownerEmail }: any) => {
+const AddNanny_2 = ({ route, navigation }: any) => {
+    const ownerEmail = route.params.ownerEmail;
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     const [selectedDay, setSelectedDay] = useState('');
     const [startTimeOpen, setStartTimeOpen] = useState(false);
@@ -117,6 +118,7 @@ const AddNanny_2 = ({ ownerEmail }: any) => {
                             </HStack>
                         ))}
                     </ScrollView>
+                    <Button onPress={() => navigation.navigate('AddNanny_review')}>Review</Button>
                 </Center>
             </Box>
         </NativeBaseProvider>

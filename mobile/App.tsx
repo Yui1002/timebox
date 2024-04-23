@@ -23,6 +23,7 @@ import Home_admin from './components/Home_admin';
 import History from './components/Users/History';
 import AddNanny_1 from './components/Users/AddNanny_1';
 import AddNanny_2 from './components/Users/AddNanny_2';
+import AddNanny_review from './components/Users/AddNanny_review';
 import EditNanny from './components/Users/EditNanny';
 import User from './components/Users/User';
 
@@ -105,6 +106,11 @@ function App(): JSX.Element {
         <Stack.Screen
           name="AddNanny_2"
           component={AddNanny_2}
+          options={{title: 'Add Nanny'}}
+        />
+        <Stack.Screen
+          name="AddNanny_review"
+          component={AddNanny_review}
           options={{title: 'Add Nanny'}}
         />
         <Stack.Screen
