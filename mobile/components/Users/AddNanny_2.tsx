@@ -4,24 +4,14 @@ import {
     Box,
     Center,
     Button,
-    Modal,
     FormControl,
-    Input,
     Select,
-    Toast,
-    Checkbox,
     HStack,
-    VStack,
     Heading,
     Text,
-    FlatList,
     CheckIcon,
     Divider,
-    CloseIcon,
-    Alert,
 } from 'native-base';
-import axios from 'axios';
-import { LOCAL_HOST_URL } from '../../config.js';
 import { ScrollView } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
@@ -35,11 +25,11 @@ const AddNanny_2 = ({ route, navigation }: any) => {
     const [startTime, setStartTime] = useState<Date | undefined>(undefined);
     const [endTime, setEndTime] = useState<Date | undefined>(undefined);
     const [lists, setLists] = useState([]);
-    const [inputErrors, setInputErrors] = useState({ isError: false, type: '', msg: '' });
+    const [inputErrors, setInputErrors] = useState({ type: '', title: '', msg: '' });
 
     const validateInput = () => {
         if (startTime >= endTime) {
-            const updatedValue = { isError: true, type: 'START_END_SET_ERROR', msg: 'Please set the start time before the end time' }
+            const updatedValue = { type: 'START_END_SET_ERROR', title: '', msg: 'Please set the start time before the end time' }
             setInputErrors(updatedValue);
             return false;
         }
@@ -50,14 +40,14 @@ const AddNanny_2 = ({ route, navigation }: any) => {
         setSelectedDay('');
         setStartTime(undefined);
         setEndTime(undefined);
-        setInputErrors({ isError: false, type: '', msg: '' });
+        setInputErrors({ type: '', title: '', msg: '' });
     }
 
     const addToLists = () => {
         if (!validateInput()) {
             return;
         };
-        
+
         const data = {
             day: selectedDay,
             start: startTime,
@@ -68,10 +58,9 @@ const AddNanny_2 = ({ route, navigation }: any) => {
     }
 
     const deleteList = (list) => {
-        console.log('list: ', list)
         setLists(l => l.filter(item => item.day !== list.day && item.start !== list.start && item.end !== list.end))
     }
-
+ 
     return (
         <NativeBaseProvider>
             <Box m='5%'>
@@ -111,7 +100,7 @@ const AddNanny_2 = ({ route, navigation }: any) => {
                             </FormControl>
                         </Center>
                         <Center>
-                            <FormControl isRequired isInvalid={'isError' in inputErrors}>
+                            <FormControl isRequired isInvalid={inputErrors.type == 'START_END_SET_ERROR'}>
                                 <Button variant='link' onPress={() => setEndTimeOpen(true)}>Pick end time</Button>
                                 <DatePicker
                                     modal
@@ -146,7 +135,10 @@ const AddNanny_2 = ({ route, navigation }: any) => {
                             </HStack>
                         ))}
                     </ScrollView>
-                    <Button onPress={() => navigation.navigate('AddNanny_review')}>Review</Button>
+                    <HStack space={2}>
+                        <Button borderRadius={20} onPress={() => navigation.goBack()}>Go Back</Button>
+                        <Button borderRadius={20} onPress={() => navigation.navigate('AddNanny_review', {ownerEmail, username, rate, rateType, lists})}>Review</Button>
+                    </HStack>
                 </Center>
             </Box>
         </NativeBaseProvider>

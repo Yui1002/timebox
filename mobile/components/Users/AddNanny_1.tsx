@@ -7,34 +7,28 @@ import {
     Input,
     Select,
     HStack,
-    Alert,
-    VStack,
-    Text,
-    IconButton,
-    CloseIcon,
 } from 'native-base';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
-import InputError from './InputError';
 
 const AddNanny_1 = ({ route, navigation }: any) => {
     const ownerEmail = route.params.ownerEmail;
     const [username, setUsername] = useState('');
     const [rate, setRate] = useState(0);
     const [rateType, setRateType] = useState('');
-    const [inputErrors, setInputErrors] = useState({ isError: false, type: '', msg: '' });
+    const [inputErrors, setInputErrors] = useState({ type: '', title: '', msg: '' });
 
     const validateInput = async () => {
         if (username.length === 0) {
-            const updatedValue = { isError: true, type: 'error', msg: 'The username is required' };
+            const updatedValue = { type: 'EMPTY_USERNAME', title: '', msg: 'The username is required' };
             setInputErrors(updatedValue);
             return;
         } else if (await isUserRegistered()) {
-            const updatedValue = { isError: true, type: 'error', msg: 'The username is already used' };
+            const updatedValue = { type: 'USERNAME_DUPLICATE', title: '', msg: 'The username is already used' };
             setInputErrors(updatedValue);
             return;
         } else {
-            setInputErrors({ isError: false, type: '', msg: '' });
+            setInputErrors({ type: '', title: '', msg: '' });
             navigation.navigate('AddNanny_2', {ownerEmail, username, rate, rateType})
         }
     }
@@ -55,7 +49,7 @@ const AddNanny_1 = ({ route, navigation }: any) => {
         <NativeBaseProvider>
             <Box m='5%'>
                 <Box mt={10}>
-                    <FormControl isRequired isInvalid={inputErrors.isError}>
+                    <FormControl isRequired isInvalid={inputErrors.type.length > 0}>
                         <FormControl.Label>User Name</FormControl.Label>
                         <Input
                             onChangeText={val => setUsername(val)}
