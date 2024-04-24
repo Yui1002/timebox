@@ -19,6 +19,7 @@ class UserControllers {
 
   async addUser(req: any, res: any) {
     const response = await this.models.addUser(req.body);
+    console.log('response: ', response)
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 

@@ -53,7 +53,7 @@ class UserRepositories {
         const convertedEndTime = (await client.query(convertFormatSql, [end])).rows[0].to_char;
         await client.query(sql, [uuidv4(), userId, day, convertedStartTime, convertedEndTime])
       })
-      await Promise.all(premises);
+      return await Promise.all(premises).then(() => { return true });
     } catch (err) {
       console.log("error: ", err)
       return err;

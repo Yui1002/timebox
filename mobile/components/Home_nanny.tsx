@@ -19,7 +19,6 @@ import moment from 'moment';
 
 const Home_nanny = ({ route }: any) => {
   const username = route.params.username;
-  const currentDate = new Date();
   const [recordResult, setRecordResult] = useState({status: false, msg: ''});
 
   const startRecord = () => {
