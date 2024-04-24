@@ -19,6 +19,12 @@ const AddNanny_review = ({ route, navigation }: any) => {
         axios.post(`${LOCAL_HOST_URL}/user`, {
             ownerEmail, username, rate, rateType, lists
         })
+        .then(() => {
+
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     }
 
     return (

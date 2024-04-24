@@ -15,28 +15,47 @@ const pool = new Pool({
 
 class UserRepositories {
 
-  async addUser(user: UserInterface) {
+  async addUser(user: any, ownerId: string) {
     const client = await pool.connect();
     const uuid = uuidv4();
-    const {ownerId, firstName, lastName, username, rate, rateType, status, updateDate, updateBy} = user;
+    const { username, rate, rateType, ownerEmail } = user;
 
     try {
       const sql =
-        "INSERT INTO public.users (user_id, owner_id, first_name, last_name, user_name, rate, rate_type, status, update_date, update_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        "INSERT INTO public.users (user_id, owner_id, first_name, last_name, user_name, rate, rate_type, status, update_date, update_by) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING user_id;";
       const data = await client.query(sql, [
         uuid,
         ownerId,
-        firstName,
-        lastName,
+        null,
+        null,
         username,
         rate,
         rateType,
-        status,
-        updateDate,
-        updateBy,
+        'active',
+        new Date(),
+        ownerEmail,
       ]);
-      return true;
+      return data.rows[0].user_id;
     } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async addSchedule(userId: string, schedules: []) {
+    const client = await pool.connect();
+    try {
+      const sql = "INSERT INTO public.users_schedule VALUES ($1, $2, $3, $4, $5);";
+      const premises = schedules.map(async ({day, start, end}) => {
+        const convertFormatSql = "SELECT to_char($1::timestamp, 'HH12:MI:SS');";
+        const convertedStartTime = (await client.query(convertFormatSql, [start])).rows[0].to_char;
+        const convertedEndTime = (await client.query(convertFormatSql, [end])).rows[0].to_char;
+        await client.query(sql, [uuidv4(), userId, day, convertedStartTime, convertedEndTime])
+      })
+      await Promise.all(premises);
+    } catch (err) {
+      console.log("error: ", err)
       return err;
     } finally {
       client.release();
@@ -88,29 +107,29 @@ class UserRepositories {
   }
 
   async editUser(req: any, userId: string) {
-    const {firstName, lastName, username, rate, rateType, status, updateDate} = req;
+    const { firstName, lastName, username, rate, rateType, status, updateDate } = req;
     const client = await pool.connect();
     try {
-        const sql = "UPDATE public.users SET first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
-        const data = await client.query(sql, [firstName, lastName, username, rate, rateType, status, updateDate, userId]);
-        return true;
+      const sql = "UPDATE public.users SET first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
+      const data = await client.query(sql, [firstName, lastName, username, rate, rateType, status, updateDate, userId]);
+      return true;
     } catch (err) {
-        return err;
+      return err;
     } finally {
-        client.release();
+      client.release();
     }
   }
 
   async getUserId(username: string) {
     const client = await pool.connect();
     try {
-        const sql = "SELECT user_id FROM public.users WHERE user_name=$1;";
-        const data = await client.query(sql, [username]);
-        return data.rows[0].user_id;
+      const sql = "SELECT user_id FROM public.users WHERE user_name=$1;";
+      const data = await client.query(sql, [username]);
+      return data.rows[0].user_id;
     } catch (err) {
-        return err;
+      return err;
     } finally {
-        client.release();
+      client.release();
     }
   }
 

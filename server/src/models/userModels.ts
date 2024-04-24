@@ -1,5 +1,4 @@
 import UserRepositories from "../repositories/userRepositories";
-import { UserInterface } from "../interfaces/UserInterface";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -23,11 +22,14 @@ class UserModels {
     return await this.repositories.getUser(username);
   }
 
-  async addUser(user: UserInterface) {
+  async addUser(user: any) {
     const ownerId = await this.getOwnerId(user.ownerEmail);
-    user.ownerId = ownerId;
-    user.updateBy = user.ownerEmail;
-    return await this.repositories.addUser(user);
+    const newUserId = await this.repositories.addUser(user, ownerId)
+    return this.addSchedule(newUserId, user.lists)
+  }
+
+  async addSchedule(userId: string, user: []) {
+    return await this.repositories.addSchedule(userId, user);
   }
 
   async editUser(req: any) {
