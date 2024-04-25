@@ -12,7 +12,7 @@ import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
 
 const AddNanny_1 = ({ route, navigation }: any) => {
-    const ownerEmail = route.params.ownerEmail;
+    const { ownerEmail, setAddSuccess, getUsers } = route.params;
     const [username, setUsername] = useState('');
     const [rate, setRate] = useState(0);
     const [rateType, setRateType] = useState('');
@@ -29,7 +29,7 @@ const AddNanny_1 = ({ route, navigation }: any) => {
             return;
         } else {
             setInputErrors({ type: '', title: '', msg: '' });
-            navigation.navigate('AddNanny_2', {ownerEmail, username, rate, rateType})
+            navigation.navigate('AddNanny_2', {ownerEmail, username, rate, rateType, setAddSuccess, getUsers})
         }
     }
 
@@ -54,6 +54,7 @@ const AddNanny_1 = ({ route, navigation }: any) => {
                         <Input
                             onChangeText={val => setUsername(val)}
                             autoCapitalize="none"
+                            autoCorrect={false}
                         />
                         <FormControl.ErrorMessage>{inputErrors.msg}</FormControl.ErrorMessage>
                     </FormControl>

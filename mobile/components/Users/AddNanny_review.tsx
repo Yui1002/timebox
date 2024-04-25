@@ -13,13 +13,15 @@ import { LOCAL_HOST_URL } from '../../config.js';
 import moment from 'moment';
 
 const AddNanny_review = ({ route, navigation }: any) => {
-    const {username, rate, rateType, lists, ownerEmail} = route.params;
+    const { username, rate, rateType, lists, ownerEmail, setAddSuccess, getUsers } = route.params;
     
     const submitForm = () => {
         axios.post(`${LOCAL_HOST_URL}/user`, {
             ownerEmail, username, rate, rateType, lists
         })
         .then((res) => {
+            setAddSuccess(true);
+            getUsers();
             navigation.navigate('Home_admin', {username})
         })
         .catch((err) => {

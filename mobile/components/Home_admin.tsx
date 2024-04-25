@@ -1,45 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
 import styles from '../styles/styles';
 import {
-  FormControl,
-  Input,
-  Stack,
-  WarningOutlineIcon,
   Box,
-  Center,
-  Button,
-  VStack,
-  HStack,
-  Divider,
-  Icon,
-  Modal,
-  Alert,
   NativeBaseProvider,
 } from 'native-base';
-import axios from 'axios';
-import { LOCAL_HOST_URL } from '../config.js';
 import Users from './Users/Users';
+import AlertMsg from './AlertMsg';
 
 const Home_admin = ({ route }: any) => {
   const email = route.params.ownerEmail;
   const [addSuccess, setAddSuccess] = useState(false);
 
+  setTimeout(() => {
+    if (addSuccess) {
+      setAddSuccess(false);
+    }
+  }, 5000)
+
   return (
     <NativeBaseProvider>
-      {addSuccess &&
-        <Alert w='100%' variant='subtle' colorScheme='success' status='success'>
-          <VStack space={2} flexShrink={1} w="100%">
-            <HStack flexShrink={1} space={2} alignItems="center" justifyContent="space-between">
-              <HStack space={2} flexShrink={1} alignItems="center">
-                <Alert.Icon />
-                  <Text>Selection successfully moved!</Text>
-              </HStack>
-            </HStack>
-          </VStack>
-        </Alert>}
+      {addSuccess ? <AlertMsg msg="Successfully added!" status='success' /> : null}
       <Box style={styles.container}>
-        <Users email={email} />
+        <Users email={email} setAddSuccess={setAddSuccess} />
       </Box>
     </NativeBaseProvider>
   );

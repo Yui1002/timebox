@@ -17,7 +17,7 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 
 const AddNanny_2 = ({ route, navigation }: any) => {
-    const { ownerEmail, username, rate, rateType } = route.params;
+    const { ownerEmail, username, rate, rateType, setAddSuccess, getUsers } = route.params;
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     const [selectedDay, setSelectedDay] = useState('');
     const [startTimeOpen, setStartTimeOpen] = useState(false);
@@ -60,7 +60,11 @@ const AddNanny_2 = ({ route, navigation }: any) => {
     const deleteList = (list) => {
         setLists(l => l.filter(item => item.day !== list.day && item.start !== list.start && item.end !== list.end))
     }
- 
+
+    const navigateToReviewPage = () => {
+        navigation.navigate('AddNanny_review', { ownerEmail, username, rate, rateType, lists, setAddSuccess, getUsers })
+    }
+
     return (
         <NativeBaseProvider>
             <Box m='5%'>
@@ -137,7 +141,7 @@ const AddNanny_2 = ({ route, navigation }: any) => {
                     </ScrollView>
                     <HStack space={2}>
                         <Button borderRadius={20} onPress={() => navigation.goBack()}>Go Back</Button>
-                        <Button borderRadius={20} onPress={() => navigation.navigate('AddNanny_review', {ownerEmail, username, rate, rateType, lists})}>Review</Button>
+                        <Button borderRadius={20} onPress={navigateToReviewPage}>Review</Button>
                     </HStack>
                 </Center>
             </Box>

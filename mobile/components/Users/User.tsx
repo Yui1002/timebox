@@ -21,7 +21,7 @@ import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
 
 
-const User = ({ user, getUsers, ownerEmail }: any) => {
+const User = ({ user, getUsers, ownerEmail, setAddSuccess }: any) => {
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
   const { first_name, last_name, user_name, rate, rate_type, status } = user;

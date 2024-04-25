@@ -96,7 +96,7 @@ class UserRepositories {
 
     try {
       const sql =
-        "SELECT first_name, last_name, user_name, rate, rate_type, status FROM users WHERE owner_id = $1;";
+        "SELECT first_name, last_name, user_name, rate, rate_type, status FROM users WHERE owner_id = $1 ORDER BY update_date DESC;";
       const data = await client.query(sql, [ownerId]);
       return data.rows;
     } catch (err) {
