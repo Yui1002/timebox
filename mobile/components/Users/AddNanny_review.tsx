@@ -13,7 +13,6 @@ import { LOCAL_HOST_URL } from '../../config.js';
 
 const AddNanny_review = ({ route, navigation }: any) => {
     const { username, rate, rateType, lists, ownerEmail, setAddSuccess, getUsers } = route.params;
-    console.log('lists: ', lists)
     
     const submitForm = () => {
         axios.post(`${LOCAL_HOST_URL}/user`, {

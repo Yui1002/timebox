@@ -27,7 +27,7 @@ interface userObjType {
   }]
 };
 
-const Users = ({ email, setAddSuccess }: any) => {
+const Users = ({ email, setAddSuccess, setEditSuccess }: any) => {
   const { navigate } = useNavigation();
   const [users, setUsers] = useState([]);
 
@@ -40,7 +40,6 @@ const Users = ({ email, setAddSuccess }: any) => {
       .get(`${LOCAL_HOST_URL}/users/${email}`)
       .then(res => {
         const data = processUserData(res.data);
-        console.log('data', data)
         setUsers(data);
       })
       .catch(() => {
@@ -94,32 +93,6 @@ const Users = ({ email, setAddSuccess }: any) => {
       result.push(newUser);
     })
     return result;
-    // const processedData: userObjType[] = [];
-
-    // users.map((user) => {
-    //   const found = processedData.some(e => e.user_name == user.user_name);
-    //   console.log(found)
-    //   if (!found) {
-    //     const userObj = {};
-    //     userObj['first_name'] = null;
-    //     userObj['last_name'] = null;
-    //     userObj['user_name'] = user.user_name;
-    //     userObj['rate'] = user.rate;
-    //     userObj['rate_type'] = user.rate_type;
-    //     userObj['status'] = 'active';
-    //     userObj['shifts'] = [];
-    //     userObj['shifts'].push({day: user.day, start_time: user.start_time, end_time: user.end_time})
-    //     processedData.push(userObj);
-    //     console.log(processedData);
-    //   } else {
-    //     const target = processUserData.find(e => e.user_name === user.user_name);
-    //     console.log('target', target)
-    //     target['shifts'].push({day: user.day, start_time: user.start_time, end_time: user.end_time})
-    //   }
-    // });
-    // console.log('here')
-    // console.log('processed data: ', processedData)
-    // return processedData;
   }
 
   return (
@@ -144,6 +117,7 @@ const Users = ({ email, setAddSuccess }: any) => {
                   user={user}
                   getUsers={getUsers}
                   ownerEmail={email}
+                  setEditSuccess={setEditSuccess}
                 />
               ))}
             </VStack>

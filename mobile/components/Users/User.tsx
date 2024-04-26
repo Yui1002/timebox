@@ -6,22 +6,17 @@ import {
   HStack,
   VStack,
   Spacer,
-  IconButton,
-  Actionsheet,
   HamburgerIcon,
-  Divider,
   AlertDialog,
   Button,
   Toast,
   Menu,
   Pressable,
 } from 'native-base';
-import EditNanny from './EditNanny';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
-import moment from 'moment';
 
-const User = ({ user, getUsers, ownerEmail, setAddSuccess }: any) => {
+const User = ({ user, getUsers, ownerEmail, setEditSuccess }: any) => {
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
   const { first_name, last_name, user_name, rate, rate_type, status, shifts } = user;
@@ -61,7 +56,7 @@ const User = ({ user, getUsers, ownerEmail, setAddSuccess }: any) => {
         <Menu w='190' trigger={triggerProps => {
           return <Pressable accessibilityLabel='More options menu' {...triggerProps}><HamburgerIcon size={6} /></Pressable>
         }}>
-          <Menu.Item onPress={() => navigation.navigate("EditNanny", { user, getUsers, ownerEmail })}>Edit</Menu.Item>
+          <Menu.Item onPress={() => navigation.navigate("EditNanny", { user, getUsers, ownerEmail, setEditSuccess })}>Edit</Menu.Item>
           <Menu.Item onPress={() => setDeleteDialogOpen(true)}>Delete</Menu.Item>
           <Menu.Item onPress={() => navigation.navigate("History", { usename: user_name })}>Show record</Menu.Item>
         </Menu>

@@ -12,14 +12,17 @@ import {
   Heading,
 } from 'native-base';
 
-const EditNanny = ({route}: any) => {
+const EditNanny = ({route, navigation}: any) => {
   const { first_name, last_name, user_name, rate, rate_type, status } = route.params.user;
+  const { getUsers, setEditSuccess } = route.params;
   const [firstName, setFirstName] = useState(first_name);
   const [lastName, setLastName] = useState(last_name);
   const [username, setUsername] = useState(user_name);
   const [updatedRate, setUpdatedRate] = useState(rate);
   const [rateType, setRateType] = useState(rate_type);
   const [updatedStatus, setUpdatedStatus] = useState(status);
+
+  console.log(setEditSuccess)
 
   const editNanny = () => {
     axios
@@ -34,17 +37,12 @@ const EditNanny = ({route}: any) => {
         originalUsername: user_name,
       })
       .then(() => {
-        Toast.show({
-          description: 'User has been updated!',
-          placement: 'top',
-        });
-        // getUsers();
+        setEditSuccess(true);
+        getUsers();
+        navigation.navigate('Home_admin', {username})
       })
       .catch(() => {
-        Toast.show({
-          description: 'Failed to update user',
-          placement: 'top',
-        });
+        setEditSuccess(false);
       })
       .finally(() => {
       });
@@ -54,24 +52,6 @@ const EditNanny = ({route}: any) => {
     <NativeBaseProvider>
       <Box m='5%'>
         <Heading>Edit</Heading>
-        <FormControl>
-          <FormControl.Label>First Name</FormControl.Label>
-          <Input
-            onChangeText={val => setFirstName(val)}
-            defaultValue={first_name}
-            autoCapitalize="words"
-            autoCorrect={false}
-          />
-        </FormControl>
-        <FormControl>
-          <FormControl.Label>Last Name</FormControl.Label>
-          <Input
-            onChangeText={val => setLastName(val)}
-            defaultValue={last_name}
-            autoCapitalize="words"
-            autoCorrect={false}
-          />
-        </FormControl>
         <FormControl isRequired>
           <FormControl.Label>User Name</FormControl.Label>
           <Input
