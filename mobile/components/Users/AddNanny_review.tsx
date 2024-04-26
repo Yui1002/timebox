@@ -10,10 +10,10 @@ import {
 } from 'native-base';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
-import moment from 'moment';
 
 const AddNanny_review = ({ route, navigation }: any) => {
     const { username, rate, rateType, lists, ownerEmail, setAddSuccess, getUsers } = route.params;
+    console.log('lists: ', lists)
     
     const submitForm = () => {
         axios.post(`${LOCAL_HOST_URL}/user`, {
@@ -51,7 +51,7 @@ const AddNanny_review = ({ route, navigation }: any) => {
                     <Text>Working Days / Hours</Text>
                     {lists.map((list) => (
                             <Box>
-                                <Text>{'\u2B24'} {`${list.day}   ${moment(list.start).format('LT')} - ${moment(list.end).format('LT')}`}</Text>
+                                <Text>{'\u2B24'} {`${list.day}   ${list.start} - ${list.end}`}</Text>
                             </Box>
                         ))}
                 </Box>

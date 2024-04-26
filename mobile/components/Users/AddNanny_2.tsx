@@ -22,6 +22,8 @@ const AddNanny_2 = ({ route, navigation }: any) => {
     const [selectedDay, setSelectedDay] = useState('');
     const [startTimeOpen, setStartTimeOpen] = useState(false);
     const [endTimeOpen, setEndTimeOpen] = useState(false);
+    // const [startTime, setStartTime] = useState<Date | undefined>(undefined);
+    // const [endTime, setEndTime] = useState<Date | undefined>(undefined);
     const [startTime, setStartTime] = useState<Date | undefined>(undefined);
     const [endTime, setEndTime] = useState<Date | undefined>(undefined);
     const [lists, setLists] = useState([]);
@@ -50,8 +52,8 @@ const AddNanny_2 = ({ route, navigation }: any) => {
 
         const data = {
             day: selectedDay,
-            start: startTime,
-            end: endTime
+            start: moment(startTime).format('LT'),
+            end: moment(endTime).format('LT')
         }
         setLists(l => [...l, data]);
         clearInput();
@@ -134,7 +136,7 @@ const AddNanny_2 = ({ route, navigation }: any) => {
                     <ScrollView>
                         {lists.map((list) => (
                             <HStack>
-                                <Text p={4}>{'\u2B24'} {`${list.day}   ${moment(list.start).format('LT')} - ${moment(list.end).format('LT')}`}</Text>
+                                <Text p={4}>{'\u2B24'} {`${list.day}   ${list.start} - ${list.end}`}</Text>
                                 <Text p={4} underline color='#0e7490' onPress={() => deleteList(list)}>Delete</Text>
                             </HStack>
                         ))}

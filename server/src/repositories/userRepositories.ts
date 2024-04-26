@@ -48,10 +48,7 @@ class UserRepositories {
     try {
       const sql = "INSERT INTO public.users_schedule VALUES ($1, $2, $3, $4, $5);";
       const premises = schedules.map(async ({day, start, end}) => {
-        const convertFormatSql = "SELECT to_char($1::timestamp, 'HH12:MI:SS');";
-        const convertedStartTime = (await client.query(convertFormatSql, [start])).rows[0].to_char;
-        const convertedEndTime = (await client.query(convertFormatSql, [end])).rows[0].to_char;
-        await client.query(sql, [uuidv4(), userId, day, convertedStartTime, convertedEndTime])
+        await client.query(sql, [uuidv4(), userId, day, start, end])
       })
       return await Promise.all(premises).then(() => { return true });
     } catch (err) {
@@ -95,8 +92,10 @@ class UserRepositories {
     const client = await pool.connect();
 
     try {
+      // const sql =
+      //   "SELECT first_name, last_name, user_name, rate, rate_type, status FROM users WHERE owner_id = $1 ORDER BY update_date DESC;";
       const sql =
-        "SELECT first_name, last_name, user_name, rate, rate_type, status FROM users WHERE owner_id = $1 ORDER BY update_date DESC;";
+        "SELECT first_name, last_name, user_name, rate, rate_type, status, day, start_time, end_time FROM users u INNER JOIN users_schedule us ON u.user_id = us.user_id WHERE u.owner_id = $1 ORDER BY update_date DESC;";
       const data = await client.query(sql, [ownerId]);
       return data.rows;
     } catch (err) {

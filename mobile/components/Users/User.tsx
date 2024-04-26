@@ -19,12 +19,12 @@ import {
 import EditNanny from './EditNanny';
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
-
+import moment from 'moment';
 
 const User = ({ user, getUsers, ownerEmail, setAddSuccess }: any) => {
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
-  const { first_name, last_name, user_name, rate, rate_type, status } = user;
+  const { first_name, last_name, user_name, rate, rate_type, status, shifts } = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const deleteUser = () => {
@@ -52,14 +52,7 @@ const User = ({ user, getUsers, ownerEmail, setAddSuccess }: any) => {
     <Box width="100%" borderBottomWidth="1" borderColor="muted.800" py="1.5">
       <HStack space={[2, 3]}>
         <VStack>
-          <Text bold fontSize="md">
-            {first_name}
-          </Text>
-        </VStack>
-        <VStack>
-          <Text bold fontSize="md">
-            {last_name}
-          </Text>
+          <Text fontSize={16} bold>{user_name}</Text>
         </VStack>
         <Spacer />
         <VStack>
@@ -75,7 +68,7 @@ const User = ({ user, getUsers, ownerEmail, setAddSuccess }: any) => {
       </HStack>
       <HStack justifyContent="space-between">
         <VStack>
-          <Text>{user_name}</Text>
+          {shifts.map((s) => <Text fontSize={12}>{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)}
         </VStack>
         <VStack>
           <Text fontSize="xs">
