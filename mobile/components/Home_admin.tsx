@@ -9,24 +9,26 @@ import AlertMsg from './AlertMsg';
 
 const Home_admin = ({ route }: any) => {
   const email = route.params.ownerEmail;
-  const [addSuccess, setAddSuccess] = useState<boolean | null>(null);
-  const [editSuccess, setEditSuccess] = useState<boolean | null>(null);
+  const [addError, setAddError] = useState({ status: undefined, msg: '' });
+  const [editError, setEditError] = useState({ status: undefined, msg: '' });
 
   setTimeout(() => {
-    if (addSuccess) {
-      setAddSuccess(null);
+    if (addError.status !== undefined) {
+      setAddError({ status: undefined, msg: '' });
     }
-    if (editSuccess) {
-      setEditSuccess(null);
+    if (editError.status !== undefined) {
+      setEditError({ status: undefined, msg: '' })
     }
   }, 5000)
 
   return (
     <NativeBaseProvider>
-      {addSuccess ? <AlertMsg msg="Successfully added!" status='success' /> : null}
-      {editSuccess ? <AlertMsg msg="Successfully edited!" status='success' /> : null}
+      {addError.status == 'success' && <AlertMsg msg={addError.msg} status={addError.status} />}
+      {addError.status == 'error' && <AlertMsg msg={addError.msg} status={addError.status} />}
+      {editError.status == 'success' && <AlertMsg msg={editError.msg} status={editError.status} />}
+      {editError.status == 'error' && <AlertMsg msg={editError.msg} status={editError.status} />}
       <Box style={styles.container}>
-        <Users email={email} setAddSuccess={setAddSuccess} setEditSuccess={setEditSuccess} />
+        <Users email={email} setAddError={setAddError} setEditError={setEditError} />
       </Box>
     </NativeBaseProvider>
   );

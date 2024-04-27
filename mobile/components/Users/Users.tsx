@@ -27,7 +27,7 @@ interface userObjType {
   }]
 };
 
-const Users = ({ email, setAddSuccess, setEditSuccess }: any) => {
+const Users = ({ email, setAddError, setEditError }: any) => {
   const { navigate } = useNavigation();
   const [users, setUsers] = useState([]);
 
@@ -99,7 +99,7 @@ const Users = ({ email, setAddSuccess, setEditSuccess }: any) => {
     <Box m="5%">
       <HStack space={2} justifyContent="space-between" alignItems="start">
         <Heading size="lg">Nannies</Heading>
-        <Button onPress={() => navigate('AddNanny_1', { ownerEmail: email, setAddSuccess: setAddSuccess, getUsers: getUsers })} size="md" borderRadius="40">
+        <Button onPress={() => navigate('AddNanny_1', { ownerEmail: email, setAddError: setAddError, getUsers: getUsers })} size="md" borderRadius="40">
           Add a Nanny
         </Button>
       </HStack>
@@ -117,7 +117,7 @@ const Users = ({ email, setAddSuccess, setEditSuccess }: any) => {
                   user={user}
                   getUsers={getUsers}
                   ownerEmail={email}
-                  setEditSuccess={setEditSuccess}
+                  setEditError={setEditError}
                 />
               ))}
             </VStack>

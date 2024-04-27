@@ -24,7 +24,9 @@ import History from './components/Users/History';
 import AddNanny_1 from './components/Users/AddNanny_1';
 import AddNanny_2 from './components/Users/AddNanny_2';
 import AddNanny_review from './components/Users/AddNanny_review';
-import EditNanny from './components/Users/EditNanny';
+import EditNanny_1 from './components/Users/EditNanny_1';
+import EditNanny_2 from './components/Users/EditNanny_2';
+import EditNanny_review from './components/Users/EditNanny_review';
 import User from './components/Users/User';
 
 function App(): JSX.Element {
@@ -114,8 +116,18 @@ function App(): JSX.Element {
           options={{title: 'Add Nanny'}}
         />
         <Stack.Screen
-          name="EditNanny"
-          component={EditNanny}
+          name="EditNanny_1"
+          component={EditNanny_1}
+          options={{title: 'Edit Nanny'}}
+        />
+        <Stack.Screen
+          name="EditNanny_2"
+          component={EditNanny_2}
+          options={{title: 'Edit Nanny'}}
+        />
+        <Stack.Screen
+          name="EditNanny_review"
+          component={EditNanny_review}
           options={{title: 'Edit Nanny'}}
         />
         <Stack.Screen

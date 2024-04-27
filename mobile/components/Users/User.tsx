@@ -16,10 +16,10 @@ import {
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
 
-const User = ({ user, getUsers, ownerEmail, setEditSuccess }: any) => {
+const User = ({ user, getUsers, ownerEmail, setEditError }: any) => {
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
-  const { first_name, last_name, user_name, rate, rate_type, status, shifts } = user;
+  const { user_name, rate, rate_type, status, shifts } = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const deleteUser = () => {
@@ -56,14 +56,14 @@ const User = ({ user, getUsers, ownerEmail, setEditSuccess }: any) => {
         <Menu w='190' trigger={triggerProps => {
           return <Pressable accessibilityLabel='More options menu' {...triggerProps}><HamburgerIcon size={6} /></Pressable>
         }}>
-          <Menu.Item onPress={() => navigation.navigate("EditNanny", { user, getUsers, ownerEmail, setEditSuccess })}>Edit</Menu.Item>
+          <Menu.Item onPress={() => navigation.navigate("EditNanny_1", { user, getUsers, ownerEmail, setEditError })}>Edit</Menu.Item>
           <Menu.Item onPress={() => setDeleteDialogOpen(true)}>Delete</Menu.Item>
           <Menu.Item onPress={() => navigation.navigate("History", { usename: user_name })}>Show record</Menu.Item>
         </Menu>
       </HStack>
       <HStack justifyContent="space-between">
         <VStack>
-          {shifts.map((s) => <Text fontSize={12}>{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)}
+          {shifts.map((s) => <Text fontSize={12} color="coolGray.800">{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)}
         </VStack>
         <VStack>
           <Text fontSize="xs">

@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
 
-const AddNanny_review = ({ route, navigation }: any) => {
+const EditNanny_review = ({ route, navigation }: any) => {
     const { username, rate, rateType, lists, ownerEmail, setAddError, getUsers } = route.params;
     
     const submitForm = () => {
@@ -64,4 +64,4 @@ const AddNanny_review = ({ route, navigation }: any) => {
     );
 };
 
-export default AddNanny_review;
+export default EditNanny_review;

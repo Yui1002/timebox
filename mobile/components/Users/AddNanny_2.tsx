@@ -17,7 +17,7 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 
 const AddNanny_2 = ({ route, navigation }: any) => {
-    const { ownerEmail, username, rate, rateType, setAddSuccess, getUsers } = route.params;
+    const { ownerEmail, username, rate, rateType, setAddError, getUsers } = route.params;
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     const [selectedDay, setSelectedDay] = useState('');
     const [startTimeOpen, setStartTimeOpen] = useState(false);
@@ -64,7 +64,7 @@ const AddNanny_2 = ({ route, navigation }: any) => {
     }
 
     const navigateToReviewPage = () => {
-        navigation.navigate('AddNanny_review', { ownerEmail, username, rate, rateType, lists, setAddSuccess, getUsers })
+        navigation.navigate('AddNanny_review', { ownerEmail, username, rate, rateType, lists, setAddError, getUsers })
     }
 
     return (
