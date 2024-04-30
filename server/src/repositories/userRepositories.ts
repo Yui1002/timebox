@@ -47,7 +47,7 @@ class UserRepositories {
     const client = await pool.connect();
     try {
       const sql = "INSERT INTO public.users_schedule VALUES ($1, $2, $3, $4, $5);";
-      const premises = schedules.map(async ({day, start, end}) => {
+      const premises = schedules.map(async ({ day, start, end }) => {
         await client.query(sql, [uuidv4(), userId, day, start, end])
       })
       return await Promise.all(premises).then(() => { return true });
@@ -106,11 +106,52 @@ class UserRepositories {
   }
 
   async editUser(req: any, userId: string) {
-    const { firstName, lastName, username, rate, rateType, status, updateDate } = req;
+    const { updatedUsername, updatedRate, updatedRateType, updatedStatus, finalShifts } = req;
     const client = await pool.connect();
     try {
       const sql = "UPDATE public.users SET first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
-      const data = await client.query(sql, [firstName, lastName, username, rate, rateType, status, updateDate, userId]);
+      await client.query(sql, [null, null, updatedUsername, updatedRate, updatedRateType, updatedStatus, new Date(), userId]);
+      return true;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async editSchedule(userId: string, shifts: []) {
+    const client = await pool.connect();
+    try {
+      const sql1 = "SELECT day, start_time, end_time FROM public.users_schedule WHERE user_id=$1;";
+      const data = (await client.query(sql1, [userId])).rows;
+      shifts.map(async (s: { day: string, start_time: string, end_time: number }) => {
+        console.log('s: ', s)
+        const isMatch = data.some((d) => d.day === s.day)
+        if (isMatch) {
+          try {
+            const sql2 = "UPDATE public.users_schedule SET start_time=$1, end_time=$2 WHERE user_id=$3 AND day=$4;";
+            await client.query(sql2, [s.start_time, s.end_time, userId, s.day]);
+            const index = data.findIndex((d) => d.day === s.day)
+            data.splice(index, 1)
+          } catch (err) {
+            return err
+          }
+        } else {
+          const uuid = uuidv4();
+          try {
+            const sql3 = "INSERT INTO public.users_schedule VALUES ($1, $2, $3, $4, $5);";
+            await client.query(sql3, [uuid, userId, s.day, s.start_time, s.end_time]);
+          } catch (err) {
+            return err;
+          }
+        }
+      })
+      if (data.length > 0) {
+        data.map(async (d) => {
+          const sql4 = "DELETE FROM public.users_schedule WHERE user_id=$1 AND day=$2;";
+          await client.query(sql4, [userId, d.day]);
+        })
+      }
       return true;
     } catch (err) {
       return err;

@@ -33,8 +33,9 @@ class UserModels {
   }
 
   async editUser(req: any) {
-    const userId = await this.repositories.getUserId(req.originalUsername);
-    return await this.repositories.editUser(req, userId);
+    const userId = await this.repositories.getUserId(req.user_name);
+    await this.repositories.editUser(req, userId);
+    return await this.repositories.editSchedule(userId, req.finalShifts)
   }
 
   async isUserRegistered(ownerEmail: string, username: string) {

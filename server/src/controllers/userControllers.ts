@@ -23,6 +23,7 @@ class UserControllers {
   }
 
   async editUser(req: any, res: any) {
+    console.log('body: ', req.body)
     const response = await this.models.editUser(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }

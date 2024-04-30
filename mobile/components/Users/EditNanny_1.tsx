@@ -15,7 +15,7 @@ const EditNanny_1 = ({ route, navigation }: any) => {
   const [updatedUsername, setUpdatedUsername] = useState(user_name);
   const [updatedRate, setUpdatedRate] = useState(rate);
   const [updatedRateType, setUpdatedRateType] = useState(rate_type);
-  const [updatedStatus, setUpdatedStatus] = useState('');
+  const [updatedStatus, setUpdatedStatus] = useState(status);
   const [inputErrors, setInputErrors] = useState({ type: '', title: '', msg: '' });
 
   const validateInput = async () => {
@@ -32,7 +32,7 @@ const EditNanny_1 = ({ route, navigation }: any) => {
     setInputErrors({ type: '', title: '', msg: '' });
     navigation.navigate
       ('EditNanny_2', {
-        ownerEmail, updatedUsername, updatedRate, updatedRateType, shifts, setEditError, getUsers
+        ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, shifts, setEditError, getUsers
       });
   }
 

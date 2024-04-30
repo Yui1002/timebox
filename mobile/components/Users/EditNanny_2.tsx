@@ -11,9 +11,8 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const EditNanny_2 = ({ route, navigation }: any) => {
-    const { ownerEmail, updatedUsername, updatedRate, updatedRateType, shifts, setEditError, getUsers } = route.params;
+    const { ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, shifts, setEditError, getUsers } = route.params;
     const [finalShifts, setFinalShifts] = useState(shifts);
-    console.log('final shifts: ', finalShifts)
 
     const navigateToEditPage = (item) => {
         navigation.navigate('EditNanny_2_1', { item, finalShifts, setFinalShifts })
@@ -24,7 +23,7 @@ const EditNanny_2 = ({ route, navigation }: any) => {
     }
 
     const navigateToReviewPage = () => {
-        navigation.navigate('EditNanny_review')
+        navigation.navigate('EditNanny_review', { finalShifts, ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, getUsers })
     }
 
     const deleteList = (item) => {

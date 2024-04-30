@@ -12,20 +12,18 @@ import axios from 'axios';
 import { LOCAL_HOST_URL } from '../../config.js';
 
 const EditNanny_review = ({ route, navigation }: any) => {
-    const { username, rate, rateType, lists, ownerEmail, setAddError, getUsers } = route.params;
+    const { finalShifts, ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, getUsers } = route.params;
     
     const submitForm = () => {
-        axios.post(`${LOCAL_HOST_URL}/user`, {
-            ownerEmail, username, rate, rateType, lists
+        axios.post(`${LOCAL_HOST_URL}/edit/user`, {
+            ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, finalShifts
         })
         .then((res) => {
-            setAddError({ status: 'success', msg: `Successfully added ${username}!` });
             getUsers();
-            navigation.navigate('Home_admin', {username})
+            navigation.navigate('Home_admin', {updatedUsername})
         })
         .catch((err) => {
-            setAddError({ status: 'error', msg: `Failed to add ${username}. Please try again.` })
-            navigation.navigate('Home_admin', {username})
+            navigation.navigate('Home_admin', {updatedUsername})
         })
     }
 
@@ -36,28 +34,32 @@ const EditNanny_review = ({ route, navigation }: any) => {
                 <VStack>
                     <HStack>
                         <Text>Username: </Text>
-                        <Text>{`${username}`}</Text>
+                        <Text>{`${updatedUsername}`}</Text>
                     </HStack>
                     <HStack>
                         <Text>Rate: </Text>
-                        <Text>{`${rate}`}</Text>
+                        <Text>{`${updatedRate}`}</Text>
                     </HStack>
                     <HStack>
                         <Text>Rate Type: </Text>
-                        <Text>{`${rateType}`}</Text>
+                        <Text>{`${updatedRateType}`}</Text>
+                    </HStack>
+                    <HStack>
+                        <Text>Status: </Text>
+                        <Text>{`${updatedStatus}`}</Text>
                     </HStack>
                 </VStack>
                 <Box>
                     <Text>Working Days / Hours</Text>
-                    {lists.map((list) => (
+                    {finalShifts.map((f) => (
                             <Box>
-                                <Text>{'\u2B24'} {`${list.day}   ${list.start} - ${list.end}`}</Text>
+                                <Text>{'\u2B24'} {`${f.day}   ${f.start_time} - ${f.end_time}`}</Text>
                             </Box>
                         ))}
                 </Box>
-                <HStack space={2}>
+                <HStack space={2} mt={10}>
                     <Button borderRadius={20} onPress={() => navigation.goBack()}>Go Back</Button>
-                    <Button borderRadius={20} onPress={submitForm}>Add</Button>
+                    <Button borderRadius={20} onPress={submitForm}>Edit</Button>
                 </HStack>
             </Box>
         </NativeBaseProvider>
