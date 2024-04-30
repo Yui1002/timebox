@@ -8,6 +8,11 @@ import {
     IconButton,
     Button,
     AlertDialog,
+    Modal,
+    FormControl,
+    Input,
+    Select,
+    CheckIcon,
 } from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -15,6 +20,13 @@ const EditNanny_2 = ({ route, navigation }: any) => {
     const cancelRef = React.useRef(null);
     const { ownerEmail, updatedUsername, updatedRate, updatedRateType, shifts, setEditError, getUsers } = route.params;
     const [finalShifts, setFinalShifts] = useState(shifts);
+    const [editEnabled, setEditEnabled] = useState(false);
+
+    console.log('final shift: ', finalShifts)
+
+    const navigateToEditPage = (item) => {
+        navigation.navigate('EditNanny_2_1', {item, finalShifts, setFinalShifts})
+    }
 
     const navigateToReviewPage = () => {
         navigation.navigate('EditNanny_review')
@@ -45,11 +57,11 @@ const EditNanny_2 = ({ route, navigation }: any) => {
                             <IconButton _icon={{
                                 as: AntDesign,
                                 name: "edit"
-                            }} />
+                            }} onPress={() => navigateToEditPage(item)} />
                         </Box>
                     </HStack>
                 )}
-                <Button position='fixed' right={0} bottom={0} onPress={navigateToReviewPage}>Next</Button>
+                <Button position='fixed' right={0} bottom={0} onPress={navigateToReviewPage}>Review</Button>
             </Box>
 
         </NativeBaseProvider>
