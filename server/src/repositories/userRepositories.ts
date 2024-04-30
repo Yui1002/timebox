@@ -61,7 +61,6 @@ class UserRepositories {
 
   async getOwnerId(email: string) {
     const client = await pool.connect();
-
     try {
       const sql =
         "SELECT owner_id FROM public.owners WHERE email_address = $1;";
@@ -76,7 +75,6 @@ class UserRepositories {
 
   async getUser(username: string) {
     const client = await pool.connect();
-
     try {
       const sql = "SELECT * FROM users WHERE user_name=$1;";
       const data = await client.query(sql, [username]);
@@ -90,12 +88,9 @@ class UserRepositories {
 
   async getUsers(ownerId: string) {
     const client = await pool.connect();
-
     try {
-      // const sql =
-      //   "SELECT first_name, last_name, user_name, rate, rate_type, status FROM users WHERE owner_id = $1 ORDER BY update_date DESC;";
       const sql =
-        "SELECT first_name, last_name, user_name, rate, rate_type, status, day, start_time, end_time FROM users u INNER JOIN users_schedule us ON u.user_id = us.user_id WHERE u.owner_id = $1 ORDER BY update_date DESC;";
+        "SELECT first_name, last_name, user_name, rate, rate_type, status, day, start_time, end_time FROM users u LEFT JOIN users_schedule us ON u.user_id = us.user_id WHERE u.owner_id = $1 ORDER BY update_date DESC;";
       const data = await client.query(sql, [ownerId]);
       return data.rows;
     } catch (err) {
@@ -202,7 +197,6 @@ class UserRepositories {
   async startRecord(userId: string) {
     const client = await pool.connect();
     const uuid = uuidv4();
-
     try {
       const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, CURRENT_TIME, $5, $6, CURRENT_TIMESTAMP, $7);";
       await client.query(sql, [uuid, null, userId, 1, null, null, userId]);

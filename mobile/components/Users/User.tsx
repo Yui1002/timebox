@@ -63,7 +63,11 @@ const User = ({ user, getUsers, ownerEmail, setEditError }: any) => {
       </HStack>
       <HStack justifyContent="space-between">
         <VStack>
-          {shifts.map((s) => <Text fontSize={12} color="coolGray.800">{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)}
+          {/* {shifts.map((s) => <Text fontSize={12} color="coolGray.800">{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)} */}
+          {shifts.map((s) => s.day === null ? 
+            <Text fontSize={12} color="coolGray.800">Not registered</Text> : 
+            <Text fontSize={12} color="coolGray.800">{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)
+          }
         </VStack>
         <VStack>
           <Text fontSize="xs">
