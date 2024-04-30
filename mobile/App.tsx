@@ -28,6 +28,7 @@ import EditNanny_1 from './components/Users/EditNanny_1';
 import EditNanny_2 from './components/Users/EditNanny_2';
 import EditNanny_2_1 from './components/Users/EditNanny_2_1'
 import EditNanny_review from './components/Users/EditNanny_review';
+import AddNanny_schedule from './components/Users/AddNanny_schedule'
 import User from './components/Users/User';
 
 function App(): JSX.Element {
@@ -140,6 +141,11 @@ function App(): JSX.Element {
           name="User"
           component={User}
           options={{title: 'User'}}
+        />
+        <Stack.Screen
+          name="AddNanny_schedule"
+          component={AddNanny_schedule}
+          options={{title: 'AddNanny_schedule'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
