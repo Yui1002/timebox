@@ -92,6 +92,7 @@ class UserRepositories {
       const sql =
         "SELECT first_name, last_name, user_name, rate, rate_type, status, day, start_time, end_time FROM users u LEFT JOIN users_schedule us ON u.user_id = us.user_id WHERE u.owner_id = $1 ORDER BY update_date DESC;";
       const data = await client.query(sql, [ownerId]);
+      console.log('data', data.rows)
       return data.rows;
     } catch (err) {
       return err;

@@ -16,7 +16,7 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 
 const AddNanny_schedule = ({ route, navigation }: any) => {
-    const { setFinalShifts } = route.params;
+    const { finalShifts, setFinalShifts } = route.params;
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     const [selectedDay, setSelectedDay] = useState('');
     const [startTime, setStartTime] = useState<string>('');
@@ -62,7 +62,6 @@ const AddNanny_schedule = ({ route, navigation }: any) => {
 
     const addSchedule = () => {
         if (!validateInput()) return;
-        clearInput();
         const newValue = {day: selectedDay, start_time: convertFormat(startTime), end_time: convertFormat(endTime)}
         setFinalShifts(s => [...s, newValue]);
 

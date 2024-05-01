@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, {useState, useRef} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {
   Box,
   Text,
@@ -14,13 +14,15 @@ import {
   Pressable,
 } from 'native-base';
 import axios from 'axios';
-import { LOCAL_HOST_URL } from '../../config.js';
+import {LOCAL_HOST_URL} from '../../config.js';
 
-const User = ({ user, getUsers, ownerEmail, setEditError }: any) => {
+const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
-  const { user_name, rate, rate_type, status, shifts } = user;
+  const {user_name, rate, rate_type, status, shifts} = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  console.log(shifts.length)
 
   const deleteUser = () => {
     axios
@@ -47,27 +49,59 @@ const User = ({ user, getUsers, ownerEmail, setEditError }: any) => {
     <Box width="100%" borderBottomWidth="1" borderColor="muted.800" py="1.5">
       <HStack space={[2, 3]}>
         <VStack>
-          <Text fontSize={16} bold>{user_name}</Text>
+          <Text fontSize={16} bold>
+            {user_name}
+          </Text>
         </VStack>
         <Spacer />
         <VStack>
           <Text fontSize="xs">{status}</Text>
         </VStack>
-        <Menu w='190' trigger={triggerProps => {
-          return <Pressable accessibilityLabel='More options menu' {...triggerProps}><HamburgerIcon size={6} /></Pressable>
-        }}>
-          <Menu.Item onPress={() => navigation.navigate("EditNanny_1", { user, getUsers, ownerEmail, setEditError })}>Edit</Menu.Item>
-          <Menu.Item onPress={() => setDeleteDialogOpen(true)}>Delete</Menu.Item>
-          <Menu.Item onPress={() => navigation.navigate("History", { usename: user_name })}>Show record</Menu.Item>
+        <Menu
+          w="190"
+          trigger={triggerProps => {
+            return (
+              <Pressable
+                accessibilityLabel="More options menu"
+                {...triggerProps}>
+                <HamburgerIcon size={6} />
+              </Pressable>
+            );
+          }}>
+          <Menu.Item
+            onPress={() =>
+              navigation.navigate('EditNanny_username', {
+                user,
+                getUsers,
+                ownerEmail,
+                setEditError,
+              })
+            }>
+            Edit
+          </Menu.Item>
+          <Menu.Item onPress={() => setDeleteDialogOpen(true)}>
+            Delete
+          </Menu.Item>
+          <Menu.Item
+            onPress={() =>
+              navigation.navigate('History', {usename: user_name})
+            }>
+            Show record
+          </Menu.Item>
         </Menu>
       </HStack>
       <HStack justifyContent="space-between">
         <VStack>
-          {/* {shifts.map((s) => <Text fontSize={12} color="coolGray.800">{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)} */}
-          {shifts.map((s) => s.day === null ? 
-            <Text fontSize={12} color="coolGray.800">Not registered</Text> : 
-            <Text fontSize={12} color="coolGray.800">{`${s.day.substring(0, 3)}: ${s.start_time} - ${s.end_time}`}</Text>)
-          }
+          {shifts.length > 0 ? (
+            <Text fontSize={12} color="coolGray.800">{`${shifts[0].day.substring(
+              0,
+              3,
+            )}: ${shifts[0].start_time} - ${shifts[0].end_time}`}</Text>
+          ) : (
+            <Text fontSize={12} color="coolGray.800">
+              Not registered
+            </Text>
+          )}
         </VStack>
         <VStack>
           <Text fontSize="xs">
@@ -82,9 +116,7 @@ const User = ({ user, getUsers, ownerEmail, setEditError }: any) => {
         <AlertDialog.Content>
           <AlertDialog.CloseButton />
           <AlertDialog.Header>Delete Nanny</AlertDialog.Header>
-          <AlertDialog.Body>
-            Are you sure to delete the nanny?
-          </AlertDialog.Body>
+          <AlertDialog.Body>Are you sure to delete the nanny?</AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
               <Button

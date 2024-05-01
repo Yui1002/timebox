@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { LOCAL_HOST_URL } from '../../config.js';
+import React, {useEffect, useState} from 'react';
+import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {
   Box,
   Text,
@@ -14,21 +14,23 @@ import {
 import User from './User';
 
 interface userObjType {
-  first_name?: string | null,
-  last_name?: string | null,
-  user_name?: string,
-  rate?: number,
-  rate_type?: string | null,
-  status?: string,
-  shifts?: [{
-    day: 'string',
-    start_time: string,
-    end_time: string
-  }]
-};
+  first_name?: string | null;
+  last_name?: string | null;
+  user_name?: string;
+  rate?: number;
+  rate_type?: string | null;
+  status?: string;
+  shifts?: [
+    {
+      day: 'string';
+      start_time: string;
+      end_time: string;
+    },
+  ];
+}
 
-const Users = ({ email, setAddError, setEditError }: any) => {
-  const { navigate } = useNavigation();
+const Users = ({email, setAddError, setEditError}: any) => {
+  const {navigate} = useNavigation();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -47,59 +49,73 @@ const Users = ({ email, setAddError, setEditError }: any) => {
       });
   };
 
-  const processUserData = (users: []) => {
+  const processUserData = (users: {
+    first_name: string | null;
+    last_name: string | null;
+    user_name: string;
+    rate: number;
+    rate_type: string | null;
+    status: string,
+    day: string | null;
+    start_time: string | null;
+    end_time: string | null;
+  }[]): userObjType[] => {
     const result = [];
+    result.push(formatData(users[0]));
 
-    users.map((user) => {
-      if (result.length < 1) {
-        const firstUser = {};
-        firstUser['first_name'] = null;
-        firstUser['last_name'] = null;
-        firstUser['user_name'] = user.user_name;
-        firstUser['rate'] = user.rate;
-        firstUser['rate_type'] = user.rate_type;
-        firstUser['status'] = user.status
-        firstUser['shifts'] = [];
-        firstUser['shifts'].push({
-          day: user.day,
-          start_time: user.start_time,
-          end_time: user.end_time
-        })
-        result.push(firstUser);
-        return;
+    for (let i = 1; i < users.length; i++) {
+      let username = users[i].user_name;
+      const isUsernameDuplicated = result.some(e => e.user_name === username);
+      if (!isUsernameDuplicated) {
+        result.push(formatData(users[i]));
+      } else {
+        result
+          .find(v => v.user_name === username)
+          ?.shifts.push({
+            day: users[i].day,
+            start_time: users[i].start_time,
+            end_time: users[i].end_time,
+          });
       }
-      if (result.some((e) => e.user_name == user.user_name)) {
-        const target = result.find((e) => e.username == user.username);
-        target['shifts'].push({
-          day: user.day,
-          start_time: user.start_time,
-          end_time: user.end_time
-        })
-        return;
-      }
-      const newUser = {};
-      newUser['first_name'] = null;
-      newUser['last_name'] = null;
-      newUser['user_name'] = user.user_name;
-      newUser['rate'] = user.rate;
-      newUser['rate_type'] = user.rate_type;
-      newUser['status'] = user.status
-      newUser['shifts'] = [];
-      newUser['shifts'].push({
-        day: user.day,
-        start_time: user.start_time,
-        end_time: user.end_time
-      })
-      result.push(newUser);
-    })
+    }
     return result;
-  }
+  };
+
+  const formatData = data => {
+    return {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      user_name: data.user_name,
+      rate: data.rate,
+      rate_type: data.rate_type,
+      status: data.status,
+      shifts:
+        data.day == null && data.start_time == null && data.end_time == null
+          ? []
+          : [
+              {
+                day: data.day,
+                start_time: data.start_time,
+                end_time: data.end_time,
+              },
+            ],
+    };
+  };
 
   return (
     <Box m="5%">
       <HStack space={2} justifyContent="space-between" alignItems="start">
         <Heading size="lg">Nannies</Heading>
-        <Button onPress={() => navigate('AddNanny_1', { ownerEmail: email, setAddError: setAddError, getUsers: getUsers })} size="md" borderRadius="40">
+        <Button
+          onPress={() =>
+            navigate('AddNanny_1', {
+              ownerEmail: email,
+              setAddError: setAddError,
+              getUsers: getUsers,
+            })
+          }
+          size="md"
+          borderRadius="40">
           Add a Nanny
         </Button>
       </HStack>

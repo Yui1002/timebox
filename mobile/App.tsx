@@ -15,7 +15,6 @@ import Users from './components/Users/Users';
 import Start from './components/Start';
 import Starter from './components/Starter';
 import Home_nanny from './components/Home_nanny';
-import Activities from './components/Activities/Activities';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
@@ -24,9 +23,9 @@ import History from './components/Users/History';
 import AddNanny_1 from './components/Users/AddNanny_1';
 import AddNanny_2 from './components/Users/AddNanny_2';
 import AddNanny_review from './components/Users/AddNanny_review';
-import EditNanny_1 from './components/Users/EditNanny_1';
-import EditNanny_2 from './components/Users/EditNanny_2';
-import EditNanny_2_1 from './components/Users/EditNanny_2_1'
+import EditNanny_username from './components/Users/EditNanny_username';
+import EditNanny_schedule_home from './components/Users/EditNanny_schedule_home';
+import EditNanny_schedule from './components/Users/EditNanny_schedule'
 import EditNanny_review from './components/Users/EditNanny_review';
 import AddNanny_schedule from './components/Users/AddNanny_schedule'
 import User from './components/Users/User';
@@ -93,11 +92,6 @@ function App(): JSX.Element {
           options={{title: 'History'}}
         />
         <Stack.Screen
-          name="Activities"
-          component={Activities}
-          options={{title: 'Activities'}}
-        />
-        <Stack.Screen
           name="Home_nanny"
           component={Home_nanny}
           options={{title: 'Home'}}
@@ -118,18 +112,18 @@ function App(): JSX.Element {
           options={{title: 'Add Nanny'}}
         />
         <Stack.Screen
-          name="EditNanny_1"
-          component={EditNanny_1}
+          name="EditNanny_username"
+          component={EditNanny_username}
           options={{title: 'Edit Nanny'}}
         />
         <Stack.Screen
-          name="EditNanny_2"
-          component={EditNanny_2}
+          name="EditNanny_schedule_home"
+          component={EditNanny_schedule_home}
           options={{title: 'Edit Nanny'}}
         />
         <Stack.Screen
-          name="EditNanny_2_1"
-          component={EditNanny_2_1}
+          name="EditNanny_schedule"
+          component={EditNanny_schedule}
           options={{title: 'Edit Nanny'}}
         />
         <Stack.Screen

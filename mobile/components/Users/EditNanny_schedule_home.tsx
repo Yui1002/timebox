@@ -10,12 +10,18 @@ import {
 } from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const EditNanny_2 = ({ route, navigation }: any) => {
+interface dayTimeObject {
+    day: string,
+    start_time: string,
+    end_time: string
+}
+
+const EditNanny_schedule_home = ({ route, navigation }: any) => {
     const { ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, shifts, setEditError, getUsers } = route.params;
     const [finalShifts, setFinalShifts] = useState(shifts);
 
-    const navigateToEditPage = (item) => {
-        navigation.navigate('EditNanny_2_1', { item, finalShifts, setFinalShifts })
+    const navigateToEditPage = (item: dayTimeObject) => {
+        navigation.navigate('EditNanny_schedule', { item, finalShifts, setFinalShifts })
     }
 
     const navigateToAddPage = () => {
@@ -26,8 +32,8 @@ const EditNanny_2 = ({ route, navigation }: any) => {
         navigation.navigate('EditNanny_review', { finalShifts, ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, getUsers })
     }
 
-    const deleteList = (item) => {
-        const result = finalShifts.filter(s => JSON.stringify(s) !== JSON.stringify(item))
+    const deleteList = (item: dayTimeObject) => {
+        const result = finalShifts.filter((s: dayTimeObject) => JSON.stringify(s) !== JSON.stringify(item))
         setFinalShifts(result);
     }
 
@@ -36,7 +42,7 @@ const EditNanny_2 = ({ route, navigation }: any) => {
             <Box m='5%'>
                 <Heading mb={8}>Edit schedule</Heading>
                 <Button borderRadius={20} w='50%' mb={6} onPress={navigateToAddPage}>Add new schedule</Button>
-                {finalShifts.map((item) =>
+                {finalShifts[0].day !== null && finalShifts.map((item: dayTimeObject) =>
                     <HStack space={3} justifyContent='center'>
                         <Text pt={3} fontSize={16}>{`${item.day.substring(0, 3)} : ${item.start_time} - ${item.end_time}`}</Text>
                         <Box>
@@ -62,4 +68,4 @@ const EditNanny_2 = ({ route, navigation }: any) => {
     );
 };
 
-export default EditNanny_2;
+export default EditNanny_schedule_home;

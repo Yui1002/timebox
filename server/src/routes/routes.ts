@@ -1,16 +1,13 @@
 import AuthControllers from "../controllers/authControllers";
 import UserControllers from "../controllers/userControllers";
-import ActivityControllers from "../controllers/activityControllers";
 
 class Routes {
     authControllers: AuthControllers;
     userControllers: UserControllers;
-    activityControllers: ActivityControllers;
 
     constructor() {
         this.authControllers = new AuthControllers();
         this.userControllers = new UserControllers();
-        this.activityControllers = new ActivityControllers();
     }
 
     applyRouting(app: any) {
@@ -33,13 +30,6 @@ class Routes {
         app.delete('/user/:username/:email', this.userControllers.deleteUser.bind(this.userControllers));
         app.post('/startRecord', this.userControllers.startRecord.bind(this.userControllers));
         app.post('/endRecord', this.userControllers.endRecord.bind(this.userControllers));
-
-        // activity routes
-        app.post('/activity', this.activityControllers.addActivity.bind(this.activityControllers));
-        app.get('/activity/:email/:name', this.activityControllers.getSpecificActivity.bind(this.activityControllers));
-        app.get('/activities/:email', this.activityControllers.getActivities.bind(this.activityControllers));
-        app.delete('/activity/:email/:name', this.activityControllers.deleteActivity.bind(this.activityControllers));
-        app.post('/edit/activity', this.activityControllers.editActivity.bind(this.activityControllers));
     }
 }
 

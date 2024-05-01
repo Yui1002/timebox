@@ -9,7 +9,7 @@ import {
   HStack,
 } from 'native-base';
 
-const EditNanny_1 = ({ route, navigation }: any) => {
+const EditNanny_username = ({ route, navigation }: any) => {
   const { ownerEmail, getUsers, setEditError } = route.params;
   const { user_name, rate, rate_type, status, shifts } = route.params.user;
   const [updatedUsername, setUpdatedUsername] = useState(user_name);
@@ -31,7 +31,7 @@ const EditNanny_1 = ({ route, navigation }: any) => {
     }
     setInputErrors({ type: '', title: '', msg: '' });
     navigation.navigate
-      ('EditNanny_2', {
+      ('EditNanny_schedule_home', {
         ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, shifts, setEditError, getUsers
       });
   }
@@ -84,4 +84,4 @@ const EditNanny_1 = ({ route, navigation }: any) => {
   );
 };
 
-export default EditNanny_1;
+export default EditNanny_username;

@@ -14,7 +14,7 @@ import {
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 
-const EditNanny_2_1 = ({ route, navigation }: any) => {
+const EditNanny_schedule = ({ route, navigation }: any) => {
     const { item, finalShifts, setFinalShifts } = route.params;
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const [selectedDay, setSelectedDay] = useState(item.day);
@@ -114,4 +114,4 @@ const EditNanny_2_1 = ({ route, navigation }: any) => {
     );
 };
 
-export default EditNanny_2_1;
+export default EditNanny_schedule;
