@@ -17,7 +17,7 @@ import axios from 'axios';
 import { LOCAL_HOST_URL } from '../config.js';
 import moment from 'moment';
 
-const Home_nanny = ({ route }: any) => {
+const Home_nanny = ({ navigation, route }: any) => {
   const username = route.params.username;
   const [time, setTime] = useState<Date>(new Date());
   const [startTime, setStartTime] = useState<string | undefined>(undefined)
@@ -31,6 +31,10 @@ const Home_nanny = ({ route }: any) => {
       clearInterval(interval);
     }
   }, [])
+
+  const signOut = () => {
+    navigation.navigate('Start')
+  }
 
   const startRecord = () => {
     setStartTime(moment().format('h:mm:ss'))
@@ -51,7 +55,8 @@ const Home_nanny = ({ route }: any) => {
 
   return (
     <NativeBaseProvider>
-      <Box style={styles.container}>
+      <Box m='5%' position='relative'>
+        <Button borderRadius={20} onPress={signOut} w={24} variant='subtle' position='absolute' top={0} right={0}>Sign Out</Button>
         <Heading size="md" mb={4}>Hello {username} !</Heading>
         <Text fontSize={16} textAlign='center'>{moment(time).format('MMMM Do YYYY, h:mm:ss a')}</Text>
         <Box style={{ flexDirection: 'row', marginTop: 30 }}>
