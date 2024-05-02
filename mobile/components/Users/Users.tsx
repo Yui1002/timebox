@@ -116,6 +116,7 @@ const Users = ({email, setAddError, setEditError}: any) => {
             })
           }
           size="md"
+          mt={10}
           borderRadius="40">
           Add a Nanny
         </Button>

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import styles from '../styles/styles';
 import {
   Box,
+  Button,
   NativeBaseProvider,
 } from 'native-base';
 import Users from './Users/Users';
 import AlertMsg from './AlertMsg';
 
-const Home_admin = ({ route }: any) => {
+const Home_admin = ({ navigation, route }: any) => {
   const email = route.params.ownerEmail;
   const [addError, setAddError] = useState({ status: undefined, msg: '' });
   const [editError, setEditError] = useState({ status: undefined, msg: '' });
@@ -19,7 +19,11 @@ const Home_admin = ({ route }: any) => {
     if (editError.status !== undefined) {
       setEditError({ status: undefined, msg: '' })
     }
-  }, 5000)
+  }, 5000);
+
+  const signOut = () => {
+    navigation.navigate('Start')
+  }
 
   return (
     <NativeBaseProvider>
@@ -27,7 +31,8 @@ const Home_admin = ({ route }: any) => {
       {addError.status == 'error' && <AlertMsg msg={addError.msg} status={addError.status} />}
       {editError.status == 'success' && <AlertMsg msg={editError.msg} status={editError.status} />}
       {editError.status == 'error' && <AlertMsg msg={editError.msg} status={editError.status} />}
-      <Box style={styles.container}>
+      <Box m='5%'>
+        <Button borderRadius={20} onPress={signOut} w={24} variant='subtle' position='absolute' top={0} right='5%'>Sign Out</Button>
         <Users email={email} setAddError={setAddError} setEditError={setEditError} />
       </Box>
     </NativeBaseProvider>
