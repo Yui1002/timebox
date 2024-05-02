@@ -22,8 +22,6 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
   const {user_name, rate, rate_type, status, shifts} = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  console.log(shifts.length)
-
   const deleteUser = () => {
     axios
       .delete(`${LOCAL_HOST_URL}/user/${user_name}/${ownerEmail}`)
@@ -93,10 +91,12 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
       <HStack justifyContent="space-between">
         <VStack>
           {shifts.length > 0 ? (
-            <Text fontSize={12} color="coolGray.800">{`${shifts[0].day.substring(
-              0,
-              3,
-            )}: ${shifts[0].start_time} - ${shifts[0].end_time}`}</Text>
+            shifts.map(s => (
+              <Text fontSize={12} color="coolGray.800">{`${s.day.substring(
+                0,
+                3,
+              )}: ${s.start_time} - ${s.end_time}`}</Text>
+            ))
           ) : (
             <Text fontSize={12} color="coolGray.800">
               Not registered

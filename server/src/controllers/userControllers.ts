@@ -23,7 +23,6 @@ class UserControllers {
   }
 
   async editUser(req: any, res: any) {
-    console.log('body: ', req.body)
     const response = await this.models.editUser(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
@@ -41,8 +40,7 @@ class UserControllers {
   }
 
   async startRecord(req: any, res: any) {
-    const { username } = req.body;
-    const response = await this.models.startRecord(username);
+    const response = await this.models.startRecord(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 

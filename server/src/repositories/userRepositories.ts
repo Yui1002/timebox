@@ -92,7 +92,6 @@ class UserRepositories {
       const sql =
         "SELECT first_name, last_name, user_name, rate, rate_type, status, day, start_time, end_time FROM users u LEFT JOIN users_schedule us ON u.user_id = us.user_id WHERE u.owner_id = $1 ORDER BY update_date DESC;";
       const data = await client.query(sql, [ownerId]);
-      console.log('data', data.rows)
       return data.rows;
     } catch (err) {
       return err;
@@ -115,19 +114,30 @@ class UserRepositories {
     }
   }
 
-  async editSchedule(userId: string, shifts: []) {
+  async getShiftsByUserId(userId: string) {
     const client = await pool.connect();
     try {
       const sql1 = "SELECT day, start_time, end_time FROM public.users_schedule WHERE user_id=$1;";
       const data = (await client.query(sql1, [userId])).rows;
+      return data;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async editSchedule(userId: string, shifts: []) {
+    const client = await pool.connect();
+    try {
+      const data = await this.getShiftsByUserId(userId);
       shifts.map(async (s: { day: string, start_time: string, end_time: number }) => {
-        console.log('s: ', s)
-        const isMatch = data.some((d) => d.day === s.day)
+        const isMatch = data.some((d: any) => d.day === s.day)
         if (isMatch) {
           try {
             const sql2 = "UPDATE public.users_schedule SET start_time=$1, end_time=$2 WHERE user_id=$3 AND day=$4;";
             await client.query(sql2, [s.start_time, s.end_time, userId, s.day]);
-            const index = data.findIndex((d) => d.day === s.day)
+            const index = data.findIndex((d: any) => d.day === s.day)
             data.splice(index, 1)
           } catch (err) {
             return err
@@ -143,7 +153,7 @@ class UserRepositories {
         }
       })
       if (data.length > 0) {
-        data.map(async (d) => {
+        data.map(async (d: any) => {
           const sql4 = "DELETE FROM public.users_schedule WHERE user_id=$1 AND day=$2;";
           await client.query(sql4, [userId, d.day]);
         })
@@ -155,6 +165,7 @@ class UserRepositories {
       client.release();
     }
   }
+
 
   async getUserId(username: string) {
     const client = await pool.connect();
@@ -195,12 +206,12 @@ class UserRepositories {
     }
   }
 
-  async startRecord(userId: string) {
+  async startRecord(userId: string, startTime: string) {
     const client = await pool.connect();
     const uuid = uuidv4();
     try {
-      const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, CURRENT_TIME, $5, $6, CURRENT_TIMESTAMP, $7);";
-      await client.query(sql, [uuid, null, userId, 1, null, null, userId]);
+      const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, $6, $7, CURRENT_TIMESTAMP, $8, $9)"
+      await client.query(sql, [uuid, null, userId, null, startTime, null, 'active', userId, null]);
       return true;
     } catch (err) {
       return err;
@@ -213,9 +224,7 @@ class UserRepositories {
     const client = await pool.connect();
     const uuid = uuidv4();
     try {
-      const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, CURRENT_TIME, $5, $6, CURRENT_TIMESTAMP, $7);";
-      await client.query(sql, [uuid, null, userId, 2, null, null, userId]);
-      return true;
+      console.log('here')
     } catch (err) {
       console.log(err)
       return err;

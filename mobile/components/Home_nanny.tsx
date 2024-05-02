@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/styles';
 import {
   Heading,
@@ -19,62 +19,46 @@ import moment from 'moment';
 
 const Home_nanny = ({ route }: any) => {
   const username = route.params.username;
-  const [recordResult, setRecordResult] = useState({status: false, msg: ''});
+  const [time, setTime] = useState<Date>(new Date());
+  const [startTime, setStartTime] = useState<string | undefined>(undefined)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, [])
 
   const startRecord = () => {
-    axios.post(`${LOCAL_HOST_URL}/startRecord`, { username })
+    setStartTime(moment().format('h:mm:ss'))
+    axios.post(`${LOCAL_HOST_URL}/startRecord`, { username, startTime })
       .then(() => {
-        renderResult('start', true);
       })
       .catch((err) => {
-        renderResult('start', false);
       })
   };
 
   const endRecord = () => {
     axios.post(`${LOCAL_HOST_URL}/endRecord`, { username })
     .then(() => {
-      renderResult('end', true);
     })
     .catch ((err) => {
-      renderResult('end', false);
     })
-  }
-
-  const renderResult = (type: string, isSuccess: boolean) => {
-    return Toast.show({
-      description: isSuccess ? `${type} time recorded!` : 'Failed t orecord. Please try again!',
-      placement: 'top'
-    });
   }
 
   return (
     <NativeBaseProvider>
       <Box style={styles.container}>
-        <Heading size="md">Hello {username} !</Heading>
-        <Text>{moment().format('LLLL')}</Text>
-        {(recordResult.status || !recordResult.status) && (recordResult.msg !== '') &&
-          <Alert status={recordResult.status ? 'success' : 'false'}>
-            <VStack space={2} flexShrink={1} w="100%">
-              <HStack flexShrink={1} space={2} justifyContent="space-between">
-                <HStack space={2} flexShrink={1}>
-                  <Alert.Icon mt="1" />
-                  <Text fontSize="md" color="coolGray.800">
-                    {recordResult.msg}
-                  </Text>
-                </HStack>
-                <IconButton variant="unstyled" _focus={{
-                  borderWidth: 0
-                }} icon={<CloseIcon size="3" />} _icon={{
-                  color: "coolGray.600"
-                }} />
-              </HStack>
-            </VStack>
-          </Alert>}
+        <Heading size="md" mb={4}>Hello {username} !</Heading>
+        <Text fontSize={16} textAlign='center'>{moment(time).format('MMMM Do YYYY, h:mm:ss a')}</Text>
         <Box style={{ flexDirection: 'row', marginTop: 30 }}>
           <Box w="46%" style={{ marginLeft: 16 }}>
             <Text style={{ marginBottom: 4 }}>Start</Text>
             <Button style={{ width: '80%' }} onPress={startRecord}>Record</Button>
+            {startTime && <Text>{startTime}</Text>}
           </Box>
           <Box w="4%"></Box>
           <Box w="46%">

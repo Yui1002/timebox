@@ -48,9 +48,10 @@ class UserModels {
     return await this.repositories.deleteUser(ownerId, username);
   }
 
-  async startRecord(username: string) {
+  async startRecord(req: any) {
+    const { username, startTime } = req;
     const userId = await this.repositories.getUserId(username);
-    return await this.repositories.startRecord(userId)
+    return await this.repositories.startRecord(userId, startTime)
   }
 
   async endRecord(username: string) {
