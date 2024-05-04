@@ -30,9 +30,9 @@ class AuthRepositories {
   async isNannyRegistered(username: string) {
     const client = await pool.connect();
     try {
-      const sql = "SELECT * FROM public.users WHERE user_name = $1;";
-      const data = await client.query(sql, [username]);
-      return data.rowCount > 0;
+      const sql = "SELECT COUNT (*) FROM public.users WHERE user_name = $1;";
+      const data = (await client.query(sql, [username])).rows[0].count;
+      return data > 0;
     } catch (err) {
       return err;
     } finally {

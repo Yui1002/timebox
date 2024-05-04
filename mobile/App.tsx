@@ -29,6 +29,7 @@ import EditNanny_schedule from './components/Users/EditNanny_schedule'
 import EditNanny_review from './components/Users/EditNanny_review';
 import AddNanny_schedule from './components/Users/AddNanny_schedule'
 import User from './components/Users/User';
+import CheckIn_out_complete from './components/Users/CheckIn_out_complete';
 
 function App(): JSX.Element {
   const Stack = createStackNavigator();
@@ -59,7 +60,7 @@ function App(): JSX.Element {
         <Stack.Screen
           name="SignIn_Nanny"
           component={SignIn_Nanny}
-          options={{title: 'Sign In_Nanny'}}
+          options={{title: 'Sign In'}}
         />
         <Stack.Screen
           name="ForgotPassword"
@@ -140,6 +141,11 @@ function App(): JSX.Element {
           name="AddNanny_schedule"
           component={AddNanny_schedule}
           options={{title: 'AddNanny_schedule'}}
+        />
+        <Stack.Screen
+          name="CheckIn_out_complete"
+          component={CheckIn_out_complete}
+          options={{title: ''}}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,77 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import styles from '../styles/styles';
+import React, {useState, useEffect} from 'react';
 import {
   Heading,
-  Alert,
   Box,
   Button,
   VStack,
   HStack,
-  Toast,
   NativeBaseProvider,
   IconButton,
-  CloseIcon,
-  Text
+  Text,
+  Center,
+  Divider,
 } from 'native-base';
 import axios from 'axios';
-import { LOCAL_HOST_URL } from '../config.js';
+import {LOCAL_HOST_URL} from '../config.js';
 import moment from 'moment';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const Home_nanny = ({ navigation, route }: any) => {
+const Home_nanny = ({navigation, route}: any) => {
   const username = route.params.username;
   const [time, setTime] = useState<Date>(new Date());
-  const [startTime, setStartTime] = useState<string | undefined>(undefined)
+  const [startTime, setStartTime] = useState<string | undefined>(undefined);
+  const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
     }, 1000);
+    getTodaysRecord();
 
     return () => {
       clearInterval(interval);
-    }
-  }, [])
+    };
+  }, []);
 
   const signOut = () => {
-    navigation.navigate('Start')
-  }
+    navigation.navigate('Start');
+  };
 
   const startRecord = () => {
-    setStartTime(moment().format('h:mm:ss'))
-    axios.post(`${LOCAL_HOST_URL}/startRecord`, { username, startTime })
+    const checkedInTime = moment().format('h:mm:ss');
+    axios
+      .post(`${LOCAL_HOST_URL}/startRecord`, {username, checkedInTime})
       .then(() => {
+        setStartTime(checkedInTime);
+        navigation.navigate('CheckIn_out_complete', {
+          type: 'Checked In',
+          time: checkedInTime,
+        });
       })
-      .catch((err) => {
-      })
+      .catch(err => {});
   };
 
   const endRecord = () => {
-    axios.post(`${LOCAL_HOST_URL}/endRecord`, { username })
-    .then(() => {
-    })
-    .catch ((err) => {
-    })
-  }
+    const checkedOutTime = moment().format('h:mm:ss');
+    axios
+      .post(`${LOCAL_HOST_URL}/endRecord`, {username, checkedOutTime})
+      .then(() => {
+        setEndTime(checkedOutTime);
+        navigation.navigate('CheckIn_out_complete', {
+          type: 'Checked Out',
+          time: checkedOutTime,
+        });
+      })
+      .catch(err => {});
+  };
+
+  const getTodaysRecord = () => {
+    axios
+      .get(`${LOCAL_HOST_URL}/getTodaysRecord/${username}`)
+      .then(res => {
+        const data = res.data;
+        if (data.length === 0) {
+          setStartTime(undefined);
+          setEndTime(undefined);
+          return;
+        }
+        const start = data[0].start_time;
+        const end = data[0].end_time;
+        start == null ? setStartTime(undefined) : setStartTime(start);        
+        end == null ? setEndTime(undefined) : setEndTime(end);        
+      })
+      .catch(err => console.log(err));
+  };
 
   return (
     <NativeBaseProvider>
-      <Box m='5%' position='relative'>
-        <Button borderRadius={20} onPress={signOut} w={24} variant='subtle' position='absolute' top={0} right={0}>Sign Out</Button>
-        <Heading size="md" mb={4}>Hello {username} !</Heading>
-        <Text fontSize={16} textAlign='center'>{moment(time).format('MMMM Do YYYY, h:mm:ss a')}</Text>
-        <Box style={{ flexDirection: 'row', marginTop: 30 }}>
-          <Box w="46%" style={{ marginLeft: 16 }}>
-            <Text style={{ marginBottom: 4 }}>Start</Text>
-            <Button style={{ width: '80%' }} onPress={startRecord}>Record</Button>
-            {startTime && <Text>{startTime}</Text>}
-          </Box>
-          <Box w="4%"></Box>
-          <Box w="46%">
-            <Text style={{ marginBottom: 4 }}>End</Text>
-            <Button style={{ width: '80%' }} onPress={endRecord}>Record</Button>
-          </Box>
-        </Box>
-
+      <VStack backgroundColor="#f5f5dc">
+        <Heading size="lg" mt={4} mb={2} textAlign="center">
+          Hello {username} !
+        </Heading>
+        <Heading size="sm" mb={4} textAlign="center">
+          {moment(time).format('MMMM D,  h:mm:ss a')}
+        </Heading>
+      </VStack>
+      <Center m="5%" mt={10}>
+        <HStack space={2} justifyContent="space-between">
+          <Button
+            w="45%"
+            isDisabled={startTime !== undefined}
+            onPress={startRecord}
+            backgroundColor="#9acd32"
+            borderRadius={10}
+            p={4}>
+            <IconButton
+              isDisabled={startTime !== undefined}
+              onPress={startRecord}
+              _icon={{
+                as: AntDesign,
+                name: 'clockcircleo',
+                color: '#fff',
+                size: 10,
+              }}
+            />
+            <Text color="#fff" textAlign="center" bold>
+              Check In
+            </Text>
+          </Button>
+          <Button
+            w="45%"
+            backgroundColor="#A9A9A9"
+            borderRadius={10}
+            p={4}
+            isDisabled={startTime === undefined || endTime !== undefined}>
+            <IconButton
+              isDisabled={startTime === undefined || endTime !== undefined}
+              onPress={endRecord}
+              _icon={{
+                as: AntDesign,
+                name: 'logout',
+                color: '#fff',
+                size: 10,
+              }}
+            />
+            <Text color="#fff" textAlign="center" bold>
+              Check Out
+            </Text>
+          </Button>
+        </HStack>
+      </Center>
+      <Box m="10%">
+        <Text fontSize="md" mb={2} bold>
+          Today's record
+        </Text>
+        <VStack>
+          <HStack space={2} justifyContent="space-between">
+            <Text color="#9acd32" bold>
+              Checked In
+            </Text>
+            <Text>{startTime ? startTime : 'Not registered'}</Text>
+          </HStack>
+        </VStack>
+        <Divider my="2" />
+        <VStack>
+          <HStack space={2} justifyContent="space-between">
+            <Text color="#ff8c00" bold>
+              Checked Out
+            </Text>
+            <Text>{endTime ? endTime : 'Not registered'}</Text>
+          </HStack>
+        </VStack>
       </Box>
     </NativeBaseProvider>
   );

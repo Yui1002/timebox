@@ -40,11 +40,11 @@ class AuthControllers {
   async signInNanny(req: any, res: any) {
     const { username } = req.body;
     const isNannyRegistered = await this.models.isNannyRegistered(username);
-    if (!isNannyRegistered) {
-      res.status(400).json({ error: "Incorrect username" });
+    if (isNannyRegistered) {
+      res.status(200).send("successfully login");
       return;
     }
-    res.status(200).send("successfully login");
+    res.status(400).json({ error: "This user is not found" });
   }
 
   async sendResetPasswordCode(req: any, res: any) {

@@ -45,9 +45,14 @@ class UserControllers {
   }
 
   async endRecord(req: any, res: any) {
-    const { username } = req.body;
-    const response = await this.models.endRecord(username);
+    const response = await this.models.endRecord(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);
+  }
+
+  async getTodaysRecord(req: any, res: any) {
+    const { username } = req.params;
+    const record = await this.models.getTodaysRecord(username);
+    res.send(record);
   }
 
   async getHistory(req: any, res: any) {

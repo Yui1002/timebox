@@ -206,27 +206,44 @@ class UserRepositories {
     }
   }
 
-  async startRecord(userId: string, startTime: string) {
+  async startRecord(userId: string, checkedInTime: string) {
     const client = await pool.connect();
     const uuid = uuidv4();
     try {
       const sql = "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, $6, $7, CURRENT_TIMESTAMP, $8, $9)"
-      await client.query(sql, [uuid, null, userId, null, startTime, null, 'active', userId, null]);
+      await client.query(sql, [uuid, null, userId, null, checkedInTime, null, 'active', userId, null]);
       return true;
     } catch (err) {
+      console.log(err)
       return err;
     } finally {
       client.release();
     }
   }
 
-  async endRecord(userId: string) {
+  async endRecord(userId: string, checkedOutTime: string) {
     const client = await pool.connect();
-    const uuid = uuidv4();
     try {
-      console.log('here')
+      const sql = "SELECT time_record_id FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
+      const sql2 = "UPDATE time_record SET end_time = $1, update_by = $2, update_date = CURRENT_TIMESTAMP WHERE time_record_id = $3;";
+      const id = (await client.query(sql, [userId])).rows[0].time_record_id;
+      await client.query(sql2, [checkedOutTime, userId, id])
+      return true;
     } catch (err) {
       console.log(err)
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async getTodaysRecord(userId: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT start_time, end_time FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
+      const data = (await client.query(sql, [userId])).rows;
+      return data;
+    } catch (err) {
       return err;
     } finally {
       client.release();

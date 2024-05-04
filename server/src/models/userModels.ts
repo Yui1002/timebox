@@ -49,14 +49,20 @@ class UserModels {
   }
 
   async startRecord(req: any) {
-    const { username, startTime } = req;
+    const { username, checkedInTime } = req;
     const userId = await this.repositories.getUserId(username);
-    return await this.repositories.startRecord(userId, startTime)
+    return await this.repositories.startRecord(userId, checkedInTime)
   }
 
-  async endRecord(username: string) {
+  async endRecord(req: any) {
+    const { username, checkedOutTime } = req;
     const userId = await this.repositories.getUserId(username);
-    return await this.repositories.endRecord(userId)
+    return await this.repositories.endRecord(userId, checkedOutTime)
+  }
+
+  async getTodaysRecord(username: string) {
+    const userId = await this.repositories.getUserId(username);
+    return await this.repositories.getTodaysRecord(userId);
   }
 
   async getHistory(username: string) {

@@ -13,48 +13,41 @@ import {
 } from 'native-base';
 
 const SignIn_Nanny = ({navigation}: any) => {
-  const [username, setUsername] = useState();
-  const [usernameErrors, setUsernameErrors] = useState({});
-  const [signInErrors, setSignInErrors] = useState({});
+  const [username, setUsername] = useState('');
+  const [inputErrors, setInputErrors] = useState({ type: '', title: '', msg: '' });
+
+  const validateInput = (): boolean => {
+    if (username.length === 0) {
+      const updatedValue = { type: 'EMPTY_USERNAME', title: '', msg: 'Username is required' };
+      setInputErrors(updatedValue);
+      return false;
+    }
+    return true;
+  };
 
   const signIn = () => {
-    // check username is not empty
-    if (!validateUsername()) {
+    if (!validateInput()) {
       return;
     }
     axios
       .post(`${LOCAL_HOST_URL}/signIn_nanny`, { username })
-      .then(() => {
-        setSignInErrors({});
+      .then((res) => {
         navigation.navigate('Home_nanny', {username})
+        setInputErrors({ type: '', title: '', msg: '' });
       })
-      .catch(error => {
-        // const errMsg = error.response.data.error;
-        // setSignInErrors({
-        //   ...signInErrors,
-        //   msg: errMsg,
-        // });
+      .catch(err => {
+        const errMsg = err.response.data.error;
+        setInputErrors({ type: 'USER_NOT_FOUND', title: '', msg: errMsg });
       });
   };
 
-  const validateUsername = (): boolean => {
-    if (username === undefined) {
-      setUsername({
-        ...usernameErrors,
-        msg: 'Username is required',
-      });
-      return false;
-    }
-    setUsernameErrors({});
-    return true;
-  };
 
   const alertSignUpFailure = () => {
     return (
       <Alert status="error" w="100%">
         <Alert.Icon mt="1" />
         <Text fontSize="md" color="coolGray.800">
-          {signInErrors.msg}
+          {/* {signInErrors.msg} */}
         </Text>
       </Alert>
     );
@@ -62,12 +55,11 @@ const SignIn_Nanny = ({navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      {signInErrors.msg && alertSignUpFailure()}
       <Box m="5%">
-        <Heading size="lg">Sign In - Nanny</Heading>
+        <Heading size="lg">Sign In</Heading>
         <Box alignItems="center">
           <Box w="100%" maxWidth="300px" my="8">
-            <FormControl isRequired isInvalid={'msg' in usernameErrors}>
+            <FormControl isRequired isInvalid={inputErrors.type.length !== 0}>
               <FormControl.Label>User Name</FormControl.Label>
               <Input
                 onChangeText={val => setUsername(val)}
@@ -75,11 +67,11 @@ const SignIn_Nanny = ({navigation}: any) => {
                 autoCorrect={false}
               />
               <FormControl.ErrorMessage>
-                {usernameErrors.msg}
+                {inputErrors.msg}
               </FormControl.ErrorMessage>
             </FormControl>
           </Box>
-          <Button onPress={() => signIn()} w="150">
+          <Button borderRadius={20} onPress={() => signIn()} w="150">
             Sign In
           </Button>
         </Box>
