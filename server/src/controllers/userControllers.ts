@@ -60,6 +60,12 @@ class UserControllers {
     const history = await this.models.getHistory(username);
     res.send(history);
   }
+
+  async getInfoForNanny(req: any, res: any) {
+    const { username } = req.params;
+    const info = await this.models.getInfoForNanny(username);
+    res.send(info);
+  }
 }
 
 export default UserControllers;

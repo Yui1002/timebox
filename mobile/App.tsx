@@ -19,7 +19,7 @@ import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 import Home_admin from './components/Home_admin';
-import History from './components/Users/History';
+import Account from './components/Users/Account';
 import AddNanny_1 from './components/Users/AddNanny_1';
 import AddNanny_2 from './components/Users/AddNanny_2';
 import AddNanny_review from './components/Users/AddNanny_review';
@@ -55,12 +55,12 @@ function App(): JSX.Element {
         <Stack.Screen
           name="SignIn_Admin"
           component={SignIn_Admin}
-          options={{title: 'SignIn_Admin'}}
+          options={{title: ''}}
         />
         <Stack.Screen
           name="SignIn_Nanny"
           component={SignIn_Nanny}
-          options={{title: 'Sign In'}}
+          options={{title: ''}}
         />
         <Stack.Screen
           name="ForgotPassword"
@@ -88,9 +88,9 @@ function App(): JSX.Element {
           options={{title: 'Users'}}
         />
         <Stack.Screen
-          name="History"
-          component={History}
-          options={{title: 'History'}}
+          name="Account"
+          component={Account}
+          options={{title: 'Account'}}
         />
         <Stack.Screen
           name="Home_nanny"

@@ -82,7 +82,7 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
           </Menu.Item>
           <Menu.Item
             onPress={() =>
-              navigation.navigate('History', {usename: user_name})
+              navigation.navigate('Account', {usename: user_name})
             }>
             Show record
           </Menu.Item>

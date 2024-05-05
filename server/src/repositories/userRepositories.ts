@@ -100,6 +100,20 @@ class UserRepositories {
     }
   }
 
+  async getInfoForNanny(userId: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT rate, rate_type, day, start_time, end_time FROM users u INNER join users_schedule us ON u.user_id = us.user_id where u.user_id = $1;";
+      const data = await client.query(sql, [userId]);
+      console.log('data', data.rows)
+      return data.rows;
+    } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
   async editUser(req: any, userId: string) {
     const { updatedUsername, updatedRate, updatedRateType, updatedStatus, finalShifts } = req;
     const client = await pool.connect();

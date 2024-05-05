@@ -33,10 +33,6 @@ const Home_nanny = ({navigation, route}: any) => {
     };
   }, []);
 
-  const signOut = () => {
-    navigation.navigate('Start');
-  };
-
   const startRecord = () => {
     const checkedInTime = moment().format('h:mm:ss');
     axios
@@ -77,16 +73,25 @@ const Home_nanny = ({navigation, route}: any) => {
         }
         const start = data[0].start_time;
         const end = data[0].end_time;
-        start == null ? setStartTime(undefined) : setStartTime(start);        
-        end == null ? setEndTime(undefined) : setEndTime(end);        
+        start == null ? setStartTime(undefined) : setStartTime(start);
+        end == null ? setEndTime(undefined) : setEndTime(end);
       })
       .catch(err => console.log(err));
   };
 
   return (
     <NativeBaseProvider>
-      <VStack backgroundColor="#f5f5dc">
-        <Heading size="lg" mt={4} mb={2} textAlign="center">
+      <Button
+        w="90"
+        borderRadius={20}
+        mt={2}
+        position="relative"
+        left="270"
+        onPress={() => navigation.navigate('Account', { username: username })}>
+        Account
+      </Button>
+      <VStack>
+        <Heading size="lg" mb={2} mt={4} textAlign="center">
           Hello {username} !
         </Heading>
         <Heading size="sm" mb={4} textAlign="center">
