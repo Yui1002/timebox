@@ -49,8 +49,8 @@ class AuthRepositories {
         "INSERT INTO public.owners (owner_id, first_name, last_name, email_address, status, create_date, owner_password) VALUES ($1, $2, $3, $4, $5, $6, $7);";
       const data = await client.query(sql, [
         uuid,
-        owner.firstName,
-        owner.lastName,
+        null,
+        null,
         owner.email,
         owner.status,
         owner.createDate,

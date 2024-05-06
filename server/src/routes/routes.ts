@@ -12,8 +12,8 @@ class Routes {
 
     applyRouting(app: any) {
         // auth routes
-        app.post('/signUp', this.authControllers.signUpOwner.bind(this.authControllers));
-        app.post('/signIn', this.authControllers.signInOwner.bind(this.authControllers));
+        app.post('/signUp_admin', this.authControllers.signUpAdmin.bind(this.authControllers));
+        app.post('/signIn_admin', this.authControllers.signInAdmin.bind(this.authControllers));
         app.post('/signIn_nanny', this.authControllers.signInNanny.bind(this.authControllers));
         app.post('/user/reset', this.authControllers.sendResetPasswordCode.bind(this.authControllers));
         app.post('/user/code', this.authControllers.validateCode.bind(this.authControllers));

@@ -34,7 +34,7 @@ class AutheModels {
     return isMatch;
   }
 
-  async signUpOwner(owner: OwnerInterface) {
+  async signUpAdmin(owner: OwnerInterface) {
     if (owner.password !== null) {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(owner.password, saltRounds);

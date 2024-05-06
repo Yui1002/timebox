@@ -12,69 +12,77 @@ import {
   Divider,
   Alert,
   HStack,
+  Center,
 } from 'native-base';
+import validator from 'validator';
 
 const SignIn_Admin = ({navigation}: any) => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [emailErrors, setEmailErrors] = useState({});
-  const [passwordErrors, setPasswordErrors] = useState({});
-  const [signInErrors, setSignInErrors] = useState({});
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [inputErrors, setInputErrors] = useState({
+    type: '',
+    title: '',
+    msg: '',
+  });
 
   const signIn = () => {
-    // check both email and pw is not empty
     if (!validateEmail() || !validatePassword()) {
       return;
     }
-
     axios
-      .post(`${LOCAL_HOST_URL}/signIn`, {
+      .post(`${LOCAL_HOST_URL}/signIn_admin`, {
         email,
         password,
       })
       .then(() => {
-        setSignInErrors({});
         navigation.navigate('Home_admin', {ownerEmail: email});
       })
-      .catch(error => {
-        // const errMsg = error.response.data.error;
-        // setSignInErrors({
-        //   ...signInErrors,
-        //   msg: errMsg,
-        // });
+      .catch(err => {
+        const errMsg = err.response.data.error;
+        const error = { type: 'SIGN_IN_ERROR', title: '', msg: errMsg }
+        setInputErrors(error);
       });
   };
 
   const validateEmail = (): boolean => {
-    if (email === undefined) {
-      setEmailErrors({
-        ...emailErrors,
-        msg: 'Email is required',
-      });
+    if (email.length === 0) {
+      const error = {type: 'EMPTY_EMAIL', title: '', msg: 'Email is required'};
+      setInputErrors(error);
       return false;
     }
-    setEmailErrors({});
+    if (!validator.isEmail(email)) {
+      const error = {
+        type: 'INVALID_EMAIL_FORMAT',
+        title: '',
+        msg: 'Email is not valid',
+      };
+      setInputErrors(error);
+      return false;
+    }
+    setInputErrors({type: '', title: '', msg: ''});
     return true;
   };
 
   const validatePassword = (): boolean => {
-    if (password === undefined) {
-      setPasswordErrors({
-        ...passwordErrors,
+    if (password.length === 0) {
+      const error = {
+        type: 'EMPTY_PASSWORD',
+        title: '',
         msg: 'Password is required',
-      });
+      };
+      setInputErrors(error);
       return false;
     }
-    setPasswordErrors({});
+    setInputErrors({type: '', title: '', msg: ''});
     return true;
   };
 
-  const alertSignUpFailure = () => {
+  const alertSignInError = () => {
     return (
       <Alert status="error" w="100%">
         <Alert.Icon mt="1" />
         <Text fontSize="md" color="coolGray.800">
-          {signInErrors.msg}
+          {inputErrors.msg}
         </Text>
       </Alert>
     );
@@ -82,12 +90,17 @@ const SignIn_Admin = ({navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      {signInErrors.msg && alertSignUpFailure()}
+      {inputErrors.type === "SIGN_IN_ERROR" && alertSignInError()}
       <Box m="5%">
-        <Heading size="lg">Sign In - Admin</Heading>
-        <Box alignItems="center">
-          <Box w="100%" maxWidth="300px" my="8">
-            <FormControl isRequired isInvalid={'msg' in emailErrors}>
+        <Heading size="md">Sign In</Heading>
+        <Center>
+          <Box w="100%" maxWidth="300px" my="6">
+            <FormControl
+              isRequired
+              isInvalid={
+                inputErrors.type === 'EMPTY_EMAIL' ||
+                inputErrors.type === 'INVALID_EMAIL_FORMAT'
+              }>
               <FormControl.Label>Email Address</FormControl.Label>
               <Input
                 onChangeText={val => setEmail(val)}
@@ -95,10 +108,12 @@ const SignIn_Admin = ({navigation}: any) => {
                 autoCorrect={false}
               />
               <FormControl.ErrorMessage>
-                {emailErrors.msg}
+                {inputErrors.msg}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={'msg' in passwordErrors}>
+            <FormControl
+              isRequired
+              isInvalid={inputErrors.type === 'EMPTY_PASSWORD'}>
               <FormControl.Label>Password</FormControl.Label>
               <Input
                 type="password"
@@ -107,14 +122,14 @@ const SignIn_Admin = ({navigation}: any) => {
                 autoCorrect={false}
               />
               <FormControl.ErrorMessage>
-                {passwordErrors.msg}
+                {inputErrors.msg}
               </FormControl.ErrorMessage>
             </FormControl>
           </Box>
-          <Button onPress={() => signIn()} w="150">
+          <Button borderRadius={20} onPress={signIn} w="150" mb={4}>
             Sign In
           </Button>
-        </Box>
+        </Center>
         <Divider
           my="2"
           _light={{

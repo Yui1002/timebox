@@ -7,19 +7,19 @@ class AuthControllers {
     this.models = new AutheModels();
   }
 
-  async signUpOwner(req: any, res: any) {
+  async signUpAdmin(req: any, res: any) {
     const isRegistered = await this.models.isOwnerRegistered(req.body.email);
     if (isRegistered) {
       res.status(400).json({ error: "This email is already used" });
     } else {
-      const response = await this.models.signUpOwner(req.body);
+      const response = await this.models.signUpAdmin(req.body);
       response
         ? res.sendStatus(200)
         : res.status(400).json({ error: "Failed to sign up" });
     }
   }
 
-  async signInOwner(req: any, res: any) {
+  async signInAdmin(req: any, res: any) {
     const { email, password } = req.body;
     const isRegistered = await this.models.isOwnerRegistered(email);
     if (!isRegistered) {

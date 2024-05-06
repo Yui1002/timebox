@@ -13,7 +13,6 @@ import SignIn_Admin from './components/Authentication/SignIn_Admin';
 import Setup from './components/Setup';
 import Users from './components/Users/Users';
 import Start from './components/Start';
-import Starter from './components/Starter';
 import Home_nanny from './components/Home_nanny';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
@@ -40,17 +39,12 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Start"
           component={Start}
-          options={{title: 'Time Tracker'}}
-        />
-        <Stack.Screen
-          name="Starter"
-          component={Starter}
-          options={{title: 'Time Tracker'}}
+          options={{title: ''}}
         />
         <Stack.Screen
           name="SignUp"
           component={SignUp}
-          options={{title: 'Sign Up'}}
+          options={{title: ''}}
         />
         <Stack.Screen
           name="SignIn_Admin"

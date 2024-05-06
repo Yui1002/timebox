@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import validator from 'validator';
@@ -12,6 +12,7 @@ import {
   Divider,
   Text,
   Alert,
+  Center,
 } from 'native-base';
 
 const passwordRules = {
@@ -19,86 +20,87 @@ const passwordRules = {
   minLowercase: 1,
   minUppercase: 1,
   minNumbers: 1,
+  minSymbols: 0,
 };
 
 const SignUp = ({navigation}: any) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [emailErrors, setEmailErrors] = useState({});
-  const [passwordErrors, setPasswordErrors] = useState({});
-  const [signUpErrors, setSignUpErrors] = useState({});
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [inputErrors, setInputErrors] = useState({
+    type: '',
+    title: '',
+    msg: '',
+  });
 
   const signUp = () => {
     if (!validateEmail() || !validatePassword()) {
       return;
     }
-
     axios
-      .post(`${LOCAL_HOST_URL}/signUp`, {
-        firstName,
-        lastName,
+      .post(`${LOCAL_HOST_URL}/signUp_admin`, {
         email,
         password,
         status: 'active',
         createDate: new Date(),
       })
       .then(res => {
-        setSignUpErrors({});
-        navigation.navigate('SignIn');
+        navigation.navigate('SignIn_Admin');
       })
-      .catch(error => {
-        const errMsg = error.response.data.error;
-        setSignUpErrors({
-          ...signUpErrors,
-          msg: errMsg,
-        });
+      .catch(err => {
+        const errMsg = err.response.data.error;
+        const error = {type: 'SIGN_UP_ERROR', title: '', msg: errMsg};
+        setInputErrors(error);
       });
   };
 
   const validateEmail = (): boolean => {
-    if (email === undefined) {
-      setEmailErrors({
-        ...emailErrors,
-        msg: 'Email is required',
-      });
-      return false;
-    } else if (!validator.isEmail(email)) {
-      setEmailErrors({
-        ...emailErrors,
-        msg: 'Email is not valid',
-      });
+    if (email.length === 0) {
+      const error = {type: 'EMPTY_EMAIL', title: '', msg: 'Email is required'};
+      setInputErrors(error);
       return false;
     }
-    setEmailErrors({});
+    if (!validator.isEmail(email)) {
+      const error = {
+        type: 'INVALID_EMAIL_FORMAT',
+        title: '',
+        msg: 'Email is not valid',
+      };
+      setInputErrors(error);
+      return false;
+    }
+    setInputErrors({type: '', title: '', msg: ''});
     return true;
   };
 
   const validatePassword = () => {
-    if (password === undefined) {
-      setPasswordErrors({
-        ...passwordErrors,
+    if (password.length === 0) {
+      const error = {
+        type: 'EMPTY_PASSWORD',
+        title: '',
         msg: 'Password is required',
-      });
-      return false;
-    } else if (!validator.isStrongPassword(password, passwordRules)) {
-      setPasswordErrors({
-        ...passwordErrors,
-        msg: 'Password is weak',
-      });
+      };
+      setInputErrors(error);
       return false;
     }
-    setPasswordErrors({});
+    if (!validator.isStrongPassword(password, passwordRules)) {
+      const error = {
+        type: 'WEAK_PASSWORD',
+        title: '',
+        msg: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+      };
+      setInputErrors(error);
+      return false;
+    }
+    setInputErrors({type: '', title: '', msg: ''});
     return true;
   };
 
-  const alertSignUpFailure = () => {
+  const alertSignUpError = () => {
     return (
       <Alert status="error" w="100%">
         <Alert.Icon mt="1" />
         <Text fontSize="md" color="coolGray.800">
-          {signUpErrors.msg}
+          {inputErrors.msg}
         </Text>
       </Alert>
     );
@@ -106,28 +108,17 @@ const SignUp = ({navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      {signUpErrors.msg && alertSignUpFailure()}
+      {inputErrors.type === 'SIGN_UP_ERROR' && alertSignUpError()}
       <Box m="5%">
-        <Heading size="lg">Sign Up</Heading>
-        <Box alignItems="center">
-          <Box w="100%" maxWidth="300px" my="8">
-            <FormControl>
-              <FormControl.Label>First Name</FormControl.Label>
-              <Input
-                onChangeText={val => setFirstName(val)}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </FormControl>
-            <FormControl>
-              <FormControl.Label>Last Name</FormControl.Label>
-              <Input
-                onChangeText={val => setLastName(val)}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </FormControl>
-            <FormControl isRequired isInvalid={'msg' in emailErrors}>
+        <Heading size="md">Sign Up</Heading>
+        <Center>
+          <Box w="100%" maxWidth="300px" my="6">
+            <FormControl
+              isRequired
+              isInvalid={
+                inputErrors.type === 'EMPTY_EMAIL' ||
+                inputErrors.type === 'INVALID_EMAIL_FORMAT'
+              }>
               <FormControl.Label>Email Address</FormControl.Label>
               <Input
                 onChangeText={val => setEmail(val)}
@@ -135,10 +126,15 @@ const SignUp = ({navigation}: any) => {
                 autoCorrect={false}
               />
               <FormControl.ErrorMessage>
-                {emailErrors.msg}
+                {inputErrors.msg}
               </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl isRequired isInvalid={'msg' in passwordErrors}>
+            <FormControl
+              isRequired
+              isInvalid={
+                inputErrors.type === 'EMPTY_PASSWORD' ||
+                inputErrors.type === 'WEAK_PASSWORD'
+              }>
               <FormControl.Label>Password</FormControl.Label>
               <Input
                 type="password"
@@ -147,17 +143,17 @@ const SignUp = ({navigation}: any) => {
                 autoCorrect={false}
               />
               <FormControl.ErrorMessage>
-                {passwordErrors.msg}
+                {inputErrors.msg}
               </FormControl.ErrorMessage>
               <FormControl.HelperText>
                 At least: 8 characters, 1 numbers, 1 upper, 1 lower
               </FormControl.HelperText>
             </FormControl>
           </Box>
-          <Button onPress={() => signUp()} w="150">
+          <Button onPress={() => signUp()} w="150" mb={4}>
             Sign Up
           </Button>
-        </Box>
+        </Center>
         <Divider
           my="2"
           _light={{
@@ -169,7 +165,7 @@ const SignUp = ({navigation}: any) => {
           <Text
             underline
             fontSize="sm"
-            onPress={() => navigation.navigate('SignIn')}>
+            onPress={() => navigation.navigate('SignIn_Admin')}>
             Sign In
           </Text>
         </Box>
