@@ -10,6 +10,8 @@ import {
   Icon,
   VStack,
   Center,
+  ScrollView,
+  Flex,
 } from 'native-base';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -20,7 +22,7 @@ import DatePicker from 'react-native-date-picker';
 const Account = ({route}: any) => {
   const username = route.params.username;
   const [userInfo, setUserInfo] = useState([]);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<[] | undefined>(undefined);
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
   const [from, setFrom] = useState<string | undefined>(undefined);
@@ -47,6 +49,21 @@ const Account = ({route}: any) => {
         setUserInfo(res.data);
       })
       .catch(err => console.log(err));
+  };
+
+  const searchByPeriod = () => {
+    axios
+      .post(`${LOCAL_HOST_URL}/searchByPeriod`, {
+        from,
+        to,
+        username,
+      })
+      .then(res => {
+        setHistory(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
@@ -153,10 +170,69 @@ const Account = ({route}: any) => {
             </VStack>
           </HStack>
           <Center>
-            <Button w="50%" mt={4}>
+            <Button w="50%" mt={4} onPress={searchByPeriod}>
               Search
             </Button>
           </Center>
+          <VStack mt={6}>
+            <HStack space={4} backgroundColor="#ddd">
+              <Text bold w="30%">Date</Text>
+              <Text bold w="30%" color="#228B22">In</Text>
+              <Text bold w="30%" color="#FF8C00">Out</Text>
+            </HStack>
+          </VStack>
+          {history &&
+            history.map(h => (
+              <VStack>
+                <HStack space={4}>
+                  <Text w="30%">{moment(h.record_date).format('YYYY/MM/DD')}</Text>
+                  <Text w="30%">{h.start_time}</Text>
+                  <Text w="30%">{h.end_time}</Text>
+                </HStack>
+              </VStack>
+            ))}
+          {/* {history && ( */}
+          {/* <Box>
+              <ScrollView>
+                <VStack>
+                  <Flex direction="row" mb="2.5" mt="4">
+                    <Center
+                      size="16"
+                      bg="primary.100"
+                      _text={{
+                        color: 'coolGray.800',
+                      }}>
+                      100
+                    </Center>
+                    <Center
+                      size="16"
+                      bg="primary.200"
+                      _text={{
+                        color: 'coolGray.800',
+                      }}>
+                      200
+                    </Center>
+                    <Center
+                      bg="primary.300"
+                      size="16"
+                      _text={{
+                        color: 'coolGray.800',
+                      }}>
+                      300
+                    </Center>
+                    <Center
+                      size="16"
+                      bg="primary.400"
+                      _text={{
+                        color: 'coolGray.800',
+                      }}>
+                      400
+                    </Center>
+                  </Flex>
+                </VStack>
+              </ScrollView>
+            </Box> */}
+          {/* )} */}
         </Box>
       </Box>
     </NativeBaseProvider>

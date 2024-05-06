@@ -74,6 +74,14 @@ class UserModels {
     const userId = await this.repositories.getUserId(username);
     return await this.repositories.getInfoForNanny(userId);
   }
+
+  async searchByPeriod(req: any) {
+    const { from, to, username } = req;
+    console.log(from, to, username)
+    const userId = await this.repositories.getUserId(username);
+    console.log('user id', userId)
+    return await this.repositories.searchByPeriod(from, to, userId)
+  }
 }
 
 export default UserModels;

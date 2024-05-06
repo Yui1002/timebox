@@ -105,7 +105,6 @@ class UserRepositories {
     try {
       const sql = "SELECT rate, rate_type, day, start_time, end_time FROM users u INNER join users_schedule us ON u.user_id = us.user_id where u.user_id = $1;";
       const data = await client.query(sql, [userId]);
-      console.log('data', data.rows)
       return data.rows;
     } catch (err) {
       return err;
@@ -271,6 +270,21 @@ class UserRepositories {
       const data = await client.query(sql, [userId]);
       return data.rows;
     } catch (err) {
+      return err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async searchByPeriod(from: string, to: string, userId: string) {
+    const client = await pool.connect();
+    try {
+      const sql = "SELECT record_date, start_time, end_time FROM time_record WHERE user_id = $1 AND record_date >= $2 AND record_date <= $3;";
+      const data = await client.query(sql, [userId, from, to]);
+      console.log('server', data.rows)
+      return data.rows;
+    } catch (err) {
+      console.log('err', err)
       return err;
     } finally {
       client.release();

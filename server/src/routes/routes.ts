@@ -32,6 +32,7 @@ class Routes {
         app.post('/endRecord', this.userControllers.endRecord.bind(this.userControllers));
         app.get('/getTodaysRecord/:username', this.userControllers.getTodaysRecord.bind(this.userControllers));
         app.get('/getUserInfo/:username', this.userControllers.getInfoForNanny.bind(this.userControllers));
+        app.post('/searchByPeriod', this.userControllers.searchByPeriod.bind(this.userControllers));
     }
 }
 

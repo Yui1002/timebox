@@ -66,6 +66,12 @@ class UserControllers {
     const info = await this.models.getInfoForNanny(username);
     res.send(info);
   }
+
+  async searchByPeriod(req: any, res: any) {
+    console.log('body', req.body)
+    const record = await this.models.searchByPeriod(req.body);
+    res.send(record);
+  }
 }
 
 export default UserControllers;
