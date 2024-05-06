@@ -59,6 +59,7 @@ const Account = ({route}: any) => {
         username,
       })
       .then(res => {
+        console.log(res.data)
         setHistory(res.data);
       })
       .catch(err => {
@@ -175,12 +176,13 @@ const Account = ({route}: any) => {
             </Button>
           </Center>
           <VStack mt={6}>
-            <HStack space={4} backgroundColor="#ddd">
-              <Text bold w="30%">Date</Text>
+            <HStack space={4} backgroundColor="#ddd" borderRadius={20}>
+              <Text bold w="30%" ml={4}>Date</Text>
               <Text bold w="30%" color="#228B22">In</Text>
               <Text bold w="30%" color="#FF8C00">Out</Text>
             </HStack>
           </VStack>
+          {history && !history.length && <Center mt={4}><Text>Not found</Text></Center>}
           {history &&
             history.map(h => (
               <VStack>
@@ -191,48 +193,6 @@ const Account = ({route}: any) => {
                 </HStack>
               </VStack>
             ))}
-          {/* {history && ( */}
-          {/* <Box>
-              <ScrollView>
-                <VStack>
-                  <Flex direction="row" mb="2.5" mt="4">
-                    <Center
-                      size="16"
-                      bg="primary.100"
-                      _text={{
-                        color: 'coolGray.800',
-                      }}>
-                      100
-                    </Center>
-                    <Center
-                      size="16"
-                      bg="primary.200"
-                      _text={{
-                        color: 'coolGray.800',
-                      }}>
-                      200
-                    </Center>
-                    <Center
-                      bg="primary.300"
-                      size="16"
-                      _text={{
-                        color: 'coolGray.800',
-                      }}>
-                      300
-                    </Center>
-                    <Center
-                      size="16"
-                      bg="primary.400"
-                      _text={{
-                        color: 'coolGray.800',
-                      }}>
-                      400
-                    </Center>
-                  </Flex>
-                </VStack>
-              </ScrollView>
-            </Box> */}
-          {/* )} */}
         </Box>
       </Box>
     </NativeBaseProvider>
