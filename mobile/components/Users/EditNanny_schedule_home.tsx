@@ -25,7 +25,6 @@ const EditNanny_schedule_home = ({route, navigation}: any) => {
     updatedRateType,
     updatedStatus,
     shifts,
-    setEditError,
     getUsers,
   } = route.params;
   const [finalShifts, setFinalShifts] = useState(shifts);
