@@ -53,7 +53,11 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
         </VStack>
         <Spacer />
         <VStack>
-          <Text fontSize="xs">{status}</Text>
+          <Text
+            fontSize="xs"
+            color={status === 'active' ? '#3cb371' : '#FF8C00'}>
+            {status}
+          </Text>
         </VStack>
         <Menu
           w="190"
@@ -103,11 +107,9 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
             </Text>
           )}
         </VStack>
-        <VStack>
-          <Text fontSize="xs">
-            ${rate} - {rate_type}
-          </Text>
-        </VStack>
+        <Text fontSize="xs">
+          {`$${rate} / ${rate_type === 'hourly' ? 'hour' : 'day'}`}
+        </Text>
       </HStack>
       <AlertDialog
         leastDestructiveRef={cancelRef}

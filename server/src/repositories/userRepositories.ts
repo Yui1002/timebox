@@ -3,7 +3,6 @@ import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 dotenv.config();
-import { UserInterface } from "../interfaces/UserInterface";
 
 const pool = new Pool({
   user: process.env.DB_USER,

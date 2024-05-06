@@ -59,7 +59,7 @@ const EditNanny_review = ({ route, navigation }: any) => {
                 </Box>
                 <HStack space={2} mt={10}>
                     <Button borderRadius={20} onPress={() => navigation.goBack()}>Go Back</Button>
-                    <Button borderRadius={20} onPress={submitForm}>Edit</Button>
+                    <Button borderRadius={20} onPress={submitForm}>Confirm</Button>
                 </HStack>
             </Box>
         </NativeBaseProvider>

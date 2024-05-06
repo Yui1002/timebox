@@ -32,7 +32,7 @@ const Home_admin = ({ navigation, route }: any) => {
       {editError.status == 'success' && <AlertMsg msg={editError.msg} status={editError.status} />}
       {editError.status == 'error' && <AlertMsg msg={editError.msg} status={editError.status} />}
       <Box m='5%'>
-        <Button borderRadius={20} onPress={signOut} w={24} variant='subtle' position='absolute' top={0} right='5%'>Sign Out</Button>
+        <Button borderRadius={20} onPress={signOut} w={24} position='absolute' top={0} right='5%'>Sign Out</Button>
         <Users email={email} setAddError={setAddError} setEditError={setEditError} />
       </Box>
     </NativeBaseProvider>

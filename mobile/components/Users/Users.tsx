@@ -12,26 +12,11 @@ import {
   Button,
 } from 'native-base';
 import User from './User';
-
-interface userObjType {
-  first_name?: string | null;
-  last_name?: string | null;
-  user_name?: string;
-  rate?: number;
-  rate_type?: string | null;
-  status?: string;
-  shifts?: [
-    {
-      day: 'string';
-      start_time: string;
-      end_time: string;
-    },
-  ];
-}
+import { UserInterface } from '../../interfaces/UserInterface';
 
 const Users = ({email, setAddError, setEditError}: any) => {
   const {navigate} = useNavigation();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<UserInterface[] | undefined>(undefined);
 
   useEffect(() => {
     getUsers();
@@ -59,7 +44,7 @@ const Users = ({email, setAddError, setEditError}: any) => {
     day: string | null;
     start_time: string | null;
     end_time: string | null;
-  }[]): userObjType[] => {
+  }[]): UserInterface[] => {
     const result = [];
     result.push(formatData(users[0]));
 
@@ -107,7 +92,30 @@ const Users = ({email, setAddError, setEditError}: any) => {
     <Box m="5%">
       <HStack space={2} justifyContent="space-between" alignItems="start">
         <Heading size="lg">Nannies</Heading>
-        <Button
+      </HStack>
+      <Box mt="8">
+        {users && users.length < 1 ? (
+          <Box>
+            <Text>No nannies registered</Text>
+          </Box>
+        ) : (
+          <ScrollView h="300">
+            <VStack flex="1">
+              {users && users.map((user, index) => (
+                <User
+                  key={index}
+                  user={user}
+                  getUsers={getUsers}
+                  ownerEmail={email}
+                  setEditError={setEditError}
+                />
+              ))}
+            </VStack>
+          </ScrollView>
+          
+        )}
+      </Box>
+      <Button
           onPress={() =>
             navigate('AddNanny_1', {
               ownerEmail: email,
@@ -120,28 +128,6 @@ const Users = ({email, setAddError, setEditError}: any) => {
           borderRadius="40">
           Add a Nanny
         </Button>
-      </HStack>
-      <Box mt="8">
-        {users && users.length < 1 ? (
-          <Box>
-            <Text>No nannies registered</Text>
-          </Box>
-        ) : (
-          <ScrollView h="400">
-            <VStack flex="1">
-              {users.map((user, index) => (
-                <User
-                  key={index}
-                  user={user}
-                  getUsers={getUsers}
-                  ownerEmail={email}
-                  setEditError={setEditError}
-                />
-              ))}
-            </VStack>
-          </ScrollView>
-        )}
-      </Box>
     </Box>
   );
 };

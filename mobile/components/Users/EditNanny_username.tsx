@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Box,
   FormControl,
@@ -7,40 +7,64 @@ import {
   Button,
   NativeBaseProvider,
   HStack,
+  Center,
 } from 'native-base';
+import validator from 'validator';
 
-const EditNanny_username = ({ route, navigation }: any) => {
-  const { ownerEmail, getUsers, setEditError } = route.params;
-  const { user_name, rate, rate_type, status, shifts } = route.params.user;
+const EditNanny_username = ({route, navigation}: any) => {
+  const {ownerEmail, getUsers, setEditError} = route.params;
+  const {user_name, rate, rate_type, status, shifts} = route.params.user;
   const [updatedUsername, setUpdatedUsername] = useState(user_name);
   const [updatedRate, setUpdatedRate] = useState(rate);
   const [updatedRateType, setUpdatedRateType] = useState(rate_type);
   const [updatedStatus, setUpdatedStatus] = useState(status);
-  const [inputErrors, setInputErrors] = useState({ type: '', title: '', msg: '' });
+  const [inputErrors, setInputErrors] = useState({
+    type: '',
+    msg: '',
+  });
 
   const validateInput = async () => {
+    let error = {type: '', msg: ''};
     if (updatedUsername.length === 0) {
-      const updatedValue = { type: 'EMPTY_USERNAME', title: '', msg: 'Username is required' };
-      setInputErrors(updatedValue);
-      return;
+      error.type = 'EMPTY_USERNAME';
+      error.msg = 'Username is required';
     }
     if (updatedStatus.length === 0) {
-      const updatedValue = { type: 'EMPTY_STATUS', title: '', msg: 'Status is required' };
-      setInputErrors(updatedValue);
-      return;
+      error.type = 'EMPTY_STATUS';
+      error.msg = 'Status is required';
     }
-    setInputErrors({ type: '', title: '', msg: '' });
-    navigation.navigate
-      ('EditNanny_schedule_home', {
-        ownerEmail, user_name, updatedUsername, updatedRate, updatedRateType, updatedStatus, shifts, setEditError, getUsers
-      });
-  }
+    if (!validator.isInt(updatedRate)) {
+      error.type = 'DATA_TYPE_MISMATCH';
+      error.msg = 'This field has to be numbers';
+    }
+    if (
+      (updatedRate !== 0 && !updatedRateType) ||
+      (updatedRate === 0 && updatedRateType)
+    ) {
+      error.type = 'MISSING_INPUT';
+      error.msg = 'Please specify both rate and rate type';
+    }
+    setInputErrors(error);
+    navigation.navigate('EditNanny_schedule_home', {
+      ownerEmail,
+      user_name,
+      updatedUsername,
+      updatedRate,
+      updatedRateType,
+      updatedStatus,
+      shifts,
+      setEditError,
+      getUsers,
+    });
+  };
 
   return (
     <NativeBaseProvider>
-      <Box m='5%'>
-        <Box mt={10}>
-          <FormControl isRequired isInvalid={inputErrors.type == 'EMPTY_USERNAME'}>
+      <Box m="5%">
+        <Center mt={10}>
+          <FormControl
+            isRequired
+            isInvalid={inputErrors.type == 'EMPTY_USERNAME'}>
             <FormControl.Label>User Name</FormControl.Label>
             <Input
               onChangeText={val => setUpdatedUsername(val)}
@@ -48,34 +72,54 @@ const EditNanny_username = ({ route, navigation }: any) => {
               autoCorrect={false}
               defaultValue={user_name}
             />
-            <FormControl.ErrorMessage>{inputErrors.msg}</FormControl.ErrorMessage>
+            <FormControl.ErrorMessage>
+              {inputErrors.msg}
+            </FormControl.ErrorMessage>
           </FormControl>
-          <HStack space={2} justifyContent="center">
-            <FormControl w='50%'>
+          <HStack space={2} justifyContent="space-between">
+            <FormControl
+              w="48%"
+              isInvalid={
+                inputErrors.type == 'DATA_TYPE_MISMATCH' ||
+                inputErrors.type === 'MISSING_INPUT'
+              }>
               <FormControl.Label>Rate($)</FormControl.Label>
               <Input
+                value={updatedRate.toString()}
                 keyboardType="numeric"
                 onChangeText={val => setUpdatedRate(val)}
               />
+              <FormControl.ErrorMessage>
+                {inputErrors.msg}
+              </FormControl.ErrorMessage>
             </FormControl>
-            <FormControl w='50%'>
+            <FormControl
+              w="48%"
+              isInvalid={inputErrors.type === 'MISSING_INPUT'}>
               <FormControl.Label>Rate Type</FormControl.Label>
-              <Select onValueChange={val => setUpdatedRateType(val)}>
+              <Select
+                selectedValue={updatedRateType}
+                onValueChange={val => setUpdatedRateType(val)}>
                 <Select.Item label="hourly" value="hourly" />
                 <Select.Item label="daily" value="daily" />
               </Select>
             </FormControl>
           </HStack>
-          <FormControl isRequired isInvalid={inputErrors.type == 'EMPTY_STATUS'}>
+          <FormControl
+            isRequired
+            isInvalid={inputErrors.type == 'EMPTY_STATUS'}>
             <FormControl.Label>Status</FormControl.Label>
-            <Select onValueChange={val => setUpdatedStatus(val)}>
-              <Select.Item label='active' value='active' />
-              <Select.Item label='vacation' value='on vacation' />
-              <Select.Item label='inactive' value='inactive' />
+            <Select
+              selectedValue={updatedStatus}
+              onValueChange={val => setUpdatedStatus(val)}>
+              <Select.Item label="active" value="active" />
+              <Select.Item label="inactive" value="inactive" />
             </Select>
-            <FormControl.ErrorMessage>{inputErrors.msg}</FormControl.ErrorMessage>
+            <FormControl.ErrorMessage>
+              {inputErrors.msg}
+            </FormControl.ErrorMessage>
           </FormControl>
-        </Box>
+        </Center>
         <Button mt="4" onPress={validateInput}>
           Next
         </Button>
