@@ -78,7 +78,7 @@ const AddNanny_2 = ({ route, navigation }: any) => {
                                     bg: "teal.600",
                                     endIcon: <CheckIcon size="5" />
                                 }} mt={1} onValueChange={itemValue => setSelectedDay(itemValue)}>
-                                    {days.map((d) => <Select.Item label={d} value={d} />)}
+                                    {days.map((d, index) => <Select.Item key={index} label={d} value={d} />)}
                                 </Select>
                             </FormControl>
                         </Center>
@@ -132,8 +132,8 @@ const AddNanny_2 = ({ route, navigation }: any) => {
                         bg: "muted.50"
                     }} />
                     <ScrollView>
-                        {lists.map((list) => (
-                            <HStack>
+                        {lists.map((list, index) => (
+                            <HStack key={index}>
                                 <Text p={4}>{'\u2B24'} {`${list.day}   ${list.start} - ${list.end}`}</Text>
                                 <Text p={4} underline color='#0e7490' onPress={() => deleteList(list)}>Delete</Text>
                             </HStack>

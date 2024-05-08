@@ -93,13 +93,13 @@ const Users = ({email, setAddError, setEditError}: any) => {
       <HStack space={2} justifyContent="space-between" alignItems="start">
         <Heading size="lg">Nannies</Heading>
       </HStack>
-      <Box mt="8">
+      <Box mt="6">
         {users && users.length < 1 ? (
           <Box>
             <Text>No nannies registered</Text>
           </Box>
         ) : (
-          <ScrollView h="300">
+          <ScrollView h="380">
             <VStack flex="1">
               {users && users.map((user, index) => (
                 <User

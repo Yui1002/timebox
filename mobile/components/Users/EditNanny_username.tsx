@@ -15,7 +15,7 @@ const EditNanny_username = ({route, navigation}: any) => {
   const {ownerEmail, getUsers, setEditError} = route.params;
   const {user_name, rate, rate_type, status, shifts} = route.params.user;
   const [updatedUsername, setUpdatedUsername] = useState(user_name);
-  const [updatedRate, setUpdatedRate] = useState(rate);
+  const [updatedRate, setUpdatedRate] = useState<number>(rate);
   const [updatedRateType, setUpdatedRateType] = useState(rate_type);
   const [updatedStatus, setUpdatedStatus] = useState(status);
   const [inputErrors, setInputErrors] = useState({
@@ -24,6 +24,7 @@ const EditNanny_username = ({route, navigation}: any) => {
   });
 
   const validateInput = async () => {
+    console.log(typeof updatedRate)
     let error = {type: '', msg: ''};
     if (updatedUsername.length === 0) {
       error.type = 'EMPTY_USERNAME';
@@ -33,7 +34,7 @@ const EditNanny_username = ({route, navigation}: any) => {
       error.type = 'EMPTY_STATUS';
       error.msg = 'Status is required';
     }
-    if (!validator.isInt(updatedRate)) {
+    if (typeof updatedRate !== 'number') {
       error.type = 'DATA_TYPE_MISMATCH';
       error.msg = 'This field has to be numbers';
     }
@@ -86,8 +87,7 @@ const EditNanny_username = ({route, navigation}: any) => {
               <FormControl.Label>Rate($)</FormControl.Label>
               <Input
                 value={updatedRate.toString()}
-                keyboardType="numeric"
-                onChangeText={val => setUpdatedRate(val)}
+                onChangeText={val => setUpdatedRate(Number(val))}
               />
               <FormControl.ErrorMessage>
                 {inputErrors.msg}

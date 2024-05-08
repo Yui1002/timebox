@@ -49,8 +49,8 @@ const AddNanny_review = ({ route, navigation }: any) => {
                 </VStack>
                 <Box>
                     <Text>Working Days / Hours</Text>
-                    {lists.map((list) => (
-                            <Box>
+                    {lists.map((list, index) => (
+                            <Box key={index}>
                                 <Text>{'\u2B24'} {`${list.day}   ${list.start} - ${list.end}`}</Text>
                             </Box>
                         ))}

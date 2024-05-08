@@ -32,10 +32,39 @@ class UserModels {
     return await this.repositories.addSchedule(userId, user);
   }
 
+  // const data = await this.getShiftsByUserId(userId);
+  // shifts.map(async (s: { day: string; start_time: string; end_time: number }) => {
+  //   const isMatch = data.some((d: any) => d.day === s.day);
+  //   if (isMatch) {
+  //     const sql = "UPDATE public.users_schedule SET start_time=$1, end_time=$2 WHERE user_id=$3 AND day=$4;";
+  //     await this.queryDB(sql, [s.start_time, s.end_time, userId, s.day])
+  //     const index = data.findIndex((d: any) => d.day === s.day);
+  //     data.splice(index, 1);
+  //   } else {
+  //     const uuid = uuidv4();
+  //     const sql2 = "INSERT INTO public.users_schedule VALUES ($1, $2, $3, $4, $5);";
+  //     await this.queryDB(sql2, [uuid, userId, s.day, s.start_time, s.end_time])
+  //   }
+  // })
+  // if (data.length > 0) {
+  //   const sql3 =
+  //     "DELETE FROM public.users_schedule WHERE user_id=$1 AND day=$2;";
+  //   data.map(async (d: any) => {
+  //     await this.queryDB(sql3, [userId, d.day])
+  //   });
+  // }
+  // return true;
+
   async editUser(req: any) {
     const userId = await this.repositories.getUserId(req.user_name);
     await this.repositories.editUser(req, userId);
-    return await this.repositories.editSchedule(userId, req.finalShifts)
+    const schedule = await this.repositories.getScheduleByUserId(userId);
+    return req.finalShifts.map(async (s: { day: string; start_time: string; end_time: number }) => {
+      const isMatch = schedule.some((d: any) => d.day === s.day);
+      if (isMatch) {
+        await this.repositories.editSchedule(userId, s)
+      }
+    })
   }
 
   async isUserRegistered(ownerEmail: string, username: string) {
@@ -45,7 +74,9 @@ class UserModels {
 
   async deleteUser(ownerEmail: string, username: string) {
     const ownerId = await this.getOwnerId(ownerEmail);
-    return await this.repositories.deleteUser(ownerId, username);
+    const userId = await this.repositories.getUserId(username);
+    await this.repositories.deleteSchedule(userId);
+    return await this.repositories.deleteUser(ownerId, userId);
   }
 
   async startRecord(req: any) {
@@ -77,9 +108,7 @@ class UserModels {
 
   async searchByPeriod(req: any) {
     const { from, to, username } = req;
-    console.log(from, to, username)
     const userId = await this.repositories.getUserId(username);
-    console.log('user id', userId)
     return await this.repositories.searchByPeriod(from, to, userId)
   }
 }

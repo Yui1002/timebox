@@ -68,9 +68,10 @@ const EditNanny_schedule_home = ({route, navigation}: any) => {
         <Button borderRadius={20} w="50%" mb={6} onPress={navigateToAddPage}>
           Add new schedule
         </Button>
+        <Text ml={4}>Current schedule: </Text>
         {finalShifts.length > 0 ? (
-          finalShifts.map(f => (
-            <HStack space={3} justifyContent="center">
+          finalShifts.map((f, index) => (
+            <HStack key={index} space={3} justifyContent="center">
               <Text pt={3} fontSize={16}>{`${f.day.substring(0, 3)} : ${
                 f.start_time
               } - ${f.end_time}`}</Text>

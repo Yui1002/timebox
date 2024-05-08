@@ -95,11 +95,13 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
       <HStack justifyContent="space-between">
         <VStack>
           {shifts.length > 0 ? (
-            shifts.map(s => (
-              <Text fontSize={12} color="coolGray.800">{`${s.day.substring(
-                0,
-                3,
-              )}: ${s.start_time} - ${s.end_time}`}</Text>
+            shifts.map((s, index) => (
+              <Text
+                key={index}
+                fontSize={12}
+                color="coolGray.800">{`${s.day.substring(0, 3)}: ${
+                s.start_time
+              } - ${s.end_time}`}</Text>
             ))
           ) : (
             <Text fontSize={12} color="coolGray.800">
@@ -117,8 +119,8 @@ const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
         onClose={() => setDeleteDialogOpen(false)}>
         <AlertDialog.Content>
           <AlertDialog.CloseButton />
-          <AlertDialog.Header>Delete Nanny</AlertDialog.Header>
-          <AlertDialog.Body>Are you sure to delete the nanny?</AlertDialog.Body>
+          <AlertDialog.Header>Delete</AlertDialog.Header>
+          <AlertDialog.Body>{`Are you sure to delete ${user_name}? This will delete all the records of shifts of the nanny.`}</AlertDialog.Body>
           <AlertDialog.Footer>
             <Button.Group space={2}>
               <Button

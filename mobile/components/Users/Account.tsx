@@ -77,8 +77,9 @@ const Account = ({route}: any) => {
           borderWidth={1}
           borderRadius={8}>
           <Text bold>Current Shifts</Text>
-          {userInfo.map(user => (
+          {userInfo.map((user, index) => (
             <Text
+              key={index}
               fontSize={
                 13
               }>{`  ${user.day} ${user.start_time} - ${user.end_time}`}</Text>
@@ -184,8 +185,8 @@ const Account = ({route}: any) => {
           </VStack>
           {history && !history.length && <Center mt={4}><Text>Not found</Text></Center>}
           {history &&
-            history.map(h => (
-              <VStack>
+            history.map((h, index) => (
+              <VStack key={index}>
                 <HStack space={4}>
                   <Text w="30%">{moment(h.record_date).format('YYYY/MM/DD')}</Text>
                   <Text w="30%">{h.start_time}</Text>

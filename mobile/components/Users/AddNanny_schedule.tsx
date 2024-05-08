@@ -81,7 +81,7 @@ const AddNanny_schedule = ({ route, navigation }: any) => {
                                     bg: "teal.600",
                                     endIcon: <CheckIcon size="5" />
                                 }} mt={1} onValueChange={itemValue => setSelectedDay(itemValue)}>
-                                    {days.map((d) => <Select.Item label={d} value={d} />)}
+                                    {days.map((d, index) => <Select.Item key={index} label={d} value={d} />)}
                                 </Select>
                                 <FormControl.ErrorMessage>{inputErrors.msg}</FormControl.ErrorMessage>
                             </FormControl>
