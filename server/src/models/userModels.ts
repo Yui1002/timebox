@@ -32,37 +32,15 @@ class UserModels {
     return await this.repositories.addSchedule(userId, user);
   }
 
-  // const data = await this.getShiftsByUserId(userId);
-  // shifts.map(async (s: { day: string; start_time: string; end_time: number }) => {
-  //   const isMatch = data.some((d: any) => d.day === s.day);
-  //   if (isMatch) {
-  //     const sql = "UPDATE public.users_schedule SET start_time=$1, end_time=$2 WHERE user_id=$3 AND day=$4;";
-  //     await this.queryDB(sql, [s.start_time, s.end_time, userId, s.day])
-  //     const index = data.findIndex((d: any) => d.day === s.day);
-  //     data.splice(index, 1);
-  //   } else {
-  //     const uuid = uuidv4();
-  //     const sql2 = "INSERT INTO public.users_schedule VALUES ($1, $2, $3, $4, $5);";
-  //     await this.queryDB(sql2, [uuid, userId, s.day, s.start_time, s.end_time])
-  //   }
-  // })
-  // if (data.length > 0) {
-  //   const sql3 =
-  //     "DELETE FROM public.users_schedule WHERE user_id=$1 AND day=$2;";
-  //   data.map(async (d: any) => {
-  //     await this.queryDB(sql3, [userId, d.day])
-  //   });
-  // }
-  // return true;
-
   async editUser(req: any) {
     const userId = await this.repositories.getUserId(req.user_name);
-    await this.repositories.editUser(req, userId);
+    await this.repositories.editUser(req, userId); // check
     const schedule = await this.repositories.getScheduleByUserId(userId);
     return req.finalShifts.map(async (s: { day: string; start_time: string; end_time: number }) => {
       const isMatch = schedule.some((d: any) => d.day === s.day);
       if (isMatch) {
-        await this.repositories.editSchedule(userId, s)
+        console.log(isMatch, s)
+        await this.repositories.editSchedule(userId, s);
       }
     })
   }

@@ -10,7 +10,7 @@ class UserRepositories {
 
   // ---------------------  Owners  --------------------------------
   async getOwnerId(email: string) {
-    const sql = "SELECT owner_id FROM public.owners WHERE email_address = $1;";
+    const sql = "SELECT owner_id FROM owners WHERE email_address = $1;";
     return (await this.repositories.queryDB(sql, [email])).rows[0].owner_id;
   }
 
@@ -59,15 +59,10 @@ class UserRepositories {
   }
 
   async editUser(req: any, userId: string) {
-    const {
-      updatedUsername,
-      updatedRate,
-      updatedRateType,
-      updatedStatus,
-      finalShifts,
-    } = req;
+    const { updatedUsername, updatedRate, updatedRateType, updatedStatus } =
+      req;
     const sql =
-      "UPDATE public.users SET first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
+      "UPDATE users SET first_name=$1, last_name=$2, user_name=$3, rate=$4, rate_type=$5, status=$6, update_date=$7 WHERE user_id=$8;";
     await this.repositories.queryDB(sql, [
       null,
       null,
@@ -75,7 +70,7 @@ class UserRepositories {
       updatedRate,
       updatedRateType,
       updatedStatus,
-      finalShifts,
+      new Date(),
       userId,
     ]);
     return true;
@@ -90,7 +85,9 @@ class UserRepositories {
 
   async isUserRegistered(ownerId: string, username: string) {
     const sql = "SELECT * FROM users WHERE owner_id = $1 AND user_name = $2;";
-    return (await this.repositories.queryDB(sql, [ownerId, username])).rowCount > 0;
+    return (
+      (await this.repositories.queryDB(sql, [ownerId, username])).rowCount > 0
+    );
   }
 
   // ---------------------  Schedule  --------------------------------
@@ -112,10 +109,19 @@ class UserRepositories {
   }
 
   async editSchedule(userId: string, shift: any) {
+    const { day, start_time, end_time } = shift;
     const uuid = uuidv4();
     const sql =
-      "INSERT INTO users_schedule VALUES ($1, $2, $3, $4, $5) ON DUPLICATE KEY UPDATE day = $6, start_time = $7, end_time = $8;";
-    await this.repositories.queryDB(sql, [uuid, userId, shift.day, shift.start_time, shift.end_time])
+      "INSERT INTO users_schedule VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, day) DO UPDATE SET start_time = $6, end_time = $7;";
+    await this.repositories.queryDB(sql, [
+      uuid,
+      userId,
+      day,
+      start_time,
+      end_time,
+      start_time,
+      end_time,
+    ]);
     return true;
   }
 
@@ -149,7 +155,8 @@ class UserRepositories {
       "SELECT time_record_id FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
     const sql2 =
       "UPDATE time_record SET end_time = $1, update_by = $2, update_date = CURRENT_TIMESTAMP WHERE time_record_id = $3;";
-    const id = (await this.repositories.queryDB(sql, [userId])).rows[0].time_record_id;
+    const id = (await this.repositories.queryDB(sql, [userId])).rows[0]
+      .time_record_id;
     await this.repositories.queryDB(sql2, [checkedOutTime, userId, id]);
     return true;
   }

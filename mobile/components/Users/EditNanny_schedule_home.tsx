@@ -98,9 +98,14 @@ const EditNanny_schedule_home = ({route, navigation}: any) => {
         ) : (
           <Text>No schedule registered</Text>
         )}
-        <Button mt={10} borderRadius={20} onPress={navigateToReviewPage}>
-          Review
-        </Button>
+        <HStack space={2} justifyContent="center">
+          <Button w="40%" variant="subtle" mt={10} borderRadius={20} onPress={() => navigation.goBack()}>
+            Back
+          </Button>
+          <Button w="40%" mt={10} borderRadius={20} onPress={navigateToReviewPage}>
+            Review
+          </Button>
+        </HStack>
       </Box>
     </NativeBaseProvider>
   );

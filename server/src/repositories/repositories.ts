@@ -18,6 +18,7 @@ class Repositories {
       const data = await client.query(sql, args);
       return data;
     } catch (err) {
+      console.log("error in query: ", err)
       return err;
     } finally {
       client.release();

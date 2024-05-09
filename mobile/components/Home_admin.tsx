@@ -1,39 +1,47 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  NativeBaseProvider,
-} from 'native-base';
+import React, {useState} from 'react';
+import {Box, Button, NativeBaseProvider} from 'native-base';
 import Users from './Users/Users';
 import AlertMsg from './AlertMsg';
 
-const Home_admin = ({ navigation, route }: any) => {
+const Home_admin = ({navigation, route}: any) => {
   const email = route.params.ownerEmail;
-  const [addError, setAddError] = useState({ status: undefined, msg: '' });
-  const [editError, setEditError] = useState({ status: undefined, msg: '' });
+  const [addError, setAddError] = useState({status: undefined, msg: ''});
+  const [editError, setEditError] = useState({status: undefined, msg: ''});
 
   setTimeout(() => {
     if (addError.status !== undefined) {
-      setAddError({ status: undefined, msg: '' });
+      setAddError({status: undefined, msg: ''});
     }
     if (editError.status !== undefined) {
-      setEditError({ status: undefined, msg: '' })
+      setEditError({status: undefined, msg: ''});
     }
   }, 5000);
 
   const signOut = () => {
-    navigation.navigate('Start')
-  }
+    console.log('here')
+    navigation.navigate('Start');
+  };
 
   return (
     <NativeBaseProvider>
-      {addError.status == 'success' && <AlertMsg msg={addError.msg} status={addError.status} />}
-      {addError.status == 'error' && <AlertMsg msg={addError.msg} status={addError.status} />}
-      {editError.status == 'success' && <AlertMsg msg={editError.msg} status={editError.status} />}
-      {editError.status == 'error' && <AlertMsg msg={editError.msg} status={editError.status} />}
-      <Box m='5%'>
-        <Button borderRadius={20} onPress={signOut} w={24} position='absolute' top={0} right='5%'>Sign Out</Button>
-        <Users email={email} setAddError={setAddError} setEditError={setEditError} />
+      {addError.status == 'success' && (
+        <AlertMsg msg={addError.msg} status={addError.status} />
+      )}
+      {addError.status == 'error' && (
+        <AlertMsg msg={addError.msg} status={addError.status} />
+      )}
+      {editError.status == 'success' && (
+        <AlertMsg msg={editError.msg} status={editError.status} />
+      )}
+      {editError.status == 'error' && (
+        <AlertMsg msg={editError.msg} status={editError.status} />
+      )}
+      <Box m="5%">
+        <Users
+          email={email}
+          setAddError={setAddError}
+          setEditError={setEditError}
+        />
       </Box>
     </NativeBaseProvider>
   );
