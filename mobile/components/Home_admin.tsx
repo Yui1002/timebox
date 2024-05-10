@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {Box, Button, NativeBaseProvider} from 'native-base';
+import {Box, NativeBaseProvider} from 'native-base';
 import Users from './Users/Users';
 import AlertMsg from './AlertMsg';
 
-const Home_admin = ({navigation, route}: any) => {
+const Home_admin = ({route}: any) => {
   const email = route.params.ownerEmail;
   const [addError, setAddError] = useState({status: undefined, msg: ''});
   const [editError, setEditError] = useState({status: undefined, msg: ''});
@@ -16,11 +16,6 @@ const Home_admin = ({navigation, route}: any) => {
       setEditError({status: undefined, msg: ''});
     }
   }, 5000);
-
-  const signOut = () => {
-    console.log('here')
-    navigation.navigate('Start');
-  };
 
   return (
     <NativeBaseProvider>

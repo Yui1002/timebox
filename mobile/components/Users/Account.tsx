@@ -59,7 +59,6 @@ const Account = ({route}: any) => {
         username,
       })
       .then(res => {
-        console.log(res.data)
         setHistory(res.data);
       })
       .catch(err => {

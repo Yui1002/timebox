@@ -9,7 +9,6 @@ import {
   HStack,
   Center,
 } from 'native-base';
-import validator from 'validator';
 
 const EditNanny_username = ({route, navigation}: any) => {
   const {ownerEmail, getUsers, setEditError} = route.params;
@@ -24,7 +23,6 @@ const EditNanny_username = ({route, navigation}: any) => {
   });
 
   const validateInput = async () => {
-    console.log(typeof updatedRate)
     let error = {type: '', msg: ''};
     if (updatedUsername.length === 0) {
       error.type = 'EMPTY_USERNAME';

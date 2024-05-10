@@ -114,7 +114,7 @@ function App(): JSX.Element {
         <Stack.Screen
           name="EditNanny_username"
           component={EditNanny_username}
-          options={{title: 'Edit Nanny', headerLeft: () => null}}
+          options={{title: 'Edit Nanny'}}
         />
         <Stack.Screen
           name="EditNanny_schedule_home"

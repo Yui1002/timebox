@@ -21,7 +21,6 @@ const SignIn_Admin = ({navigation}: any) => {
   const [password, setPassword] = useState('');
   const [inputErrors, setInputErrors] = useState({
     type: '',
-    title: '',
     msg: '',
   });
 
@@ -39,7 +38,7 @@ const SignIn_Admin = ({navigation}: any) => {
       })
       .catch(err => {
         const errMsg = err.response.data.error;
-        const error = { type: 'SIGN_IN_ERROR', title: '', msg: errMsg }
+        const error = { type: 'SIGN_IN_ERROR', msg: errMsg }
         setInputErrors(error);
       });
   };
@@ -53,13 +52,12 @@ const SignIn_Admin = ({navigation}: any) => {
     if (!validator.isEmail(email)) {
       const error = {
         type: 'INVALID_EMAIL_FORMAT',
-        title: '',
         msg: 'Email is not valid',
       };
       setInputErrors(error);
       return false;
     }
-    setInputErrors({type: '', title: '', msg: ''});
+    setInputErrors({type: '', msg: ''});
     return true;
   };
 
@@ -67,13 +65,12 @@ const SignIn_Admin = ({navigation}: any) => {
     if (password.length === 0) {
       const error = {
         type: 'EMPTY_PASSWORD',
-        title: '',
         msg: 'Password is required',
       };
       setInputErrors(error);
       return false;
     }
-    setInputErrors({type: '', title: '', msg: ''});
+    setInputErrors({type: '', msg: ''});
     return true;
   };
 

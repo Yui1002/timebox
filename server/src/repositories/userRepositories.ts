@@ -110,11 +110,9 @@ class UserRepositories {
 
   async editSchedule(userId: string, shift: any) {
     const { day, start_time, end_time } = shift;
-    const uuid = uuidv4();
     const sql =
-      "INSERT INTO users_schedule VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, day) DO UPDATE SET start_time = $6, end_time = $7;";
+      "INSERT INTO users_schedule VALUES (uuid_generate_v4(), $1, $2, $3, $4) ON CONFLICT (user_id, day) DO UPDATE SET start_time = $5, end_time = $6;";
     await this.repositories.queryDB(sql, [
-      uuid,
       userId,
       day,
       start_time,

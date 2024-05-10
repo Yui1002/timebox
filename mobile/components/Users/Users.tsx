@@ -8,15 +8,14 @@ import {
   Heading,
   ScrollView,
   VStack,
-  HStack,
   Button,
 } from 'native-base';
 import User from './User';
-import { UserInterface } from '../../interfaces/UserInterface';
+import {UserInterface} from '../../interfaces/UserInterface';
 
 const Users = ({email, setAddError, setEditError}: any) => {
   const {navigate} = useNavigation();
-  const [users, setUsers] = useState<UserInterface[] | undefined>(undefined);
+  const [users, setUsers] = useState<UserInterface[] | []>([]);
 
   useEffect(() => {
     getUsers();
@@ -34,17 +33,19 @@ const Users = ({email, setAddError, setEditError}: any) => {
       });
   };
 
-  const processUserData = (users: {
-    first_name: string | null;
-    last_name: string | null;
-    user_name: string;
-    rate: number;
-    rate_type: string | null;
-    status: string,
-    day: string | null;
-    start_time: string | null;
-    end_time: string | null;
-  }[]): UserInterface[] => {
+  const processUserData = (
+    users: {
+      first_name: string | null;
+      last_name: string | null;
+      user_name: string;
+      rate: number;
+      rate_type: string | null;
+      status: string;
+      day: string | null;
+      start_time: string | null;
+      end_time: string | null;
+    }[],
+  ): UserInterface[] => {
     const result = [];
     result.push(formatData(users[0]));
 
@@ -90,10 +91,8 @@ const Users = ({email, setAddError, setEditError}: any) => {
 
   return (
     <Box m="5%">
-      <HStack space={2} justifyContent="space-between" alignItems="start">
-        <Heading size="lg">Nannies</Heading>
-      </HStack>
-      <Box mt="6">
+      <Heading size="lg">Nannies</Heading>
+      <Box mt="4">
         {users && users.length < 1 ? (
           <Box>
             <Text>No nannies registered</Text>
@@ -101,33 +100,32 @@ const Users = ({email, setAddError, setEditError}: any) => {
         ) : (
           <ScrollView h="380">
             <VStack flex="1">
-              {users && users.map((user, index) => (
-                <User
-                  key={index}
-                  user={user}
-                  getUsers={getUsers}
-                  ownerEmail={email}
-                  setEditError={setEditError}
-                />
-              ))}
+              {users.map((user, index) => (
+                  <User
+                    key={index}
+                    user={user}
+                    getUsers={getUsers}
+                    ownerEmail={email}
+                    setEditError={setEditError}
+                  />
+                ))}
             </VStack>
           </ScrollView>
-          
         )}
       </Box>
       <Button
-          onPress={() =>
-            navigate('AddNanny_1', {
-              ownerEmail: email,
-              setAddError: setAddError,
-              getUsers: getUsers,
-            })
-          }
-          size="md"
-          mt={10}
-          borderRadius="40">
-          Add a Nanny
-        </Button>
+        onPress={() =>
+          navigate('AddNanny_1', {
+            ownerEmail: email,
+            setAddError: setAddError,
+            getUsers: getUsers,
+          })
+        }
+        size="md"
+        mt={10}
+        borderRadius="40">
+        Add a Nanny
+      </Button>
     </Box>
   );
 };

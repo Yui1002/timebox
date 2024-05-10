@@ -16,27 +16,29 @@ import {
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
-const User = ({user, getUsers, ownerEmail, setEditError}: any) => {
+const User = (props: any) => {
+  const { user, getUsers, ownerEmail, setEditError } = props;
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
   const {user_name, rate, rate_type, status, shifts} = user;
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
+  const showToast = (description: string) => {
+    return Toast.show({
+      description: description,
+      placement: "top"
+    });
+  };
+
   const deleteUser = () => {
     axios
       .delete(`${LOCAL_HOST_URL}/user/${user_name}/${ownerEmail}`)
       .then(() => {
-        Toast.show({
-          description: 'User has been deleted!',
-          placement: 'top',
-        });
+        showToast('User has been deleted!');
         getUsers();
       })
       .catch(() => {
-        Toast.show({
-          description: 'Failed to delete user.',
-          placement: 'top',
-        });
+        showToast('Failed to delete user.');
       })
       .finally(() => {
         setDeleteDialogOpen(false);
