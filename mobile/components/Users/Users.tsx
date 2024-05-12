@@ -12,6 +12,7 @@ import {
 } from 'native-base';
 import User from './User';
 import {UserInterface} from '../../interfaces/UserInterface';
+import {Alert, BackHandler} from 'react-native';
 
 const Users = ({email, setAddError, setEditError}: any) => {
   const {navigate} = useNavigation();
@@ -19,6 +20,35 @@ const Users = ({email, setAddError, setEditError}: any) => {
 
   useEffect(() => {
     getUsers();
+  }, []);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      Alert.alert(
+        'Exit App',
+        'Do you want to exit?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {
+              // Do nothing
+            },
+            style: 'cancel',
+          },
+          { text: 'YES', onPress: () => BackHandler.exitApp() },
+        ],
+        { cancelable: false }
+      );
+  
+      return true;
+    };
+  
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPress
+    );
+  
+    return () => backHandler.remove();
   }, []);
 
   const getUsers = () => {

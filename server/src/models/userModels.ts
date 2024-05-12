@@ -34,14 +34,14 @@ class UserModels {
 
   async editUser(req: any) {
     const userId = await this.repositories.getUserId(req.user_name);
-    await this.repositories.editUser(req, userId); // check
+    await this.repositories.editUser(req, userId);
     const schedule = await this.repositories.getScheduleByUserId(userId);
     return req.finalShifts.map(async (s: { day: string; start_time: string; end_time: number }) => {
-      const isMatch = schedule.some((d: any) => d.day === s.day);
-      if (isMatch) {
-        console.log(isMatch, s)
-        await this.repositories.editSchedule(userId, s);
-      }
+      await this.repositories.editSchedule(userId, s)
+      // const isMatch = schedule.some((d: any) => d.day === s.day);
+      // if (isMatch) {
+      //   await this.repositories.editSchedule(userId, s);
+      // }
     })
   }
 

@@ -40,29 +40,30 @@ function App(): JSX.Element {
         <Stack.Screen
           name="SignUp"
           component={SignUp}
-          options={{title: '', headerLeft: () => null}}
+          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="SignIn_Admin"
           component={SignIn_Admin}
-          options={{title: ''}}
+          options={{title: '', gestureEnabled: false}}
         />
         <Stack.Screen
           name="SignIn_Nanny"
           component={SignIn_Nanny}
-          options={{title: ''}}
+          options={{title: '', gestureEnabled: false}}
         />
         <Stack.Screen
           name="ForgotPassword"
           component={ForgotPassword}
-          options={{title: 'Forgot Password', headerLeft: () => null}}
+          options={{title: 'Forgot Password', gestureEnabled: false, headerLeft: () => null}}
         />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{gestureEnabled: false}}/>
         <Stack.Screen
           name="Home_admin"
           component={Home_admin}
           options={({navigation}) => ({
             headerTitle: 'Home',
+            gestureEnabled: false,
             headerLeft: () => null,
             headerRight: () => (
               <Button
@@ -75,18 +76,19 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Users"
           component={Users}
-          options={{title: 'Users', headerLeft: () => null}}
+          options={{title: 'Users', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="Account"
           component={Account}
-          options={{title: 'Account'}}
+          options={{title: 'Account', gestureEnabled: false}}
         />
         <Stack.Screen
           name="Home_nanny"
           component={Home_nanny}
           options={({navigation}) => ({
             headerTitle: 'Home',
+            gestureEnabled: false,
             headerLeft: () => null,
             headerRight: () => (
               <Button
@@ -99,52 +101,52 @@ function App(): JSX.Element {
         <Stack.Screen
           name="AddNanny_1"
           component={AddNanny_1}
-          options={{title: 'Add Nanny'}}
+          options={{title: 'Add Nanny', gestureEnabled: false}}
         />
         <Stack.Screen
           name="AddNanny_2"
           component={AddNanny_2}
-          options={{title: 'Add Nanny', headerLeft: () => null}}
+          options={{title: 'Add Nanny', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="AddNanny_review"
           component={AddNanny_review}
-          options={{title: 'Add Nanny', headerLeft: () => null}}
+          options={{title: 'Add Nanny', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="EditNanny_username"
           component={EditNanny_username}
-          options={{title: 'Edit Nanny'}}
+          options={{title: 'Edit Nanny', gestureEnabled: false}}
         />
         <Stack.Screen
           name="EditNanny_schedule_home"
           component={EditNanny_schedule_home}
-          options={{title: 'Edit Nanny', headerLeft: () => null}}
+          options={{title: 'Edit Nanny', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="EditNanny_schedule"
           component={EditNanny_schedule}
-          options={{title: 'Edit Nanny', headerLeft: () => null}}
+          options={{title: 'Edit Nanny', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="EditNanny_review"
           component={EditNanny_review}
-          options={{title: 'Edit Nanny', headerLeft: () => null}}
+          options={{title: 'Edit Nanny', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="User"
           component={User}
-          options={{title: 'User', headerLeft: () => null}}
+          options={{title: 'User', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="AddNanny_schedule"
           component={AddNanny_schedule}
-          options={{title: 'AddNanny_schedule', headerLeft: () => null}}
+          options={{title: 'AddNanny_schedule', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="CheckIn_out_complete"
           component={CheckIn_out_complete}
-          options={{title: '', headerLeft: () => null}}
+          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
         />
       </Stack.Navigator>
     </NavigationContainer>
