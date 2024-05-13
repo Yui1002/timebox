@@ -22,40 +22,12 @@ const Users = ({email, setAddError, setEditError}: any) => {
     getUsers();
   }, []);
 
-  useEffect(() => {
-    const onBackPress = () => {
-      Alert.alert(
-        'Exit App',
-        'Do you want to exit?',
-        [
-          {
-            text: 'Cancel',
-            onPress: () => {
-              // Do nothing
-            },
-            style: 'cancel',
-          },
-          { text: 'YES', onPress: () => BackHandler.exitApp() },
-        ],
-        { cancelable: false }
-      );
-  
-      return true;
-    };
-  
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      onBackPress
-    );
-  
-    return () => backHandler.remove();
-  }, []);
-
   const getUsers = () => {
     axios
       .get(`${LOCAL_HOST_URL}/users/${email}`)
       .then(res => {
         const data = processUserData(res.data);
+        console.log('processed data', data)
         setUsers(data);
       })
       .catch(() => {
@@ -76,47 +48,11 @@ const Users = ({email, setAddError, setEditError}: any) => {
       end_time: string | null;
     }[],
   ): UserInterface[] => {
-    const result = [];
-    result.push(formatData(users[0]));
-
-    for (let i = 1; i < users.length; i++) {
-      let username = users[i].user_name;
-      const isUsernameDuplicated = result.some(e => e.user_name === username);
-      if (!isUsernameDuplicated) {
-        result.push(formatData(users[i]));
-      } else {
-        result
-          .find(v => v.user_name === username)
-          ?.shifts.push({
-            day: users[i].day,
-            start_time: users[i].start_time,
-            end_time: users[i].end_time,
-          });
-      }
-    }
-
-    return result;
-  };
-
-  const formatData = data => {
-    return {
-      first_name: data.first_name,
-      last_name: data.last_name,
-      user_name: data.user_name,
-      rate: data.rate,
-      rate_type: data.rate_type,
-      status: data.status,
-      shifts:
-        data.day == null && data.start_time == null && data.end_time == null
-          ? []
-          : [
-              {
-                day: data.day,
-                start_time: data.start_time,
-                end_time: data.end_time,
-              },
-            ],
-    };
+    return users.reduce((a,b) => {
+      const found = a.find(e => e.user_name == b.user_name);
+      const item = { day: b.day, start_time: b.start_time, end_time: b.end_time };
+      return found ? found.shifts.push(item) : a.push({...b, shifts:[item]}), a;
+    }, [])
   };
 
   return (

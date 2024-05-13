@@ -17,7 +17,7 @@ import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
 const User = (props: any) => {
-  const { user, getUsers, ownerEmail, setEditError } = props;
+  const {user, getUsers, ownerEmail, setEditError} = props;
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
   const {user_name, rate, rate_type, status, shifts} = user;
@@ -26,7 +26,7 @@ const User = (props: any) => {
   const showToast = (description: string) => {
     return Toast.show({
       description: description,
-      placement: "top"
+      placement: 'top',
     });
   };
 
@@ -96,20 +96,20 @@ const User = (props: any) => {
       </HStack>
       <HStack justifyContent="space-between">
         <VStack>
-          {shifts.length > 0 ? (
-            shifts.map((s, index) => (
+          {shifts.map((s, index) => {
+            return s.day ? (
               <Text
                 key={index}
                 fontSize={12}
                 color="coolGray.800">{`${s.day.substring(0, 3)}: ${
                 s.start_time
               } - ${s.end_time}`}</Text>
-            ))
-          ) : (
-            <Text fontSize={12} color="coolGray.800">
-              Not registered
-            </Text>
-          )}
+            ) : (
+              <Text fontSize={12} color="coolGray.800">
+                Not registered
+              </Text>
+            );
+          })}
         </VStack>
         <Text fontSize="xs">
           {`$${rate} / ${rate_type === 'hourly' ? 'hour' : 'day'}`}
