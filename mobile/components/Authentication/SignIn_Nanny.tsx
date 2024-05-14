@@ -14,15 +14,16 @@ import {
 
 const SignIn_Nanny = ({navigation}: any) => {
   const [username, setUsername] = useState('');
-  const [inputErrors, setInputErrors] = useState({ type: '', title: '', msg: '' });
+  const [inputErrors, setInputErrors] = useState({type: '', msg: ''});
 
   const validateInput = (): boolean => {
+    let error = {type: '', msg: ''};
     if (username.length === 0) {
-      const updatedValue = { type: 'EMPTY_USERNAME', title: '', msg: 'Username is required' };
-      setInputErrors(updatedValue);
-      return false;
+      error.type = 'EMPTY_USERNAME';
+      error.msg = 'Username is required';
     }
-    return true;
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
   };
 
   const signIn = () => {
@@ -30,17 +31,16 @@ const SignIn_Nanny = ({navigation}: any) => {
       return;
     }
     axios
-      .post(`${LOCAL_HOST_URL}/signIn_nanny`, { username })
-      .then((res) => {
-        navigation.navigate('Home_nanny', {username})
-        setInputErrors({ type: '', title: '', msg: '' });
+      .post(`${LOCAL_HOST_URL}/signIn_nanny`, {username})
+      .then(res => {
+        navigation.navigate('Home_nanny', {username});
+        setInputErrors({type: '', msg: ''});
       })
       .catch(err => {
         const errMsg = err.response.data.error;
-        setInputErrors({ type: 'USER_NOT_FOUND', title: '', msg: errMsg });
+        setInputErrors({type: 'USER_NOT_FOUND', msg: errMsg});
       });
   };
-
 
   const alertSignUpFailure = () => {
     return (

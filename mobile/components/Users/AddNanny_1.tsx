@@ -22,31 +22,29 @@ const AddNanny_1 = ({route, navigation}: any) => {
   });
 
   const validateInput = async () => {
+    let error = {type: '', msg: ''};
     if (username.length === 0) {
-      const updatedValue = {
-        type: 'EMPTY_USERNAME',
-        msg: 'The username is required',
-      };
-      setInputErrors(updatedValue);
-      return;
-    } else if (await isUserRegistered()) {
-      const updatedValue = {
-        type: 'USERNAME_DUPLICATE',
-        msg: 'The username is already used',
-      };
-      setInputErrors(updatedValue);
-      return;
-    } else {
-      setInputErrors({type: '', msg: ''});
-      navigation.navigate('AddNanny_2', {
-        ownerEmail,
-        username,
-        rate,
-        rateType,
-        setAddError,
-        getUsers,
-      });
+      error.type = 'EMPTY_USERNAME';
+      error.msg = 'The username is required';
     }
+    if (await isUserRegistered()) {
+      error.type = 'USERNAME_DUPLICATE';
+      error.msg = 'The username is already used';
+    }
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
+  };
+
+  const navigateToNext = () => {
+    if (!validateInput()) return;
+    navigation.navigate('AddNanny_2', {
+      ownerEmail,
+      username,
+      rate,
+      rateType,
+      setAddError,
+      getUsers,
+    });
   };
 
   const isUserRegistered = async () => {
@@ -93,7 +91,7 @@ const AddNanny_1 = ({route, navigation}: any) => {
             </FormControl>
           </HStack>
         </Box>
-        <Button mt="4" onPress={validateInput}>
+        <Button mt="4" onPress={navigateToNext}>
           Next
         </Button>
       </Box>

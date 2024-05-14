@@ -44,6 +44,11 @@ const EditNanny_username = ({route, navigation}: any) => {
       error.msg = 'Please specify both rate and rate type';
     }
     setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
+  };
+
+  const navigateToNext = () => {
+    if (!validateInput()) return;
     navigation.navigate('EditNanny_schedule_home', {
       ownerEmail,
       user_name,
@@ -55,7 +60,7 @@ const EditNanny_username = ({route, navigation}: any) => {
       setEditError,
       getUsers,
     });
-  };
+  }
 
   return (
     <NativeBaseProvider>
@@ -118,7 +123,7 @@ const EditNanny_username = ({route, navigation}: any) => {
             </FormControl.ErrorMessage>
           </FormControl>
         </Center>
-        <Button mt="4" onPress={validateInput}>
+        <Button mt="4" onPress={navigateToNext}>
           Next
         </Button>
       </Box>

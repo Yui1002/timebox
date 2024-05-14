@@ -35,21 +35,18 @@ const EditNanny_schedule = ({route, navigation}: any) => {
     msg: '',
   });
 
-
   const convertFormat = (time: string | Date) => {
     return typeof time === 'string' ? time : moment(time).format('LT');
   };
 
   const validateInput = () => {
+    let error = {type: "", msg: ""};
     if (startTime >= endTime) {
-      const updatedValue = {
-        type: 'START_END_SET_ERROR',
-        msg: 'Please set the start time before the end time',
-      };
-      setInputErrors(updatedValue);
-      return false;
+      error.type = 'START_END_SET_ERROR';
+      error.msg = 'Please set the start time before the end time';
     }
-    return true;
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
   };
 
   const saveChanges = () => {
@@ -149,7 +146,11 @@ const EditNanny_schedule = ({route, navigation}: any) => {
             </Center>
           </Box>
           <HStack space={2} mt={10}>
-            <Button w="40%" borderRadius={20} variant='subtle' onPress={() => navigation.goBack()}>
+            <Button
+              w="40%"
+              borderRadius={20}
+              variant="subtle"
+              onPress={() => navigation.goBack()}>
               Back
             </Button>
             <Button w="40%" borderRadius={20} onPress={saveChanges}>

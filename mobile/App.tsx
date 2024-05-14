@@ -178,7 +178,7 @@ function App(): JSX.Element {
           name="AddNanny_schedule"
           component={AddNanny_schedule}
           options={{
-            title: 'AddNanny_schedule',
+            title: '',
             gestureEnabled: false,
             headerLeft: () => null,
           }}
