@@ -2,14 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
-import {
-  Box,
-  Text,
-  Heading,
-  ScrollView,
-  VStack,
-  Button,
-} from 'native-base';
+import {Box, Text, Heading, ScrollView, VStack, Button} from 'native-base';
 import User from './User';
 import {UserInterface} from '../../interfaces/UserInterface';
 import {Alert, BackHandler} from 'react-native';
@@ -27,7 +20,6 @@ const Users = ({email, setAddError, setEditError}: any) => {
       .get(`${LOCAL_HOST_URL}/users/${email}`)
       .then(res => {
         const data = processUserData(res.data);
-        console.log('processed data', data)
         setUsers(data);
       })
       .catch(() => {
@@ -48,11 +40,33 @@ const Users = ({email, setAddError, setEditError}: any) => {
       end_time: string | null;
     }[],
   ): UserInterface[] => {
-    return users.reduce((a,b) => {
+    const data = users.reduce((a, b) => {
       const found = a.find(e => e.user_name == b.user_name);
-      const item = { day: b.day, start_time: b.start_time, end_time: b.end_time };
-      return found ? found.shifts.push(item) : a.push({...b, shifts:[item]}), a;
-    }, [])
+      const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
+      return (
+        found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
+      );
+    }, []);
+    for (let i = 0; i < data.length; i++) {
+      sortDays(data[i]);
+    }
+    return data;
+  };
+
+  const sortDays = data => {
+    if (data.shifts[0].day === null) return;
+    const sorter = {
+      Monday: 1,
+      Tuesday: 2,
+      Wednesday: 3,
+      Thursday: 4,
+      Friday: 5,
+      Saturday: 6,
+      Sunday: 7,
+    };
+    return data.shifts.sort((a, b) => {
+      return sorter[a.day] - sorter[b.day];
+    });
   };
 
   return (
@@ -67,14 +81,14 @@ const Users = ({email, setAddError, setEditError}: any) => {
           <ScrollView h="380">
             <VStack flex="1">
               {users.map((user, index) => (
-                  <User
-                    key={index}
-                    user={user}
-                    getUsers={getUsers}
-                    ownerEmail={email}
-                    setEditError={setEditError}
-                  />
-                ))}
+                <User
+                  key={index}
+                  user={user}
+                  getUsers={getUsers}
+                  ownerEmail={email}
+                  setEditError={setEditError}
+                />
+              ))}
             </VStack>
           </ScrollView>
         )}
