@@ -89,6 +89,19 @@ class UserModels {
     const userId = await this.repositories.getUserId(username);
     return await this.repositories.searchByPeriod(from, to, userId)
   }
+
+  async searchByDateYear(req: any) {
+    const { year, month, username } = req;
+    const userId = await this.repositories.getUserId(username);
+    return await this.repositories.searchByDateYear(year, month, userId);
+  }
+
+  async getRecord(username: string) {
+    const currentYear = (new Date().getFullYear()).toString();
+    const currentMonth = (new Date().getMonth() + 1).toString();
+    const userId = await this.repositories.getUserId(username);
+    return await this.repositories.searchByDateYear(currentYear, currentMonth, userId)
+  }
 }
 
 export default UserModels;

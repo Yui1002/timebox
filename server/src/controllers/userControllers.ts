@@ -34,7 +34,7 @@ class UserControllers {
   }
 
   async deleteUser(req: any, res: any) {
-    const {username, email} = req.params;
+    const { username, email } = req.params;
     const response = await this.models.deleteUser(email, username);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
@@ -69,6 +69,17 @@ class UserControllers {
 
   async searchByPeriod(req: any, res: any) {
     const record = await this.models.searchByPeriod(req.body);
+    res.send(record);
+  }
+
+  async searchByDateYear(req: any, res: any) {
+    const record = await this.models.searchByDateYear(req.body);
+    res.send(record);
+  }
+
+  async getRecord(req: any, res: any) {
+    const { username } = req.params;
+    const record = await this.models.getRecord(username);
     res.send(record);
   }
 }

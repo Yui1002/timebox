@@ -32,16 +32,6 @@ const Account = ({route}: any) => {
     getUserInfo();
   }, []);
 
-  // const getHistory = () => {
-  //   axios.get(`${LOCAL_HOST_URL}/history/${username}`)
-  //     .then((res) => {
-  //       setHistory(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     })
-  // }
-
   const getUserInfo = () => {
     axios
       .get(`${LOCAL_HOST_URL}/getUserInfo/${username}`)
@@ -177,17 +167,29 @@ const Account = ({route}: any) => {
           </Center>
           <VStack mt={6}>
             <HStack space={4} backgroundColor="#ddd" borderRadius={20}>
-              <Text bold w="30%" ml={4}>Date</Text>
-              <Text bold w="30%" color="#228B22">In</Text>
-              <Text bold w="30%" color="#FF8C00">Out</Text>
+              <Text bold w="30%" ml={4}>
+                Date
+              </Text>
+              <Text bold w="30%" color="#228B22">
+                In
+              </Text>
+              <Text bold w="30%" color="#FF8C00">
+                Out
+              </Text>
             </HStack>
           </VStack>
-          {history && !history.length && <Center mt={4}><Text>Not found</Text></Center>}
+          {history && !history.length && (
+            <Center mt={4}>
+              <Text>Not found</Text>
+            </Center>
+          )}
           {history &&
             history.map((h, index) => (
               <VStack key={index}>
                 <HStack space={4}>
-                  <Text w="30%">{moment(h.record_date).format('YYYY/MM/DD')}</Text>
+                  <Text w="30%">
+                    {moment(h.record_date).format('YYYY/MM/DD')}
+                  </Text>
                   <Text w="30%">{h.start_time}</Text>
                   <Text w="30%">{h.end_time}</Text>
                 </HStack>

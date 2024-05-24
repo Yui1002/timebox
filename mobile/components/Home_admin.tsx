@@ -5,38 +5,19 @@ import AlertMsg from './AlertMsg';
 
 const Home_admin = ({route}: any) => {
   const email = route.params.ownerEmail;
-  const [addError, setAddError] = useState({status: undefined, msg: ''});
-  const [editError, setEditError] = useState({status: undefined, msg: ''});
+  const [errors, setErrors] = useState({status: '', msg: ''});
 
   setTimeout(() => {
-    if (addError.status !== undefined) {
-      setAddError({status: undefined, msg: ''});
-    }
-    if (editError.status !== undefined) {
-      setEditError({status: undefined, msg: ''});
+    if (errors.status) {
+      setErrors({status: '', msg: ''});
     }
   }, 5000);
 
   return (
     <NativeBaseProvider>
-      {addError.status == 'success' && (
-        <AlertMsg msg={addError.msg} status={addError.status} />
-      )}
-      {addError.status == 'error' && (
-        <AlertMsg msg={addError.msg} status={addError.status} />
-      )}
-      {editError.status == 'success' && (
-        <AlertMsg msg={editError.msg} status={editError.status} />
-      )}
-      {editError.status == 'error' && (
-        <AlertMsg msg={editError.msg} status={editError.status} />
-      )}
+      {errors.status && <AlertMsg status={errors.status} msg={errors.msg} />}
       <Box m="5%">
-        <Users
-          email={email}
-          setAddError={setAddError}
-          setEditError={setEditError}
-        />
+        <Users email={email} setErrors={setErrors} />
       </Box>
     </NativeBaseProvider>
   );

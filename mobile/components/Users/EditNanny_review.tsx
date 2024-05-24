@@ -21,6 +21,7 @@ const EditNanny_review = ({route, navigation}: any) => {
     updatedRateType,
     updatedStatus,
     getUsers,
+    setErrors,
   } = route.params;
 
   const submitForm = () => {
@@ -36,9 +37,11 @@ const EditNanny_review = ({route, navigation}: any) => {
       })
       .then(res => {
         getUsers();
+        setErrors({ status: "success", msg: "Successfully edited!"})
         navigation.navigate('Home_admin', {updatedUsername});
       })
       .catch(err => {
+        setErrors({ status: "error", msg: "Failed to edit. Please try again!"})
         navigation.navigate('Home_admin', {updatedUsername});
       });
   };

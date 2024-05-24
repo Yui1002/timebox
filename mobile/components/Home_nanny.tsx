@@ -17,14 +17,14 @@ import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const Home_nanny = ({navigation, route}: any) => {
-  const username = route.params.username;
-  const [time, setTime] = useState<Date>(new Date());
+  const { username } = route.params;
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [startTime, setStartTime] = useState<string | undefined>(undefined);
   const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(new Date());
+      setCurrentTime(new Date());
     }, 1000);
     getTodaysRecord();
 
@@ -35,10 +35,11 @@ const Home_nanny = ({navigation, route}: any) => {
 
   const startRecord = () => {
     const checkedInTime = moment().format('h:mm:ss');
+    setStartTime(checkedInTime);
+    
     axios
       .post(`${LOCAL_HOST_URL}/startRecord`, {username, checkedInTime})
       .then(() => {
-        setStartTime(checkedInTime);
         navigation.navigate('CheckIn_out_complete', {
           type: 'Checked In',
           time: checkedInTime,
@@ -95,7 +96,7 @@ const Home_nanny = ({navigation, route}: any) => {
           Hello {username} !
         </Heading>
         <Heading size="sm" mb={4} textAlign="center">
-          {moment(time).format('MMMM D,  h:mm:ss a')}
+          {moment(currentTime).format('dddd, MMMM D, h:mm:ss a')}
         </Heading>
       </VStack>
       <Center m="5%" mt={10}>

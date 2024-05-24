@@ -161,7 +161,7 @@ class UserRepositories {
 
   async getTodaysRecord(userId: string) {
     const sql =
-      "SELECT start_time, end_time FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
+      "SELECT TO_CHAR(start_time, 'FMHH12:MI pm') as start_time, TO_CHAR(end_time, 'FMHH12:MI pm') as end_time FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
     return (await this.repositories.queryDB(sql, [userId])).rows;
   }
 
@@ -176,6 +176,14 @@ class UserRepositories {
       "SELECT record_date, start_time, end_time FROM time_record WHERE user_id = $1 AND record_date >= $2 AND record_date <= $3;";
     return (await this.repositories.queryDB(sql, [userId, from, to])).rows;
   }
+
+  async searchByDateYear(year: string, month: string, userId: string) {
+    const sql = "SELECT record_date, start_time, end_time FROM time_record WHERE date_part('year', record_date) = $1 AND date_part('month', record_date) = $2 AND user_id = $3;";
+    const data = (await this.repositories.queryDB(sql, [year, month, userId])).rows;
+    console.log('data', data)
+    return data;
+  }
+
 }
 
 export default UserRepositories;

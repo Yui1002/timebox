@@ -17,7 +17,7 @@ import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
 const User = (props: any) => {
-  const {user, getUsers, ownerEmail, setEditError} = props;
+  const {user, getUsers, ownerEmail, setErrors} = props;
   const navigation = useNavigation();
   const cancelRef = React.useRef(null);
   const {user_name, rate, rate_type, status, shifts} = user;
@@ -78,7 +78,7 @@ const User = (props: any) => {
                 user,
                 getUsers,
                 ownerEmail,
-                setEditError,
+                setErrors,
               })
             }>
             Edit
@@ -86,10 +86,7 @@ const User = (props: any) => {
           <Menu.Item onPress={() => setDeleteDialogOpen(true)}>
             Delete
           </Menu.Item>
-          <Menu.Item
-            onPress={() =>
-              navigation.navigate('Account', {usename: user_name})
-            }>
+          <Menu.Item onPress={() => navigation.navigate('Account_Admin', {user_name})}>
             Show record
           </Menu.Item>
         </Menu>

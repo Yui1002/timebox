@@ -16,7 +16,7 @@ class AuthRepositories {
 
   async isNannyRegistered(username: string) {
     const sql = "SELECT COUNT (*) FROM public.users WHERE user_name = $1;";
-    return (await this.repositories.queryDB(sql, [username])).rows[0].count;
+    return (await this.repositories.queryDB(sql, [username])).rows[0].count > 0;
   }
 
   async registerOwner(owner: OwnerInterface) {

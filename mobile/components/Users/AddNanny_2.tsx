@@ -17,7 +17,7 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
 const AddNanny_2 = ({route, navigation}: any) => {
-  const {ownerEmail, username, rate, rateType, setAddError, getUsers} =
+  const {ownerEmail, username, rate, rateType, getUsers, setErrors} =
     route.params;
   const days = [
     'Monday',
@@ -88,8 +88,8 @@ const AddNanny_2 = ({route, navigation}: any) => {
       rate,
       rateType,
       lists,
-      setAddError,
       getUsers,
+      setErrors,
     });
   };
 

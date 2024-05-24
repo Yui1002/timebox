@@ -38,40 +38,33 @@ const SignIn_Admin = ({navigation}: any) => {
       })
       .catch(err => {
         const errMsg = err.response.data.error;
-        const error = { type: 'SIGN_IN_ERROR', msg: errMsg }
+        const error = {type: 'SIGN_IN_ERROR', msg: errMsg};
         setInputErrors(error);
       });
   };
 
   const validateEmail = (): boolean => {
+    let error = {type: '', msg: ''};
     if (email.length === 0) {
-      const error = {type: 'EMPTY_EMAIL', title: '', msg: 'Email is required'};
-      setInputErrors(error);
-      return false;
+      error.type = 'EMPTY_EMAIL';
+      error.msg = 'Email is required';
     }
     if (!validator.isEmail(email)) {
-      const error = {
-        type: 'INVALID_EMAIL_FORMAT',
-        msg: 'Email is not valid',
-      };
-      setInputErrors(error);
-      return false;
+      error.type = 'INVALID_EMAIL_FORMAT';
+      error.msg = 'Email is not valid';
     }
-    setInputErrors({type: '', msg: ''});
-    return true;
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
   };
 
   const validatePassword = (): boolean => {
+    let error = {type: '', msg: ''};
     if (password.length === 0) {
-      const error = {
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
-      };
-      setInputErrors(error);
-      return false;
+      error.type = 'EMPTY_PASSWOR';
+      error.msg = 'Password is required';
     }
-    setInputErrors({type: '', msg: ''});
-    return true;
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
   };
 
   const alertSignInError = () => {
@@ -87,7 +80,7 @@ const SignIn_Admin = ({navigation}: any) => {
 
   return (
     <NativeBaseProvider>
-      {inputErrors.type === "SIGN_IN_ERROR" && alertSignInError()}
+      {inputErrors.type === 'SIGN_IN_ERROR' && alertSignInError()}
       <Box m="5%">
         <Heading size="md">Sign In</Heading>
         <Center>

@@ -12,7 +12,7 @@ import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
 const AddNanny_1 = ({route, navigation}: any) => {
-  const {ownerEmail, setAddError, getUsers} = route.params;
+  const {ownerEmail, setErrors, getUsers} = route.params;
   const [username, setUsername] = useState('');
   const [rate, setRate] = useState(0);
   const [rateType, setRateType] = useState('');
@@ -42,8 +42,8 @@ const AddNanny_1 = ({route, navigation}: any) => {
       username,
       rate,
       rateType,
-      setAddError,
       getUsers,
+      setErrors,
     });
   };
 

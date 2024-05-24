@@ -33,6 +33,8 @@ class Routes {
         app.get('/getTodaysRecord/:username', this.userControllers.getTodaysRecord.bind(this.userControllers));
         app.get('/getUserInfo/:username', this.userControllers.getInfoForNanny.bind(this.userControllers));
         app.post('/searchByPeriod', this.userControllers.searchByPeriod.bind(this.userControllers));
+        app.post('/searchByDateYear', this.userControllers.searchByDateYear.bind(this.userControllers));
+        app.get('/getRecord/:username', this.userControllers.getRecord.bind(this.userControllers));
     }
 }
 

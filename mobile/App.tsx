@@ -18,6 +18,7 @@ import ResetPassword from './components/Authentication/ResetPassword';
 import SignIn_Nanny from './components/Authentication/SignIn_Nanny';
 import Home_admin from './components/Home_admin';
 import Account from './components/Users/Account';
+import Account_Admin from './components/Users/Account_Admin';
 import AddNanny_1 from './components/Users/AddNanny_1';
 import AddNanny_2 from './components/Users/AddNanny_2';
 import AddNanny_review from './components/Users/AddNanny_review';
@@ -93,6 +94,11 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Account"
           component={Account}
+          options={{title: 'Account', gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="Account_Admin"
+          component={Account_Admin}
           options={{title: 'Account', gestureEnabled: false}}
         />
         <Stack.Screen

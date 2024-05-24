@@ -4,10 +4,9 @@ import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import {Box, Text, Heading, ScrollView, VStack, Button} from 'native-base';
 import User from './User';
-import {UserInterface} from '../../interfaces/UserInterface';
-import {Alert, BackHandler} from 'react-native';
+import {UserInterface, RawUserInterface} from '../../interfaces/UserInterface';
 
-const Users = ({email, setAddError, setEditError}: any) => {
+const Users = ({email, setErrors}: any) => {
   const {navigate} = useNavigation();
   const [users, setUsers] = useState<UserInterface[] | []>([]);
 
@@ -27,21 +26,9 @@ const Users = ({email, setAddError, setEditError}: any) => {
       });
   };
 
-  const processUserData = (
-    users: {
-      first_name: string | null;
-      last_name: string | null;
-      user_name: string;
-      rate: number;
-      rate_type: string | null;
-      status: string;
-      day: string | null;
-      start_time: string | null;
-      end_time: string | null;
-    }[],
-  ): UserInterface[] => {
+  const processUserData = (users: RawUserInterface[]): UserInterface[] => {
     const data = users.reduce((a, b) => {
-      const found = a.find(e => e.user_name == b.user_name);
+      const found = a.find((e: RawUserInterface) => e.user_name == b.user_name);
       const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
       return (
         found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
@@ -53,8 +40,8 @@ const Users = ({email, setAddError, setEditError}: any) => {
     return data;
   };
 
-  const sortDays = data => {
-    if (data.shifts[0].day === null) return;
+  const sortDays = (data: UserInterface) => {
+    if (data.shifts == undefined || data.shifts[0].day === null) return;
     const sorter = {
       Monday: 1,
       Tuesday: 2,
@@ -86,7 +73,7 @@ const Users = ({email, setAddError, setEditError}: any) => {
                   user={user}
                   getUsers={getUsers}
                   ownerEmail={email}
-                  setEditError={setEditError}
+                  setErrors={setErrors}
                 />
               ))}
             </VStack>
@@ -97,7 +84,7 @@ const Users = ({email, setAddError, setEditError}: any) => {
         onPress={() =>
           navigate('AddNanny_1', {
             ownerEmail: email,
-            setAddError: setAddError,
+            setErrors: setErrors,
             getUsers: getUsers,
           })
         }

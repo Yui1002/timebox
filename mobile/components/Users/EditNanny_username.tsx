@@ -11,7 +11,7 @@ import {
 } from 'native-base';
 
 const EditNanny_username = ({route, navigation}: any) => {
-  const {ownerEmail, getUsers, setEditError} = route.params;
+  const {ownerEmail, getUsers, setErrors} = route.params;
   const {user_name, rate, rate_type, status, shifts} = route.params.user;
   const [updatedUsername, setUpdatedUsername] = useState(user_name);
   const [updatedRate, setUpdatedRate] = useState<number>(rate);
@@ -57,7 +57,7 @@ const EditNanny_username = ({route, navigation}: any) => {
       updatedRateType,
       updatedStatus,
       shifts,
-      setEditError,
+      setErrors,
       getUsers,
     });
   }
