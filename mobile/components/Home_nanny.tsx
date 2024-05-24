@@ -17,9 +17,11 @@ import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const Home_nanny = ({navigation, route}: any) => {
-  const { username } = route.params;
+  const {username} = route.params;
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  const [startTime, setStartTime] = useState<string | undefined>(undefined);
+  const [startTime, setStartTime] = useState<string | Date | undefined>(
+    undefined,
+  );
   const [endTime, setEndTime] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -34,9 +36,9 @@ const Home_nanny = ({navigation, route}: any) => {
   }, []);
 
   const startRecord = () => {
-    const checkedInTime = moment().format('h:mm:ss');
+    const checkedInTime = moment().format();
     setStartTime(checkedInTime);
-    
+
     axios
       .post(`${LOCAL_HOST_URL}/startRecord`, {username, checkedInTime})
       .then(() => {
@@ -49,11 +51,12 @@ const Home_nanny = ({navigation, route}: any) => {
   };
 
   const endRecord = () => {
-    const checkedOutTime = moment().format('h:mm:ss');
+    const checkedOutTime = moment().format();
+    setEndTime(checkedOutTime);
+    
     axios
       .post(`${LOCAL_HOST_URL}/endRecord`, {username, checkedOutTime})
       .then(() => {
-        setEndTime(checkedOutTime);
         navigation.navigate('CheckIn_out_complete', {
           type: 'Checked Out',
           time: checkedOutTime,
@@ -88,7 +91,7 @@ const Home_nanny = ({navigation, route}: any) => {
         mt={2}
         position="relative"
         left="270"
-        onPress={() => navigation.navigate('Account', { username: username })}>
+        onPress={() => navigation.navigate('Account', {username: username})}>
         Account
       </Button>
       <VStack>
@@ -153,7 +156,9 @@ const Home_nanny = ({navigation, route}: any) => {
             <Text color="#9acd32" bold>
               Checked In
             </Text>
-            <Text>{startTime ? startTime : 'Not registered'}</Text>
+            <Text>
+              {startTime ? moment(startTime).format('LT') : 'Not registered'}
+            </Text>
           </HStack>
         </VStack>
         <Divider my="2" />
@@ -162,7 +167,7 @@ const Home_nanny = ({navigation, route}: any) => {
             <Text color="#ff8c00" bold>
               Checked Out
             </Text>
-            <Text>{endTime ? endTime : 'Not registered'}</Text>
+            <Text>{endTime ? moment(endTime).format('LT') : 'Not registered'}</Text>
           </HStack>
         </VStack>
       </Box>

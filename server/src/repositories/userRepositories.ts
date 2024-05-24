@@ -131,28 +131,17 @@ class UserRepositories {
 
   // ---------------------  Record  --------------------------------
   async startRecord(userId: string, checkedInTime: string) {
-    const uuid = uuidv4();
     const sql =
-      "INSERT INTO time_record VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, $6, $7, CURRENT_TIMESTAMP, $8, $9)";
-    await this.repositories.queryDB(sql, [
-      uuid,
-      null,
-      userId,
-      null,
-      checkedInTime,
-      null,
-      "active",
-      userId,
-      null,
-    ]);
+      "INSERT INTO time_record_v2 VALUES (gen_random_uuid(), $1, $2, $3, CURRENT_DATE, $4)";
+    await this.repositories.queryDB(sql, [userId, checkedInTime, null, userId]);
     return true;
   }
 
   async endRecord(userId: string, checkedOutTime: string) {
     const sql =
-      "SELECT time_record_id FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
+      "SELECT time_record_id FROM time_record_v2 WHERE user_id = $1 AND start_time::DATE = CURRENT_DATE;";
     const sql2 =
-      "UPDATE time_record SET end_time = $1, update_by = $2, update_date = CURRENT_TIMESTAMP WHERE time_record_id = $3;";
+      "UPDATE time_record_v2 SET end_time = $1, update_by = $2, update_date = CURRENT_TIMESTAMP WHERE time_record_id = $3;";
     const id = (await this.repositories.queryDB(sql, [userId])).rows[0]
       .time_record_id;
     await this.repositories.queryDB(sql2, [checkedOutTime, userId, id]);
@@ -161,7 +150,7 @@ class UserRepositories {
 
   async getTodaysRecord(userId: string) {
     const sql =
-      "SELECT TO_CHAR(start_time, 'FMHH12:MI pm') as start_time, TO_CHAR(end_time, 'FMHH12:MI pm') as end_time FROM time_record WHERE user_id = $1 AND record_date = CURRENT_DATE;";
+      "SELECT start_time, end_time FROM time_record_v2 WHERE user_id = $1 AND (start_time::DATE = CURRENT_DATE OR end_time::DATE = CURRENT_DATE);";
     return (await this.repositories.queryDB(sql, [userId])).rows;
   }
 
@@ -178,12 +167,13 @@ class UserRepositories {
   }
 
   async searchByDateYear(year: string, month: string, userId: string) {
-    const sql = "SELECT record_date, start_time, end_time FROM time_record WHERE date_part('year', record_date) = $1 AND date_part('month', record_date) = $2 AND user_id = $3;";
-    const data = (await this.repositories.queryDB(sql, [year, month, userId])).rows;
-    console.log('data', data)
+    const sql =
+      "SELECT record_date, start_time, end_time FROM time_record WHERE date_part('year', record_date) = $1 AND date_part('month', record_date) = $2 AND user_id = $3;";
+    const data = (await this.repositories.queryDB(sql, [year, month, userId]))
+      .rows;
+    console.log("data", data);
     return data;
   }
-
 }
 
 export default UserRepositories;

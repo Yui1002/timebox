@@ -23,8 +23,6 @@ import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker';
 
-console.log('hello');
-
 const Account_Admin = ({route}: any) => {
   const username = route.params.user_name;
   const currentMonth = new Date().getMonth() + 1;
