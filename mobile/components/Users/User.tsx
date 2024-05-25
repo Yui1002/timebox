@@ -86,7 +86,10 @@ const User = (props: any) => {
           <Menu.Item onPress={() => setDeleteDialogOpen(true)}>
             Delete
           </Menu.Item>
-          <Menu.Item onPress={() => navigation.navigate('Account_Admin', {user_name})}>
+          <Menu.Item
+            onPress={() =>
+              navigation.navigate('Account_Admin', {user_name, rate, rate_type})
+            }>
             Show record
           </Menu.Item>
         </Menu>

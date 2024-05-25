@@ -168,10 +168,9 @@ class UserRepositories {
 
   async searchByDateYear(year: string, month: string, userId: string) {
     const sql =
-      "SELECT record_date, start_time, end_time FROM time_record WHERE date_part('year', record_date) = $1 AND date_part('month', record_date) = $2 AND user_id = $3;";
+      "SELECT start_time, end_time FROM time_record_v2 WHERE date_part('year', start_time) = $1 AND date_part('month', start_time) = $2 AND user_id = $3;";
     const data = (await this.repositories.queryDB(sql, [year, month, userId]))
       .rows;
-    console.log("data", data);
     return data;
   }
 }

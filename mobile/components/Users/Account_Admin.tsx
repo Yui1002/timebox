@@ -21,10 +21,10 @@ import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import DatePicker from 'react-native-date-picker';
 
 const Account_Admin = ({route}: any) => {
   const username = route.params.user_name;
+  const { rate, rate_type } = route.params;
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
   const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -44,14 +44,44 @@ const Account_Admin = ({route}: any) => {
     return yearArray;
   };
 
+  const get1DayWorkingHours = (start, end) => {
+    const elapsed = new Date(end) - new Date(start);
+    const hour = (elapsed / (1000 * 60 * 60)).toFixed(1);
+    return hour;
+  }
+
+  const getTotalHoursSalary = () => {
+    if (history == undefined || !history.length) return;
+    let totalHours = 0;
+    history.map((h, idx) => {
+        const elapsed = new Date(h.end_time) - new Date(h.start_time);
+        const hour = (elapsed / (1000 * 60 * 60)).toFixed(1);
+        totalHours += Number(hour);
+    })
+    const salary = getSalary(rate, rate_type, totalHours);
+    return { total: totalHours, salary: salary }; 
+  }
+
+  const getSalary = (rate: number, rateType: string, totalHours: number) => {
+    let salary = 0;
+    if (rateType === 'hourly') {
+        salary = rate * totalHours;
+    }
+    if (rateType === 'daily') {
+        // fix later
+        salary = 0;
+    }
+    return salary
+  }
+
   const getRecord = () => {
     axios
       .get(`${LOCAL_HOST_URL}/getRecord/${username}`)
       .then(res => {
+        console.log(res.data);
         setHistory(res.data);
       })
       .catch(err => {
-        console.log(err);
         setHistory(undefined);
       });
   };
@@ -153,16 +183,17 @@ const Account_Admin = ({route}: any) => {
             <VStack key={idx} my={1}>
               <HStack space={4}>
                 <Text w="25%" textAlign="center">
-                  {moment(h.record_date).format('YYYY/MM/DD')}
+                  {moment(h.start_time).format('YYYY/MM/DD')}
                 </Text>
                 <Text w="18%" textAlign="center">
-                  {h.start_time.slice(0, -3)}
+                  {/* {h.start_time.slice(0, -3)} */}
+                  {moment(h.start_time).format('LT')}
                 </Text>
                 <Text w="18%" textAlign="center">
-                  {h.end_time ? h.end_time.slice(0, -3) : 'NA'}
+                  {h.end_time ? moment(h.end_time).format('LT') : 'NA'}
                 </Text>
                 <Text w="18%" textAlign="center">
-                  9h
+                  {get1DayWorkingHours(h.start_time, h.end_time)} h
                 </Text>
               </HStack>
               <Divider
@@ -177,9 +208,9 @@ const Account_Admin = ({route}: any) => {
         ) : (
           <Text textAlign="center">Not registered</Text>
         )}
-        <HStack space={2}>
-            <Text>Total: </Text>
-            <Text>Salary: </Text>
+        <HStack w={200} space={2}>
+          <Text bold>Total: {getTotalHoursSalary()?.total} h</Text>
+          <Text size="md" bold>Salary: {getTotalHoursSalary()?.salary}</Text>
         </HStack>
       </Box>
     </NativeBaseProvider>
