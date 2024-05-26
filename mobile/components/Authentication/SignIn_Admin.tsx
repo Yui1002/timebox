@@ -60,7 +60,7 @@ const SignIn_Admin = ({navigation}: any) => {
   const validatePassword = (): boolean => {
     let error = {type: '', msg: ''};
     if (password.length === 0) {
-      error.type = 'EMPTY_PASSWOR';
+      error.type = 'EMPTY_PASSWORD';
       error.msg = 'Password is required';
     }
     setInputErrors(error);
@@ -82,7 +82,7 @@ const SignIn_Admin = ({navigation}: any) => {
     <NativeBaseProvider>
       {inputErrors.type === 'SIGN_IN_ERROR' && alertSignInError()}
       <Box m="5%">
-        <Heading size="md">Sign In</Heading>
+        <Heading size="md">Sign In (Admin)</Heading>
         <Center>
           <Box w="100%" maxWidth="300px" my="6">
             <FormControl
@@ -132,7 +132,7 @@ const SignIn_Admin = ({navigation}: any) => {
             <Text
               underline
               fontSize="sm"
-              onPress={() => navigation.navigate('SignUp')}>
+              onPress={() => navigation.navigate('SignUp_Admin')}>
               Sign Up
             </Text>
           </Box>

@@ -28,16 +28,39 @@ class AutheModels {
     return await this.repositories.isNannyRegistered(username);
   }
 
-  async isPasswordMatch(email: string, password: string) {
+  async isAdminPasswordMatch(email: string, password: string) {
     const hashedPassword = await this.repositories.getOwnerPassword(email);
     const isMatch = await bcrypt.compare(password, hashedPassword);
     return isMatch;
   }
 
+  async isNannyPasswordMatch(username: string, password: string) {
+    const hashedPassword = await this.repositories.getNannyPassword(username);
+    if (hashedPassword === null) {
+      return false;
+    }
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch;
+  }
+
+  async isPasswordRegistered(username: string) {
+    return await this.repositories.isNannyPasswordRegistered(username);
+  }
+
+  async setNannyPassword(username: string, password: string) {
+    const hashedPassword = await bcrypt.hash(
+      password,
+      Number(process.env.SALT_ROUNDS)
+    );
+    return await this.repositories.setNannyPassword(username, hashedPassword);
+  }
+
   async signUpAdmin(owner: OwnerInterface) {
     if (owner.password !== null) {
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(owner.password, saltRounds);
+      const hashedPassword = await bcrypt.hash(
+        owner.password,
+        Number(process.env.SALT_ROUNDS)
+      );
       owner.password = hashedPassword;
     }
     return await this.repositories.registerOwner(owner);
@@ -68,14 +91,20 @@ class AutheModels {
   async validateCodeExpiration(req: any) {
     const { ownerEmail, submittedDate } = req;
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
-    const isValid = await this.repositories.validateCodeExpiration(ownerId, submittedDate);
+    const isValid = await this.repositories.validateCodeExpiration(
+      ownerId,
+      submittedDate
+    );
     return isValid;
   }
 
   async validateCodeMatch(req: any) {
     const { code, ownerEmail } = req;
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
-    const isCodeMatch = await this.repositories.validateCodeMatch(ownerId, code);
+    const isCodeMatch = await this.repositories.validateCodeMatch(
+      ownerId,
+      code
+    );
     return isCodeMatch;
   }
 
@@ -87,10 +116,10 @@ class AutheModels {
   }
 
   async resetPassword(req: any) {
-    const {newPassword, ownerEmail} = req;
+    const { newPassword, ownerEmail } = req;
     const ownerId = await this.repositories.getOwnerId(ownerEmail);
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    return await this.repositories.resetPassword(ownerId, hashedPassword)
+    return await this.repositories.resetPassword(ownerId, hashedPassword);
   }
 }
 

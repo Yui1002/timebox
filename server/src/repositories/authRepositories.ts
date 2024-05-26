@@ -10,19 +10,32 @@ class AuthRepositories {
   }
 
   async isOwnerRegistered(email: string) {
-    const sql = "SELECT * FROM public.owners WHERE email_address = $1;";
+    const sql = "SELECT * FROM owners WHERE email_address = $1;";
     return (await this.repositories.queryDB(sql, [email])).rowCount > 0;
   }
 
   async isNannyRegistered(username: string) {
-    const sql = "SELECT COUNT (*) FROM public.users WHERE user_name = $1;";
+    const sql = "SELECT COUNT (*) FROM users WHERE user_name = $1;";
     return (await this.repositories.queryDB(sql, [username])).rows[0].count > 0;
+  }
+
+  async isNannyPasswordRegistered(username: string) {
+    const sql = "SELECT user_password FROM users WHERE user_name = $1;";
+    const data = (await this.repositories.queryDB(sql, [username])).rows[0].user_password;
+    return data !== null;
+  }
+
+  async setNannyPassword(username: string, password: string) {
+    const sql = "UPDATE users SET user_password = $1 WHERE user_name = $2;";
+    await this.repositories.queryDB(sql, [password, username]);
+    console.log('here')
+    return true;
   }
 
   async registerOwner(owner: OwnerInterface) {
     const { email, status, createDate, password } = owner;
     const sql =
-      "INSERT INTO public.owners (owner_id, first_name, last_name, email_address, status, create_date, owner_password) VALUES ($1, $2, $3, $4, $5, $6, $7);";
+      "INSERT INTO owners (owner_id, first_name, last_name, email_address, status, create_date, owner_password) VALUES ($1, $2, $3, $4, $5, $6, $7);";
     const uuid = uuidv4();
     return (
       (
@@ -41,9 +54,15 @@ class AuthRepositories {
 
   async getOwnerPassword(email: string) {
     const sql =
-      "SELECT owner_password FROM public.owners WHERE email_address = $1;";
+      "SELECT owner_password FROM owners WHERE email_address = $1;";
     return (await this.repositories.queryDB(sql, [email])).rows[0]
       .owner_password;
+  }
+
+  async getNannyPassword(username: string) {
+    const sql = "SELECT user_password FROM users WHERE user_name = $1;"
+    return (await this.repositories.queryDB(sql, [username])).rows[0]
+      .user_password;
   }
 
   async storeResetPasswordCode(code: number, ownerId: string) {

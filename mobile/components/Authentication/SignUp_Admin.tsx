@@ -14,21 +14,14 @@ import {
   Alert,
   Center,
 } from 'native-base';
+import {PASSWORD_RULES} from '../../config.js';
 
-const passwordRules = {
-  minLength: 8,
-  minLowercase: 1,
-  minUppercase: 1,
-  minNumbers: 1,
-  minSymbols: 0,
-};
-
-const SignUp = ({navigation}: any) => {
+const SignUp_Admin = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmedPassword, setConfirmedPassword] = useState('');
   const [inputErrors, setInputErrors] = useState({
     type: '',
-    title: '',
     msg: '',
   });
 
@@ -48,51 +41,42 @@ const SignUp = ({navigation}: any) => {
       })
       .catch(err => {
         const errMsg = err.response.data.error;
-        const error = {type: 'SIGN_UP_ERROR', title: '', msg: errMsg};
+        const error = {type: 'SIGN_UP_ERROR', msg: errMsg};
         setInputErrors(error);
       });
   };
 
   const validateEmail = (): boolean => {
+    let error = {type: '', msg: ''};
     if (email.length === 0) {
-      const error = {type: 'EMPTY_EMAIL', title: '', msg: 'Email is required'};
-      setInputErrors(error);
-      return false;
+      error.type = 'EMPTY_EMAIL';
+      error.msg = 'Email is required';
     }
     if (!validator.isEmail(email)) {
-      const error = {
-        type: 'INVALID_EMAIL_FORMAT',
-        title: '',
-        msg: 'Email is not valid',
-      };
-      setInputErrors(error);
-      return false;
+      error.type = 'INVALID_EMAIL_FORMAT';
+      error.msg = 'Email is not valid';
     }
-    setInputErrors({type: '', title: '', msg: ''});
-    return true;
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
   };
 
   const validatePassword = () => {
-    if (password.length === 0) {
-      const error = {
-        type: 'EMPTY_PASSWORD',
-        title: '',
-        msg: 'Password is required',
-      };
-      setInputErrors(error);
-      return false;
+    let error = {type: '', msg: ''};
+    if (!password.length || !confirmedPassword.length) {
+      error.type = 'EMPTY_PASSWORD';
+      error.msg = 'Password is required';
     }
-    if (!validator.isStrongPassword(password, passwordRules)) {
-      const error = {
-        type: 'WEAK_PASSWORD',
-        title: '',
-        msg: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
-      };
-      setInputErrors(error);
-      return false;
+    if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
+      error.type = 'WEAK_PASSWORD';
+      error.msg =
+        'Password must contain 8 characters, 1 number, 1 upper, 1 lower';
     }
-    setInputErrors({type: '', title: '', msg: ''});
-    return true;
+    if (password !== confirmedPassword) {
+      error.type = 'PASSWORD_MISMATCH';
+      error.msg = 'Password does not match';
+    }
+    setInputErrors(error);
+    return error.type.length === 0 && error.msg.length === 0;
   };
 
   const alertSignUpError = () => {
@@ -149,6 +133,23 @@ const SignUp = ({navigation}: any) => {
                 At least: 8 characters, 1 numbers, 1 upper, 1 lower
               </FormControl.HelperText>
             </FormControl>
+            <FormControl
+              isRequired
+              isInvalid={
+                inputErrors.type === 'EMPTY_PASSWORD' ||
+                inputErrors.type === 'PASSWORD_MISMATCH'
+              }>
+              <FormControl.Label>Confirm Password</FormControl.Label>
+              <Input
+                type="password"
+                onChangeText={val => setPassword(val)}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <FormControl.ErrorMessage>
+                {inputErrors.msg}
+              </FormControl.ErrorMessage>
+            </FormControl>
           </Box>
           <Button onPress={() => signUp()} w="150" mb={4}>
             Sign Up
@@ -174,4 +175,4 @@ const SignUp = ({navigation}: any) => {
   );
 };
 
-export default SignUp;
+export default SignUp_Admin;

@@ -8,7 +8,8 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import SignUp from './components/Authentication/SignUp';
+import SignUp_Admin from './components/Authentication/SignUp_Admin';
+import SignUp_Nanny from './components/Authentication/SignUp_Nanny';
 import SignIn_Admin from './components/Authentication/SignIn_Admin';
 import Users from './components/Users/Users';
 import Start from './components/Start';
@@ -39,9 +40,14 @@ function App(): JSX.Element {
       <Stack.Navigator>
         <Stack.Screen name="Start" component={Start} options={{title: ''}} />
         <Stack.Screen
-          name="SignUp"
-          component={SignUp}
+          name="SignUp_Admin"
+          component={SignUp_Admin}
           options={{title: '', gestureEnabled: false, headerLeft: () => null}}
+        />
+        <Stack.Screen
+          name="SignUp_Nanny"
+          component={SignUp_Nanny}
+          options={{title: '', gestureEnabled: false}}
         />
         <Stack.Screen
           name="SignIn_Admin"
