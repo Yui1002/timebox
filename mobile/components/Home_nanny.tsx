@@ -88,9 +88,9 @@ const Home_nanny = ({navigation, route}: any) => {
       <Button
         w="90"
         borderRadius={20}
-        mt={2}
+        mt={4}
         position="relative"
-        left="270"
+        left="38%"
         onPress={() => navigation.navigate('Account', {username: username})}>
         Account
       </Button>

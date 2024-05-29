@@ -8,7 +8,7 @@ import {
   Center,
 } from 'native-base';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import moment from "moment";
+import moment from 'moment';
 
 const CheckIn_out_complete = ({navigation, route}: any) => {
   const {type, time} = route.params;
@@ -27,14 +27,18 @@ const CheckIn_out_complete = ({navigation, route}: any) => {
             size: 10,
           }}
         />
-        <Text color="#fff" textAlign="center" bold fontSize="lg">
+        <Text my={4} color="#fff" textAlign="center" bold fontSize="24">
           {type}
         </Text>
-        <Text color="#fff" textAlign="center" bold fontSize="sm">
+        <Text color="#fff" textAlign="center" bold fontSize="18">
           {moment(time).format('dddd MMMM Do, h:mm a')}
         </Text>
         <Center>
-          <Button w="60%" m="5%" onPress={() => navigation.goBack()}>
+          <Button
+            w="60%"
+            my="10"
+            borderRadius={20}
+            onPress={() => navigation.goBack()}>
             Back
           </Button>
         </Center>

@@ -19,6 +19,7 @@ import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker';
 
+console.log('hello');
 const Account = ({route}: any) => {
   const username = route.params.username;
   const [userInfo, setUserInfo] = useState([]);
@@ -49,6 +50,7 @@ const Account = ({route}: any) => {
         username,
       })
       .then(res => {
+        console.log('data', res.data);
         setHistory(res.data);
       })
       .catch(err => {
@@ -65,7 +67,7 @@ const Account = ({route}: any) => {
           borderColor="#babec5"
           borderWidth={1}
           borderRadius={8}>
-          <Text bold>Current Shifts</Text>
+          <Text bold>Working schedule</Text>
           {userInfo.map((user, index) => (
             <Text
               key={index}
@@ -75,7 +77,7 @@ const Account = ({route}: any) => {
           ))}
           <Text bold>Pay</Text>
           {userInfo.length && (
-            <Text fontSize={13}>{`$${userInfo[0].rate} / ${
+            <Text fontSize={13}>{` $${userInfo[0].rate} / ${
               userInfo[0].rate_type === 'daily' ? 'day' : 'hour'
             }`}</Text>
           )}
@@ -161,7 +163,7 @@ const Account = ({route}: any) => {
             </VStack>
           </HStack>
           <Center>
-            <Button w="50%" mt={4} onPress={searchByPeriod}>
+            <Button w="50%" borderRadius={20} mt={4} onPress={searchByPeriod}>
               Search
             </Button>
           </Center>
@@ -190,8 +192,16 @@ const Account = ({route}: any) => {
                   <Text w="30%">
                     {moment(h.record_date).format('YYYY/MM/DD')}
                   </Text>
-                  <Text w="30%">{h.start_time}</Text>
-                  <Text w="30%">{h.end_time}</Text>
+                  <Text w="30%">
+                    {h.start_time
+                      ? moment(h.start_time).format('LT')
+                      : 'Not registered'}
+                  </Text>
+                  <Text w="30%">
+                    {h.end_time
+                      ? moment(h.end_time).format('LT')
+                      : 'Not registered'}
+                  </Text>
                 </HStack>
               </VStack>
             ))}

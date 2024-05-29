@@ -161,8 +161,7 @@ class UserRepositories {
   }
 
   async searchByPeriod(from: string, to: string, userId: string) {
-    const sql =
-      "SELECT record_date, start_time, end_time FROM time_record WHERE user_id = $1 AND record_date >= $2 AND record_date <= $3;";
+    const sql = "SELECT start_time, end_time FROM time_record_v2 WHERE user_id = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
     return (await this.repositories.queryDB(sql, [userId, from, to])).rows;
   }
 
