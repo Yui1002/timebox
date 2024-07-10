@@ -6,113 +6,190 @@
  */
 
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import SignUp from './components/Authentication/SignUp';
+import SignIn from './components/Authentication/SignIn';
+import VerifyOTP from './components/Authentication/VerifyOTP';
+import Home from './components/Users/Home';
+import ServiceProviders from './components/Users/ServiceProviders';
+import ForgotPassword from './components/Authentication/ForgotPassword';
+import ResetPassword from './components/Authentication/ResetPassword';
+import Account from './components/Users/Account';
+import Account_Admin from './components/Users/Account_Admin';
+// import AddServiceProvider_1 from './components/Users/AddServiceProvider_1';
+// import AddServiceProvider_2 from './components/Users/AddServiceProvider_2';
+// import AddServiceProvider_Review from './components/Users/AddServiceProvider_Review';
+// import EditServiceProvider_1 from './components/Users/EditServiceProvider_1';
+// import EditServiceProvider_2 from './components/Users/EditServiceProvider_2';
+// import EditServiceProvider_3 from './components/Users/EditServiceProvider_3';
+// import EditServiceProvider_review from './components/Users/EditServiceProvider_review';
+// import EditAddServiceProvider from './components/Users/EditAddServiceProvider';
+// import ServiceProvider from './components/Users/ServiceProvider';
+// import CheckIn_out_complete from './components/Users/CheckIn_out_complete';
+import {Button} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+function App(): JSX.Element {
+  const Stack = createStackNavigator();
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="SignIn"
+          component={SignIn}
+          options={{title: '', gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
+        />
+        <Stack.Screen
+          name="VerifyOTP"
+          component={VerifyOTP}
+          options={{
+            title: 'Forgot Password',
+            gestureEnabled: false,
+          }}
+        />
+        {/* <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
+        />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPassword}
+          options={{
+            title: 'Forgot Password',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="VerifyOTP"
+          component={VerifyOTP}
+          options={{
+            title: 'Forgot Password',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={({navigation}) => ({
+            headerTitle: 'Home',
+            gestureEnabled: false,
+            headerLeft: () => null,
+            headerRight: () => (
+              <Button
+                title="Sign Out"
+                onPress={() => navigation.navigate('SignIn')}
+              />
+            ),
+          })}
+        /> */}
+        {/* <Stack.Screen
+          name="ServiceProviders"
+          component={ServiceProviders}
+          options={{
+            title: 'Service Providers',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="Account"
+          component={Account}
+          options={{title: 'Account', gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="Account_Admin"
+          component={Account_Admin}
+          options={{title: 'Account', gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="AddServiceProvider_1"
+          component={AddServiceProvider_1}
+          options={{title: 'Add Service Provicer', gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="AddServiceProvider_2"
+          component={AddServiceProvider_2}
+          options={{
+            title: 'Add Service Provider',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="AddServiceProvider_Review"
+          component={AddServiceProvider_Review}
+          options={{
+            title: 'Review',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="EditServiceProvider_1"
+          component={EditServiceProvider_1}
+          options={{title: 'Edit Service Provider', gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="EditServiceProvider_2"
+          component={EditServiceProvider_2}
+          options={{
+            title: 'Edit Service Provider',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="EditServiceProvider_3"
+          component={EditServiceProvider_3}
+          options={{
+            title: 'Edit Service Provider',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="EditServiceProvider_review"
+          component={EditServiceProvider_review}
+          options={{
+            title: 'Edit Service Provider',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="ServiceProvider"
+          component={ServiceProvider}
+          options={{
+            title: 'Service Provider',
+            gestureEnabled: false,
+            headerLeft: () => null,
+          }}
+        />
+        <Stack.Screen
+          name="CheckIn_out_complete"
+          component={CheckIn_out_complete}
+          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
+        />
+        <Stack.Screen
+          name="EditAddServiceProvider"
+          component={EditAddServiceProvider}
+          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
+        /> */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
