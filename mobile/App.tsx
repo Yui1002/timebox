@@ -53,6 +53,34 @@ function App(): JSX.Element {
             gestureEnabled: false,
           }}
         />
+        <Stack.Screen
+          name="ForgotPassword"
+          component={ForgotPassword}
+          options={{
+            title: 'Forgot Password',
+            gestureEnabled: false,
+          }}
+        />
+        <Stack.Screen
+          name="ResetPassword"
+          component={ResetPassword}
+          options={{gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={({navigation}) => ({
+            headerTitle: 'Home',
+            gestureEnabled: false,
+            headerLeft: () => null,
+            headerRight: () => (
+              <Button
+                title="Sign Out"
+                onPress={() => navigation.navigate('SignIn')}
+              />
+            ),
+          })}
+        />
         {/* <Stack.Screen
           name="SignUp"
           component={SignUp}

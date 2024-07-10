@@ -117,7 +117,7 @@ const SignUp = ({navigation}: any) => {
       <View>
         {inputError.type === 'SIGN_UP_ERROR' && <SignUpError />}
         <Text style={styles.header}>Sign Up</Text>
-        <View style={{marginVertical: 10}} />
+        <View style={{marginVertical: 6}} />
         <View>
           <Text>First Name</Text>
           <TextInput
@@ -129,7 +129,7 @@ const SignUp = ({navigation}: any) => {
             <Text style={styles.inputError}>{inputError.msg}</Text>
           )}
         </View>
-        <View style={{marginVertical: 10}} />
+        <View style={{marginVertical: 6}} />
         <View>
           <Text>Last Name</Text>
           <TextInput
@@ -141,7 +141,7 @@ const SignUp = ({navigation}: any) => {
             <Text style={styles.inputError}>{inputError.msg}</Text>
           )}
         </View>
-        <View style={{marginVertical: 10}} />
+        <View style={{marginVertical: 6}} />
         <View>
           <Text>Email</Text>
           <TextInput
@@ -155,9 +155,25 @@ const SignUp = ({navigation}: any) => {
             <Text style={styles.inputError}>{inputError.msg}</Text>
           )}
         </View>
-        <View style={{marginVertical: 10}} />
+        <View style={{marginVertical: 6}} />
         <View>
           <Text>Password</Text>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            secureTextEntry={true}
+            onChangeText={val => setPassword(val)}
+          />
+          {(inputError.type === 'EMPTY_PASSWORD' ||
+            inputError.type === 'WEAK_PASSWORD' ||
+            inputError.type === 'PASSWORD_MISMATCH') && (
+            <Text style={styles.inputError}>{inputError.msg}</Text>
+          )}
+        </View>
+        <View style={{marginVertical: 6}} />
+        <View>
+          <Text>Confirm Password</Text>
           <TextInput
             style={styles.input}
             autoCorrect={false}

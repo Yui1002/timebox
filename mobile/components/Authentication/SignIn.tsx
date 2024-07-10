@@ -1,13 +1,7 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  Button,
-} from 'react-native';
+import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import validator from 'validator';
 import {styles} from '../../styles/signInStyles.js';
 
@@ -73,7 +67,7 @@ const SignIn = ({navigation}: any) => {
       <View style={styles.signInError}>
         <Text>{inputError.msg}</Text>
       </View>
-    )
+    );
   };
 
   const Separator = () => <View style={styles.separator}></View>;

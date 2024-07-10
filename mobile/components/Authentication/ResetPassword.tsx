@@ -2,131 +2,112 @@ import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import validator from 'validator';
-// import {
-//   NativeBaseProvider,
-//   Box,
-//   FormControl,
-//   Input,
-//   Button,
-//   Heading,
-//   Text,
-//   Divider,
-// } from 'native-base';
-import { SafeAreaView } from 'react-native';
+import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import {PASSWORD_RULES} from '../../config.js';
+import {styles} from '../../styles/resetPasswordStyles.js';
 
 const ResetPassword = ({route, navigation}: any) => {
-  const ownerEmail = route.params.email;
+  const email = route.params.email;
   const [password, setPassword] = useState('');
   const [confirmdPassword, setConfirmedPassword] = useState('');
-  const [inputErrors, setInputErrors] = useState({
+  const [inputError, setInputError] = useState({
     type: '',
     msg: '',
   });
 
   const validatePassword = (): boolean => {
-    let error = {type: '', msg: ''};
     if (!password.length || !confirmdPassword.length) {
-      error.type = 'EMPTY_PASSWORD';
-      error.msg = 'Password is required';
+      setInputError({
+        type: 'EMPTY_PASSWORD',
+        msg: 'Password is required',
+      });
+      return false;
     }
     if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
-      error.type = 'WEAK_PASSWORD';
-      error.msg =
-        'Password must contain 8 characters, 1 number, 1 upper, 1 lower';
+      setInputError({
+        type: 'WEAK_PASSWORD',
+        msg: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+      });
+      return false;
     }
     if (password !== confirmdPassword) {
-      error.type = 'PASSWORD_MISMATCH';
-      error.msg = 'Password does not match';
+      setInputError({
+        type: 'PASSWORD_MISMATCH',
+        msg: 'Password does not match',
+      });
+      return false;
     }
-    setInputErrors(error);
-    return error.type.length === 0 && error.msg.length === 0;
+    return true;
   };
 
-  const resetNewPassword = () => {
+  const resetPassword = () => {
     if (!validatePassword()) return;
-
     axios
-      .post(`${LOCAL_HOST_URL}/reset/password`, {
+      .post(`${LOCAL_HOST_URL}/resetPassword`, {
+        email,
         password,
-        ownerEmail,
       })
       .then(() => {
-        navigation.navigate('SignIn_Employer')
+        navigation.navigate('SignIn');
       })
-      .catch(err => {
-      });
+      .catch(err => {});
   };
 
+  const Separator = () => <View style={styles.separator}></View>;
+
   return (
-    <SafeAreaView>
-      
+    <SafeAreaView style={styles.container}>
+      <View>
+        <Text style={styles.header}>Reset Password</Text>
+        <View style={{marginVertical: 10}} />
+        <View>
+          <Text>Password</Text>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            secureTextEntry={true}
+            onChangeText={val => setPassword(val)}
+          />
+          {(inputError.type === 'EMPTY_PASSWORD' ||
+            inputError.type === 'WEAK_PASSWORD' ||
+            inputError.type === 'PASSWORD_MISMATCH') && (
+            <Text style={styles.inputError}>{inputError.msg}</Text>
+          )}
+        </View>
+        <View style={{marginVertical: 10}} />
+        <View>
+          <Text>Confirm Password</Text>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            secureTextEntry={true}
+            onChangeText={val => setConfirmedPassword(val)}
+          />
+          {(inputError.type === 'EMPTY_PASSWORD' ||
+            inputError.type === 'WEAK_PASSWORD' ||
+            inputError.type === 'PASSWORD_MISMATCH') && (
+            <Text style={styles.inputError}>{inputError.msg}</Text>
+          )}
+        </View>
+        <View style={{marginVertical: 20}} />
+        <View style={styles.button}>
+          <Button title="Reset Password" color="#fff" onPress={resetPassword} />
+        </View>
+      </View>
+      <Separator />
+      <View style={styles.footer}>
+        <View>
+          <Text>Go back to</Text>
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate('SignIn')}>
+            Sign In
+          </Text>
+        </View>
+      </View>
     </SafeAreaView>
-    // <NativeBaseProvider>
-    //   <Box m="5%">
-    //     <Heading size="lg">Reset Password</Heading>
-    //     <Box alignItems="center">
-    //       <Box w="100%" maxWidth="300px" my="8">
-    //         <FormControl
-    //           isRequired
-    //           isInvalid={
-    //             inputErrors.type === 'EMPTY_PASSWORD' ||
-    //             inputErrors.type === 'WEAK_PASSWORD'
-    //           }>
-    //           <FormControl.Label>New Password</FormControl.Label>
-    //           <Input
-    //             type="password"
-    //             onChangeText={val => setPassword(val)}
-    //             placeholder="Your new password"
-    //           />
-    //           <FormControl.ErrorMessage>
-    //             {inputErrors.msg}
-    //           </FormControl.ErrorMessage>
-    //           <FormControl.HelperText>
-    //             At least: 8 characters, 1 numbers, 1 upper, 1 lower
-    //           </FormControl.HelperText>
-    //         </FormControl>
-    //         <FormControl
-    //           isRequired
-    //           isInvalid={
-    //             inputErrors.type === 'EMPTY_PASSWORD' ||
-    //             inputErrors.type === 'PASSWORD_MISMATCH'
-    //           }>
-    //           <FormControl.Label>Confirm New Password</FormControl.Label>
-    //           <Input
-    //             type="password"
-    //             onChangeText={val => setConfirmedPassword(val)}
-    //             placeholder="Your new password"
-    //           />
-    //           <FormControl.ErrorMessage>
-    //             {inputErrors.msg}
-    //           </FormControl.ErrorMessage>
-    //         </FormControl>
-    //       </Box>
-    //       <Button onPress={resetNewPassword} w="250" borderRadius={20}>
-    //         Reset Password
-    //       </Button>
-    //     </Box>
-    //     <Divider
-    //       my="4"
-    //       _light={{
-    //         bg: 'muted.400',
-    //       }}
-    //     />
-    //     <Box mt="4">
-    //       <Text fontSize="xs">
-    //         Go back to{' '}
-    //         <Text
-    //           underline
-    //           onPress={() => {
-    //             navigation.navigate('SignIn_Employer');
-    //           }}>
-    //           Log in
-    //         </Text>
-    //       </Text>
-    //     </Box>
-    //   </Box>
-    // </NativeBaseProvider>
   );
 };
 

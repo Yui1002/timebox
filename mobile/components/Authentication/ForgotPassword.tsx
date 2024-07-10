@@ -1,121 +1,97 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-// import {
-//   NativeBaseProvider,
-//   Box,
-//   FormControl,
-//   Input,
-//   Button,
-//   Heading,
-//   Text,
-//   Divider,
-//   Alert,
-// } from 'native-base';
-import { SafeAreaView } from 'react-native';
+import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import validator from 'validator';
+import {styles} from '../../styles/forgotPasswordStyles.js';
 
 const ForgotPassword = ({navigation}: any) => {
   const [email, setEmail] = useState('');
-  const [inputErrors, setInputErrors] = useState({
+  const [inputError, setInputError] = useState({
     type: '',
     msg: '',
   });
 
   const validateEmail = (): boolean => {
-    let error = {type: '', msg: ''};
-    if (!email) {
-      error.type = 'EMPTY_EMAIL';
-      error.msg = 'Email is required';
+    if (email.length === 0) {
+      setInputError({
+        type: 'EMPTY_EMAIL',
+        msg: 'Email is required',
+      });
+      return false;
     }
     if (!validator.isEmail(email)) {
-      error.type = 'INVALID_EMAIL_FORMAT';
-      error.msg = 'Email is not valid';
+      setInputError({
+        type: 'INVALID_EMAIL_FORMAT',
+        msg: 'Email is not valid',
+      });
+      return false;
     }
-    setInputErrors(error);
-    return error.type.length === 0 && error.msg.length === 0;
+    return true;
   };
 
-  const sendPasswordResetCode = () => {
+  const checkEmailRegistered = () => {
     if (!validateEmail()) return;
+    console.log('here')
     axios
-      .post(`${LOCAL_HOST_URL}/user/reset`, {email})
-      .then((res) => {
-        const otp = res.data.otp;
-        navigation.navigate('VerifyOTP', {email, otp});
+      .post(`${LOCAL_HOST_URL}/checkEmailRegistered`, {email})
+      .then(res => {
+        console.log(res)
+        console.log('hererere')
+        navigation.navigate('ResetPassword', {email})
       })
-      .catch((err) => {
-        const errMsg = err.response.data.error;
-        setInputErrors({type: 'EMAIL_NOT_REGISTERED', msg: errMsg});
-      })
+      .catch(err => {
+        const errMsg = 'The email is not registered. Please sign up';
+        setInputError({type: 'EMAIL_NOT_REGISTERED', msg: errMsg});
+      });
   };
 
-  const alertError = () => {
+  const Error = () => {
     return (
-      <Alert status="error" w="100%">
-        <Alert.Icon mt="1" />
-        <Text fontSize="md" color="coolGray.800">
-          {inputErrors.msg}
-        </Text>
-      </Alert>
+      <View style={styles.emailError}>
+        <Text>{inputError.msg}</Text>
+      </View>
     );
   };
 
+  const Separator = () => <View style={styles.separator}></View>;
+
   return (
-    <SafeAreaView>
-      
+    <SafeAreaView style={styles.container}>
+      <View>
+        {inputError.type === 'EMAIL_NOT_REGISTERED' && <Error />}
+        <Text style={styles.header}>Verify Email</Text>
+        <View style={{marginVertical: 10}} />
+        <View>
+          <Text>Email</Text>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            onChangeText={val => setEmail(val)}
+          />
+          {(inputError.type === 'EMPTY_EMAIL' ||
+            inputError.type === 'INVALID_EMAIL_FORMAT') && (
+            <Text style={styles.inputError}>{inputError.msg}</Text>
+          )}
+        </View>
+        <View style={{marginVertical: 20}} />
+        <View style={styles.button}>
+          <Button title="Submit" color="#fff" onPress={checkEmailRegistered} />
+        </View>
+      </View>
+      <Separator />
+      <View style={styles.footer}>
+        <View>
+          <Text>Go back to</Text>
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate('SignIn')}>
+            Sign In
+          </Text>
+        </View>
+      </View>
     </SafeAreaView>
-    // <NativeBaseProvider>
-    //   {inputErrors.type === 'EMAIL_NOT_REGISTERED' && alertError()}
-    //   <Box m="5%">
-    //     <Heading size="lg">Reset Password</Heading>
-    //     <Box alignItems="center">
-    //       <Box w="100%" maxWidth="300px" my="8">
-    //         <FormControl
-    //           isRequired
-    //           isInvalid={
-    //             inputErrors.type === 'EMPTY_EMAIL' ||
-    //             inputErrors.type === 'INVALID_EMAIL_FORMAT'
-    //           }>
-    //           <FormControl.Label>Email</FormControl.Label>
-    //           <Input
-    //             onChangeText={val => setEmail(val)}
-    //             autoCapitalize="none"
-    //             autoCorrect={false}
-    //           />
-    //           <FormControl.ErrorMessage>
-    //             {inputErrors.msg}
-    //           </FormControl.ErrorMessage>
-    //         </FormControl>
-    //       </Box>
-    //       <Button
-    //         onPress={sendPasswordResetCode}
-    //         w="250"
-    //         borderRadius={20}
-    //         mb={8}>
-    //         Send Password Reset Code
-    //       </Button>
-    //     </Box>
-    //     <Divider
-    //       my="2"
-    //       _light={{
-    //         bg: 'muted.400',
-    //       }}
-    //     />
-    //     <Box mt="4">
-    //       <Text fontSize="xs">
-    //         Go back to{' '}
-    //         <Text
-    //           underline
-    //           onPress={() => {
-    //             navigation.navigate('SignIn');
-    //           }}>
-    //           Sign in
-    //         </Text>
-    //       </Text>
-    //     </Box>
-    //   </Box>
-    // </NativeBaseProvider>
   );
 };
 
