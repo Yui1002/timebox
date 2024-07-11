@@ -12,7 +12,6 @@ const VerifyOTP = ({route, navigation}: any) => {
     msg: '',
   });
   const otpBoxReference = useRef([]);
-  console.log(typeof otp);
 
   useEffect(() => {
     if (input.join('').length === 6) {

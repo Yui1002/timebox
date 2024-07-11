@@ -12,10 +12,10 @@ class UserControllers {
     res.send(user);
   }
 
-  // async getUsers(req: any, res: any) {
-  //   const users = await this.models.getUsers(req.params.email);
-  //   res.send(users);
-  // }
+  async getEmployers(req: any, res: any) {
+    const response = await this.models.getEmployers(req.params.email);
+    res.send(response);
+  }
 
   async getServiceProviders(req: any, res: any) {
     const serviceProviders = await this.models.getServiceProviders(
@@ -35,7 +35,6 @@ class UserControllers {
   }
 
   async editServiceProvider(req: any, res: any) {
-    console.log(req)
     const response = await this.models.editServiceProvider(req.body);
     // const response = await this.models.addServiceProvider(req.body);
     // response ? res.sendStatus(200) : res.sendStatus(400);

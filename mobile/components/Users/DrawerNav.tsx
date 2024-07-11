@@ -23,6 +23,7 @@ const CustomDrawerContent = (props: any) => {
 };
 
 const DrawerNav = ({route, navigation}: any) => {
+  console.log('drawer', route.params)
   const Drawer = createDrawerNavigator();
 
   return (
@@ -34,7 +35,11 @@ const DrawerNav = ({route, navigation}: any) => {
         component={Home}
         initialParams={{params: route.params}}
       />
-      <Drawer.Screen name="Working History" component={WorkingHistory} />
+      <Drawer.Screen
+        name="Working Records"
+        component={WorkingHistory}
+        
+      />
       <Drawer.Screen
         name="Hire Service Provider"
         component={HireServiceProvider}

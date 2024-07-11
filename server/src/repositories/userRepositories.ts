@@ -12,7 +12,7 @@ class UserRepositories {
   // ---------------------  Owners  -------------------------------
   async getUserId(email: string) {
     const sql = "SELECT user_id FROM users WHERE email_address = $1;";
-    return (await this.repositories.queryDB(sql, [email])).rows[0].id;
+    return (await this.repositories.queryDB(sql, [email])).rows[0].user_id;
   }
 
   async getEmployerId(email: string) {
@@ -27,6 +27,11 @@ class UserRepositories {
   }
 
   // ---------------------  Users  --------------------------------
+  async getEmployers(serviceProviderId: string) {
+    const sql = "SELECT u.first_name, u.last_name, u.email_address FROM users u INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id WHERE ut.service_provider_id = $1;";
+    return (await this.repositories.queryDB(sql, [serviceProviderId])).rows;
+  }
+
   async getUsers(ownerId: string) {
     const sql =
       "SELECT first_name, last_name, user_name, rate, rate_type, status, day, start_time, end_time FROM users u LEFT JOIN users_schedule us ON u.user_id = us.user_id WHERE u.owner_id = $1 ORDER BY update_date DESC;";

@@ -19,6 +19,8 @@ class Routes {
         app.post('/resetPassword', this.authControllers.resetPassword.bind(this.authControllers));
         app.post('/resendOTP', this.authControllers.resendOTP.bind(this.authControllers));
 
+        app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
+
         // user routes
         app.get('/getServiceProviders/:email', this.userControllers.getServiceProviders.bind(this.userControllers));
         // app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));

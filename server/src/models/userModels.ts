@@ -10,6 +10,11 @@ class UserModels {
     this.repositories = new UserRepositories();
   }
 
+  async getEmployers(email: string) {
+    const serviceProviderId = await this.repositories.getUserId(email)
+    return await this.repositories.getEmployers(serviceProviderId);
+  }
+
   async getEmployerId(email: string) {
     return await this.repositories.getEmployerId(email);
   }
@@ -53,27 +58,6 @@ class UserModels {
     // update user_schedule table
   }
 
-// Frances => Andria
-// Frances => Amit
-// Yui => Andria
-// Amit => Yui
-
-
-// User
-// 	1. Frances
-// 	2. Andria
-// 	3. Yui
-// 	4. Amit
-
-// User_transaction
-// 	id: 1, rate: 20, sp_id: 2, ep_id: 1
-// 	id: 2, rate: 10, sp_id: 4, ep_id: 1
-// 	id: 3, rate: 20, sp_id: 2, ep_id: 3
-// 	id: 4, rate: 25, sp_id: 3, ep_id: 4
-
-// User_schedule
-// 	id: 1, sp_id: 2, ut_id: 1, day: Mon, start_time: 9:00AM, end_time: 5:00PM
-
   async editUser(req: any) {
     const userId = await this.repositories.getUserId(req.user_name);
     await this.repositories.editUser(req, userId);
@@ -89,23 +73,8 @@ class UserModels {
     );
   }
 
-  // async isUserRegistered(ownerEmail: string, username: string) {
-  //   const ownerId = await this.getOwnerId(ownerEmail);
-  //   return await this.repositories.isUserRegistered(ownerId, username);
-  // }
-
   async deleteServiceProvider(email: string) {
     return false;
-    /**
-     * delete from application_user
-     * delete from service_provider
-     * delete from employer_provider
-     * delete from service_provider_schedule
-     */
-    // const ownerId = await this.getOwnerId(ownerEmail);
-    // const userId = await this.repositories.getUserId(username);
-    // await this.repositories.deleteSchedule(userId);
-    // return await this.repositories.deleteUser(ownerId, userId);
   }
 
   async startRecord(req: any) {
