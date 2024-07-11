@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
-import Hello from './Hello';
-import Yahoo from './Yahoo';
 
 const Home = ({route}: any) => {
   console.log('route', route)

@@ -33,15 +33,6 @@ import {Button} from 'react-native';
 
 const Stack = createStackNavigator();
 
-// const DrawerNav = () => {
-//   return (
-//     <Drawer.Navigator initialRouteName="Home">
-//       <Drawer.Screen name="Yahoo" component={Yahoo} />
-//       <Drawer.Screen name="Hello" component={Hello} />
-//     </Drawer.Navigator>
-//   );
-// };
-
 function App(): JSX.Element {
   return (
     <NavigationContainer>
@@ -85,6 +76,12 @@ function App(): JSX.Element {
             headerTitle: '',
             gestureEnabled: false,
             headerLeft: () => null,
+            // headerRight: () => (
+            //   <Button
+            //     title="Sign Out"
+            //     onPress={() => navigation.navigate('SignIn')}
+            //   />
+            // ),
           })}
         />
         {/* <Stack.Screen

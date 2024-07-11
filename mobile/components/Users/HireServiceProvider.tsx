@@ -4,15 +4,15 @@ import axios from 'axios';
 // import {Box, Text, Heading, ScrollView, VStack, Button} from 'native-base';
 import { SafeAreaView, View, Text } from 'react-native';
 
-const Yahoo = ({employerEmail, setErrors}: any) => {
+const HireServiceProvider = ({employerEmail, setErrors}: any) => {
 
   return (
     <SafeAreaView>
       <View>
-        <Text>Yahoo</Text>
+        <Text>HireServiceProvider</Text>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Yahoo;
+export default HireServiceProvider;
