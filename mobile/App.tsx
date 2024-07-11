@@ -5,6 +5,7 @@
  * @format
  */
 
+import 'react-native-gesture-handler'
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -17,6 +18,7 @@ import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import Account from './components/Users/Account';
 import Account_Admin from './components/Users/Account_Admin';
+import DrawerNav from './components/Users/DrawerNav';
 // import AddServiceProvider_1 from './components/Users/AddServiceProvider_1';
 // import AddServiceProvider_2 from './components/Users/AddServiceProvider_2';
 // import AddServiceProvider_Review from './components/Users/AddServiceProvider_Review';
@@ -29,9 +31,18 @@ import Account_Admin from './components/Users/Account_Admin';
 // import CheckIn_out_complete from './components/Users/CheckIn_out_complete';
 import {Button} from 'react-native';
 
-function App(): JSX.Element {
-  const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
+// const DrawerNav = () => {
+//   return (
+//     <Drawer.Navigator initialRouteName="Home">
+//       <Drawer.Screen name="Yahoo" component={Yahoo} />
+//       <Drawer.Screen name="Hello" component={Hello} />
+//     </Drawer.Navigator>
+//   );
+// };
+
+function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -67,59 +78,22 @@ function App(): JSX.Element {
           options={{gestureEnabled: false}}
         />
         <Stack.Screen
-          name="Home"
-          component={Home}
+          name="DrawerNav"
+          component={DrawerNav}
           options={({navigation}) => ({
-            headerTitle: 'Home',
+            headerShown: false,
+            headerTitle: '',
             gestureEnabled: false,
             headerLeft: () => null,
-            headerRight: () => (
-              <Button
-                title="Sign Out"
-                onPress={() => navigation.navigate('SignIn')}
-              />
-            ),
           })}
         />
         {/* <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
-        />
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPassword}
-          options={{
-            title: 'Forgot Password',
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen
-          name="VerifyOTP"
-          component={VerifyOTP}
-          options={{
-            title: 'Forgot Password',
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen
-          name="ResetPassword"
-          component={ResetPassword}
-          options={{gestureEnabled: false}}
-        />
-        <Stack.Screen
           name="Home"
-          component={Home}
+          component={DrawerNav}
           options={({navigation}) => ({
-            headerTitle: 'Home',
+            headerTitle: '',
             gestureEnabled: false,
             headerLeft: () => null,
-            headerRight: () => (
-              <Button
-                title="Sign Out"
-                onPress={() => navigation.navigate('SignIn')}
-              />
-            ),
           })}
         /> */}
         {/* <Stack.Screen
