@@ -12,10 +12,10 @@ class UserControllers {
     res.send(user);
   }
 
-  // async getUsers(req: any, res: any) {
-  //   const users = await this.models.getUsers(req.params.email);
-  //   res.send(users);
-  // }
+  async getEmployers(req: any, res: any) {
+    const response = await this.models.getEmployers(req.params.email);
+    res.send(response);
+  }
 
   async getServiceProviders(req: any, res: any) {
     const serviceProviders = await this.models.getServiceProviders(
@@ -24,28 +24,16 @@ class UserControllers {
     res.send(serviceProviders);
   }
 
-  // async addUser(req: any, res: any) {
-  // const response = await this.models.addUser(req.body);
-  // response ? res.sendStatus(200) : res.sendStatus(400);
-  // }
-
   async addServiceProvider(req: any, res: any) {
     const response = await this.models.addServiceProvider(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async editServiceProvider(req: any, res: any) {
-    console.log(req)
     const response = await this.models.editServiceProvider(req.body);
     // const response = await this.models.addServiceProvider(req.body);
     // response ? res.sendStatus(200) : res.sendStatus(400);
   }
-
-  // async isUserRegistered(req: any, res: any) {
-  //   const { ownerEmail, username } = req.body;
-  //   const response = await this.models.isUserRegistered(ownerEmail, username);
-  //   res.send(response);
-  // }
 
   async deleteServiceProvider(req: any, res: any) {
     const { email } = req.params;
@@ -53,19 +41,13 @@ class UserControllers {
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 
-  async startRecord(req: any, res: any) {
-    const response = await this.models.startRecord(req.body);
-    response ? res.sendStatus(200) : res.sendStatus(400);
-  }
-
-  async endRecord(req: any, res: any) {
-    const response = await this.models.endRecord(req.body);
-    response ? res.sendStatus(200) : res.sendStatus(400);
+  async recordTime(req: any, res: any) {
+    const response = await this.models.recordTime(req.body);
+    res.send(response);
   }
 
   async getTodaysRecord(req: any, res: any) {
-    const { username } = req.params;
-    const record = await this.models.getTodaysRecord(username);
+    const record = await this.models.getTodaysRecord(req.query);
     res.send(record);
   }
 

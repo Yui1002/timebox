@@ -71,7 +71,6 @@ class AutheModels {
   }
 
   async storeOtp(email: string, otp: string) {
-    console.log('email', email)
     const userId = await this.repositories.getUserId(email);
     return await this.repositories.storeOtp(otp, userId);
   }

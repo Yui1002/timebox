@@ -26,7 +26,6 @@ class AuthControllers {
   async isEmailRegistered(req: any, res: any) {
     const { email } = req.body;
     const emailRegistered = await this.models.isUserRegistered(email);
-    console.log(emailRegistered);
     emailRegistered ? res.status(200).send("success") : res.status(400);
   }
 
@@ -39,7 +38,6 @@ class AuthControllers {
   async signIn(req: any, res: any) {
     const { email, password } = req.body;
     const usersname = await this.models.getName(email);
-    console.log("users name", usersname, usersname.length);
     if (!usersname.length) {
       res.status(400).json({ error: "Incorrect email address or password" });
       return;

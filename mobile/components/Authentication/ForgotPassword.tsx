@@ -32,12 +32,9 @@ const ForgotPassword = ({navigation}: any) => {
 
   const checkEmailRegistered = () => {
     if (!validateEmail()) return;
-    console.log('here')
     axios
       .post(`${LOCAL_HOST_URL}/checkEmailRegistered`, {email})
       .then(res => {
-        console.log(res)
-        console.log('hererere')
         navigation.navigate('ResetPassword', {email})
       })
       .catch(err => {
