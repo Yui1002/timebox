@@ -26,9 +26,18 @@ class UserRepositories {
     return (await this.repositories.queryDB(sql, [email])).rows[0].id;
   }
 
+  async getUserTransactionId(employerId: string, serviceProviderId: string) {
+    const sql =
+      "SELECT user_transaction_id FROM user_transaction WHERE employer_user_id = $1 AND service_provider_id = $2;";
+    return (
+      await this.repositories.queryDB(sql, [employerId, serviceProviderId])
+    ).rows[0].user_transaction_id;
+  }
+
   // ---------------------  Users  --------------------------------
   async getEmployers(serviceProviderId: string) {
-    const sql = "SELECT u.first_name, u.last_name, u.email_address FROM users u INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id WHERE ut.service_provider_id = $1;";
+    const sql =
+      "SELECT u.first_name, u.last_name, u.email_address FROM users u INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id WHERE ut.service_provider_id = $1;";
     return (await this.repositories.queryDB(sql, [serviceProviderId])).rows;
   }
 
@@ -39,7 +48,8 @@ class UserRepositories {
   }
 
   async getServiceProviders(employerId: string) {
-    const sql = "SELECT u.first_name, u.last_name, u.email_address, u.status, ut.rate, ut.rate_type, us.day, us.start_time, us.end_time FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id INNER JOIN user_schedule us ON ut.service_provider_id = us.service_provider_id WHERE ut.employer_user_id = $1;";
+    const sql =
+      "SELECT u.first_name, u.last_name, u.email_address, u.status, ut.rate, ut.rate_type, us.day, us.start_time, us.end_time FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id INNER JOIN user_schedule us ON ut.service_provider_id = us.service_provider_id WHERE ut.employer_user_id = $1;";
     return (await this.repositories.queryDB(sql, [employerId])).rows;
   }
 
@@ -50,13 +60,18 @@ class UserRepositories {
   ) {
     const sql =
       "INSERT INTO users VALUES (gen_random_uuid(), $1, $2, $3, NULL, DEFAULT, CURRENT_TIMESTAMP) RETURNING user_id;";
-    return (
-      await this.repositories.queryDB(sql, [firstName, lastName, email])
-    ).rows[0].user_id;
+    return (await this.repositories.queryDB(sql, [firstName, lastName, email]))
+      .rows[0].user_id;
   }
 
-  async updateServiceProviderInfo(firstName: string, lastName: string, email: string, status: string) {
-    const sql = "UPDATE users SET first_name = $1, last_name = $2, email_address = $3, status = $4 WHERE user_id = $5;";
+  async updateServiceProviderInfo(
+    firstName: string,
+    lastName: string,
+    email: string,
+    status: string
+  ) {
+    const sql =
+      "UPDATE users SET first_name = $1, last_name = $2, email_address = $3, status = $4 WHERE user_id = $5;";
     await this.repositories.queryDB(sql, [firstName, lastName, email, status]);
     return true;
   }
@@ -82,14 +97,25 @@ class UserRepositories {
     ).rows[0].user_transaction_id;
   }
 
-  async updateRateInfo(rate: string, rateType: string, status: string, serviceProviderId: string) {
-    const sql = "UPDATE user_transaction SET rate = $1, rate_type = $2, status = $3, update_date = CURRENT_TIMESTAMP WHERE service_provider_id = $4;";
-    await this.repositories.queryDB(sql, [rate, rateType, status, serviceProviderId]);
+  async updateRateInfo(
+    rate: string,
+    rateType: string,
+    status: string,
+    serviceProviderId: string
+  ) {
+    const sql =
+      "UPDATE user_transaction SET rate = $1, rate_type = $2, status = $3, update_date = CURRENT_TIMESTAMP WHERE service_provider_id = $4;";
+    await this.repositories.queryDB(sql, [
+      rate,
+      rateType,
+      status,
+      serviceProviderId,
+    ]);
     return true;
   }
 
   async updateSchedule() {
-    const sql = "UPDATE user_schedule SET "
+    const sql = "UPDATE user_schedule SET ";
   }
 
   async getUser(username: string) {
@@ -205,28 +231,27 @@ class UserRepositories {
   }
 
   // ---------------------  Record  --------------------------------
-  async startRecord(userId: string, checkedInTime: string) {
+  async startRecord(serviceProviderEmail: string, transactionId: string) {
     const sql =
-      "INSERT INTO time_record_v2 VALUES (gen_random_uuid(), $1, $2, $3, CURRENT_DATE, $4)";
-    await this.repositories.queryDB(sql, [userId, checkedInTime, null, userId]);
-    return true;
+      "INSERT INTO time_record VALUES (gen_random_uuid(), DEFAULT, CURRENT_TIMESTAMP, $1, $2, CURRENT_TIMESTAMP, NULL) RETURNING start_time;";
+    return (
+      await this.repositories.queryDB(sql, [
+        serviceProviderEmail,
+        transactionId,
+      ])
+    ).rows[0].start_time;
   }
 
-  async endRecord(userId: string, checkedOutTime: string) {
+  async endRecord(transactionId: string) {
     const sql =
-      "SELECT time_record_id FROM time_record_v2 WHERE user_id = $1 AND start_time::DATE = CURRENT_DATE;";
-    const sql2 =
-      "UPDATE time_record_v2 SET end_time = $1, update_by = $2, update_date = CURRENT_TIMESTAMP WHERE time_record_id = $3;";
-    const id = (await this.repositories.queryDB(sql, [userId])).rows[0]
-      .time_record_id;
-    await this.repositories.queryDB(sql2, [checkedOutTime, userId, id]);
-    return true;
+      "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 RETURNING end_time;";
+    return (await this.repositories.queryDB(sql, [transactionId])).rows[0]
+      .end_time;
   }
 
-  async getTodaysRecord(userId: string) {
-    const sql =
-      "SELECT start_time, end_time FROM time_record_v2 WHERE user_id = $1 AND (start_time::DATE = CURRENT_DATE OR end_time::DATE = CURRENT_DATE);";
-    return (await this.repositories.queryDB(sql, [userId])).rows;
+  async getTodaysRecord(transactionId: string) {
+    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE OR end_time::DATE = CURRENT_DATE);";
+    return (await this.repositories.queryDB(sql, [transactionId])).rows[0];
   }
 
   async getHistory(userId: string) {

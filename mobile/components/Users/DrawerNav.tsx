@@ -23,7 +23,6 @@ const CustomDrawerContent = (props: any) => {
 };
 
 const DrawerNav = ({route, navigation}: any) => {
-  console.log('drawer', route.params)
   const Drawer = createDrawerNavigator();
 
   return (

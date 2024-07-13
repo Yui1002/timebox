@@ -1,19 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  Button,
-  FlatList,
-} from 'react-native';
+import {Text, View, SafeAreaView, Button, FlatList} from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
-const Home = ({route}: any) => {
+const Home = ({route, navigation}: any) => {
   const {firstName, lastName, email} = route.params.params;
-  const [menuOpen, setMenuOpen] = useState(false);
   const [employers, setEmployers] = useState([]);
 
   useEffect(() => {
@@ -40,12 +32,23 @@ const Home = ({route}: any) => {
             renderItem={({item}) => (
               <View style={styles.listContainer}>
                 <View>
-                  <Text>{item.first_name} {item.last_name}</Text>
+                  <Text>
+                    {item.first_name} {item.last_name}
+                  </Text>
                   <Text>{item.email_address}</Text>
                 </View>
                 <View>
                   <View style={styles.button}>
-                    <Button title='Record' color="#fff" />
+                    <Button
+                      title="Record"
+                      color="#fff"
+                      onPress={() =>
+                        navigation.navigate('Record', {
+                          employer: item,
+                          serviceProviderEmail: email,
+                        })
+                      }
+                    />
                   </View>
                 </View>
               </View>

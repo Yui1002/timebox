@@ -5,20 +5,20 @@
  * @format
  */
 
-import 'react-native-gesture-handler'
+import 'react-native-gesture-handler';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SignUp from './components/Authentication/SignUp';
 import SignIn from './components/Authentication/SignIn';
 import VerifyOTP from './components/Authentication/VerifyOTP';
-import Home from './components/Users/Home';
+import DrawerNav from './components/Users/DrawerNav';
+import Record from './components/Users/Record';
 import ServiceProviders from './components/Users/ServiceProviders';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import Account from './components/Users/Account';
 import Account_Admin from './components/Users/Account_Admin';
-import DrawerNav from './components/Users/DrawerNav';
 // import AddServiceProvider_1 from './components/Users/AddServiceProvider_1';
 // import AddServiceProvider_2 from './components/Users/AddServiceProvider_2';
 // import AddServiceProvider_Review from './components/Users/AddServiceProvider_Review';
@@ -28,7 +28,6 @@ import DrawerNav from './components/Users/DrawerNav';
 // import EditServiceProvider_review from './components/Users/EditServiceProvider_review';
 // import EditAddServiceProvider from './components/Users/EditAddServiceProvider';
 // import ServiceProvider from './components/Users/ServiceProvider';
-// import CheckIn_out_complete from './components/Users/CheckIn_out_complete';
 import {Button} from 'react-native';
 
 const Stack = createStackNavigator();
@@ -83,6 +82,11 @@ function App(): JSX.Element {
             //   />
             // ),
           })}
+        />
+        <Stack.Screen
+          name="Record"
+          component={Record}
+          options={{gestureEnabled: false}}
         />
         {/* <Stack.Screen
           name="Home"
@@ -175,11 +179,6 @@ function App(): JSX.Element {
             gestureEnabled: false,
             headerLeft: () => null,
           }}
-        />
-        <Stack.Screen
-          name="CheckIn_out_complete"
-          component={CheckIn_out_complete}
-          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="EditAddServiceProvider"
