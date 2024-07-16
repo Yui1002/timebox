@@ -51,18 +51,6 @@ class UserControllers {
     res.send(record);
   }
 
-  async getHistory(req: any, res: any) {
-    const { username } = req.params;
-    const history = await this.models.getHistory(username);
-    res.send(history);
-  }
-
-  async getInfoForNanny(req: any, res: any) {
-    const { username } = req.params;
-    const info = await this.models.getInfoForNanny(username);
-    res.send(info);
-  }
-
   async searchByPeriod(req: any, res: any) {
     const record = await this.models.searchByPeriod(req.body);
     res.send(record);

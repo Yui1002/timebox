@@ -3,7 +3,6 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     margin: '5%',
   },
   header: {
@@ -11,13 +10,26 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  input: {
-    width: 300,
-    height: 34,
-    borderWidth: 0.5,
-    borderRadius: 10,
-    padding: 10,
-    margin: 6,
+  subHeader: {
+    fontSize: 14,
+    marginTop: 6,
+    marginBottom: 4
+  },
+  dropdownContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  dropwdown: {
+    height: null,
+    marginVertical: 4,
+  },
+  periodContainer: {
+    width: '100%',
+  },
+  periodDropdown: {
+    backgroundColor: '#ddd',
+    width: '40%',
   },
   button: {
     backgroundColor: '#24a0ed',
@@ -29,15 +41,6 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-  footer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  link: {
-    textDecorationLine: 'underline',
-    textDecorationColor: '#000',
   },
   inputError: {
     color: '#ff0000',

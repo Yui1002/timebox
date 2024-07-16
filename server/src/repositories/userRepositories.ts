@@ -123,12 +123,6 @@ class UserRepositories {
     return (await this.repositories.queryDB(sql, [username])).rows;
   }
 
-  async getInfoForNanny(userId: string) {
-    const sql =
-      "SELECT rate, rate_type, day, start_time, end_time FROM users u INNER join users_schedule us ON u.user_id = us.user_id where u.user_id = $1;";
-    return (await this.repositories.queryDB(sql, [userId])).rows;
-  }
-
   async addUser(user: any, ownerId: string) {
     const { username, rate, rateType, ownerEmail } = user;
     const sql =
@@ -244,25 +238,19 @@ class UserRepositories {
 
   async endRecord(transactionId: string) {
     const sql =
-      "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 RETURNING end_time;";
+      "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 AND start_time::DATE = CURRENT_DATE RETURNING end_time;";
     return (await this.repositories.queryDB(sql, [transactionId])).rows[0]
       .end_time;
   }
 
   async getTodaysRecord(transactionId: string) {
-    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE OR end_time::DATE = CURRENT_DATE);";
+    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE AND end_time::DATE = CURRENT_DATE);";
     return (await this.repositories.queryDB(sql, [transactionId])).rows[0];
-  }
-
-  async getHistory(userId: string) {
-    const sql =
-      "SELECT record_date, record_time FROM time_record WHERE user_id = $1;";
-    return (await this.repositories.queryDB(sql, [userId])).rows;
   }
 
   async searchByPeriod(from: string, to: string, userId: string) {
     const sql =
-      "SELECT start_time, end_time FROM time_record_v2 WHERE user_id = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
+      "SELECT start_time, end_time FROM time_record WHERE user_id = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
     return (await this.repositories.queryDB(sql, [userId, from, to])).rows;
   }
 

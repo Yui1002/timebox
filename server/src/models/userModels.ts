@@ -129,16 +129,6 @@ class UserModels {
     return await this.repositories.getTodaysRecord(userTransactionId);
   }
 
-  async getHistory(username: string) {
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.getHistory(userId);
-  }
-
-  async getInfoForNanny(username: string) {
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.getInfoForNanny(userId);
-  }
-
   async searchByPeriod(req: any) {
     const { from, to, username } = req;
     const userId = await this.repositories.getUserId(username);
