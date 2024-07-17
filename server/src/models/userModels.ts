@@ -135,6 +135,19 @@ class UserModels {
     return await this.repositories.searchByPeriod(from, to, userId);
   }
 
+  async getRecordByPeriod(req: any) {
+    const {employerEmail, serviceProviderEmail, from, to} = req;
+    const serviceProviderId = await this.repositories.getUserId(
+      serviceProviderEmail
+    );
+    const employerId = await this.repositories.getUserId(employerEmail);
+    const userTransactionId = await this.repositories.getUserTransactionId(
+      employerId,
+      serviceProviderId
+    );
+    return await this.repositories.getRecordByPeriod(userTransactionId, from, to)
+  }
+
   async searchByDateYear(req: any) {
     const { year, month, username } = req;
     const userId = await this.repositories.getUserId(username);

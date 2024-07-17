@@ -3,6 +3,7 @@ import {Text, View, SafeAreaView, Button, FlatList} from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
+import CookieManager from '@react-native-cookies/cookies'
 
 const Home = ({route, navigation}: any) => {
   const {firstName, lastName, email} = route.params.params;
@@ -10,13 +11,20 @@ const Home = ({route, navigation}: any) => {
 
   useEffect(() => {
     getEmployers();
-  }, []);
+  }, [])
 
   const getEmployers = () => {
-    axios.get(`${LOCAL_HOST_URL}/employers/${email}`).then(res => {
+    axios.get(`${LOCAL_HOST_URL}/employers/${email}`)
+    .then((res) => {
       setEmployers(res.data);
-    });
-  };
+    })
+  }
+
+  // useEffect(() => {
+  //   CookieManager.get('http://localhost').then((cookies) => {
+  //     setEmployers(JSON.parse(cookies.myCookie.value))
+  //   })
+  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>

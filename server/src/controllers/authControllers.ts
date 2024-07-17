@@ -1,10 +1,13 @@
 import AutheModels from "../models/authModels";
+// import UserModels from '../models/userModels'
 
 class AuthControllers {
   models: AutheModels;
+  // userModels: UserModels;
 
   constructor() {
     this.models = new AutheModels();
+    // this.userModels = new UserModels();
   }
 
   async isUserRegistered(req: any, res: any) {
@@ -16,8 +19,6 @@ class AuthControllers {
     }
 
     const otp = this.models.generateOtp();
-    // console.log('generated otp', otp, email)
-    // await this.models.storeOtp(email, otp);
     (await this.models.sendOtp(email, otp))
       ? res.status(200).json({ otp })
       : res.status(400).json({ error: "Failed to send otp" });
@@ -47,9 +48,12 @@ class AuthControllers {
       res.status(400).json({ error: "Incorrect email address or password" });
       return;
     }
+    // const employers = await this.userModels.getEmployers(email);
+    // console.log(employers)
     res.status(200).send({
       firstName: usersname[0].first_name,
       lastName: usersname[0].last_name,
+      // employers
     });
   }
 

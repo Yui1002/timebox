@@ -32,7 +32,7 @@ class Routes {
         app.delete('/user/:email', this.userControllers.deleteServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));
-        app.post('/searchByPeriod', this.userControllers.searchByPeriod.bind(this.userControllers));
+        app.get('/record', this.userControllers.getRecordByPeriod.bind(this.userControllers));
         app.post('/searchByDateYear', this.userControllers.searchByDateYear.bind(this.userControllers));
         app.get('/getRecord/:username', this.userControllers.getRecord.bind(this.userControllers));
     }

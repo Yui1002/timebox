@@ -1,42 +1,53 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {SafeAreaView, View, Text, TouchableOpacity, Button} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  Button,
+  FlatList,
+} from 'react-native';
 import {styles} from '../../styles/workingHistoryStyles.js';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 
 const WorkingHistory = (props: any) => {
-  const {email, firstName, lastName} = props.params;
+  const {email} = props.params;
   const [employerDropdownOpen, setEmployerDropdownOpen] = useState(false);
-  const [periodDropdownOpen, setPeriodDropdownOpen] = useState(false);
-  const [selectedEmployer, setSelectedEmployer] = useState(null);
-  const [selectedPeriod, setSelectedPeriod] = useState({
-    from: null,
-    to: null,
-  });
+  const [fromDropdown, setFromDropDown] = useState(false);
+  const [toDropdown, setToDropDown] = useState(false);
+  const [selectedEmployer, setSelectedEmployer] = useState<string>('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const [items, setItems] = useState([]);
-  const [from, setFrom] = useState([]);
+  const [history, setHistory] = useState<[] | null>(null);
 
   useEffect(() => {
     getEmployers();
   }, []);
 
   const getEmployers = () => {
-    axios
-      .get(`${LOCAL_HOST_URL}/employers/${email}`)
-      .then(res => {
-        const data = formatData(res.data);
-        setItems(data);
-      })
-      .catch(() => {});
+    axios.get(`${LOCAL_HOST_URL}/employers/${email}`).then((res): any => {
+      setItems(formatData(res.data));
+    });
   };
 
-  const searchRecord = (employerEmail: string) => {
-    console.log('selected employer', selectedEmployer);
+  const searchRecord = () => {
     axios
-      .get(`${LOCAL_HOST_URL}/record/${employerEmail}`)
-      .then(() => {})
+      .get(`${LOCAL_HOST_URL}/record`, {
+        params: {
+          employerEmail: selectedEmployer,
+          serviceProviderEmail: email,
+          from,
+          to,
+        },
+      })
+      .then(res => {
+        setHistory(res.data);
+      })
       .catch(() => {});
   };
 
@@ -49,6 +60,13 @@ const WorkingHistory = (props: any) => {
       result.push(subData);
     });
     return result;
+  };
+
+  const onPeriodChange = (type, data) => {
+    setFromDropDown(false);
+    type === 'from'
+      ? setFrom(moment(data).format('YYYY-MM-DD'))
+      : setTo(moment(data).format('YYYY-MM-DD'));
   };
 
   const Separator = () => <View style={styles.separator}></View>;
@@ -65,83 +83,84 @@ const WorkingHistory = (props: any) => {
           setOpen={setEmployerDropdownOpen}
           setValue={setSelectedEmployer}
           setItems={setItems}
-          placeholder={'Choose an employer'}
-          onChangeValue={() => searchRecord(selectedEmployer)}
+          placeholder="Employer's name"
         />
       </View>
-      {selectedEmployer && (
-        <View style={employerDropdownOpen ? {marginTop: 120} : {marginTop: 10}}>
-          <Text style={styles.subHeader}>Search by period</Text>
-          <TouchableOpacity
-            onPress={() => setPeriodDropdownOpen(!periodDropdownOpen)}
-            style={{
-              height: 40,
-              backgroundColor: '#fff',
-              borderWidth: 1,
-              borderRadius: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={{lineHeight: 36, paddingLeft: 10}}>From</Text>
-            <View
-              style={{
-                marginRight: 16,
-                marginTop: 12,
-                width: 10,
-                height: 10,
-                borderColor: '#484848',
-                borderStyle: 'solid',
-                borderTopWidth: 0,
-                borderRightWidth: 2,
-                borderBottomWidth: 2,
-                borderLeftWidth: 0,
-                padding: 3,
-                transform: 'rotate(45deg)',
-              }}
+      <View style={employerDropdownOpen ? {marginTop: 120} : {marginTop: 10}}>
+        <Text style={styles.subHeader}>Search by period</Text>
+        <TouchableOpacity
+          onPress={() => setFromDropDown(!fromDropdown)}
+          style={styles.dropdown_2}>
+          <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
+          <View style={styles.arrow} />
+        </TouchableOpacity>
+        <View style={{marginVertical: 10}}></View>
+        <TouchableOpacity
+          onPress={() => setToDropDown(!toDropdown)}
+          style={styles.dropdown_2}>
+          <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
+          <View style={styles.arrow} />
+        </TouchableOpacity>
+        <DatePicker
+          modal
+          open={fromDropdown}
+          mode="date"
+          date={new Date()}
+          onConfirm={d => onPeriodChange('from', d)}
+          onCancel={() => {
+            setFromDropDown(false);
+          }}
+        />
+        <DatePicker
+          modal
+          open={toDropdown}
+          mode="date"
+          date={new Date()}
+          onConfirm={d => onPeriodChange('to', d)}
+          onCancel={() => {
+            setToDropDown(false);
+          }}
+        />
+      </View>
+      {selectedEmployer && from && to && (
+        <View style={styles.button}>
+          <Button title="Search" color="#fff" onPress={searchRecord} />
+        </View>
+      )}
+      {history === null && (
+        <View>
+          <Text style={{textAlign: 'center', marginTop: 150}}>
+            Search from above!
+          </Text>
+        </View>
+      )}
+      {history !== null && history.length && (
+        <View>
+          <View style={styles.listHeader}>
+            <Text>Date</Text>
+            <Text>Check In</Text>
+            <Text>Check Out</Text>
+            <Text>Total</Text>
+          </View>
+          <Separator />
+          <View>
+            <FlatList
+              data={history}
+              renderItem={({item}) => (
+                <View style={styles.list}>
+                  <Text>{moment(item.start_time).format('YYYY/MM/DD')}</Text>
+                  <Text>{moment(item.start_time).format('LT')}</Text>
+                  <Text>{moment(item.end_time).format('LT')}</Text>
+                  <Text>Total</Text>
+                </View>
+              )}
             />
-          </TouchableOpacity>
-          <View style={{marginVertical: 10}}></View>
-          <TouchableOpacity
-            onPress={() => setPeriodDropdownOpen(!periodDropdownOpen)}
-            style={{
-              height: 40,
-              backgroundColor: '#fff',
-              borderWidth: 1,
-              borderRadius: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={{lineHeight: 36, paddingLeft: 10}}>To</Text>
-            <View
-              style={{
-                marginRight: 16,
-                marginTop: 12,
-                width: 10,
-                height: 10,
-                borderColor: '#484848',
-                borderStyle: 'solid',
-                borderTopWidth: 0,
-                borderRightWidth: 2,
-                borderBottomWidth: 2,
-                borderLeftWidth: 0,
-                padding: 3,
-                transform: 'rotate(45deg)',
-              }}
-            />
-          </TouchableOpacity>
-          <DatePicker
-            modal
-            open={periodDropdownOpen}
-            mode="date"
-            date={new Date()}
-            onConfirm={date => {
-              setPeriodDropdownOpen(false);
-              setFrom(date);
-            }}
-            onCancel={() => {
-              setPeriodDropdownOpen(false);
-            }}
-          />
+          </View>
+        </View>
+      )}
+      {history !== null && history.length === 0 && (
+        <View>
+          <Text>No records matched</Text>
         </View>
       )}
     </SafeAreaView>

@@ -12,7 +12,9 @@ class UserRepositories {
   // ---------------------  Owners  -------------------------------
   async getUserId(email: string) {
     const sql = "SELECT user_id FROM users WHERE email_address = $1;";
-    return (await this.repositories.queryDB(sql, [email])).rows[0].user_id;
+    const data = (await this.repositories.queryDB(sql, [email])).rows;
+    return data[0].user_id;
+    // return (await this.repositories.queryDB(sql, [email])).rows[0].user_id;
   }
 
   async getEmployerId(email: string) {
@@ -246,6 +248,11 @@ class UserRepositories {
   async getTodaysRecord(transactionId: string) {
     const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE AND end_time::DATE = CURRENT_DATE);";
     return (await this.repositories.queryDB(sql, [transactionId])).rows[0];
+  }
+
+  async getRecordByPeriod(transactionId: string, from: string, to: string) {
+    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
+    return (await this.repositories.queryDB(sql, [transactionId, from, to])).rows;
   }
 
   async searchByPeriod(from: string, to: string, userId: string) {

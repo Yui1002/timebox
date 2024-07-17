@@ -51,6 +51,11 @@ class UserControllers {
     res.send(record);
   }
 
+  async getRecordByPeriod(req: any, res: any) {
+    const records = await this.models.getRecordByPeriod(req.query);
+    res.send(records);
+  }
+
   async searchByPeriod(req: any, res: any) {
     const record = await this.models.searchByPeriod(req.body);
     res.send(record);
