@@ -28,8 +28,8 @@ class UserModels {
     return await this.repositories.getServiceProviders(employerId);
   }
 
-  async getUser(username: string) {
-    return await this.repositories.getUser(username);
+  async getUser(email: string) {
+    return await this.repositories.getUser(email);
   }
 
   async addServiceProvider(req: any) {

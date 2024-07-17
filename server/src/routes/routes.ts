@@ -20,9 +20,10 @@ class Routes {
         app.post('/resendOTP', this.authControllers.resendOTP.bind(this.authControllers));
 
         app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
+        app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
 
         // user routes
-        app.get('/getServiceProviders/:email', this.userControllers.getServiceProviders.bind(this.userControllers));
+        app.get('/serviceProviders/:email', this.userControllers.getServiceProviders.bind(this.userControllers));
         // app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
         app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
         // app.post('/user', this.userControllers.addUser.bind(this.userControllers));

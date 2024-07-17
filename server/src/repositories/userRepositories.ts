@@ -120,9 +120,9 @@ class UserRepositories {
     const sql = "UPDATE user_schedule SET ";
   }
 
-  async getUser(username: string) {
-    const sql = "SELECT * FROM users WHERE user_name=$1;";
-    return (await this.repositories.queryDB(sql, [username])).rows;
+  async getUser(email: string) {
+    const sql = "SELECT first_name, last_name, email_address FROM users WHERE email_address = $1;";
+    return (await this.repositories.queryDB(sql, [email])).rows;
   }
 
   async addUser(user: any, ownerId: string) {

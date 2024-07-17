@@ -8,7 +8,7 @@ class UserControllers {
   }
 
   async getUser(req: any, res: any) {
-    const user = await this.models.getUser(req.params.username);
+    const user = await this.models.getUser(req.params.email);
     res.send(user);
   }
 
