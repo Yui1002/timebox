@@ -9,9 +9,6 @@ import WorkingHistory from './WorkingHistory';
 import HireServiceProvider from './HireServiceProvider';
 import ManageServiceProviders from './ManageServiceProviders';
 import Home from './Home';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config';
-import CookieManager from '@react-native-cookies/cookies'
 
 const CustomDrawerContent = (props: any) => {
   return (
@@ -20,9 +17,6 @@ const CustomDrawerContent = (props: any) => {
       <DrawerItem
         label="Sign Out"
         onPress={() => props.navigation.navigate('SignIn')}
-        // onPress={() => {
-        //   CookieManager.clearAll().then(() => props.navigation.navigate('SignIn'));
-        // }}
       />
     </DrawerContentScrollView>
   );

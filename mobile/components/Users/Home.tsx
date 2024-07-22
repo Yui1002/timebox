@@ -3,14 +3,18 @@ import {Text, View, SafeAreaView, Button, FlatList} from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import CookieManager from '@react-native-cookies/cookies'
 
 const Home = ({route, navigation}: any) => {
   const {firstName, lastName, email} = route.params.params;
   const [employers, setEmployers] = useState([]);
 
   useEffect(() => {
-    getEmployers();
+    try {
+      getEmployers();
+    }
+    catch (e) {
+      console.log("hello world", e)
+    }
   }, [])
 
   const getEmployers = () => {
@@ -18,13 +22,10 @@ const Home = ({route, navigation}: any) => {
     .then((res) => {
       setEmployers(res.data);
     })
+    .catch((err) => {
+      console.log('home error', err)
+    })
   }
-
-  // useEffect(() => {
-  //   CookieManager.get('http://localhost').then((cookies) => {
-  //     setEmployers(JSON.parse(cookies.myCookie.value))
-  //   })
-  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,10 +35,10 @@ const Home = ({route, navigation}: any) => {
       </View>
       <View>
         <Text>Employers</Text>
-        {employers.length ? (
+        {employers !== null && employers.length > 0 ? (
           <FlatList
             data={employers}
-            renderItem={({item}) => (
+            renderItem={({item}: any) => (
               <View style={styles.listContainer}>
                 <View>
                   <Text>

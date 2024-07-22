@@ -24,6 +24,12 @@ class UserControllers {
     res.send(serviceProviders);
   }
 
+  async checkUserExists(req: any, res: any) {
+    const user = await this.models.getUser(req.params.email);
+    console.log('user ', user, user.length)
+    user.length > 0 ? res.status(200).send(user) : res.status(400);
+  }
+
   async addServiceProvider(req: any, res: any) {
     const response = await this.models.addServiceProvider(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);

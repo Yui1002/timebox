@@ -14,6 +14,8 @@ import SignIn from './components/Authentication/SignIn';
 import VerifyOTP from './components/Authentication/VerifyOTP';
 import DrawerNav from './components/Users/DrawerNav';
 import Record from './components/Users/Record';
+import PersonalInfo from './components/Users/StepForms/PersonalInfo';
+import WorkShifts from './components/Users/StepForms/WorkShifts';
 import ServiceProviders from './components/Users/ServiceProviders';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
@@ -75,12 +77,6 @@ function App(): JSX.Element {
             headerTitle: '',
             gestureEnabled: false,
             headerLeft: () => null,
-            // headerRight: () => (
-            //   <Button
-            //     title="Sign Out"
-            //     onPress={() => navigation.navigate('SignIn')}
-            //   />
-            // ),
           })}
         />
         <Stack.Screen
@@ -88,15 +84,22 @@ function App(): JSX.Element {
           component={Record}
           options={{gestureEnabled: false}}
         />
-        {/* <Stack.Screen
-          name="Home"
-          component={DrawerNav}
+        <Stack.Screen
+          name="PersonalInfo"
+          component={PersonalInfo}
           options={({navigation}) => ({
             headerTitle: '',
             gestureEnabled: false,
-            headerLeft: () => null,
           })}
-        /> */}
+        />
+        <Stack.Screen
+          name="WorkShifts"
+          component={WorkShifts}
+          options={({navigation}) => ({
+            headerTitle: '',
+            gestureEnabled: false,
+          })}
+        />
         {/* <Stack.Screen
           name="ServiceProviders"
           component={ServiceProviders}

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text} from 'react-native';
 import {styles} from '../styles/inputErrorStyles.js';
 
 const InputError = ({error}: any) => {

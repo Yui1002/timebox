@@ -1,28 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import {Text, View, SafeAreaView, Alert} from 'react-native';
 import {styles} from '../../styles/hireServiceProviderStyles.js';
 import validator from 'validator';
 import InputField from '../InputField';
 import InputError from '../InputError';
+import Button from './Button';
 
-const HireServiceProvider = () => {
-  const [searchInput, setSearchInput] = useState<string | null>(null);
-  const [manualInput, setManualInput] = useState<string | null>(null);
+const HireServiceProvider = ({route, navigation}: any) => {
+  const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
   });
-
+ 
   const validateEmail = (type: string): boolean => {
-    if (searchInput === null || searchInput.length === 0) {
+    if (searchInput.length === 0) {
       setInputError({
         type: `${type}_EMPTY_EMAIL`,
         msg: 'Email is required',
@@ -42,21 +36,38 @@ const HireServiceProvider = () => {
   const search = () => {
     if (!validateEmail('SEARCH')) return;
     axios
-      .get(`${LOCAL_HOST_URL}/user/${searchInput}`)
+      .get(`${LOCAL_HOST_URL}/user/exists/${searchInput}`)
       .then(res => {
-        if (res.data.length === 0) {
-          setInputError({
-            type: 'EMAIL_NOT_FOUND',
-            msg: 'This email is not registered. You can add an email manually.',
-          });
-        }
+        const data = res.data[0];
+        Alert.alert(
+          `Select ${data.first_name} ${data.last_name}?`,
+          '',
+          [
+            {
+              text: 'No',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'Yes',
+              onPress: () =>
+                navigation.navigate('PersonalInfo', {
+                  firstName: data.first_name,
+                  lastName: data.last_name,
+                  email: data.email_address,
+                }),
+            },
+          ],
+        );
       })
-      .catch(() => {});
-  };
-
-  const proceed = () => {
-    if (!validateEmail('MANUAL')) return;
-    console.log('proceed');
+      .catch(error => {
+        console.log(error);
+        setInputError({
+          type: 'EMAIL_NOT_FOUND',
+          msg: 'This email is not registered. You can add an email manually.',
+        });
+        return error;
+      });
   };
 
   return (
@@ -69,28 +80,17 @@ const HireServiceProvider = () => {
         </Text>
       </View>
       <View style={styles.subContainer}>
-        <InputField
-          title={'Search by email'}
+        <Text>Enter the email</Text>
+        <InputField.Outlined
           onChangeText={(val: any) => setSearchInput(val)}
-          onPress={search}
+          isEditable={true}
         />
         {(inputError.type === 'SEARCH_EMPTY_EMAIL' ||
           inputError.type === 'SEARCH_INVALID_FORMAT' ||
           inputError.type === 'EMAIL_NOT_FOUND') && (
           <InputError error={inputError} />
         )}
-      </View>
-      <View style={styles.subContainer}>
-        <InputField
-          title={'Add an email manually'}
-          onChangeText={(val: any) => setManualInput(val)}
-          onPress={proceed}
-        />
-        {(inputError.type === 'MANUAL_EMPTY_EMAIL' ||
-          inputError.type === 'MANUAL_INVALID_FORMAT' ||
-          inputError.type === 'EMAIL_NOT_FOUND') && (
-          <InputError error={inputError} />
-        )}
+        <Button.Outlined title="Continue" onPress={search} />
       </View>
     </SafeAreaView>
   );

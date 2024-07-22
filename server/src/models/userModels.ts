@@ -32,6 +32,10 @@ class UserModels {
     return await this.repositories.getUser(email);
   }
 
+  async checkUserExists(email: string) {
+    return await this.repositories.checkUserExists(email);
+  }
+
   async addServiceProvider(req: any) {
     const {
       firstName,

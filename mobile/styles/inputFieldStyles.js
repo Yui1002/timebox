@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   input: {
     width: 300,
@@ -13,17 +13,16 @@ export const styles = StyleSheet.create({
     padding: 10,
     margin: 6,
   },
-  arrowButton: {
-    backgroundColor: '#24a0ed',
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    padding: 5,
-  },
-  arrow: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 24,
+  underLineInput: {
+    width: 100,
+    borderBottomWidth: 1,
+    // borderWidth: 20,
+    // // alignSelf: 'stretch',
+    padding: 8,
+    // // marginLeft: 50,
+    // borderBottomColor: '#ddd',
+    // margin: 5,
+    // // marginRight: 50,
+    // backgroundColor: '#ddd'
   },
 });

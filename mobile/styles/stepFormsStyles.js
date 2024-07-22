@@ -2,14 +2,14 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    margin: '5%',
+    margin: '5%'
   },
-  subContainer: {
-    marginVertical: 24
+  header: {
+    marginVertical: 20,
+    fontSize: 24
   },
-  inputContainer: {
+  statusBarContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
-  }
+    justifyContent: 'space-between',
+  },
 });

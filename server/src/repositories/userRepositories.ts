@@ -36,6 +36,11 @@ class UserRepositories {
     ).rows[0].user_transaction_id;
   }
 
+  async checkUserExists(email: string) {
+    const sql = "SELECT COUNT (*) FROM users WHERE email_address = $1;";
+    return (await this.repositories.queryDB(sql, [email])).rowCount > 0
+  }
+
   // ---------------------  Users  --------------------------------
   async getEmployers(serviceProviderId: string) {
     const sql =
