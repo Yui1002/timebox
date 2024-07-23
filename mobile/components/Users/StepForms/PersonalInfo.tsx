@@ -69,8 +69,7 @@ const PersonalInfo = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View>
-        <Text style={styles.header}>User Information</Text>
+      <View style={{marginTop: 30}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '50%'}}>
             <Text style={{fontSize: 14}}>First Name</Text>

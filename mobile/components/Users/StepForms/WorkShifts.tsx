@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  TouchableOpacityBase,
-} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-import InputField from '../../InputField';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
 import Button from '../Button';
+import moment from 'moment';
+
+interface Shifts {
+  day: string;
+  startTime: string;
+  endTime: string;
+}
 
 const WorkShifts = ({route, navigation}: any) => {
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
@@ -24,9 +24,51 @@ const WorkShifts = ({route, navigation}: any) => {
     'Saturday',
     'Sunday',
   ];
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [isDaySelected, setIsDaySelected] = useState(false);
+  const [startOpen, setStartOpen] = useState(false);
+  const [endOpen, setEndOpen] = useState(false);
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<string>('');
+  const [selectedDays, setSelectedDays] = useState<Array<Shifts>>([]);
+  const [inputError, setInputError] = useState({
+    type: '',
+    msg: '',
+  });
+
+  const validateInput = () => {
+    if (selectedDay.length === 0) {
+      setInputError({
+        type: 'EMPTY_DAY',
+        msg: 'Day is required',
+      });
+      return false;
+    }
+    if (startTime > endTime) {
+      setInputError({
+        type: 'INVALID_TIME',
+        msg: 'Time is invalid',
+      });
+      return false;
+    }
+    if (endTime.getHours() - startTime.getHours() < 1) {
+      setInputError({
+        type: 'INVALID_TIME',
+        msg: 'Duration has to more than 1 hour',
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const add = () => {
+    if (!validateInput()) return;
+    const value = {
+      day: selectedDay,
+      startTime: moment(startTime).format('LT'),
+      endTime: moment(endTime).format('LT'),
+    };
+    setSelectedDays([...selectedDays, value]);
+  };
 
   return (
     <View style={styles.container}>
@@ -39,79 +81,88 @@ const WorkShifts = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View>
-        <Text style={styles.header}>Work Shifts</Text>
-        <Text style={{marginVertical: 4}}>Select day</Text>
-        <View
-          style={{
-            width: '100%',
-            height: 150,
-            display: 'flex',
-            flexWrap: 'wrap',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
-          {days.map(d => (
+      <View style={styles.workShiftsContainer}>
+        <Text style={styles.title}>Select day and time</Text>
+        {inputError.type === 'EMPTY_DAY' && <InputError error={inputError} />}
+        <View style={styles.dayContainer}>
+          {days.map(day => (
             <TouchableOpacity
-              style={{
-                // backgroundColor: '#24a0ed',
-                backgroundColor: '#ccc',
-                borderRadius: 20,
-                width: 100,
-                height: 30,
-                marginVertical: 4,
-              }}
-              onPress={() => setIsDaySelected(true)}>
-              <Text
-                style={{
-                  color: '#fff',
-                  padding: 6,
-                  textAlign: 'center',
-                  fontWeight: 400,
-                }}>
-                {d}
-              </Text>
+              style={selectedDay === day ? styles.day_selected : styles.day}
+              onPress={() => setSelectedDay(day)}>
+              <Text style={styles.day_text}>{day}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <View>
-          <Text style={{marginVertical: 4}}>Select time</Text>
-          {open && (
+          {startOpen && (
             <DropdownPicker.DateDropdownPicker
-              open={open}
-              date={date}
-              setOpen={setOpen}
-              setDate={setDate}
+              open={startOpen}
+              date={startTime}
+              setOpen={setStartOpen}
+              setDate={setStartTime}
+            />
+          )}
+          {endOpen && (
+            <DropdownPicker.DateDropdownPicker
+              open={endOpen}
+              date={endTime}
+              setOpen={setEndOpen}
+              setDate={setEndTime}
             />
           )}
         </View>
-        <View>
-          <TouchableOpacity
-            style={{
-              borderBottomWidth: 1,
-              paddingTop: 20,
-              borderBottomColor: '#ccc',
-              width: '40%',
-              flexDirection: 'row',
-              justifyContent: 'space-between'
-            }}>
-            <Text style={{color: '#505050'}}>Start</Text>
-            <View
-              style={{
-                width: 10,
-                height: 10,
-                borderTopWidth: 0,
-                borderRightWidth: 2,
-                borderBottomWidth: 2,
-                borderLeftWidth: 0,
-                borderStyle: 'solid',
-                borderColor: '#000',
-                padding: 2,
-                transform: 'rotate(45deg)',
-              }}
-            />
-          </TouchableOpacity>
+        <View style={styles.timeContainer}>
+          <View style={{width: '50%'}}>
+            <Text style={styles.titleHeader}>Start</Text>
+            <TouchableOpacity
+              style={styles.startText}
+              onPress={() => setStartOpen(true)}>
+              <Text style={{color: '#505050'}}>
+                {moment(startTime).format('LT')}
+              </Text>
+              <View style={styles.arrow} />
+            </TouchableOpacity>
+          </View>
+          <View style={{width: '50%'}}>
+            <Text style={styles.titleHeader}>End</Text>
+            <TouchableOpacity
+              style={styles.startText}
+              onPress={() => setEndOpen(true)}>
+              <Text style={{color: '#505050'}}>
+                {moment(endTime).format('LT')}
+              </Text>
+              <View style={styles.arrow} />
+            </TouchableOpacity>
+          </View>
         </View>
+        {inputError.type === 'INVALID_TIME' && (
+          <InputError error={inputError} />
+        )}
+        <Button.Outlined title="Add" onPress={add} />
+      </View>
+      <View>
+        <Text style={{fontWeight: '500'}}>Selected Date</Text>
+        {selectedDays.map(day => (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginVertical: 4,
+            }}>
+            <Text style={{width: '30%'}}>{day.day}</Text>
+            <Text style={{width: '50%'}}>
+              {day.startTime} ~ {day.endTime}
+            </Text>
+            <Text
+              style={{
+                color: '#24a0ed',
+                width: '20%',
+                textDecorationLine: 'underline',
+              }}>
+              Delete
+            </Text>
+          </View>
+        ))}
       </View>
     </View>
   );
