@@ -18,7 +18,25 @@ const Review = ({route, navigation}: any) => {
   const workShifts = route.params.workShifts;
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
-  const editDay = (shift: Shifts) => {};
+  const editDay = () => {
+    navigation.navigate('WorkShifts', {
+      firstName,
+      lastName,
+      email,
+      rate,
+      rateType,
+    });
+  };
+
+  const editRate = () => {
+    navigation.navigate('PersonalInfo', {
+      firstName,
+      lastName,
+      email,
+    });
+  };
+
+  const confirmServiceProvider = () => {};
 
   return (
     <View style={styles.container}>
@@ -56,16 +74,37 @@ const Review = ({route, navigation}: any) => {
             marginVertical: 20,
           }}>
           <View style={{width: '50%'}}>
-            <Text style={{fontSize: 14}}>Rate</Text>
+            <Text style={{fontSize: 14}}>
+              Rate{' '}
+              <Text
+                style={{color: '#24a0ed', textDecorationLine: 'underline'}}
+                onPress={editRate}>
+                Edit
+              </Text>
+            </Text>
             <Text style={{fontSize: 18}}>${rate}</Text>
           </View>
           <View style={{width: '50%'}}>
-            <Text style={{fontSize: 14}}>Rate Type</Text>
+            <Text style={{fontSize: 14}}>
+              Rate Type{' '}
+              <Text
+                style={{color: '#24a0ed', textDecorationLine: 'underline'}}
+                onPress={editRate}>
+                Edit
+              </Text>
+            </Text>
             <Text style={{fontSize: 18}}>{rateType}</Text>
           </View>
         </View>
         <View style={{marginTop: 20}}>
-          <Text style={{fontSize: 14}}>Work Shifts</Text>
+          <Text style={{fontSize: 14}}>
+            Work Shifts{' '}
+            <Text
+              style={{color: '#24a0ed', textDecorationLine: 'underline'}}
+              onPress={editDay}>
+              Edit
+            </Text>
+          </Text>
           {workShifts.length > 0 ? (
             workShifts.map((shift: Shifts, index: number) => (
               <View key={index} style={styles.dateContainer}>
@@ -75,15 +114,13 @@ const Review = ({route, navigation}: any) => {
                 <Text style={{fontSize: 18}}>
                   {shift.startTime} ~ {shift.endTime}
                 </Text>
-                <Text style={[styles.delete, {fontSize: 18}]} onPress={() => editDay(shift)}>
-                  Edit
-                </Text>
               </View>
             ))
           ) : (
             <Text>No days selected</Text>
           )}
         </View>
+        <Button.Outlined title="Confirm" onPress={confirmServiceProvider} />
       </View>
     </View>
   );
