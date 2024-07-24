@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text, TouchableOpacity, TextInput, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
-import Button from '../Button';
+// import Button from '../Button';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const {firstName, lastName, email} = route.params;
@@ -25,7 +25,7 @@ const PersonalInfo = ({route, navigation}: any) => {
   const validateInput = () => {
     if (rate === null || rate.length === 0) {
       setInputError({
-        type: 'EMPTY_RATE',
+        type: 'INVALID_RATE_FORMAT',
         msg: 'Rate is required',
       });
       return false;
@@ -37,6 +37,13 @@ const PersonalInfo = ({route, navigation}: any) => {
       });
       return false;
     }
+    if (Number(rate) < 1) {
+      setInputError({
+        type: 'INVALID_RATE_FORMAT',
+        msg: 'The value has to be more than 0',
+      });
+      return false;
+    }
     if (rateType === null || rateType.length === 0) {
       setInputError({
         type: 'INVALID_RATE_TYPE_FORMAT',
@@ -45,6 +52,10 @@ const PersonalInfo = ({route, navigation}: any) => {
       return false;
     }
     return true;
+  };
+
+  const cancel = () => {
+    navigation.navigate('HireServiceProvider');
   };
 
   const proceed = () => {
@@ -60,7 +71,7 @@ const PersonalInfo = ({route, navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.statusBarContainer}>
+      <View style={[styles.statusBarContainer, {height: '10%'}]}>
         {statusTitles.map((val, index) =>
           statusTitles[index] === 'Information' ? (
             <StatusBar key={index} title={val} isFocused={true} />
@@ -69,7 +80,7 @@ const PersonalInfo = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View style={{marginTop: 30}}>
+      <View style={{marginTop: 30, height: '50%'}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '50%'}}>
             <Text style={{fontSize: 14}}>First Name</Text>
@@ -92,8 +103,7 @@ const PersonalInfo = ({route, navigation}: any) => {
           }}>
           <View style={{width: '50%'}}>
             <Text>Rate ($)</Text>
-            {(inputError.type === 'INVALID_RATE_FORMAT' ||
-              inputError.type === 'EMPTY_RATE') && (
+            {inputError.type === 'INVALID_RATE_FORMAT' && (
               <InputError error={inputError} />
             )}
             <InputField.Underlined onChangeText={setRate} />
@@ -113,7 +123,23 @@ const PersonalInfo = ({route, navigation}: any) => {
             />
           </View>
         </View>
-        <Button.Outlined title="Proceed" onPress={proceed} />
+      </View>
+      <View style={{width: '100%', backgroundColor: '#ddd'}}>
+        <View
+          style={{
+            backgroundColor: '#24a0ed',
+            width: '40%',
+            borderRadius: 10,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+          }}>
+          <Button
+            title={`Continue  ${String.fromCharCode(9654)}`}
+            onPress={proceed}
+            color="#fff"
+          />
+        </View>
       </View>
     </View>
   );

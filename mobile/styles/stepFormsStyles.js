@@ -2,7 +2,8 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    margin: '5%'
+    margin: '5%',
+    height: '100%'
   },
   header: {
     marginVertical: 20,

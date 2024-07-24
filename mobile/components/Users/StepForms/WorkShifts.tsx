@@ -2,10 +2,6 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-import InputError from '../../InputError';
-import DropdownPicker from '../DropdownPicker';
-// import Button from '../Button';
-import moment from 'moment';
 
 interface Shifts {
   day: string;
@@ -14,6 +10,7 @@ interface Shifts {
 }
 
 const WorkShifts = ({route, navigation}: any) => {
+  console.log('params in work shifts', route.params)
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [selectedDays, setSelectedDays] = useState<Array<Shifts>>([]);
 
@@ -33,14 +30,15 @@ const WorkShifts = ({route, navigation}: any) => {
 
   const navigateToAddSchedule = () => {
     navigation.navigate('RegisterWorkShifts', {
+      params: route.params,
       selectedDays,
-      setSelectedDays, 
-    })
-  }
+      setSelectedDays,
+    });
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.statusBarContainer}>
+    <View style={[styles.container, {height: '100%'}]}>
+      <View style={[styles.statusBarContainer, {height: '10%'}]}>
         {statusTitles.map((val, index) =>
           statusTitles[index] === 'Work Shifts' ? (
             <StatusBar key={index} title={val} isFocused={true} />
@@ -49,10 +47,9 @@ const WorkShifts = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View style={{marginVertical: 20}}>
+      <View
+        style={{marginVertical: 20, height: '60%'}}>
         <Text style={{fontSize: 20, fontWeight: 500}}>Work Schedules</Text>
-      </View>
-      <View>
         {selectedDays.length > 0 ? (
           selectedDays.map(day => (
             <View style={styles.dateContainer}>
@@ -70,24 +67,32 @@ const WorkShifts = ({route, navigation}: any) => {
             No date and time selected
           </Text>
         )}
+        <View
+          style={{
+            backgroundColor: '#24a0ed',
+            borderRadius: 10,
+            width: '50%',
+            marginVertical: 20,
+            position: 'absolute',
+            top: '30%',
+            left: '25%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Button
+            title={`${String.fromCharCode(43)}  Add Schedule`}
+            color="#fff"
+            onPress={navigateToAddSchedule}
+          />
+        </View>
       </View>
-      <View
-        style={{
-          backgroundColor: '#24a0ed',
-          borderRadius: 10,
-          width: '50%',
-          marginVertical: 20,
-          position: 'absolute',
-          top: '100%',
-          left: '25%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Button
-          title={`${String.fromCharCode(43)}  Add Schedule`}
-          color="#fff"
-          onPress={navigateToAddSchedule}
-        />
+      <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{backgroundColor: '#909090', width: '40%', borderRadius: 10}}>
+          <Button title="Back" onPress={() => navigation.goBack()} color="#fff" />
+        </View>
+        <View style={{backgroundColor: '#24a0ed', width: '40%', borderRadius: 10}}>
+          <Button title={`Review  ${String.fromCharCode(9654)}`} onPress={review} color="#fff" />
+        </View>
       </View>
     </View>
   );

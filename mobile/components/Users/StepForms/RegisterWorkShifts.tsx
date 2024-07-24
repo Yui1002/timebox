@@ -7,6 +7,7 @@ import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
+  console.log('params in register', route.params);
   const days = [
     'Monday',
     'Tuesday',
@@ -52,10 +53,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     return true;
   };
 
-  const cancel = () => {
-    navigation.navigate('WorkShifts');
-  };
-
   const add = () => {
     if (!validateInput()) return;
     const value = {
@@ -65,7 +62,9 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     };
     setSelectedDays([...selectedDays, value]);
 
-    navigation.navigate('WorkShifts');
+    navigation.navigate('WorkShifts', {
+      params: route.params,
+    });
   };
 
   return (
@@ -130,11 +129,18 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
           <InputError error={inputError} />
         )}
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 40}}>
-        <View style={{backgroundColor: '#909090', width: '40%', borderRadius: 10}}>
-          <Button title="Cancel" color="#fff" onPress={cancel} />
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginVertical: 40,
+        }}>
+        <View
+          style={{backgroundColor: '#909090', width: '40%', borderRadius: 10}}>
+          <Button title="Cancel" color="#fff" onPress={() => navigation.goBack()} />
         </View>
-        <View style={{backgroundColor: '#24a0ed', width: '40%', borderRadius: 10}}>
+        <View
+          style={{backgroundColor: '#24a0ed', width: '40%', borderRadius: 10}}>
           <Button title="Add" color="#fff" onPress={add} />
         </View>
       </View>
