@@ -16,6 +16,7 @@ import DrawerNav from './components/Users/DrawerNav';
 import Record from './components/Users/Record';
 import PersonalInfo from './components/Users/StepForms/PersonalInfo';
 import WorkShifts from './components/Users/StepForms/WorkShifts';
+import Review from './components/Users/StepForms/Review';
 import ServiceProviders from './components/Users/ServiceProviders';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
@@ -95,6 +96,14 @@ function App(): JSX.Element {
         <Stack.Screen
           name="WorkShifts"
           component={WorkShifts}
+          options={({navigation}) => ({
+            headerTitle: '',
+            gestureEnabled: false,
+          })}
+        />
+        <Stack.Screen
+          name="Review"
+          component={Review}
           options={({navigation}) => ({
             headerTitle: '',
             gestureEnabled: false,

@@ -70,6 +70,20 @@ const WorkShifts = ({route, navigation}: any) => {
     setSelectedDays([...selectedDays, value]);
   };
 
+  const deleteDate = (day: Shifts) => {
+    const result = selectedDays.filter(
+      s => JSON.stringify(s) !== JSON.stringify(day),
+    );
+    setSelectedDays(result);
+  };
+
+  const review = () => {
+    navigation.navigate('Review', {
+      params: route.params,
+      workShifts: selectedDays
+    })
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.statusBarContainer}>
@@ -142,27 +156,24 @@ const WorkShifts = ({route, navigation}: any) => {
       </View>
       <View>
         <Text style={{fontWeight: '500'}}>Selected Date</Text>
-        {selectedDays.map(day => (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginVertical: 4,
-            }}>
-            <Text style={{width: '30%'}}>{day.day}</Text>
-            <Text style={{width: '50%'}}>
-              {day.startTime} ~ {day.endTime}
-            </Text>
-            <Text
-              style={{
-                color: '#24a0ed',
-                width: '20%',
-                textDecorationLine: 'underline',
-              }}>
-              Delete
-            </Text>
-          </View>
-        ))}
+        {selectedDays.length > 0 ? (
+          selectedDays.map(day => (
+            <View style={styles.dateContainer}>
+              <Text style={{width: '30%'}}>{day.day}</Text>
+              <Text style={{width: '50%'}}>
+                {day.startTime} ~ {day.endTime}
+              </Text>
+              <Text style={styles.delete} onPress={() => deleteDate(day)}>
+                Delete
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text>No days selected</Text>
+        )}
+      </View>
+      <View>
+        <Button.Outlined title="Review" onPress={review} />
       </View>
     </View>
   );

@@ -74,5 +74,15 @@ export const styles = StyleSheet.create({
     borderColor: '#000',
     padding: 2,
     transform: 'rotate(45deg)',
+  },
+  delete: {
+    color: '#24a0ed',
+    width: '20%',
+    textDecorationLine: 'underline',
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 4,
   }
 });
