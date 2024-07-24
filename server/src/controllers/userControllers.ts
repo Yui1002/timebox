@@ -26,7 +26,6 @@ class UserControllers {
 
   async checkUserExists(req: any, res: any) {
     const user = await this.models.getUser(req.params.email);
-    console.log('user ', user, user.length)
     user.length > 0 ? res.status(200).send(user) : res.status(400);
   }
 

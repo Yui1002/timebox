@@ -23,6 +23,7 @@ const PersonalInfo = ({route, navigation}: any) => {
   });
 
   const validateInput = () => {
+    console.log('rate', rate)
     if (rate === null || rate.length === 0) {
       setInputError({
         type: 'INVALID_RATE_FORMAT',
@@ -41,6 +42,13 @@ const PersonalInfo = ({route, navigation}: any) => {
       setInputError({
         type: 'INVALID_RATE_FORMAT',
         msg: 'The value has to be more than 0',
+      });
+      return false;
+    }
+    if (Number(rate) > 30000) {
+      setInputError({
+        type: 'INVALID_RATE_FORMAT',
+        msg: 'The value has to be lower',
       });
       return false;
     }
@@ -80,7 +88,10 @@ const PersonalInfo = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View style={{marginTop: 30, height: '50%'}}>
+      <View style={{height: '5%'}}>
+        <Text style={{fontSize: 22, fontWeight: 500}}>User Information</Text>
+      </View>
+      <View style={{marginTop: 20, height: '50%'}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '50%'}}>
             <Text style={{fontSize: 14}}>First Name</Text>

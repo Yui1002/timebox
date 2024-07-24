@@ -85,5 +85,31 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 4,
-  }
+  },
+  addButton: {
+    backgroundColor: '#24a0ed',
+    borderRadius: 10,
+    width: '50%',
+    marginVertical: 20,
+    position: 'absolute',
+    top: '30%',
+    left: '25%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  workShiftsBtn: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  workShiftsBtn_back: {
+    backgroundColor: '#909090', 
+    width: '40%', 
+    borderRadius: 10
+  },
+  workShiftsBtn_add: {
+    backgroundColor: '#24a0ed', 
+    width: '40%', 
+    borderRadius: 10
+  },
 });

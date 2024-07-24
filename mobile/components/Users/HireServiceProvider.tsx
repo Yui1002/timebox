@@ -14,7 +14,7 @@ const HireServiceProvider = ({route, navigation}: any) => {
     type: '',
     msg: '',
   });
- 
+
   const validateEmail = (type: string): boolean => {
     if (searchInput.length === 0) {
       setInputError({
@@ -38,36 +38,42 @@ const HireServiceProvider = ({route, navigation}: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/user/exists/${searchInput}`)
       .then(res => {
-        const data = res.data[0];
-        Alert.alert(
-          `Select ${data.first_name} ${data.last_name}?`,
-          '',
-          [
-            {
-              text: 'No',
-              onPress: () => console.log('Cancel Pressed'),
-              style: 'cancel',
-            },
-            {
-              text: 'Yes',
-              onPress: () =>
-                navigation.navigate('PersonalInfo', {
-                  firstName: data.first_name,
-                  lastName: data.last_name,
-                  email: data.email_address,
-                }),
-            },
-          ],
-        );
+        showAlert(true, res.data[0]);
       })
       .catch(error => {
         console.log(error);
-        setInputError({
-          type: 'EMAIL_NOT_FOUND',
-          msg: 'This email is not registered. You can add an email manually.',
-        });
+        showAlert(false, null);
         return error;
       });
+  };
+
+  const emailToNotFoundUser = () => {
+    console.log('will send email!!')
+  };
+
+  const showAlert = (isFound: boolean, data: any) => {
+    console.log('here')
+    const msg = isFound
+      ? `Select ${data.first_name} ${data.last_name}?`
+      : `Add ${searchInput} as a service provider`;
+    Alert.alert(msg, '', [
+      {
+        text: 'No',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: () =>
+          isFound
+            ? navigation.navigate('PersonalInfo', {
+                firstName: data.first_name,
+                lastName: data.last_name,
+                email: data.email_address,
+              })
+            : emailToNotFoundUser(),
+      },
+    ]);
   };
 
   return (
