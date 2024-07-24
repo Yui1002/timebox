@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
-import Button from '../Button';
+// import Button from '../Button';
 import moment from 'moment';
 
 interface Shifts {
@@ -15,60 +15,7 @@ interface Shifts {
 
 const WorkShifts = ({route, navigation}: any) => {
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
-  const days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
-  const [startOpen, setStartOpen] = useState(false);
-  const [endOpen, setEndOpen] = useState(false);
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState<string>('');
   const [selectedDays, setSelectedDays] = useState<Array<Shifts>>([]);
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
-  });
-
-  const validateInput = () => {
-    if (selectedDay.length === 0) {
-      setInputError({
-        type: 'EMPTY_DAY',
-        msg: 'Day is required',
-      });
-      return false;
-    }
-    if (startTime > endTime) {
-      setInputError({
-        type: 'INVALID_TIME',
-        msg: 'Time is invalid',
-      });
-      return false;
-    }
-    if (endTime.getHours() - startTime.getHours() < 1) {
-      setInputError({
-        type: 'INVALID_TIME',
-        msg: 'Duration has to more than 1 hour',
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const add = () => {
-    if (!validateInput()) return;
-    const value = {
-      day: selectedDay,
-      startTime: moment(startTime).format('LT'),
-      endTime: moment(endTime).format('LT'),
-    };
-    setSelectedDays([...selectedDays, value]);
-  };
 
   const deleteDate = (day: Shifts) => {
     const result = selectedDays.filter(
@@ -80,9 +27,16 @@ const WorkShifts = ({route, navigation}: any) => {
   const review = () => {
     navigation.navigate('Review', {
       params: route.params,
-      workShifts: selectedDays
-    })
+      workShifts: selectedDays,
+    });
   };
+
+  const navigateToAddSchedule = () => {
+    navigation.navigate('RegisterWorkShifts', {
+      selectedDays,
+      setSelectedDays, 
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -95,67 +49,10 @@ const WorkShifts = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View style={styles.workShiftsContainer}>
-        <Text style={styles.title}>Select day and time</Text>
-        {inputError.type === 'EMPTY_DAY' && <InputError error={inputError} />}
-        <View style={styles.dayContainer}>
-          {days.map(day => (
-            <TouchableOpacity
-              style={selectedDay === day ? styles.day_selected : styles.day}
-              onPress={() => setSelectedDay(day)}>
-              <Text style={styles.day_text}>{day}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View>
-          {startOpen && (
-            <DropdownPicker.DateDropdownPicker
-              open={startOpen}
-              date={startTime}
-              setOpen={setStartOpen}
-              setDate={setStartTime}
-            />
-          )}
-          {endOpen && (
-            <DropdownPicker.DateDropdownPicker
-              open={endOpen}
-              date={endTime}
-              setOpen={setEndOpen}
-              setDate={setEndTime}
-            />
-          )}
-        </View>
-        <View style={styles.timeContainer}>
-          <View style={{width: '50%'}}>
-            <Text style={styles.titleHeader}>Start</Text>
-            <TouchableOpacity
-              style={styles.startText}
-              onPress={() => setStartOpen(true)}>
-              <Text style={{color: '#505050'}}>
-                {moment(startTime).format('LT')}
-              </Text>
-              <View style={styles.arrow} />
-            </TouchableOpacity>
-          </View>
-          <View style={{width: '50%'}}>
-            <Text style={styles.titleHeader}>End</Text>
-            <TouchableOpacity
-              style={styles.startText}
-              onPress={() => setEndOpen(true)}>
-              <Text style={{color: '#505050'}}>
-                {moment(endTime).format('LT')}
-              </Text>
-              <View style={styles.arrow} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        {inputError.type === 'INVALID_TIME' && (
-          <InputError error={inputError} />
-        )}
-        <Button.Outlined title="Add" onPress={add} />
+      <View style={{marginVertical: 20}}>
+        <Text style={{fontSize: 20, fontWeight: 500}}>Work Schedules</Text>
       </View>
       <View>
-        <Text style={{fontWeight: '500'}}>Selected Date</Text>
         {selectedDays.length > 0 ? (
           selectedDays.map(day => (
             <View style={styles.dateContainer}>
@@ -169,11 +66,28 @@ const WorkShifts = ({route, navigation}: any) => {
             </View>
           ))
         ) : (
-          <Text>No days selected</Text>
+          <Text style={{textAlign: 'center', marginTop: 40}}>
+            No date and time selected
+          </Text>
         )}
       </View>
-      <View>
-        <Button.Outlined title="Review" onPress={review} />
+      <View
+        style={{
+          backgroundColor: '#24a0ed',
+          borderRadius: 10,
+          width: '50%',
+          marginVertical: 20,
+          position: 'absolute',
+          top: '100%',
+          left: '25%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Button
+          title={`${String.fromCharCode(43)}  Add Schedule`}
+          color="#fff"
+          onPress={navigateToAddSchedule}
+        />
       </View>
     </View>
   );
