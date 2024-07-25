@@ -2,6 +2,15 @@ import UserRepositories from "../repositories/userRepositories";
 import { ServiceProviderInterface } from "../interfaces/ServiceProviderInterface";
 import dotenv from "dotenv";
 dotenv.config();
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
 
 class UserModels {
   repositories: UserRepositories;
@@ -26,6 +35,24 @@ class UserModels {
   async getServiceProviders(employerEmail: string) {
     const employerId = await this.repositories.getEmployerId(employerEmail);
     return await this.repositories.getServiceProviders(employerId);
+  }
+
+  async emailToNotFoundUser(email: string, userInfo: any) {
+    const { firstName, lastName, userEmail } = userInfo;
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: email,
+      subject: `${firstName} ${lastName} added you as a service provider`,
+      text: `${firstName} ${lastName} added you as a service provider. Please download the app from this link: `,
+    };
+    try {
+      await transporter.sendMail(mailOptions);
+      return true;
+    } catch (err) {
+      return false;
+    } finally {
+      transporter.close();
+    }
   }
 
   async getUser(email: string) {
@@ -115,13 +142,13 @@ class UserModels {
     return type === "checkin"
       ? await this.repositories.startRecord(
           serviceProviderEmail,
-          userTransactionId,
+          userTransactionId
         )
       : await this.repositories.endRecord(userTransactionId);
   }
 
   async getTodaysRecord(req: any) {
-    const {employerEmail, serviceProviderEmail} = req;
+    const { employerEmail, serviceProviderEmail } = req;
     const serviceProviderId = await this.repositories.getUserId(
       serviceProviderEmail
     );
@@ -140,7 +167,7 @@ class UserModels {
   }
 
   async getRecordByPeriod(req: any) {
-    const {employerEmail, serviceProviderEmail, from, to} = req;
+    const { employerEmail, serviceProviderEmail, from, to } = req;
     const serviceProviderId = await this.repositories.getUserId(
       serviceProviderEmail
     );
@@ -149,7 +176,11 @@ class UserModels {
       employerId,
       serviceProviderId
     );
-    return await this.repositories.getRecordByPeriod(userTransactionId, from, to)
+    return await this.repositories.getRecordByPeriod(
+      userTransactionId,
+      from,
+      to
+    );
   }
 
   async searchByDateYear(req: any) {

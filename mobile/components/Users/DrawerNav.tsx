@@ -28,23 +28,20 @@ const DrawerNav = ({route, navigation}: any) => {
   return (
     <Drawer.Navigator
       initialRouteName="Home"
-      drawerContent={props => (
-        <CustomDrawerContent {...props} />
-      )}>
+      drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
         name="Home"
         component={Home}
         initialParams={{params: route.params}}
       />
       <Drawer.Screen name={'Working Records'}>
+        {props => <WorkingHistory params={route.params} />}
+      </Drawer.Screen>
+      <Drawer.Screen name={'Hire Service Provider'}>
         {props => (
-          <WorkingHistory params={route.params} />
+          <HireServiceProvider params={route.params} navigation={navigation} />
         )}
       </Drawer.Screen>
-      <Drawer.Screen
-        name="Hire Service Provider"
-        component={HireServiceProvider}
-      />
       <Drawer.Screen
         name="Manage Service Provider"
         component={ManageServiceProviders}

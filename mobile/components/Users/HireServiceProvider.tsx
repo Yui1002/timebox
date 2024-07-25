@@ -8,7 +8,8 @@ import InputField from '../InputField';
 import InputError from '../InputError';
 import Button from './Button';
 
-const HireServiceProvider = ({route, navigation}: any) => {
+const HireServiceProvider = (props: any) => {
+  const {firstName, lastName, email} = props.params;
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
     type: '',
@@ -33,57 +34,76 @@ const HireServiceProvider = ({route, navigation}: any) => {
     return true;
   };
 
-  const search = () => {
+  const searchEmail = () => {
     if (!validateEmail('SEARCH')) return;
     axios
       .get(`${LOCAL_HOST_URL}/user/exists/${searchInput}`)
       .then(res => {
-        showAlert(true, res.data[0]);
+        const msg = `Select ${res.data[0].first_name} ${res.data[0].last_name}?`;
+        showAlert(msg, null, function () {
+          navigateToNext(res.data[0]);
+        });
       })
       .catch(error => {
-        console.log(error);
-        showAlert(false, null);
+        const msg = `Add ${searchInput} as a service provider`;
+        showAlert(msg, null, emailToNotFoundUser);
         return error;
       });
   };
 
   const emailToNotFoundUser = () => {
-    console.log('will send email!!')
+    axios
+      .post(`${LOCAL_HOST_URL}/not/user/send`, {
+        params: {
+          serviceProviderEmail: searchInput,
+          userInfo: {
+            firstName,
+            lastName,
+            userEmail: email,
+          },
+        },
+      })
+      .then(() => {
+        const msg = `An email has been sent to ${searchInput}. You will see the user on your home page once the request is approved. `;
+        showAlert(msg, null, navigateToHome);
+      })
+      .catch(() => {});
   };
 
-  const showAlert = (isFound: boolean, data: any) => {
-    console.log('here')
-    const msg = isFound
-      ? `Select ${data.first_name} ${data.last_name}?`
-      : `Add ${searchInput} as a service provider`;
+  const showAlert = (msg: string, cancelCb: any, confirmCb: any) => {
     Alert.alert(msg, '', [
       {
         text: 'No',
-        onPress: () => console.log('Cancel Pressed'),
+        onPress: cancelCb ? cancelCb : () => console.log('cancel pressed'),
         style: 'cancel',
       },
       {
         text: 'Yes',
-        onPress: () =>
-          isFound
-            ? navigation.navigate('PersonalInfo', {
-                firstName: data.first_name,
-                lastName: data.last_name,
-                email: data.email_address,
-              })
-            : emailToNotFoundUser(),
+        onPress: confirmCb,
       },
     ]);
+  };
+
+  const navigateToNext = (data: any) => {
+    props.navigation.navigate('PersonalInfo', {
+      firstName: data.first_name,
+      lastName: data.last_name,
+      email: data.email_address,
+    });
+  };
+
+  const navigateToHome = () => {
+    props.navigation.navigate('Home', {
+      firstName,
+      lastName,
+      email,
+    });
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text>
-          {`You can add a service provider by searching email or manually add email. After the email is found, click ${String.fromCharCode(
-            8594,
-          )} to enter other information`}
-        </Text>
+        <Text>Enter the email to find a service provider</Text>
       </View>
       <View style={styles.subContainer}>
         <Text>Enter the email</Text>
@@ -96,7 +116,7 @@ const HireServiceProvider = ({route, navigation}: any) => {
           inputError.type === 'EMAIL_NOT_FOUND') && (
           <InputError error={inputError} />
         )}
-        <Button.Outlined title="Continue" onPress={search} />
+        <Button.Outlined title="Continue" onPress={searchEmail} />
       </View>
     </SafeAreaView>
   );
