@@ -1,11 +1,8 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-import InputField from '../../InputField';
-import InputError from '../../InputError';
-import DropdownPicker from '../DropdownPicker';
-import Button from '../Button';
+// import Button from '../Button';
 
 interface Shifts {
   day: string;
@@ -14,7 +11,7 @@ interface Shifts {
 }
 
 const Review = ({route, navigation}: any) => {
-    console.log('params in review', route.params)
+  console.log('params in review', route.params);
   const {firstName, lastName, email, rate, rateType} = route.params.params;
   const workShifts = route.params.workShifts;
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
@@ -37,7 +34,9 @@ const Review = ({route, navigation}: any) => {
     });
   };
 
-  const confirmServiceProvider = () => {};
+  const confirmServiceProvider = () => {
+    
+  };
 
   return (
     <View style={styles.container}>
@@ -121,7 +120,23 @@ const Review = ({route, navigation}: any) => {
             <Text>No days selected</Text>
           )}
         </View>
-        <Button.Outlined title="Confirm" onPress={confirmServiceProvider} />
+        <View style={styles.workShiftsBtn}>
+          <View style={styles.workShiftsBtn_back}>
+            <Button
+              title="Back"
+              onPress={() => navigation.goBack()}
+              color="#fff"
+            />
+          </View>
+          <View style={styles.workShiftsBtn_add}>
+            <Button
+              title='Confirm'
+              onPress={confirmServiceProvider}
+              color="#fff"
+            />
+          </View>
+        </View>
+        {/* <Button.Outlined title="Confirm" onPress={confirmServiceProvider} /> */}
       </View>
     </View>
   );

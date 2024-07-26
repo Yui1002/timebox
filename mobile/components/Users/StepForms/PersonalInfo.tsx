@@ -23,7 +23,6 @@ const PersonalInfo = ({route, navigation}: any) => {
   });
 
   const validateInput = () => {
-    console.log('rate', rate)
     if (rate === null || rate.length === 0) {
       setInputError({
         type: 'INVALID_RATE_FORMAT',

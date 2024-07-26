@@ -18,21 +18,8 @@ import PersonalInfo from './components/Users/StepForms/PersonalInfo';
 import WorkShifts from './components/Users/StepForms/WorkShifts';
 import RegisterWorkShifts from './components/Users/StepForms/RegisterWorkShifts';
 import Review from './components/Users/StepForms/Review';
-import ServiceProviders from './components/Users/ServiceProviders';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
-import Account from './components/Users/Account';
-import Account_Admin from './components/Users/Account_Admin';
-// import AddServiceProvider_1 from './components/Users/AddServiceProvider_1';
-// import AddServiceProvider_2 from './components/Users/AddServiceProvider_2';
-// import AddServiceProvider_Review from './components/Users/AddServiceProvider_Review';
-// import EditServiceProvider_1 from './components/Users/EditServiceProvider_1';
-// import EditServiceProvider_2 from './components/Users/EditServiceProvider_2';
-// import EditServiceProvider_3 from './components/Users/EditServiceProvider_3';
-// import EditServiceProvider_review from './components/Users/EditServiceProvider_review';
-// import EditAddServiceProvider from './components/Users/EditAddServiceProvider';
-// import ServiceProvider from './components/Users/ServiceProvider';
-import {Button} from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -43,12 +30,12 @@ function App(): JSX.Element {
         <Stack.Screen
           name="SignIn"
           component={SignIn}
-          options={{title: '', gestureEnabled: false}}
+          options={{title: 'Sign In', gestureEnabled: false}}
         />
         <Stack.Screen
           name="SignUp"
           component={SignUp}
-          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
+          options={{title: 'Sign Up', gestureEnabled: false, headerLeft: () => null}}
         />
         <Stack.Screen
           name="VerifyOTP"
@@ -64,6 +51,7 @@ function App(): JSX.Element {
           options={{
             title: 'Forgot Password',
             gestureEnabled: false,
+            headerLeft: () => null
           }}
         />
         <Stack.Screen
@@ -100,6 +88,7 @@ function App(): JSX.Element {
           options={({navigation}) => ({
             headerTitle: '',
             gestureEnabled: false,
+            headerLeft: () => null
           })}
         />
         <Stack.Screen
@@ -108,6 +97,7 @@ function App(): JSX.Element {
           options={({navigation}) => ({
             headerTitle: '',
             gestureEnabled: false,
+            headerLeft: () => null
           })}
         />
         <Stack.Screen
@@ -118,94 +108,6 @@ function App(): JSX.Element {
             gestureEnabled: false,
           })}
         />
-        {/* <Stack.Screen
-          name="ServiceProviders"
-          component={ServiceProviders}
-          options={{
-            title: 'Service Providers',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="Account"
-          component={Account}
-          options={{title: 'Account', gestureEnabled: false}}
-        />
-        <Stack.Screen
-          name="Account_Admin"
-          component={Account_Admin}
-          options={{title: 'Account', gestureEnabled: false}}
-        />
-        <Stack.Screen
-          name="AddServiceProvider_1"
-          component={AddServiceProvider_1}
-          options={{title: 'Add Service Provicer', gestureEnabled: false}}
-        />
-        <Stack.Screen
-          name="AddServiceProvider_2"
-          component={AddServiceProvider_2}
-          options={{
-            title: 'Add Service Provider',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="AddServiceProvider_Review"
-          component={AddServiceProvider_Review}
-          options={{
-            title: 'Review',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="EditServiceProvider_1"
-          component={EditServiceProvider_1}
-          options={{title: 'Edit Service Provider', gestureEnabled: false}}
-        />
-        <Stack.Screen
-          name="EditServiceProvider_2"
-          component={EditServiceProvider_2}
-          options={{
-            title: 'Edit Service Provider',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="EditServiceProvider_3"
-          component={EditServiceProvider_3}
-          options={{
-            title: 'Edit Service Provider',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="EditServiceProvider_review"
-          component={EditServiceProvider_review}
-          options={{
-            title: 'Edit Service Provider',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="ServiceProvider"
-          component={ServiceProvider}
-          options={{
-            title: 'Service Provider',
-            gestureEnabled: false,
-            headerLeft: () => null,
-          }}
-        />
-        <Stack.Screen
-          name="EditAddServiceProvider"
-          component={EditAddServiceProvider}
-          options={{title: '', gestureEnabled: false, headerLeft: () => null}}
-        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,10 +1,17 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  Button,
+  ScrollView,
+} from 'react-native';
 import validator from 'validator';
 import {styles} from '../../styles/signInStyles.js';
-import CookieManager from '@react-native-cookies/cookies'
+import CookieManager from '@react-native-cookies/cookies';
 
 const SignIn = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -28,7 +35,7 @@ const SignIn = ({navigation}: any) => {
         CookieManager.set('http://localhost', {
           name: 'myCookie',
           value: JSON.stringify(employers),
-        })
+        });
         navigation.navigate('DrawerNav', {firstName, lastName, email});
       })
       .catch(err => {
@@ -78,63 +85,63 @@ const SignIn = ({navigation}: any) => {
   const Separator = () => <View style={styles.separator}></View>;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        {inputError.type === 'SIGN_IN_ERROR' && <SignInError />}
-        <Text style={styles.header}>Sign In</Text>
-        <View style={{marginVertical: 10}} />
+    <ScrollView>
+      <SafeAreaView style={styles.container}>
         <View>
-          <Text>Email</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={val => setEmail(val)}
-          />
-          {(inputError.type === 'EMPTY_EMAIL' ||
-            inputError.type === 'INVALID_EMAIL_FORMAT') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
+          {inputError.type === 'SIGN_IN_ERROR' && <SignInError />}
+          <View>
+            <Text>Email</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              autoCapitalize="none"
+              onChangeText={val => setEmail(val)}
+            />
+            {(inputError.type === 'EMPTY_EMAIL' ||
+              inputError.type === 'INVALID_EMAIL_FORMAT') && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 10}} />
+          <View>
+            <Text>Password</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              autoCapitalize="none"
+              secureTextEntry={true}
+              onChangeText={val => setPassword(val)}
+            />
+            {inputError.type === 'EMPTY_PASSWORD' && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 20}} />
+          <View style={styles.button}>
+            <Button title="Sign In" color="#fff" onPress={signIn} />
+          </View>
         </View>
-        <View style={{marginVertical: 10}} />
-        <View>
-          <Text>Password</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            secureTextEntry={true}
-            onChangeText={val => setPassword(val)}
-          />
-          {inputError.type === 'EMPTY_PASSWORD' && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
+        <Separator />
+        <View style={styles.footer}>
+          <View>
+            <Text>New user?</Text>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('SignUp')}>
+              Sign Up
+            </Text>
+          </View>
+          <View>
+            <Text>Forgot password?</Text>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('ForgotPassword')}>
+              Reset password
+            </Text>
+          </View>
         </View>
-        <View style={{marginVertical: 20}} />
-        <View style={styles.button}>
-          <Button title="Sign In" color="#fff" onPress={signIn} />
-        </View>
-      </View>
-      <Separator />
-      <View style={styles.footer}>
-        <View>
-          <Text>New user?</Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate('SignUp')}>
-            Sign Up
-          </Text>
-        </View>
-        <View>
-          <Text>Forgot password?</Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate('ForgotPassword')}>
-            Reset password
-          </Text>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

@@ -10,7 +10,6 @@ interface Shifts {
 }
 
 const WorkShifts = ({route, navigation}: any) => {
-  console.log('params in work shifts', route.params);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [selectedDays, setSelectedDays] = useState<Array<Shifts>>([]);
 

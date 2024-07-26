@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  Button,
+  ScrollView,
+} from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import validator from 'validator';
@@ -12,6 +19,7 @@ const SignUp = ({navigation}: any) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [inputError, setinputError] = useState({
     type: '',
     msg: '',
@@ -88,7 +96,7 @@ const SignUp = ({navigation}: any) => {
     if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
       setinputError({
         type: 'WEAK_PASSWORD',
-        msg: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+        msg: 'Must contain 8 characters, 1 number, 1 upper, 1 lower',
       });
       return false;
     }
@@ -113,97 +121,115 @@ const SignUp = ({navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        {inputError.type === 'SIGN_UP_ERROR' && <SignUpError />}
-        <Text style={styles.header}>Sign Up</Text>
-        <View style={{marginVertical: 6}} />
+    <ScrollView>
+      <SafeAreaView style={styles.container}>
         <View>
-          <Text>First Name</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            onChangeText={val => setFirstName(val)}
-          />
-          {inputError.type === 'EMPTY_FIRST_NAME' && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
+          {inputError.type === 'SIGN_UP_ERROR' && <SignUpError />}
+          <View>
+            <Text>First Name</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              onChangeText={val => setFirstName(val)}
+            />
+            {inputError.type === 'EMPTY_FIRST_NAME' && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 6}} />
+          <View>
+            <Text>Last Name</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              onChangeText={val => setLastName(val)}
+            />
+            {inputError.type === 'EMPTY_LAST_NAME' && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 6}} />
+          <View>
+            <Text>Email</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              autoCapitalize="none"
+              onChangeText={val => setEmail(val)}
+            />
+            {(inputError.type === 'EMPTY_EMAIL' ||
+              inputError.type === 'INVALID_EMAIL_FORMAT') && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 6}} />
+          <View>
+            <Text>Password</Text>
+            <View>
+              <TextInput
+                style={styles.input}
+                autoCorrect={false}
+                autoCapitalize="none"
+                secureTextEntry={!showPassword}
+                onChangeText={val => setPassword(val)}
+              />
+              <Text
+                style={{position: 'absolute', top: '32%', right: '8%'}}
+                onPress={() => setShowPassword(!showPassword)}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Text>
+            </View>
+            {(inputError.type === 'EMPTY_PASSWORD' ||
+              inputError.type === 'WEAK_PASSWORD' ||
+              inputError.type === 'PASSWORD_MISMATCH') && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 6}} />
+          <View>
+            <Text>Confirm Password</Text>
+            <View>
+              <TextInput
+                style={styles.input}
+                autoCorrect={false}
+                autoCapitalize="none"
+                secureTextEntry={!showPassword}
+                onChangeText={val => setConfirmedPassword(val)}
+              />
+              <Text
+                style={{position: 'absolute', top: '32%', right: '8%'}}
+                onPress={() => setShowPassword(!showPassword)}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Text>
+            </View>
+            {(inputError.type === 'EMPTY_PASSWORD' ||
+              inputError.type === 'WEAK_PASSWORD' ||
+              inputError.type === 'PASSWORD_MISMATCH') && (
+              <Text style={styles.inputError}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{marginVertical: 14}} />
+          <View style={styles.button}>
+            <Button
+              title="Sign Up"
+              color="#fff"
+              onPress={checkUserRegistered}
+            />
+          </View>
         </View>
-        <View style={{marginVertical: 6}} />
-        <View>
-          <Text>Last Name</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            onChangeText={val => setLastName(val)}
-          />
-          {inputError.type === 'EMPTY_LAST_NAME' && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
+        <Separator />
+        <View style={styles.footer}>
+          <View>
+            <Text>Already have account?</Text>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('SignIn')}>
+              Sign In
+            </Text>
+          </View>
         </View>
-        <View style={{marginVertical: 6}} />
-        <View>
-          <Text>Email</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={val => setEmail(val)}
-          />
-          {(inputError.type === 'EMPTY_EMAIL' ||
-            inputError.type === 'INVALID_EMAIL_FORMAT') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
-        </View>
-        <View style={{marginVertical: 6}} />
-        <View>
-          <Text>Password</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            secureTextEntry={true}
-            onChangeText={val => setPassword(val)}
-          />
-          {(inputError.type === 'EMPTY_PASSWORD' ||
-            inputError.type === 'WEAK_PASSWORD' ||
-            inputError.type === 'PASSWORD_MISMATCH') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
-        </View>
-        <View style={{marginVertical: 6}} />
-        <View>
-          <Text>Confirm Password</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            secureTextEntry={true}
-            onChangeText={val => setPassword(val)}
-          />
-          {(inputError.type === 'EMPTY_PASSWORD' ||
-            inputError.type === 'WEAK_PASSWORD' ||
-            inputError.type === 'PASSWORD_MISMATCH') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
-        </View>
-        <View style={{marginVertical: 20}} />
-        <View style={styles.button}>
-          <Button title="Sign Up" color="#fff" onPress={checkUserRegistered} />
-        </View>
-      </View>
-      <Separator />
-      <View style={styles.footer}>
-        <View>
-          <Text>Already have account?</Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate('SignIn')}>
-            Sign In
-          </Text>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
