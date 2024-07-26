@@ -17,7 +17,7 @@ const ServiceProviders = ({employerEmail, setErrors}: any) => {
 
   const getServiceProviders = () => {
     axios
-      .get(`${LOCAL_HOST_URL}/getServiceProviders/${employerEmail}`)
+      .get(`${LOCAL_HOST_URL}/serviceProviders/${employerEmail}`)
       .then(res => {
         const data = processUserData(res.data);
         setUsers(data);

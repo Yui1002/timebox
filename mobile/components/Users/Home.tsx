@@ -9,14 +9,23 @@ const Home = ({route, navigation}: any) => {
   const [employers, setEmployers] = useState([]);
 
   useEffect(() => {
-    getEmployers();
-  }, []);
+    try {
+      getEmployers();
+    }
+    catch (e) {
+      console.log("hello world", e)
+    }
+  }, [])
 
   const getEmployers = () => {
-    axios.get(`${LOCAL_HOST_URL}/employers/${email}`).then(res => {
+    axios.get(`${LOCAL_HOST_URL}/employers/${email}`)
+    .then((res) => {
       setEmployers(res.data);
-    });
-  };
+    })
+    .catch((err) => {
+      console.log('home error', err)
+    })
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,10 +35,10 @@ const Home = ({route, navigation}: any) => {
       </View>
       <View>
         <Text>Employers</Text>
-        {employers.length ? (
+        {employers !== null && employers.length > 0 ? (
           <FlatList
             data={employers}
-            renderItem={({item}) => (
+            renderItem={({item}: any) => (
               <View style={styles.listContainer}>
                 <View>
                   <Text>

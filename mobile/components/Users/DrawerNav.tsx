@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -34,15 +34,14 @@ const DrawerNav = ({route, navigation}: any) => {
         component={Home}
         initialParams={{params: route.params}}
       />
-      <Drawer.Screen
-        name="Working Records"
-        component={WorkingHistory}
-        
-      />
-      <Drawer.Screen
-        name="Hire Service Provider"
-        component={HireServiceProvider}
-      />
+      <Drawer.Screen name={'Working Records'}>
+        {props => <WorkingHistory params={route.params} />}
+      </Drawer.Screen>
+      <Drawer.Screen name={'Hire Service Provider'}>
+        {props => (
+          <HireServiceProvider params={route.params} navigation={navigation} />
+        )}
+      </Drawer.Screen>
       <Drawer.Screen
         name="Manage Service Provider"
         component={ManageServiceProviders}

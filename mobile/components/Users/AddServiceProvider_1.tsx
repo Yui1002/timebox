@@ -64,11 +64,11 @@
 //   const validateRate = () => {
 //     if (typeof rate !== 'string') return false;
 //     if (isNaN(rate) && isNaN(parseFloat(rate))) {
-//       setInputErrors({
-//         type: 'INVALID_RATE_FORMAT',
-//         msg: 'Rate must be a  number',
-//       });
-//       return false;
+    //   setInputErrors({
+    //     type: 'INVALID_RATE_FORMAT',
+    //     msg: 'Rate must be a  number',
+    //   });
+    //   return false;
 //     }
 //     if (Number(rate) < 0 || Number(rate) > 32767) {
 //       setInputErrors({

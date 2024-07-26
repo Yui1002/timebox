@@ -34,7 +34,6 @@ const Record = ({route, navigation}: any) => {
   };
 
   const recordTime = (type: string) => {
-    console.log('clicked');
     axios
       .post(`${LOCAL_HOST_URL}/record`, {
         type: type,

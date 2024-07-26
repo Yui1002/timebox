@@ -20,12 +20,14 @@ class Routes {
         app.post('/resendOTP', this.authControllers.resendOTP.bind(this.authControllers));
 
         app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
+        app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
+        app.get('/user/exists/:email', this.userControllers.checkUserExists.bind(this.userControllers));
+        app.post('/not/user/send', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
 
         // user routes
-        app.get('/getServiceProviders/:email', this.userControllers.getServiceProviders.bind(this.userControllers));
+        app.get('/serviceProviders/:email', this.userControllers.getServiceProviders.bind(this.userControllers));
         // app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
         app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
-        app.get('/history/:username', this.userControllers.getHistory.bind(this.userControllers));
         // app.post('/user', this.userControllers.addUser.bind(this.userControllers));
         app.post('/addServiceProvider', this.userControllers.addServiceProvider.bind(this.userControllers));
         app.post('/edit/serviceProvider', this.userControllers.editServiceProvider.bind(this.userControllers));
@@ -33,8 +35,7 @@ class Routes {
         app.delete('/user/:email', this.userControllers.deleteServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));
-        app.get('/getUserInfo/:username', this.userControllers.getInfoForNanny.bind(this.userControllers));
-        app.post('/searchByPeriod', this.userControllers.searchByPeriod.bind(this.userControllers));
+        app.get('/record', this.userControllers.getRecordByPeriod.bind(this.userControllers));
         app.post('/searchByDateYear', this.userControllers.searchByDateYear.bind(this.userControllers));
         app.get('/getRecord/:username', this.userControllers.getRecord.bind(this.userControllers));
     }

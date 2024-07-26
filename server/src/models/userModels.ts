@@ -2,6 +2,15 @@ import UserRepositories from "../repositories/userRepositories";
 import { ServiceProviderInterface } from "../interfaces/ServiceProviderInterface";
 import dotenv from "dotenv";
 dotenv.config();
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
 
 class UserModels {
   repositories: UserRepositories;
@@ -28,8 +37,30 @@ class UserModels {
     return await this.repositories.getServiceProviders(employerId);
   }
 
-  async getUser(username: string) {
-    return await this.repositories.getUser(username);
+  async emailToNotFoundUser(email: string, userInfo: any) {
+    const { firstName, lastName, userEmail } = userInfo;
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: email,
+      subject: `${firstName} ${lastName} added you as a service provider`,
+      text: `${firstName} ${lastName} added you as a service provider. Please download the app from this link: `,
+    };
+    try {
+      await transporter.sendMail(mailOptions);
+      return true;
+    } catch (err) {
+      return false;
+    } finally {
+      transporter.close();
+    }
+  }
+
+  async getUser(email: string) {
+    return await this.repositories.getUser(email);
+  }
+
+  async checkUserExists(email: string) {
+    return await this.repositories.checkUserExists(email);
   }
 
   async addServiceProvider(req: any) {
@@ -111,13 +142,13 @@ class UserModels {
     return type === "checkin"
       ? await this.repositories.startRecord(
           serviceProviderEmail,
-          userTransactionId,
+          userTransactionId
         )
       : await this.repositories.endRecord(userTransactionId);
   }
 
   async getTodaysRecord(req: any) {
-    const {employerEmail, serviceProviderEmail} = req;
+    const { employerEmail, serviceProviderEmail } = req;
     const serviceProviderId = await this.repositories.getUserId(
       serviceProviderEmail
     );
@@ -129,20 +160,27 @@ class UserModels {
     return await this.repositories.getTodaysRecord(userTransactionId);
   }
 
-  async getHistory(username: string) {
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.getHistory(userId);
-  }
-
-  async getInfoForNanny(username: string) {
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.getInfoForNanny(userId);
-  }
-
   async searchByPeriod(req: any) {
     const { from, to, username } = req;
     const userId = await this.repositories.getUserId(username);
     return await this.repositories.searchByPeriod(from, to, userId);
+  }
+
+  async getRecordByPeriod(req: any) {
+    const { employerEmail, serviceProviderEmail, from, to } = req;
+    const serviceProviderId = await this.repositories.getUserId(
+      serviceProviderEmail
+    );
+    const employerId = await this.repositories.getUserId(employerEmail);
+    const userTransactionId = await this.repositories.getUserTransactionId(
+      employerId,
+      serviceProviderId
+    );
+    return await this.repositories.getRecordByPeriod(
+      userTransactionId,
+      from,
+      to
+    );
   }
 
   async searchByDateYear(req: any) {

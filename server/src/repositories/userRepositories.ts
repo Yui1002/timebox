@@ -12,7 +12,9 @@ class UserRepositories {
   // ---------------------  Owners  -------------------------------
   async getUserId(email: string) {
     const sql = "SELECT user_id FROM users WHERE email_address = $1;";
-    return (await this.repositories.queryDB(sql, [email])).rows[0].user_id;
+    const data = (await this.repositories.queryDB(sql, [email])).rows;
+    return data[0].user_id;
+    // return (await this.repositories.queryDB(sql, [email])).rows[0].user_id;
   }
 
   async getEmployerId(email: string) {
@@ -32,6 +34,11 @@ class UserRepositories {
     return (
       await this.repositories.queryDB(sql, [employerId, serviceProviderId])
     ).rows[0].user_transaction_id;
+  }
+
+  async checkUserExists(email: string) {
+    const sql = "SELECT COUNT (*) FROM users WHERE email_address = $1;";
+    return (await this.repositories.queryDB(sql, [email])).rowCount > 0
   }
 
   // ---------------------  Users  --------------------------------
@@ -118,15 +125,9 @@ class UserRepositories {
     const sql = "UPDATE user_schedule SET ";
   }
 
-  async getUser(username: string) {
-    const sql = "SELECT * FROM users WHERE user_name=$1;";
-    return (await this.repositories.queryDB(sql, [username])).rows;
-  }
-
-  async getInfoForNanny(userId: string) {
-    const sql =
-      "SELECT rate, rate_type, day, start_time, end_time FROM users u INNER join users_schedule us ON u.user_id = us.user_id where u.user_id = $1;";
-    return (await this.repositories.queryDB(sql, [userId])).rows;
+  async getUser(email: string) {
+    const sql = "SELECT first_name, last_name, email_address FROM users WHERE email_address = $1;";
+    return (await this.repositories.queryDB(sql, [email])).rows;
   }
 
   async addUser(user: any, ownerId: string) {
@@ -244,25 +245,24 @@ class UserRepositories {
 
   async endRecord(transactionId: string) {
     const sql =
-      "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 RETURNING end_time;";
+      "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 AND start_time::DATE = CURRENT_DATE RETURNING end_time;";
     return (await this.repositories.queryDB(sql, [transactionId])).rows[0]
       .end_time;
   }
 
   async getTodaysRecord(transactionId: string) {
-    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE OR end_time::DATE = CURRENT_DATE);";
+    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE AND end_time::DATE = CURRENT_DATE);";
     return (await this.repositories.queryDB(sql, [transactionId])).rows[0];
   }
 
-  async getHistory(userId: string) {
-    const sql =
-      "SELECT record_date, record_time FROM time_record WHERE user_id = $1;";
-    return (await this.repositories.queryDB(sql, [userId])).rows;
+  async getRecordByPeriod(transactionId: string, from: string, to: string) {
+    const sql = "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
+    return (await this.repositories.queryDB(sql, [transactionId, from, to])).rows;
   }
 
   async searchByPeriod(from: string, to: string, userId: string) {
     const sql =
-      "SELECT start_time, end_time FROM time_record_v2 WHERE user_id = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
+      "SELECT start_time, end_time FROM time_record WHERE user_id = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
     return (await this.repositories.queryDB(sql, [userId, from, to])).rows;
   }
 

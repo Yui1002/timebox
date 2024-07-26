@@ -8,7 +8,7 @@ class UserControllers {
   }
 
   async getUser(req: any, res: any) {
-    const user = await this.models.getUser(req.params.username);
+    const user = await this.models.getUser(req.params.email);
     res.send(user);
   }
 
@@ -22,6 +22,18 @@ class UserControllers {
       req.params.email
     );
     res.send(serviceProviders);
+  }
+
+  async checkUserExists(req: any, res: any) {
+    const user = await this.models.getUser(req.params.email);
+    user.length > 0 ? res.status(200).send(user) : res.sendStatus(400);
+  }
+
+  async emailToNotFoundUser(req: any, res: any) {
+    // const {serviceProviderEmail, userInfo} = req.query;
+    // const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
+    const result = true
+    result ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async addServiceProvider(req: any, res: any) {
@@ -51,16 +63,9 @@ class UserControllers {
     res.send(record);
   }
 
-  async getHistory(req: any, res: any) {
-    const { username } = req.params;
-    const history = await this.models.getHistory(username);
-    res.send(history);
-  }
-
-  async getInfoForNanny(req: any, res: any) {
-    const { username } = req.params;
-    const info = await this.models.getInfoForNanny(username);
-    res.send(info);
+  async getRecordByPeriod(req: any, res: any) {
+    const records = await this.models.getRecordByPeriod(req.query);
+    res.send(records);
   }
 
   async searchByPeriod(req: any, res: any) {
