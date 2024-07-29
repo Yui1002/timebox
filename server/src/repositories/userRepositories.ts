@@ -14,7 +14,6 @@ class UserRepositories {
     const sql = "SELECT user_id FROM users WHERE email_address = $1;";
     const data = (await this.repositories.queryDB(sql, [email])).rows;
     return data[0].user_id;
-    // return (await this.repositories.queryDB(sql, [email])).rows[0].user_id;
   }
 
   async getEmployerId(email: string) {
@@ -26,6 +25,11 @@ class UserRepositories {
     const sql =
       "SELECT id FROM service_provider WHERE EXISTS (SELECT id FROM application_user WHERE email_address = $1);";
     return (await this.repositories.queryDB(sql, [email])).rows[0].id;
+  }
+
+  async getServiceProviderIds(userId: string) {
+    const sql = "SELECT service_provider_id FROM user_transaction WHERE employer_user_id = $1;";
+    return (await this.repositories.queryDB(sql, [userId])).rows[0];
   }
 
   async getUserTransactionId(employerId: string, serviceProviderId: string) {
@@ -55,8 +59,7 @@ class UserRepositories {
   }
 
   async getServiceProviders(employerId: string) {
-    const sql =
-      "SELECT u.first_name, u.last_name, u.email_address, u.status, ut.rate, ut.rate_type, us.day, us.start_time, us.end_time FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id INNER JOIN user_schedule us ON ut.service_provider_id = us.service_provider_id WHERE ut.employer_user_id = $1;";
+    const sql = "SELECT u.first_name, u.last_name, u.email_address, ut.rate, ut.rate_type FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id WHERE employer_user_id = $1;";
     return (await this.repositories.queryDB(sql, [employerId])).rows;
   }
 

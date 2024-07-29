@@ -7,7 +7,6 @@ import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
-  console.log('params in register', route.params);
   const days = [
     'Monday',
     'Tuesday',

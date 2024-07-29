@@ -19,8 +19,9 @@ class UserControllers {
 
   async getServiceProviders(req: any, res: any) {
     const serviceProviders = await this.models.getServiceProviders(
-      req.params.email
+      req.query.email
     );
+    console.log('serviceProviders', serviceProviders)
     res.send(serviceProviders);
   }
 
