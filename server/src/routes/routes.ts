@@ -25,7 +25,7 @@ class Routes {
         app.post('/not/user/send', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
 
         // user routes
-        app.get('/serviceProviders/:email', this.userControllers.getServiceProviders.bind(this.userControllers));
+        app.get('/serviceProviders', this.userControllers.getServiceProviders.bind(this.userControllers));
         // app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
         app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
         // app.post('/user', this.userControllers.addUser.bind(this.userControllers));

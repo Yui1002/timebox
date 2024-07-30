@@ -42,10 +42,11 @@ const DrawerNav = ({route, navigation}: any) => {
           <HireServiceProvider params={route.params} navigation={navigation} />
         )}
       </Drawer.Screen>
-      <Drawer.Screen
-        name="Manage Service Provider"
-        component={ManageServiceProviders}
-      />
+      <Drawer.Screen name={'Manage Service Provider'}>
+        {props => (
+          <ManageServiceProviders params={route.params} navigation={navigation} />
+        )}
+      </Drawer.Screen>
     </Drawer.Navigator>
   );
 };

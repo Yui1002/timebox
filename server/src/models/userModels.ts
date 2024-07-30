@@ -33,8 +33,8 @@ class UserModels {
   }
 
   async getServiceProviders(employerEmail: string) {
-    const employerId = await this.repositories.getEmployerId(employerEmail);
-    return await this.repositories.getServiceProviders(employerId);
+    const userId = await this.repositories.getUserId(employerEmail);
+    return await this.repositories.getServiceProviders(userId);
   }
 
   async emailToNotFoundUser(email: string, userInfo: any) {
