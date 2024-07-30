@@ -20,6 +20,7 @@ import RegisterWorkShifts from './components/Users/StepForms/RegisterWorkShifts'
 import Review from './components/Users/StepForms/Review';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
+import Profile from './components/Users/Profile';
 
 const Stack = createStackNavigator();
 
@@ -105,6 +106,14 @@ function App(): JSX.Element {
           component={Review}
           options={({navigation}) => ({
             headerTitle: '',
+            gestureEnabled: false,
+          })}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={({navigation}) => ({
+            headerTitle: 'Profile',
             gestureEnabled: false,
           })}
         />
