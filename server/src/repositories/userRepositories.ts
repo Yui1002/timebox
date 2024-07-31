@@ -59,7 +59,7 @@ class UserRepositories {
   }
 
   async getServiceProviders(employerId: string) {
-    const sql = "SELECT u.first_name, u.last_name, u.email_address, ut.rate, ut.rate_type FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id WHERE employer_user_id = $1;";
+    const sql = "SELECT u.first_name, u.last_name, u.email_address, ut.rate, ut.rate_type, us.day, us.start_time, us.end_time FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id INNER JOIN user_schedule us ON ut.service_provider_id = us.service_provider_id WHERE employer_user_id = $1;";
     return (await this.repositories.queryDB(sql, [employerId])).rows;
   }
 

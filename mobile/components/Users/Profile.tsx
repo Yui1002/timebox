@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Profile = ({route, navigation}: any) => {
-  const {first_name, last_name, email_address, rate, rate_type} =
+  const {first_name, last_name, email_address, rate, rate_type, shifts} =
     route.params.user;
 
   const showDeleteAlert = () => {
@@ -52,12 +52,14 @@ const Profile = ({route, navigation}: any) => {
         },
       })
       .then(() => {
-        // navigate to home page
+        showSuccessAlert();
       })
       .catch((err): any => {
         console.log(err);
       });
   };
+
+  const editProfile = () => {};
 
   return (
     <SafeAreaView style={[styles.container, {height: '100%'}]}>
@@ -69,7 +71,12 @@ const Profile = ({route, navigation}: any) => {
         <Text style={{fontSize: 14}}>{email_address}</Text>
       </View>
       <View style={styles.optionContainer}>
-        <MaterialIcons name="edit" size={30} color="#000" />
+        <MaterialIcons
+          name="edit"
+          size={30}
+          color="#000"
+          onPress={editProfile}
+        />
         <MaterialCommunityIcons
           name="message-processing-outline"
           size={30}
@@ -92,9 +99,18 @@ const Profile = ({route, navigation}: any) => {
       </View>
       <View style={{height: '16%'}}>
         <Text style={styles.text}>Working shifts</Text>
-        <Text>Monday: 9:00 AM - 5:00 PM</Text>
-        <Text>Monday: 9:00 AM - 5:00 PM</Text>
-        <Text>Monday: 9:00 AM - 5:00 PM</Text>
+        {shifts.map(shift => (
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text
+              style={{
+                width: '40%',
+              }}>{`${String.fromCharCode(8226)} ${shift.day}`}</Text>
+            <Text
+              style={{
+                width: '60%',
+              }}>{`${shift.start_time} - ${shift.end_time}`}</Text>
+          </View>
+        ))}
       </View>
       <View style={styles.btn}>
         <Button title="View working history" color="#fff" />
