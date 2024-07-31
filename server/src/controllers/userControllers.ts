@@ -21,7 +21,6 @@ class UserControllers {
     const serviceProviders = await this.models.getServiceProviders(
       req.query.email
     );
-    console.log('serviceProviders', serviceProviders)
     res.send(serviceProviders);
   }
 
@@ -33,7 +32,7 @@ class UserControllers {
   async emailToNotFoundUser(req: any, res: any) {
     // const {serviceProviderEmail, userInfo} = req.query;
     // const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
-    const result = true
+    const result = true;
     result ? res.sendStatus(200) : res.sendStatus(400);
   }
 
@@ -49,8 +48,11 @@ class UserControllers {
   }
 
   async deleteServiceProvider(req: any, res: any) {
-    const { email } = req.params;
-    const response = await this.models.deleteServiceProvider(email);
+    const { employerEmail, serviceProviderEmail } = req.query;
+    const response = await this.models.deleteServiceProvider(
+      employerEmail,
+      serviceProviderEmail
+    );
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 

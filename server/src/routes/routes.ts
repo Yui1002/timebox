@@ -24,6 +24,7 @@ class Routes {
         app.get('/user/exists/:email', this.userControllers.checkUserExists.bind(this.userControllers));
         app.post('/not/user/send', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
 
+
         // user routes
         app.get('/serviceProviders', this.userControllers.getServiceProviders.bind(this.userControllers));
         // app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
@@ -32,7 +33,7 @@ class Routes {
         app.post('/addServiceProvider', this.userControllers.addServiceProvider.bind(this.userControllers));
         app.post('/edit/serviceProvider', this.userControllers.editServiceProvider.bind(this.userControllers));
         // app.post('/user/duplicate', this.userControllers.isUserRegistered.bind(this.userControllers));
-        app.delete('/user/:email', this.userControllers.deleteServiceProvider.bind(this.userControllers));
+        app.delete('/user', this.userControllers.deleteServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));
         app.get('/record', this.userControllers.getRecordByPeriod.bind(this.userControllers));

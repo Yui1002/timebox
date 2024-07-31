@@ -26,9 +26,12 @@ const ManageServiceProviders = (props: any) => {
       });
   };
 
-  const navigateToProfile = () => {
-    props.navigation.navigate('Profile')
-  }
+  const navigateToProfile = user => {
+    props.navigation.navigate('Profile', {
+      user,
+      employerEmail: props.params.email,
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,8 +40,13 @@ const ManageServiceProviders = (props: any) => {
       </View>
       <View>
         {serviceProviders.map((sp, index) => (
-          <TouchableOpacity key={index} onPress={navigateToProfile} style={styles.listContainer}>
-            <Text style={{fontSize: 16, fontWeight: 500}}>{sp.first_name} {sp.last_name}</Text>
+          <TouchableOpacity
+            key={index}
+            onPress={() => navigateToProfile(sp)}
+            style={styles.listContainer}>
+            <Text style={{fontSize: 16, fontWeight: 500}}>
+              {sp.first_name} {sp.last_name}
+            </Text>
             <Text>{sp.email_address}</Text>
             <Text>{`$${sp.rate} / ${sp.rate_type}`}</Text>
           </TouchableOpacity>

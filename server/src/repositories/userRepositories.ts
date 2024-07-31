@@ -170,16 +170,14 @@ class UserRepositories {
     return true;
   }
 
-  async deleteUserInfo(email: string) {
-    const sql =
-      "DELETE FROM application_user WHERE email_address = $1 RETURNING id;";
-    return (await this.repositories.queryDB(sql, [email])).rows[0].id;
+  async deleteServiceProvider(transactionId: string) {
+    const sql = "DELETE FROM user_transaction WHERE user_transaction_id = $1;";
+    return await this.repositories.queryDB(sql, [transactionId]);
   }
 
-  async deleteServiceProviderId(userId: string) {
-    const sql =
-      "DELETE FROM service_provider WHERE id_application_user = $1 RETURNING;";
-    return await this.repositories.queryDB(sql, [userId]);
+  async deleteSchedules(transactionId: string) {
+    const sql = "DELETE FROM user_schedule WHERE user_transaction_id = $1;";
+    return await this.repositories.queryDB(sql, [transactionId]);
   }
 
   async isUserRegistered(ownerId: string, username: string) {
@@ -225,12 +223,6 @@ class UserRepositories {
       start_time,
       end_time,
     ]);
-    return true;
-  }
-
-  async deleteSchedule(userId: string) {
-    const sql = "DELETE FROM users_schedule WHERE user_id = $1;";
-    await this.repositories.queryDB(sql, [userId]);
     return true;
   }
 
