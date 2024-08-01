@@ -12,16 +12,16 @@ class Routes {
 
     applyRouting(app: any) {
         // auth routes
-        app.post('/checkUserRegistered', this.authControllers.isUserRegistered.bind(this.authControllers));
+        app.get('/user/exists/:email', this.authControllers.isUserRegistered.bind(this.authControllers));
         app.post('/checkEmailRegistered', this.authControllers.isEmailRegistered.bind(this.authControllers));
         app.post('/signUp', this.authControllers.signUp.bind(this.authControllers));
         app.post('/signIn', this.authControllers.signIn.bind(this.authControllers));
         app.post('/resetPassword', this.authControllers.resetPassword.bind(this.authControllers));
-        app.post('/resendOTP', this.authControllers.resendOTP.bind(this.authControllers));
+        app.post('/otp/resend', this.authControllers.resendOTP.bind(this.authControllers));
 
         app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
         app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
-        app.get('/user/exists/:email', this.userControllers.checkUserExists.bind(this.userControllers));
+        // app.get('/user/exists/:email', this.userControllers.checkUserExists.bind(this.userControllers));
         app.post('/not/user/send', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
 
 

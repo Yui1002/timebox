@@ -2,14 +2,12 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
+    height: '100%',
     margin: '5%',
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 22,
+    fontWeight: '500',
   },
   separator: {
     width: '100%',
@@ -18,19 +16,23 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  codeInputContainer: {
-    width: '100%',
+  otpContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    height: '10%',
   },
-  codeInput: {
+  otpBox: {
     width: '10%',
-    height: '70%',
-    fontSize: 18
+    height: '100%',
+    fontSize: 18,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: '#A0A0A0',
   },
   inputError: {
     color: '#ff0000',
     fontSize: 12,
+    marginVertical: 8
   },
   link: {
     textDecorationLine: 'underline',

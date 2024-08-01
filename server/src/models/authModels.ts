@@ -71,13 +71,11 @@ class AutheModels {
   }
 
   async storeOtp(email: string, otp: string) {
-    const userId = await this.repositories.getUserId(email);
-    return await this.repositories.storeOtp(otp, userId);
+    return await this.repositories.storeOtp(otp, email);
   }
 
   async updateOtp(email: string, otp: string) {
-    const ownerId = await this.repositories.getUserId(email);
-    // return await this.repositories.updateOtp(otp, ownerId);
+    return await this.repositories.updateOtp(otp, email)
   }
 
   async validateCodeExpiration(req: any) {

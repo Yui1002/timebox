@@ -11,7 +11,7 @@ class AuthControllers {
   }
 
   async isUserRegistered(req: any, res: any) {
-    const { email } = req.body;
+    const { email } = req.params;
     const isUserRegistered = await this.models.isUserRegistered(email);
     if (isUserRegistered) {
       res.status(400).json({ error: "This email is already used" });
@@ -19,6 +19,7 @@ class AuthControllers {
     }
 
     const otp = this.models.generateOtp();
+    await this.models.storeOtp(email, otp);
     (await this.models.sendOtp(email, otp))
       ? res.status(200).json({ otp })
       : res.status(400).json({ error: "Failed to send otp" });
@@ -58,16 +59,12 @@ class AuthControllers {
   }
 
   async resendOTP(req: any, res: any) {
-    // generate otp
     const { email } = req.body;
     const otp = this.models.generateOtp();
-    // send otp
-    if (await this.models.sendOtp(email, otp)) {
-      // update otp
-      await this.models.updateOtp(email, otp);
-    }
-    // const response = await this.models.updateOtp(email);
-    // response ? res.status(200).send({ otp }) : res.sendStatus(400);
+    await this.models.updateOtp(email, otp);
+    (await this.models.sendOtp(email, otp))
+      ? res.status(200).send({ otp })
+      : res.status(400).json({ error: "Failed to send otp" });
   }
 
   async resetPassword(req: any, res: any) {

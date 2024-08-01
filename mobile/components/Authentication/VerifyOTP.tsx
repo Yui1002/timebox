@@ -40,7 +40,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         password,
       })
       .then(res => {
-        navigation.navigate('Home', {firstName, lastName, email});
+        navigation.navigate('DrawerNav', {firstName, lastName, email});
       });
   };
 
@@ -67,8 +67,10 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   const resendOtp = () => {
     axios
-      .post(`${LOCAL_HOST_URL}/resendOTP`, {email: route.params.email})
-      .then(() => {})
+      .post(`${LOCAL_HOST_URL}/otp/resend`, {email: email})
+      .then((res) => {
+        console.log(res.data)
+      })
       .catch(() => {});
   };
 
@@ -76,23 +78,25 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      <View style={{height: '10%'}}>
         <Text style={styles.header}>Verification code</Text>
       </View>
-      <View>
+      <View style={{height: '8%'}}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
-      <View style={styles.codeInputContainer}>
+      <View style={styles.otpContainer}>
         {input.map((digit, index) => (
           <TextInput
             key={index}
             value={digit}
-            style={styles.codeInput}
+            style={styles.otpBox}
             onChangeText={e => handleChange(e, index)}
             onKeyPress={e => handleBackspaceAndEnter(e, index)}
             ref={reference => (otpBoxReference.current[index] = reference)}
           />
         ))}
+      </View>
+      <View>
         {inputError.type === 'WRONG_OTP' && (
           <Text style={styles.inputError}>{inputError.msg}</Text>
         )}

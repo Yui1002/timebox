@@ -25,14 +25,13 @@ const SignUp = ({navigation}: any) => {
     msg: '',
   });
 
-  const checkUserRegistered = () => {
+  const isUserRegistered = () => {
     if (!validateName() || !validateEmail() || !validatePassword()) {
       return;
     }
+
     axios
-      .post(`${LOCAL_HOST_URL}/checkUserRegistered`, {
-        email,
-      })
+      .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
       .then(res => {
         navigation.navigate('VerifyOTP', {
           firstName,
@@ -43,9 +42,10 @@ const SignUp = ({navigation}: any) => {
         });
       })
       .catch(err => {
-        const errMsg = err.response.data.error;
-        const error = {type: 'SIGN_UP_ERROR', msg: errMsg};
-        setinputError(error);
+        setinputError({
+          type: 'SIGN_UP_ERROR',
+          msg: err.response.data.error,
+        });
       });
   };
 
@@ -210,11 +210,7 @@ const SignUp = ({navigation}: any) => {
           </View>
           <View style={{marginVertical: 14}} />
           <View style={styles.button}>
-            <Button
-              title="Sign Up"
-              color="#fff"
-              onPress={checkUserRegistered}
-            />
+            <Button title="Sign Up" color="#fff" onPress={isUserRegistered} />
           </View>
         </View>
         <Separator />

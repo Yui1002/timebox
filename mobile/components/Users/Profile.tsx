@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {SafeAreaView, View, Text, Button, Alert} from 'react-native';
+import {SafeAreaView, View, Text, Button, Alert, Linking} from 'react-native';
 import {styles} from '../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -59,7 +59,9 @@ const Profile = ({route, navigation}: any) => {
       });
   };
 
-  const editProfile = () => {};
+  const editProfile = () => {
+    navigation.navigate('EditProfile', {rate, rate_type, shifts})
+  };
 
   return (
     <SafeAreaView style={[styles.container, {height: '100%'}]}>
@@ -81,6 +83,7 @@ const Profile = ({route, navigation}: any) => {
           name="message-processing-outline"
           size={30}
           color="#000"
+          onPress={() => Linking.openURL('mailto:yuimurayama1002@gmail.com')}
         />
         <MaterialCommunityIcons
           name="trash-can-outline"

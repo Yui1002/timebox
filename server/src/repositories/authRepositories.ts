@@ -42,17 +42,17 @@ class AuthRepositories extends Repositories {
     return (await this.queryDB(sql, [email])).rows[0].user_id;
   }
 
-  async storeOtp(otp: string, userId: string) {
+  async storeOtp(otp: string, email: string) {
     const sql =
-      "INSERT INTO otp VALUES (gen_random_uuid(), $1, $2, CURRENT_TIMESTAMP);";
-    await this.queryDB(sql, [userId, otp]);
+      "INSERT INTO otp VALUES (gen_random_uuid(), $1, CURRENT_TIMESTAMP, $2);";
+    await this.queryDB(sql, [otp, email]);
     return true;
   }
 
-  async updateOtp(otp: number, ownerId: string) {
+  async updateOtp(otp: string, email: string) {
     const sql =
-      "UPDATE otps SET otp = $1 AND create_date = CURRENT_TIMESTAMP WHERE owner_id = $2;";
-    const data = await this.queryDB(sql, [otp, ownerId]);
+      "UPDATE otp SET otp = $1 AND create_date = CURRENT_TIMESTAMP WHERE email_address = $2;";
+    await this.queryDB(sql, [otp, email]);
     return true;
   }
 
