@@ -33,7 +33,7 @@ const Home = ({route, navigation}: any) => {
         <Text style={styles.header}>Hi {firstName}!</Text>
       </View>
       <View style={{height: '80%'}}>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>Employers</Text>
+        <Text style={{fontSize: 20, fontWeight: '500'}}>My Employers</Text>
         {employers !== null && employers.length > 0 ? (
           <FlatList
             data={employers}
