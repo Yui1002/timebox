@@ -1,13 +1,10 @@
 import AutheModels from "../models/authModels";
-// import UserModels from '../models/userModels'
 
 class AuthControllers {
   models: AutheModels;
-  // userModels: UserModels;
 
   constructor() {
     this.models = new AutheModels();
-    // this.userModels = new UserModels();
   }
 
   async isUserRegistered(req: any, res: any) {
@@ -17,12 +14,7 @@ class AuthControllers {
       res.status(400).json({ error: "This email is already used" });
       return;
     }
-
-    const otp = this.models.generateOtp();
-    await this.models.storeOtp(email, otp);
-    (await this.models.sendOtp(email, otp))
-      ? res.status(200).json({ otp })
-      : res.status(400).json({ error: "Failed to send otp" });
+    res.sendStatus(200)
   }
 
   async isEmailRegistered(req: any, res: any) {
@@ -49,21 +41,26 @@ class AuthControllers {
       res.status(400).json({ error: "Incorrect email address or password" });
       return;
     }
-    // const employers = await this.userModels.getEmployers(email);
-    // console.log(employers)
     res.status(200).send({
       firstName: usersname[0].first_name,
       lastName: usersname[0].last_name,
-      // employers
     });
   }
 
-  async resendOTP(req: any, res: any) {
+  async verifyOTP(req: any, res: any) {
+    const { otp, email } = req.body;
+    const isOtpVerified = await this.models.verifyOtp(email, otp);
+    isOtpVerified
+      ? res.sendStatus(200)
+      : res.status(400).json({ error: "Entered OTP is invalid or expired" });
+  }
+
+  async sendOTP(req: any, res: any) {
     const { email } = req.body;
     const otp = this.models.generateOtp();
-    await this.models.updateOtp(email, otp);
+    await this.models.storeOtp(email, otp);
     (await this.models.sendOtp(email, otp))
-      ? res.status(200).send({ otp })
+      ? res.status(200)
       : res.status(400).json({ error: "Failed to send otp" });
   }
 

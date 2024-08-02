@@ -42,6 +42,16 @@ class AuthRepositories extends Repositories {
     return (await this.queryDB(sql, [email])).rows[0].user_id;
   }
 
+  async verifyOtp(email: string, inputOtp: string) {
+    const sql = "SELECT * FROM otp WHERE otp = $1 AND email_address = $2 AND create_date > now()::timestamp - INTERVAL '10 min'";
+    return (await this.queryDB(sql, [inputOtp, email])).rowCount > 0;
+  }
+
+  async checkOtpExists(email: string) {
+    const sql = "SELECT otp_id FROM otp WHERE email_address = $1;";
+    return (await this.queryDB(sql, [email])).rowCount > 0;
+  }
+
   async storeOtp(otp: string, email: string) {
     const sql =
       "INSERT INTO otp VALUES (gen_random_uuid(), $1, CURRENT_TIMESTAMP, $2);";
@@ -51,7 +61,7 @@ class AuthRepositories extends Repositories {
 
   async updateOtp(otp: string, email: string) {
     const sql =
-      "UPDATE otp SET otp = $1 AND create_date = CURRENT_TIMESTAMP WHERE email_address = $2;";
+      "UPDATE otp SET otp = $1, create_date = CURRENT_TIMESTAMP WHERE email_address = $2;";
     await this.queryDB(sql, [otp, email]);
     return true;
   }

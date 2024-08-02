@@ -50,7 +50,7 @@ class AutheModels {
   }
 
   generateOtp() {
-    return (Math.floor(100000 + Math.random() * 900000)).toString();
+    return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
   async sendOtp(email: string, otp: string) {
@@ -70,12 +70,15 @@ class AutheModels {
     }
   }
 
-  async storeOtp(email: string, otp: string) {
-    return await this.repositories.storeOtp(otp, email);
+  async verifyOtp(email: string, inputOtp: string) {
+    return this.repositories.verifyOtp(email, inputOtp)
   }
 
-  async updateOtp(email: string, otp: string) {
-    return await this.repositories.updateOtp(otp, email)
+  async storeOtp(email: string, otp: string) {
+    const otpExist = await this.repositories.checkOtpExists(email);
+    return otpExist
+      ? this.repositories.updateOtp(otp, email)
+      : this.repositories.storeOtp(otp, email);
   }
 
   async validateCodeExpiration(req: any) {

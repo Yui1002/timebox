@@ -29,7 +29,6 @@ const SignUp = ({navigation}: any) => {
     if (!validateName() || !validateEmail() || !validatePassword()) {
       return;
     }
-
     axios
       .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
       .then(res => {
@@ -37,11 +36,11 @@ const SignUp = ({navigation}: any) => {
           firstName,
           lastName,
           email,
-          password,
-          otp: res.data.otp,
+          password
         });
       })
       .catch(err => {
+        console.log(err)
         setinputError({
           type: 'SIGN_UP_ERROR',
           msg: err.response.data.error,

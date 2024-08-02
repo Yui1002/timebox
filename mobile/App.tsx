@@ -46,6 +46,7 @@ function App(): JSX.Element {
           options={{
             title: 'Verify OTP',
             gestureEnabled: false,
+            headerLeft: () => null
           }}
         />
         <Stack.Screen

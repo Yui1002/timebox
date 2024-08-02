@@ -17,7 +17,10 @@ class Routes {
         app.post('/signUp', this.authControllers.signUp.bind(this.authControllers));
         app.post('/signIn', this.authControllers.signIn.bind(this.authControllers));
         app.post('/resetPassword', this.authControllers.resetPassword.bind(this.authControllers));
-        app.post('/otp/resend', this.authControllers.resendOTP.bind(this.authControllers));
+
+        // otp
+        app.post('/otp/send', this.authControllers.sendOTP.bind(this.authControllers));
+        app.post('/otp/verify', this.authControllers.verifyOTP.bind(this.authControllers));
 
         app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
         app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));

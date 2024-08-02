@@ -5,7 +5,6 @@ import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
 const Home = ({route, navigation}: any) => {
-  console.log('route params', route.params)
   const {firstName, lastName, email} = route.params.params;
   const [employers, setEmployers] = useState([]);
 
