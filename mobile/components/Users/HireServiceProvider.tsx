@@ -7,14 +7,20 @@ import validator from 'validator';
 import InputField from '../InputField';
 import InputError from '../InputError';
 import Button from './Button';
+import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {
   const {firstName, lastName, email} = props.params;
+  const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
   });
+
+  useEffect(() => {
+    setModalVisible(true);
+  }, []);
 
   const validateEmail = (type: string): boolean => {
     if (searchInput.length === 0) {
@@ -102,11 +108,12 @@ const HireServiceProvider = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {modalVisible && <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />}
       <View>
-        <Text>Enter the email to find a service provider</Text>
+        <Text>Enter the email of a service provider you would like to hire</Text>
       </View>
       <View style={styles.subContainer}>
-        <Text>Enter the email</Text>
+        <Text>Email</Text>
         <InputField.Outlined
           onChangeText={(val: any) => setSearchInput(val)}
           isEditable={true}
