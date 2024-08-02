@@ -73,94 +73,105 @@ const WorkingHistory = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.subHeader}>Search by an employer's name</Text>
-        <DropDownPicker
-          style={styles.dropwdown}
-          open={employerDropdownOpen}
-          value={selectedEmployer}
-          items={items}
-          setOpen={setEmployerDropdownOpen}
-          setValue={setSelectedEmployer}
-          setItems={setItems}
-          placeholder="Employer's name"
-        />
-      </View>
-      <View style={employerDropdownOpen ? {marginTop: 120} : {marginTop: 10}}>
-        <Text style={styles.subHeader}>Search by period</Text>
-        <TouchableOpacity
-          onPress={() => setFromDropDown(!fromDropdown)}
-          style={styles.dropdown_2}>
-          <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
-          <View style={styles.arrow} />
-        </TouchableOpacity>
-        <View style={{marginVertical: 10}}></View>
-        <TouchableOpacity
-          onPress={() => setToDropDown(!toDropdown)}
-          style={styles.dropdown_2}>
-          <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
-          <View style={styles.arrow} />
-        </TouchableOpacity>
-        <DatePicker
-          modal
-          open={fromDropdown}
-          mode="date"
-          date={new Date()}
-          onConfirm={d => onPeriodChange('from', d)}
-          onCancel={() => {
-            setFromDropDown(false);
-          }}
-        />
-        <DatePicker
-          modal
-          open={toDropdown}
-          mode="date"
-          date={new Date()}
-          onConfirm={d => onPeriodChange('to', d)}
-          onCancel={() => {
-            setToDropDown(false);
-          }}
-        />
-      </View>
-      {selectedEmployer && from && to && (
-        <View style={styles.button}>
-          <Button title="Search" color="#fff" onPress={searchRecord} />
-        </View>
-      )}
-      {history === null && (
+      {items.length > 0 ? (
         <View>
-          <Text style={{textAlign: 'center', marginTop: 150}}>
-            Search from above!
-          </Text>
-        </View>
-      )}
-      {history !== null && history.length && (
-        <View>
-          <View style={styles.listHeader}>
-            <Text>Date</Text>
-            <Text>Check In</Text>
-            <Text>Check Out</Text>
-            <Text>Total</Text>
-          </View>
-          <Separator />
           <View>
-            <FlatList
-              data={history}
-              renderItem={({item}) => (
-                <View style={styles.list}>
-                  <Text>{moment(item.start_time).format('YYYY/MM/DD')}</Text>
-                  <Text>{moment(item.start_time).format('LT')}</Text>
-                  <Text>{moment(item.end_time).format('LT')}</Text>
-                  <Text>Total</Text>
-                </View>
-              )}
+            <Text style={styles.subHeader}>Search by an employer's name</Text>
+            <DropDownPicker
+              style={styles.dropwdown}
+              open={employerDropdownOpen}
+              value={selectedEmployer}
+              items={items}
+              setOpen={setEmployerDropdownOpen}
+              setValue={setSelectedEmployer}
+              setItems={setItems}
+              placeholder="Employer's name"
             />
           </View>
+          <View
+            style={employerDropdownOpen ? {marginTop: 120} : {marginTop: 10}}>
+            <Text style={styles.subHeader}>Search by period</Text>
+            <TouchableOpacity
+              onPress={() => setFromDropDown(!fromDropdown)}
+              style={styles.dropdown_2}>
+              <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
+              <View style={styles.arrow} />
+            </TouchableOpacity>
+            <View style={{marginVertical: 10}}></View>
+            <TouchableOpacity
+              onPress={() => setToDropDown(!toDropdown)}
+              style={styles.dropdown_2}>
+              <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
+              <View style={styles.arrow} />
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={fromDropdown}
+              mode="date"
+              date={new Date()}
+              onConfirm={d => onPeriodChange('from', d)}
+              onCancel={() => {
+                setFromDropDown(false);
+              }}
+            />
+            <DatePicker
+              modal
+              open={toDropdown}
+              mode="date"
+              date={new Date()}
+              onConfirm={d => onPeriodChange('to', d)}
+              onCancel={() => {
+                setToDropDown(false);
+              }}
+            />
+          </View>
+          {selectedEmployer && from && to && (
+            <View style={styles.button}>
+              <Button title="Search" color="#fff" onPress={searchRecord} />
+            </View>
+          )}
+          {history === null && (
+            <View>
+              <Text style={{textAlign: 'center', marginTop: 150}}>
+                Search from above!
+              </Text>
+            </View>
+          )}
+          {history !== null && history.length && (
+            <View>
+              <View style={styles.listHeader}>
+                <Text>Date</Text>
+                <Text>Check In</Text>
+                <Text>Check Out</Text>
+                <Text>Total</Text>
+              </View>
+              <Separator />
+              <View>
+                <FlatList
+                  data={history}
+                  renderItem={({item}) => (
+                    <View style={styles.list}>
+                      <Text>
+                        {moment(item.start_time).format('YYYY/MM/DD')}
+                      </Text>
+                      <Text>{moment(item.start_time).format('LT')}</Text>
+                      <Text>{moment(item.end_time).format('LT')}</Text>
+                      <Text>Total</Text>
+                    </View>
+                  )}
+                />
+              </View>
+            </View>
+          )}
+          {history !== null && history.length === 0 && (
+            <View>
+              <Text>No records matched</Text>
+            </View>
+          )}
         </View>
-      )}
-      {history !== null && history.length === 0 && (
+      ) : (
         <View>
-          <Text>No records matched</Text>
+          <Text>You currenly have no working records</Text>
         </View>
       )}
     </SafeAreaView>

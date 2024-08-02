@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import validator from 'validator';
 import {styles} from '../../styles/signInStyles.js';
-import CookieManager from '@react-native-cookies/cookies';
 
 const SignIn = ({navigation}: any) => {
   const [email, setEmail] = useState('');
@@ -31,11 +30,7 @@ const SignIn = ({navigation}: any) => {
         password,
       })
       .then(res => {
-        const {firstName, lastName, employers} = res.data;
-        CookieManager.set('http://localhost', {
-          name: 'myCookie',
-          value: JSON.stringify(employers),
-        });
+        const {firstName, lastName} = res.data;
         navigation.navigate('DrawerNav', {firstName, lastName, email});
       })
       .catch(err => {

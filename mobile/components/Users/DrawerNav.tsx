@@ -34,7 +34,7 @@ const DrawerNav = ({route, navigation}: any) => {
         component={Home}
         initialParams={{params: route.params}}
       />
-      <Drawer.Screen name={'Working Records'}>
+      <Drawer.Screen name={'My Working Records'}>
         {props => <WorkingHistory params={route.params} />}
       </Drawer.Screen>
       <Drawer.Screen name={'Hire Service Provider'}>

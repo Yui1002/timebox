@@ -12,6 +12,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import SignUp from './components/Authentication/SignUp';
 import SignIn from './components/Authentication/SignIn';
 import VerifyOTP from './components/Authentication/VerifyOTP';
+import Home from './components/Users/Home';
 import DrawerNav from './components/Users/DrawerNav';
 import Record from './components/Users/Record';
 import PersonalInfo from './components/Users/StepForms/PersonalInfo';
@@ -21,6 +22,7 @@ import Review from './components/Users/StepForms/Review';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import Profile from './components/Users/Profile';
+import EditProfile from './components/Users/EditProfile';
 
 const Stack = createStackNavigator();
 
@@ -42,8 +44,9 @@ function App(): JSX.Element {
           name="VerifyOTP"
           component={VerifyOTP}
           options={{
-            title: 'Forgot Password',
+            title: 'Verify OTP',
             gestureEnabled: false,
+            headerLeft: () => null
           }}
         />
         <Stack.Screen
@@ -59,6 +62,15 @@ function App(): JSX.Element {
           name="ResetPassword"
           component={ResetPassword}
           options={{gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={({navigation}) => ({
+            headerTitle: '',
+            gestureEnabled: false,
+            headerLeft: () => null
+          })}
         />
         <Stack.Screen
           name="DrawerNav"
@@ -114,6 +126,14 @@ function App(): JSX.Element {
           component={Profile}
           options={({navigation}) => ({
             headerTitle: 'Profile',
+            gestureEnabled: false,
+          })}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={({navigation}) => ({
+            headerTitle: 'Edit Profile',
             gestureEnabled: false,
           })}
         />

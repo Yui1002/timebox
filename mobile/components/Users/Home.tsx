@@ -29,12 +29,11 @@ const Home = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      <View style={{height: '10%'}}>
         <Text style={styles.header}>Hi {firstName}!</Text>
-        <View style={{marginVertical: 10}} />
       </View>
-      <View>
-        <Text>Employers</Text>
+      <View style={{height: '80%'}}>
+        <Text style={{fontSize: 20, fontWeight: '500'}}>My Employers</Text>
         {employers !== null && employers.length > 0 ? (
           <FlatList
             data={employers}
@@ -64,7 +63,7 @@ const Home = ({route, navigation}: any) => {
             )}
           />
         ) : (
-          <Text>There is no employers</Text>
+          <Text style={{marginTop: 10}}>There is no employers</Text>
         )}
       </View>
     </SafeAreaView>

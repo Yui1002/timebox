@@ -125,8 +125,12 @@ class UserModels {
     );
   }
 
-  async deleteServiceProvider(email: string) {
-    return false;
+  async deleteServiceProvider(employerEmail: string, serviceProviderEmail: string) {
+    const employerId = await this.repositories.getUserId(employerEmail);
+    const serviceProviderId = await this.repositories.getUserId(serviceProviderEmail);
+    const transactionId = await this.repositories.getUserTransactionId(employerId, serviceProviderId);
+    await this.repositories.deleteSchedules(transactionId);
+    return await this.repositories.deleteServiceProvider(transactionId);
   }
 
   async recordTime(req: any) {
