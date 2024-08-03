@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, TextInput, Button} from 'react-native';
+import {View, Text, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
-// import Button from '../Button';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const {firstName, lastName, email} = route.params;
@@ -35,7 +34,7 @@ const PersonalInfo = ({route, navigation}: any) => {
         type: 'INVALID_RATE_FORMAT',
         msg: 'Rate must be a number',
       });
-      return false;
+      return false
     }
     if (Number(rate) < 1) {
       setInputError({
@@ -59,10 +58,6 @@ const PersonalInfo = ({route, navigation}: any) => {
       return false;
     }
     return true;
-  };
-
-  const cancel = () => {
-    navigation.navigate('HireServiceProvider');
   };
 
   const proceed = () => {

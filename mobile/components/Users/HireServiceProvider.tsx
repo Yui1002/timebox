@@ -7,14 +7,20 @@ import validator from 'validator';
 import InputField from '../InputField';
 import InputError from '../InputError';
 import Button from './Button';
+import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {
   const {firstName, lastName, email} = props.params;
+  const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
   });
+
+  useEffect(() => {
+    setModalVisible(true);
+  }, []);
 
   const validateEmail = (type: string): boolean => {
     if (searchInput.length === 0) {
@@ -37,15 +43,20 @@ const HireServiceProvider = (props: any) => {
   const searchEmail = () => {
     if (!validateEmail('SEARCH')) return;
     axios
-      .get(`${LOCAL_HOST_URL}/user/exists/${searchInput}`)
+      .get(`${LOCAL_HOST_URL}/email/exists`, {
+        params: {
+          email: searchInput
+        }
+      })
       .then(res => {
-        const msg = `Select ${res.data[0].first_name} ${res.data[0].last_name}?`;
+        console.log(res.data)
+        const msg = `This user exists on the app! Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
         showAlert(msg, null, function () {
           navigateToNext(res.data[0]);
         });
       })
       .catch(error => {
-        const msg = `Add ${searchInput} as a service provider`;
+        const msg = `Looks like this user does not exist on the app. Do you still want to add ${searchInput} as a service provider?`;
         showAlert(msg, null, emailToNotFoundUser);
         return error;
       });
@@ -88,7 +99,7 @@ const HireServiceProvider = (props: any) => {
     props.navigation.navigate('PersonalInfo', {
       firstName: data.first_name,
       lastName: data.last_name,
-      email: data.email_address,
+      email: email,
     });
   };
 
@@ -102,11 +113,16 @@ const HireServiceProvider = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {modalVisible && (
+        <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
+      )}
       <View>
-        <Text>Enter the email to find a service provider</Text>
+        <Text>
+          Enter the email of a service provider you would like to hire
+        </Text>
       </View>
       <View style={styles.subContainer}>
-        <Text>Enter the email</Text>
+        <Text>Email</Text>
         <InputField.Outlined
           onChangeText={(val: any) => setSearchInput(val)}
           isEditable={true}

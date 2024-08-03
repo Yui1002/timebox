@@ -13,7 +13,7 @@ class Routes {
     applyRouting(app: any) {
         // auth routes
         app.get('/user/exists/:email', this.authControllers.isUserRegistered.bind(this.authControllers));
-        app.post('/checkEmailRegistered', this.authControllers.isEmailRegistered.bind(this.authControllers));
+        app.get('/email/exists', this.authControllers.isEmailRegistered.bind(this.authControllers));
         app.post('/signUp', this.authControllers.signUp.bind(this.authControllers));
         app.post('/signIn', this.authControllers.signIn.bind(this.authControllers));
         app.post('/resetPassword', this.authControllers.resetPassword.bind(this.authControllers));
