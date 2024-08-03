@@ -18,9 +18,14 @@ class AuthControllers {
   }
 
   async isEmailRegistered(req: any, res: any) {
-    const { email } = req.body;
+    const { email } = req.query;
     const emailRegistered = await this.models.isUserRegistered(email);
-    emailRegistered ? res.status(200).send("success") : res.status(400);
+    if (emailRegistered) {
+      const name = await this.models.getName(email);
+      res.status(200).send(name);
+      return;
+    }
+    res.sendStatus(400);
   }
 
   async signUp(req: any, res: any) {

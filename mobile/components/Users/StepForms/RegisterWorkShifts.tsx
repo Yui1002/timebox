@@ -3,10 +3,10 @@ import {View, Text, TouchableOpacity, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
-// import Button from '../Button';
 import moment from 'moment';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
+  console.log('params in register', route.params);
   const days = [
     'Monday',
     'Tuesday',
