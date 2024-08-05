@@ -55,9 +55,6 @@ const Record = ({route, navigation}: any) => {
         <Text style={styles.header}>
           Employer: {first_name} {last_name}
         </Text>
-        <Text style={styles.dateText}>
-          Today's date: {moment().format('LLL')}
-        </Text>
       </View>
       <View style={styles.recordContainer}>
         <TouchableOpacity

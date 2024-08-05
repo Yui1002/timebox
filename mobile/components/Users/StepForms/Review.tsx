@@ -57,7 +57,7 @@ const Review = ({route, navigation}: any) => {
       [
         {
           text: 'OK',
-          onPress: () => navigation.navigate('Home'),
+          onPress: () => navigation.navigate('DrawerNav'),
         },
       ],
       {cancelable: false},

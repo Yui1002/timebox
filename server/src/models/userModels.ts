@@ -232,6 +232,11 @@ class UserModels {
       transporter.close();
     }
   }
+
+  async emailHasBeenSent(searchedEmail: string, employerEmail: string) {
+    const userId = await this.repositories.getUserId(employerEmail)
+    return await this.repositories.emailHasBeenSent(searchedEmail, userId)
+  }
 }
 
 export default UserModels;

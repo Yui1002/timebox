@@ -39,6 +39,7 @@ const SignIn = ({navigation}: any) => {
           email: email,
         };
         dispatch(signInUser(value));
+        clearInput();
         navigation.navigate('DrawerNav');
       })
       .catch(err => {
@@ -85,6 +86,15 @@ const SignIn = ({navigation}: any) => {
     );
   };
 
+  const clearInput = () => {
+    setEmail('');
+    setPassword('');
+    setinputError({
+      type: '',
+      msg: '',
+    })
+  }
+
   const Separator = () => <View style={styles.separator}></View>;
 
   return (
@@ -95,6 +105,7 @@ const SignIn = ({navigation}: any) => {
           <View>
             <Text>Email</Text>
             <TextInput
+              value={email}
               style={styles.input}
               autoCorrect={false}
               autoCapitalize="none"
@@ -109,6 +120,7 @@ const SignIn = ({navigation}: any) => {
           <View>
             <Text>Password</Text>
             <TextInput
+              value={password}
               style={styles.input}
               autoCorrect={false}
               autoCapitalize="none"
