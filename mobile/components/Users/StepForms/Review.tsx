@@ -11,7 +11,6 @@ interface Shifts {
 }
 
 const Review = ({route, navigation}: any) => {
-  console.log('params in review', route.params);
   const {firstName, lastName, email, rate, rateType} = route.params.params;
   const workShifts = route.params.workShifts;
   const statusTitles = ['Information', 'Work Shifts', 'Review'];

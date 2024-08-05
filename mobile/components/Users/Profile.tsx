@@ -43,7 +43,6 @@ const Profile = ({route, navigation}: any) => {
   };
 
   const deleteProfile = () => {
-    console.log(route.params.employerEmail, email_address);
     axios
       .delete(`${LOCAL_HOST_URL}/user`, {
         params: {

@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
+import { addShift } from '../../../redux/actions/workShiftsAction';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
-  console.log('params in register', route.params);
+  const dispatch = useDispatch();
+
   const days = [
     'Monday',
     'Tuesday',
@@ -16,7 +19,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     'Saturday',
     'Sunday',
   ];
-  const {selectedDays, setSelectedDays} = route.params;
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
   const [startTime, setStartTime] = useState(new Date());
@@ -59,7 +61,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
       startTime: moment(startTime).format('LT'),
       endTime: moment(endTime).format('LT'),
     };
-    setSelectedDays([...selectedDays, value]);
+    dispatch(addShift(value))
 
     navigation.navigate('WorkShifts', {
       params: route.params,

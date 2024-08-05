@@ -49,7 +49,6 @@ const HireServiceProvider = (props: any) => {
         }
       })
       .then(res => {
-        console.log(res.data)
         const msg = `This user exists on the app! Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
         showAlert(msg, null, function () {
           navigateToNext(res.data[0]);

@@ -32,6 +32,7 @@ const SignIn = ({navigation}: any) => {
       .then(res => {
         const {firstName, lastName} = res.data;
         navigation.navigate('DrawerNav', {firstName, lastName, email});
+        // navigation.navigate('MainComponent')
       })
       .catch(err => {
         const errMsg = err.response.data.error;
