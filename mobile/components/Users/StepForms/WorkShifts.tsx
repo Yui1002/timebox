@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {useSelector, useDispatch } from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, Button, Alert} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-import { deleteShift } from '../../../redux/actions/workShiftsAction';
+import {deleteShift} from '../../../redux/actions/workShiftsAction';
 
 interface Shifts {
   day: string;
@@ -12,28 +12,31 @@ interface Shifts {
 }
 
 const WorkShifts = ({route, navigation}: any) => {
-  const workShifts = useSelector(state => state.workShifts)
+  const {firstName, lastName, email, rate, rateType} = route.params;
+  const workShifts = useSelector(state => state.workShifts);
   const dispatch = useDispatch();
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
   const deleteDate = (day: Shifts) => {
-    dispatch(deleteShift(day))
+    dispatch(deleteShift(day));
   };
 
   const review = () => {
-    if (workShifts.workShifts.length > 0) {
+    if (workShifts.workShifts.length < 1) {
       showAlert();
       return;
     }
-    
-    navigation.navigate('Review', {
-      params: route.params,
-    });
+
+    navigation.navigate('Review', {firstName, lastName, email, rate, rateType});
   };
 
   const navigateToAddSchedule = () => {
     navigation.navigate('RegisterWorkShifts', {
-      params: route.params,
+      firstName,
+      lastName,
+      email,
+      rate,
+      rateType,
     });
   };
 
@@ -50,9 +53,7 @@ const WorkShifts = ({route, navigation}: any) => {
         {
           text: 'Yes',
           onPress: () =>
-            navigation.navigate('Review', {
-              params: route.params,
-            }),
+            navigation.navigate('Review', {firstName, lastName, email, rate, rateType}),
         },
       ],
     );
@@ -72,8 +73,8 @@ const WorkShifts = ({route, navigation}: any) => {
       <View style={{marginVertical: 20, height: '60%'}}>
         <Text style={{fontSize: 20, fontWeight: 500}}>Work Schedules</Text>
         {workShifts.workShifts.length > 0 ? (
-          workShifts.workShifts.map(w => (
-            <View style={styles.dateContainer}>
+          workShifts.workShifts.map((w, index) => (
+            <View style={styles.dateContainer} key={index}>
               <Text style={{width: '30%'}}>{w.day}</Text>
               <Text style={{width: '50%'}}>
                 {w.startTime} ~ {w.endTime}

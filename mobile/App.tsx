@@ -126,6 +126,7 @@ function App(): JSX.Element {
             options={({navigation}) => ({
               headerTitle: '',
               gestureEnabled: false,
+              headerLeft: () => null
             })}
           />
           <Stack.Screen

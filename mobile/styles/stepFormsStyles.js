@@ -101,6 +101,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 20
   },
   workShiftsBtn_back: {
     backgroundColor: '#909090', 

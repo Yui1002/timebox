@@ -34,7 +34,7 @@ const PersonalInfo = ({route, navigation}: any) => {
         type: 'INVALID_RATE_FORMAT',
         msg: 'Rate must be a number',
       });
-      return false
+      return false;
     }
     if (Number(rate) < 1) {
       setInputError({

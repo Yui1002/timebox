@@ -36,6 +36,13 @@ class UserControllers {
     result ? res.sendStatus(200) : res.sendStatus(400);
   }
 
+  async sendEmailToServiceProvider(req: any, res: any) {
+    // send email to the sp
+    const { emailTo, employer } = req.body;
+    const result = await this.models.sendEmailToServiceProvider(emailTo, employer);
+    result ? res.sendStatus(200) : res.sendStatus(400);
+  }
+
   async addServiceProvider(req: any, res: any) {
     const response = await this.models.addServiceProvider(req.body);
     response ? res.sendStatus(200) : res.sendStatus(400);

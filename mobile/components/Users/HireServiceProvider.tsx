@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {Text, View, SafeAreaView, Alert} from 'react-native';
@@ -10,7 +11,9 @@ import Button from './Button';
 import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {
-  const {firstName, lastName, email} = props.params;
+  const userInfo = useSelector(state => state.userInfo);
+  const {firstName, lastName, email} = userInfo;
+
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
@@ -37,6 +40,13 @@ const HireServiceProvider = (props: any) => {
       });
       return false;
     }
+    if (searchInput === email) {
+      setInputError({
+        type: `${type}_INVALID_FORMAT`,
+        msg: 'Email should be not yours',
+      });
+      return false;
+    }
     return true;
   };
 
@@ -49,7 +59,7 @@ const HireServiceProvider = (props: any) => {
         }
       })
       .then(res => {
-        const msg = `This user exists on the app! Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
+        const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
         showAlert(msg, null, function () {
           navigateToNext(res.data[0]);
         });
@@ -98,16 +108,12 @@ const HireServiceProvider = (props: any) => {
     props.navigation.navigate('PersonalInfo', {
       firstName: data.first_name,
       lastName: data.last_name,
-      email: email,
+      email: searchInput,
     });
   };
 
   const navigateToHome = () => {
-    props.navigation.navigate('Home', {
-      firstName,
-      lastName,
-      email,
-    });
+    props.navigation.navigate('Home');
   };
 
   return (

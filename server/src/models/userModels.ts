@@ -125,10 +125,18 @@ class UserModels {
     );
   }
 
-  async deleteServiceProvider(employerEmail: string, serviceProviderEmail: string) {
+  async deleteServiceProvider(
+    employerEmail: string,
+    serviceProviderEmail: string
+  ) {
     const employerId = await this.repositories.getUserId(employerEmail);
-    const serviceProviderId = await this.repositories.getUserId(serviceProviderEmail);
-    const transactionId = await this.repositories.getUserTransactionId(employerId, serviceProviderId);
+    const serviceProviderId = await this.repositories.getUserId(
+      serviceProviderEmail
+    );
+    const transactionId = await this.repositories.getUserTransactionId(
+      employerId,
+      serviceProviderId
+    );
     await this.repositories.deleteSchedules(transactionId);
     return await this.repositories.deleteServiceProvider(transactionId);
   }
@@ -202,6 +210,27 @@ class UserModels {
       currentMonth,
       userId
     );
+  }
+
+  async sendEmailToServiceProvider(
+    emailTo: string,
+    employer: { firstName: string; lastName: string; email: string }
+  ) {
+    const { firstName, lastName, email } = employer;
+    const mailOptions = {
+      from: email,
+      to: emailTo,
+      subject: `${firstName} ${lastName} requested you as a service provider`,
+      text: `${firstName} ${lastName} requested you as a service provider. Please open the link below to approve this, otherwise ignore it.`,
+    };
+    try {
+      await transporter.sendMail(mailOptions);
+      return true;
+    } catch (err) {
+      return false;
+    } finally {
+      transporter.close();
+    }
   }
 }
 

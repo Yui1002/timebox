@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {
@@ -11,8 +12,10 @@ import {
 } from 'react-native';
 import validator from 'validator';
 import {styles} from '../../styles/signInStyles.js';
+import {signInUser} from '../../redux/actions/signInAction.js';
 
 const SignIn = ({navigation}: any) => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [inputError, setinputError] = useState({
@@ -30,9 +33,13 @@ const SignIn = ({navigation}: any) => {
         password,
       })
       .then(res => {
-        const {firstName, lastName} = res.data;
-        navigation.navigate('DrawerNav', {firstName, lastName, email});
-        // navigation.navigate('MainComponent')
+        const value = {
+          firstName: res.data.firstName,
+          lastName: res.data.lastName,
+          email: email,
+        };
+        dispatch(signInUser(value));
+        navigation.navigate('DrawerNav');
       })
       .catch(err => {
         const errMsg = err.response.data.error;

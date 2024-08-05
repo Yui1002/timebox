@@ -3,7 +3,6 @@ const initialState = {
 };
 
 const workShiftsReducer = (state = initialState, action) => {
-  //   console.log('payload', action.payload)
   switch (action.type) {
     case 'ADD':
       return {

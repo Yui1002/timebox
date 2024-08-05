@@ -8,6 +8,7 @@ import moment from 'moment';
 import { addShift } from '../../../redux/actions/workShiftsAction';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
+  const {firstName, lastName, email, rate, rateType} = route.params;
   const dispatch = useDispatch();
 
   const days = [
@@ -63,9 +64,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     };
     dispatch(addShift(value))
 
-    navigation.navigate('WorkShifts', {
-      params: route.params,
-    });
+    navigation.navigate('WorkShifts', {firstName, lastName, email, rate, rateType});
   };
 
   return (
@@ -76,8 +75,9 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         </Text>
         {inputError.type === 'EMPTY_DAY' && <InputError error={inputError} />}
         <View style={styles.dayContainer}>
-          {days.map(day => (
+          {days.map((day, index) => (
             <TouchableOpacity
+              key={index}
               style={selectedDay === day ? styles.day_selected : styles.day}
               onPress={() => setSelectedDay(day)}>
               <Text style={styles.day_text}>{day}</Text>
