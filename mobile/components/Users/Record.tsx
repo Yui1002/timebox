@@ -4,6 +4,9 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const Record = ({route, navigation}: any) => {
   const {first_name, last_name, email_address} = route.params.employer;
@@ -51,23 +54,37 @@ const Record = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.header}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>
           Employer: {first_name} {last_name}
         </Text>
-      </View>
+      </View> 
       <View style={styles.recordContainer}>
         <TouchableOpacity
           style={styles.checkInButton}
           disabled={start !== null}
           onPress={() => recordTime('checkin')}>
           <Text style={styles.buttonText}>Check In</Text>
+          <View style={{alignItems: 'center', marginTop: 20}}>
+            <AntDesign
+              name="login"
+              size={75}
+              color="#fff"
+            />
+          </View>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.checkOutButton}
           disabled={end !== null}
           onPress={() => recordTime('checkout')}>
           <Text style={styles.buttonText}>Check Out</Text>
+          <View style={{alignItems: 'center', marginTop: 20}}>
+            <AntDesign
+              name="logout"
+              size={75}
+              color="#fff"
+            />
+          </View>
         </TouchableOpacity>
       </View>
       <View style={styles.todayRecordContainer}>

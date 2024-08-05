@@ -59,7 +59,7 @@ const Profile = ({route, navigation}: any) => {
   };
 
   const editProfile = () => {
-    navigation.navigate('EditProfile', {rate, rate_type, shifts})
+    navigation.navigate('EditProfile', {rate, rate_type, shifts});
   };
 
   return (

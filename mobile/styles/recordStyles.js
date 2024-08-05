@@ -2,13 +2,15 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
     margin: '5%',
   },
   header: {
+    height: '10%',
+  },
+  headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontWeight: '500',
   },
   subHeader: {
     fontSize: 16,
@@ -19,22 +21,20 @@ export const styles = StyleSheet.create({
     textAlign: 'center'
   },
   recordContainer: {
-    width: '100%',
-    height: 150,
-    marginVertical: 20,
+    height: '30%',
     flexDirection: "row",
     justifyContent: 'space-between',
   },
   checkInButton: {
     width: "45%",
-    height: '100%',
-    backgroundColor: '#17B169',
+    height: '90%',
+    backgroundColor: '#26b226',
     padding: 14,
     borderRadius: 10,
   },
   checkOutButton: {
     width: "45%",
-    height: '100%',
+    height: '90%',
     backgroundColor: '#F28C28',
     padding: 14,
     borderRadius: 10,
