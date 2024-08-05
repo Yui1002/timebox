@@ -1,20 +1,17 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
 import {Text, View, SafeAreaView, Button, FlatList} from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
 const Home = ({route, navigation}: any) => {
-  const {firstName, lastName, email} = route.params.params;
+  const userInfo = useSelector(state => state.userInfo);
+  const {firstName, lastName, email} = userInfo;
   const [employers, setEmployers] = useState([]);
 
   useEffect(() => {
-    try {
-      getEmployers();
-    }
-    catch (e) {
-      console.log("hello world", e)
-    }
+    getEmployers();
   }, [])
 
   const getEmployers = () => {

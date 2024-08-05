@@ -1,12 +1,16 @@
 import React, {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
+import { addShift } from '../../../redux/actions/workShiftsAction';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
-  console.log('params in register', route.params);
+  const {firstName, lastName, email, rate, rateType} = route.params;
+  const dispatch = useDispatch();
+
   const days = [
     'Monday',
     'Tuesday',
@@ -16,7 +20,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     'Saturday',
     'Sunday',
   ];
-  const {selectedDays, setSelectedDays} = route.params;
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
   const [startTime, setStartTime] = useState(new Date());
@@ -59,11 +62,9 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
       startTime: moment(startTime).format('LT'),
       endTime: moment(endTime).format('LT'),
     };
-    setSelectedDays([...selectedDays, value]);
+    dispatch(addShift(value))
 
-    navigation.navigate('WorkShifts', {
-      params: route.params,
-    });
+    navigation.navigate('WorkShifts', {firstName, lastName, email, rate, rateType});
   };
 
   return (
@@ -74,8 +75,9 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         </Text>
         {inputError.type === 'EMPTY_DAY' && <InputError error={inputError} />}
         <View style={styles.dayContainer}>
-          {days.map(day => (
+          {days.map((day, index) => (
             <TouchableOpacity
+              key={index}
               style={selectedDay === day ? styles.day_selected : styles.day}
               onPress={() => setSelectedDay(day)}>
               <Text style={styles.day_text}>{day}</Text>

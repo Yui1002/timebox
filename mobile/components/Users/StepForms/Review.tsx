@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, Button, Alert} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-// import Button from '../Button';
+import {useSelector} from 'react-redux';
+import axios from 'axios';
+import {LOCAL_HOST_URL} from '../../../config.js';
 
 interface Shifts {
   day: string;
@@ -11,9 +13,9 @@ interface Shifts {
 }
 
 const Review = ({route, navigation}: any) => {
-  console.log('params in review', route.params);
-  const {firstName, lastName, email, rate, rateType} = route.params.params;
-  const workShifts = route.params.workShifts;
+  const {firstName, lastName, email, rate, rateType} = route.params;
+  const userInfo = useSelector(state => state.userInfo);
+  const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
   const editDay = () => {
@@ -35,7 +37,31 @@ const Review = ({route, navigation}: any) => {
   };
 
   const confirmServiceProvider = () => {
-    
+    axios
+      .post(`${LOCAL_HOST_URL}/send/notice/serviceProvider`, {
+        emailTo: email,
+        employer: userInfo,
+      })
+      .then(() => {
+        showSuccess()
+      })
+      .catch((err) => [
+        console.log(err)
+      ])
+  };
+
+  const showSuccess = () => {
+    Alert.alert(
+      'Success',
+      `We have sent an email to ${firstName} ${lastName}. Once this request is approved, you will see this person on your service provider list.`,
+      [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('DrawerNav'),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   return (
@@ -105,8 +131,8 @@ const Review = ({route, navigation}: any) => {
               Edit
             </Text>
           </Text>
-          {workShifts.length > 0 ? (
-            workShifts.map((shift: Shifts, index: number) => (
+          {workShifts.workShifts.length > 0 ? (
+            workShifts.workShifts.map((shift: Shifts, index: number) => (
               <View key={index} style={styles.dateContainer}>
                 <Text style={{fontSize: 18}}>
                   {String.fromCharCode(8226)} {shift.day}
@@ -130,13 +156,12 @@ const Review = ({route, navigation}: any) => {
           </View>
           <View style={styles.workShiftsBtn_add}>
             <Button
-              title='Confirm'
+              title="Confirm"
               onPress={confirmServiceProvider}
               color="#fff"
             />
           </View>
         </View>
-        {/* <Button.Outlined title="Confirm" onPress={confirmServiceProvider} /> */}
       </View>
     </View>
   );

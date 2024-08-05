@@ -32,6 +32,7 @@ const SignUp = ({navigation}: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
       .then(res => {
+        clearInput();
         navigation.navigate('VerifyOTP', {
           firstName,
           lastName,
@@ -108,6 +109,18 @@ const SignUp = ({navigation}: any) => {
     }
     return true;
   };
+
+  const clearInput = () => {
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+    setPassword('');
+    setConfirmedPassword('');
+    setinputError({
+      type: '',
+      msg: '',
+    })
+  }
 
   const Separator = () => <View style={styles.separator}></View>;
 

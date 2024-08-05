@@ -268,6 +268,11 @@ class UserRepositories {
       .rows;
     return data;
   }
+
+  async emailHasBeenSent(email: string, addedBy: string) {
+    const sql = "SELECT * FROM email_user_sent WHERE email = $1 AND added_by = $2;";
+    return (await this.repositories.queryDB(sql, [email, addedBy])).rowCount > 0;
+  }
 }
 
 export default UserRepositories;
