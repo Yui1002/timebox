@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux'
+import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {
@@ -16,16 +16,20 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
 const WorkingHistory = (props: any) => {
-  const userInfo = useSelector(state => state.workShifts);
+  const userInfo = useSelector(state => state.userInfo);
   const {email} = userInfo;
   const [employerDropdownOpen, setEmployerDropdownOpen] = useState(false);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);
   const [selectedEmployer, setSelectedEmployer] = useState<string>('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
+  const [from, setFrom] = useState<string>('');
+  const [to, setTo] = useState<string>('');
   const [items, setItems] = useState([]);
   const [history, setHistory] = useState<[] | null>(null);
+  const [inputError, setInputError] = useState({
+    type: '',
+    msg: '',
+  });
 
   useEffect(() => {
     getEmployers();
@@ -38,6 +42,7 @@ const WorkingHistory = (props: any) => {
   };
 
   const searchRecord = () => {
+    if (!validateInput()) return;
     axios
       .get(`${LOCAL_HOST_URL}/record`, {
         params: {
@@ -51,6 +56,17 @@ const WorkingHistory = (props: any) => {
         setHistory(res.data);
       })
       .catch(() => {});
+  };
+
+  const validateInput = () => {
+    if (selectedEmployer.length < 1) {
+      setInputError({
+        type: 'EMPLOYER_EMPTY',
+        msg: "Employer's name is required",
+      });
+      return false;
+    }
+    return true;
   };
 
   const formatData = (data: []) => {
@@ -78,7 +94,12 @@ const WorkingHistory = (props: any) => {
       {items.length > 0 ? (
         <View>
           <View>
-            <Text style={styles.subHeader}>Search by an employer's name</Text>
+            <Text style={styles.subHeader}>Select employer's name</Text>
+            {inputError.type === 'EMPLOYER_EMPTY' && (
+              <Text style={{fontSize: 12, color: '#FF0000'}}>
+                {inputError.msg}
+              </Text>
+            )}
             <DropDownPicker
               style={styles.dropwdown}
               open={employerDropdownOpen}
@@ -92,20 +113,21 @@ const WorkingHistory = (props: any) => {
           </View>
           <View
             style={employerDropdownOpen ? {marginTop: 120} : {marginTop: 10}}>
-            <Text style={styles.subHeader}>Search by period</Text>
+            <Text style={styles.subHeader}>Select period</Text>
             <TouchableOpacity
               onPress={() => setFromDropDown(!fromDropdown)}
               style={styles.dropdown_2}>
               <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
-            <View style={{marginVertical: 10}}></View>
             <TouchableOpacity
               onPress={() => setToDropDown(!toDropdown)}
               style={styles.dropdown_2}>
               <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
+          </View>
+          <View>
             <DatePicker
               modal
               open={fromDropdown}
@@ -127,19 +149,10 @@ const WorkingHistory = (props: any) => {
               }}
             />
           </View>
-          {selectedEmployer && from && to && (
-            <View style={styles.button}>
-              <Button title="Search" color="#fff" onPress={searchRecord} />
-            </View>
-          )}
-          {history === null && (
-            <View>
-              <Text style={{textAlign: 'center', marginTop: 150}}>
-                Search from above!
-              </Text>
-            </View>
-          )}
-          {history !== null && history.length && (
+          <View style={styles.button}>
+            <Button title="Search" color="#fff" onPress={searchRecord} />
+          </View>
+          {history !== null && history.length > 0 && (
             <View>
               <View style={styles.listHeader}>
                 <Text>Date</Text>
@@ -149,25 +162,29 @@ const WorkingHistory = (props: any) => {
               </View>
               <Separator />
               <View>
-                <FlatList
-                  data={history}
-                  renderItem={({item}) => (
-                    <View style={styles.list}>
+                {history.map((h, index) => {
+                  const a = moment(h.start_time)
+                  const b = moment(h.end_time)
+                  const total = b.diff(a, 'hours')
+                  return (
+                    <View style={styles.list} key={index}>
                       <Text>
-                        {moment(item.start_time).format('YYYY/MM/DD')}
+                        {moment(h.start_time).format('YYYY/MM/DD')}
                       </Text>
-                      <Text>{moment(item.start_time).format('LT')}</Text>
-                      <Text>{moment(item.end_time).format('LT')}</Text>
-                      <Text>Total</Text>
+                      <Text>{moment(h.start_time).format('LT')}</Text>
+                      <Text>{moment(h.end_time).format('LT')}</Text>
+                      <Text>{`${total}h`}</Text>
                     </View>
-                  )}
-                />
+                  );
+                })}
               </View>
             </View>
           )}
           {history !== null && history.length === 0 && (
             <View>
-              <Text>No records matched</Text>
+              <Text style={{textAlign: 'center', marginTop: 50}}>
+                No records matched
+              </Text>
             </View>
           )}
         </View>

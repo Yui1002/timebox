@@ -3,6 +3,7 @@ import { ServiceProviderInterface } from "../interfaces/ServiceProviderInterface
 import dotenv from "dotenv";
 dotenv.config();
 import nodemailer from "nodemailer";
+import moment from "moment";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -172,14 +173,19 @@ class UserModels {
     return await this.repositories.getTodaysRecord(userTransactionId);
   }
 
-  async searchByPeriod(req: any) {
-    const { from, to, username } = req;
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.searchByPeriod(from, to, userId);
-  }
-
   async getRecordByPeriod(req: any) {
-    const { employerEmail, serviceProviderEmail, from, to } = req;
+    const { employerEmail, serviceProviderEmail } = req;
+    let {from, to} = req;
+
+    if (from.length > 0 && to.length < 1) {
+      to = moment(from).add(1, 'month').format('YYYY-MM-DD')
+    } else if (from.length < 1 && to.length > 0) {
+      from = moment(to).subtract(1, 'month').format('YYYY-MM-DD')
+    } else if (from.length < 1 && to.length < 1) {
+      from = moment(new Date()).subtract(1, 'month').format('YYYY-MM-DD')
+      to = moment(new Date()).format('YYYY-MM-DD')
+    }
+
     const serviceProviderId = await this.repositories.getUserId(
       serviceProviderEmail
     );
@@ -234,8 +240,8 @@ class UserModels {
   }
 
   async emailHasBeenSent(searchedEmail: string, employerEmail: string) {
-    const userId = await this.repositories.getUserId(employerEmail)
-    return await this.repositories.emailHasBeenSent(searchedEmail, userId)
+    const userId = await this.repositories.getUserId(employerEmail);
+    return await this.repositories.emailHasBeenSent(searchedEmail, userId);
   }
 }
 
