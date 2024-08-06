@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux'
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {
@@ -15,7 +16,8 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
 const WorkingHistory = (props: any) => {
-  const {email} = props.params;
+  const userInfo = useSelector(state => state.workShifts);
+  const {email} = userInfo;
   const [employerDropdownOpen, setEmployerDropdownOpen] = useState(false);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);

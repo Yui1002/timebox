@@ -6,7 +6,7 @@ import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const Record = ({route, navigation}: any) => {
   const {first_name, last_name, email_address} = route.params.employer;
@@ -58,32 +58,32 @@ const Record = ({route, navigation}: any) => {
         <Text style={styles.headerText}>
           Employer: {first_name} {last_name}
         </Text>
-      </View> 
+      </View>
       <View style={styles.recordContainer}>
         <TouchableOpacity
-          style={styles.checkInButton}
+          style={
+            start !== null
+              ? [styles.checkInButton, styles.checkInButton_disabled]
+              : styles.checkInButton
+          }
           disabled={start !== null}
           onPress={() => recordTime('checkin')}>
           <Text style={styles.buttonText}>Check In</Text>
-          <View style={{alignItems: 'center', marginTop: 20}}>
-            <AntDesign
-              name="login"
-              size={75}
-              color="#fff"
-            />
+          <View style={styles.logoContainer}>
+            <AntDesign name="login" size={75} color="#fff" />
           </View>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.checkOutButton}
+          style={
+            end !== null
+              ? [styles.checkOutButton, styles.checkOutButton_disabled]
+              : styles.checkOutButton
+          }
           disabled={end !== null}
           onPress={() => recordTime('checkout')}>
           <Text style={styles.buttonText}>Check Out</Text>
-          <View style={{alignItems: 'center', marginTop: 20}}>
-            <AntDesign
-              name="logout"
-              size={75}
-              color="#fff"
-            />
+          <View style={styles.logoContainer}>
+            <AntDesign name="logout" size={75} color="#fff" />
           </View>
         </TouchableOpacity>
       </View>
