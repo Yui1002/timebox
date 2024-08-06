@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { UseSelector, useSelector } from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
@@ -6,6 +7,7 @@ import {styles} from '../../styles/manageServiceProvidersStyles.js';
 
 const ManageServiceProviders = (props: any) => {
   const [serviceProviders, setServiceProviders] = useState([]);
+  const userInfo = useSelector(state => state.userInfo)
 
   useEffect(() => {
     getServiceProviders();
@@ -15,7 +17,7 @@ const ManageServiceProviders = (props: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/serviceProviders`, {
         params: {
-          email: props.params.email,
+          email: userInfo.email,
         },
       })
       .then(res => {
@@ -68,7 +70,7 @@ const ManageServiceProviders = (props: any) => {
   const navigateToProfile = user => {
     props.navigation.navigate('Profile', {
       user,
-      employerEmail: props.params.email,
+      employerEmail: userInfo.email,
     });
   };
 

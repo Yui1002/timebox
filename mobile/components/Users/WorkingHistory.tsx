@@ -8,7 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Button,
-  FlatList,
+  ScrollView,
 } from 'react-native';
 import {styles} from '../../styles/workingHistoryStyles.js';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -161,7 +161,7 @@ const WorkingHistory = (props: any) => {
                 <Text>Total</Text>
               </View>
               <Separator />
-              <View>
+              <ScrollView>
                 {history.map((h, index) => {
                   const a = moment(h.start_time)
                   const b = moment(h.end_time)
@@ -177,7 +177,7 @@ const WorkingHistory = (props: any) => {
                     </View>
                   );
                 })}
-              </View>
+              </ScrollView>
             </View>
           )}
           {history !== null && history.length === 0 && (
