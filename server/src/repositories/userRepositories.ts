@@ -255,12 +255,6 @@ class UserRepositories {
     return (await this.repositories.queryDB(sql, [transactionId, from, to])).rows;
   }
 
-  async searchByPeriod(from: string, to: string, userId: string) {
-    const sql =
-      "SELECT start_time, end_time FROM time_record WHERE user_id = $1 AND start_time::DATE >= $2 AND start_time::DATE <= $3;";
-    return (await this.repositories.queryDB(sql, [userId, from, to])).rows;
-  }
-
   async searchByDateYear(year: string, month: string, userId: string) {
     const sql =
       "SELECT start_time, end_time FROM time_record_v2 WHERE date_part('year', start_time) = $1 AND date_part('month', start_time) = $2 AND user_id = $3;";

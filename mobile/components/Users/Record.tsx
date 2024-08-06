@@ -16,7 +16,7 @@ const Record = ({route, navigation}: any) => {
 
   useEffect(() => {
     getTodaysRecord();
-  }, []);
+  }, []); 
 
   const getTodaysRecord = () => {
     axios

@@ -2,8 +2,8 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
     margin: '5%',
+    height: '94%'
   },
   header: {
     fontSize: 24,
@@ -21,7 +21,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   dropwdown: {
-    height: null,
     marginVertical: 4,
   },
   dropdown_2: {
@@ -31,6 +30,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 10
   },
   dropdownText: {
     lineHeight: 36, 
