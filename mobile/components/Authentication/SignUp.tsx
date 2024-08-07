@@ -142,6 +142,7 @@ const SignUp = ({navigation}: any) => {
               style={styles.input}
               autoCorrect={false}
               onChangeText={val => setFirstName(val)}
+              autoFocus={true}
             />
             {inputError.type === 'EMPTY_FIRST_NAME' && (
               <Text style={styles.inputError}>{inputError.msg}</Text>

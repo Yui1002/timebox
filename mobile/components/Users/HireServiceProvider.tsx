@@ -73,13 +73,11 @@ const HireServiceProvider = (props: any) => {
   const emailToNotFoundUser = () => {
     axios
       .post(`${LOCAL_HOST_URL}/not/user/send`, {
-        params: {
-          serviceProviderEmail: searchInput,
-          userInfo: {
-            firstName,
-            lastName,
-            userEmail: email,
-          },
+        serviceProviderEmail: searchInput,
+        userInfo: {
+          firstName,
+          lastName,
+          userEmail: email,
         },
       })
       .then(() => {

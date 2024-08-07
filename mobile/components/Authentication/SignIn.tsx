@@ -108,6 +108,7 @@ const SignIn = ({navigation}: any) => {
               value={email}
               style={styles.input}
               autoCorrect={false}
+              
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
             />
