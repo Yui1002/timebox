@@ -30,9 +30,8 @@ class UserControllers {
   }
 
   async emailToNotFoundUser(req: any, res: any) {
-    // const {serviceProviderEmail, userInfo} = req.query;
-    // const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
-    const result = true;
+    const {serviceProviderEmail, userInfo} = req.query;
+    const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
     result ? res.sendStatus(200) : res.sendStatus(400);
   }
 

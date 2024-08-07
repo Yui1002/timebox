@@ -9,8 +9,8 @@ import WorkingHistory from './WorkingHistory';
 import HireServiceProvider from './HireServiceProvider';
 import ManageServiceProviders from './ManageServiceProviders';
 import Home from './Home';
-import { UseDispatch, useDispatch } from 'react-redux';
-import { signOutUser } from '../../redux/actions/signInAction';
+import {useDispatch} from 'react-redux';
+import {signOutUser} from '../../redux/actions/signInAction';
 
 const CustomDrawerContent = (props: any) => {
   const dispatch = useDispatch();
@@ -21,14 +21,14 @@ const CustomDrawerContent = (props: any) => {
         label="Sign Out"
         onPress={() => {
           props.navigation.navigate('SignIn');
-          dispatch(signOutUser())
+          dispatch(signOutUser());
         }}
       />
     </DrawerContentScrollView>
   );
 };
 
-const DrawerNav = ({route, navigation}: any) => {
+const DrawerNav = ({navigation}: any) => {
   const Drawer = createDrawerNavigator();
 
   return (
@@ -38,20 +38,15 @@ const DrawerNav = ({route, navigation}: any) => {
       <Drawer.Screen
         name="Home"
         component={Home}
-        initialParams={{params: route.params}}
       />
       <Drawer.Screen name={'My Working Records'}>
-        {props => <WorkingHistory params={route.params} />}
+        {props => <WorkingHistory />}
       </Drawer.Screen>
       <Drawer.Screen name={'Hire Service Provider'}>
-        {props => (
-          <HireServiceProvider params={route.params} navigation={navigation} />
-        )}
+        {props => <HireServiceProvider navigation={navigation} />}
       </Drawer.Screen>
       <Drawer.Screen name={'Manage Service Provider'}>
-        {props => (
-          <ManageServiceProviders params={route.params} navigation={navigation} />
-        )}
+        {props => <ManageServiceProviders navigation={navigation} />}
       </Drawer.Screen>
     </Drawer.Navigator>
   );

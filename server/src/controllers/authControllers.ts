@@ -55,6 +55,7 @@ class AuthControllers {
   async verifyOTP(req: any, res: any) {
     const { otp, email } = req.body;
     const isOtpVerified = await this.models.verifyOtp(email, otp);
+    console.log(isOtpVerified)
     isOtpVerified
       ? res.sendStatus(200)
       : res.status(400).json({ error: "Entered OTP is invalid or expired" });

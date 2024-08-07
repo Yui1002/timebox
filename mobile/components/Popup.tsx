@@ -20,8 +20,14 @@ const Popup = (props: any) => {
             <View style={styles.modalView}>
               <Text style={styles.modalTitle}>To hire a service provider...</Text>
               <Text style={styles.modalText}>1. Type the email of a service provider you would like to hire.</Text>
-              <Text style={styles.modalText}>2. If it's found on the app, the service provider will see your name on the employer's list.</Text>
-              <Text style={styles.modalText}>3. Otherwise, we will send the service provider an email to download this app</Text>
+              <View style={styles.separator}></View>
+              <Text style={styles.modalText}>{`<If the email is found on our app>`}</Text>
+              <Text style={styles.modalText}>You can specify employment conditions between you and the service provider</Text>
+              <View style={styles.separator}></View>
+              <Text style={styles.modalText}>{`<If the email is not found on our app>`}</Text>
+              <Text style={styles.modalText}>The service provider will receive a request from you</Text>
+              <View style={styles.separator}></View>
+              <Text style={styles.modalText}>2. Once the request has been approved, you will see the name on your service provider's list</Text>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}>

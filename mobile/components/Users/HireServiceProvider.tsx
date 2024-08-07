@@ -11,9 +11,7 @@ import Button from './Button';
 import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {
-  const userInfo = useSelector(state => state.userInfo);
-  const {firstName, lastName, email} = userInfo;
-
+  const {firstName, lastName, email} = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
@@ -55,10 +53,11 @@ const HireServiceProvider = (props: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/email/exists`, {
         params: {
-          email: searchInput
-        }
+          email: searchInput,
+        },
       })
       .then(res => {
+        clearInput();
         const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
         showAlert(msg, null, function () {
           navigateToNext(res.data[0]);
@@ -84,8 +83,7 @@ const HireServiceProvider = (props: any) => {
         },
       })
       .then(() => {
-        const msg = `An email has been sent to ${searchInput}. You will see the user on your home page once the request is approved. `;
-        showAlert(msg, null, navigateToHome);
+        showSuccessAlert();
       })
       .catch(() => {});
   };
@@ -104,6 +102,20 @@ const HireServiceProvider = (props: any) => {
     ]);
   };
 
+  const showSuccessAlert = () => {
+    Alert.alert(
+      'Request sent!',
+      `An request has been sent to ${searchInput}. You will see the user on your home page once the request is approved. `,
+      [
+        {
+          text: 'OK',
+          onPress: () => props.navigation.navigate('DrawerNav'),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   const navigateToNext = (data: any) => {
     props.navigation.navigate('PersonalInfo', {
       firstName: data.first_name,
@@ -112,8 +124,12 @@ const HireServiceProvider = (props: any) => {
     });
   };
 
-  const navigateToHome = () => {
-    props.navigation.navigate('Home');
+  const clearInput = () => {
+    setSearchInput('');
+    setInputError({
+      type: '',
+      msg: '',
+    });
   };
 
   return (

@@ -41,10 +41,10 @@ class UserModels {
   async emailToNotFoundUser(email: string, userInfo: any) {
     const { firstName, lastName, userEmail } = userInfo;
     const mailOptions = {
-      from: process.env.MAIL_USER,
+      from: userEmail,
       to: email,
-      subject: `${firstName} ${lastName} added you as a service provider`,
-      text: `${firstName} ${lastName} added you as a service provider. Please download the app from this link: `,
+      subject: `Request from ${firstName} ${lastName}`,
+      text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
     };
     try {
       await transporter.sendMail(mailOptions);

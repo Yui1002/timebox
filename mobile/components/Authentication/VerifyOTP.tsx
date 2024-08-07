@@ -3,19 +3,20 @@ import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
-import {UseDispatch, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password} = route.params;
   const [otp, setOtp] = useState(new Array(6).fill(''));
+  const otpBoxReference = useRef([]);
   const [inputError, setinputError] = useState({
     type: '',
     msg: '',
   });
-  const otpBoxReference = useRef([]);
 
+  // send otp when the user loads this page
   useEffect(() => {
     axios
       .post(`${LOCAL_HOST_URL}/otp/send`, {
@@ -52,7 +53,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         email,
         password,
       })
-      .then(res => {
+      .then(() => {
         dispatch(
           signInUser({
             firstName,
@@ -60,7 +61,7 @@ const VerifyOTP = ({route, navigation}: any) => {
             email,
           }),
         );
-        navigation.navigate('DrawerNav', {firstName, lastName, email});
+        navigation.navigate('DrawerNav');
       });
   };
 
@@ -112,6 +113,7 @@ const VerifyOTP = ({route, navigation}: any) => {
             key={index}
             value={digit}
             style={styles.otpBox}
+            autoFocus={index === 0}
             onChangeText={e => handleChange(e, index)}
             onKeyPress={e => handleBackspaceAndEnter(e, index)}
             ref={reference => (otpBoxReference.current[index] = reference)}
@@ -119,7 +121,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         ))}
       </View>
       <View>
-        {inputError.type === 'WRONG_OTP' && (
+        {inputError.type === 'INVALID_OTP' && (
           <Text style={styles.inputError}>{inputError.msg}</Text>
         )}
       </View>
