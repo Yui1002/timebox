@@ -3,8 +3,11 @@ import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
+import {UseDispatch, useDispatch} from 'react-redux';
+import {signInUser} from '../../redux/actions/signInAction';
 
 const VerifyOTP = ({route, navigation}: any) => {
+  const dispatch = useDispatch();
   const {firstName, lastName, email, password} = route.params;
   const [otp, setOtp] = useState(new Array(6).fill(''));
   const [inputError, setinputError] = useState({
@@ -50,6 +53,13 @@ const VerifyOTP = ({route, navigation}: any) => {
         password,
       })
       .then(res => {
+        dispatch(
+          signInUser({
+            firstName,
+            lastName,
+            email,
+          }),
+        );
         navigation.navigate('DrawerNav', {firstName, lastName, email});
       });
   };
@@ -82,7 +92,7 @@ const VerifyOTP = ({route, navigation}: any) => {
       })
       .then(res => {})
       .catch((err): any => {
-        console.log(err)
+        console.log(err);
       });
   };
 

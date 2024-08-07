@@ -4,3 +4,10 @@ export const signInUser = data => {
     payload: data,
   };
 };
+
+export const signOutUser = data => {
+  return {
+    type: 'SIGN_OUT',
+    payload: data
+  }
+}

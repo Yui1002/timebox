@@ -9,14 +9,20 @@ import WorkingHistory from './WorkingHistory';
 import HireServiceProvider from './HireServiceProvider';
 import ManageServiceProviders from './ManageServiceProviders';
 import Home from './Home';
+import { UseDispatch, useDispatch } from 'react-redux';
+import { signOutUser } from '../../redux/actions/signInAction';
 
 const CustomDrawerContent = (props: any) => {
+  const dispatch = useDispatch();
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
       <DrawerItem
         label="Sign Out"
-        onPress={() => props.navigation.navigate('SignIn')}
+        onPress={() => {
+          props.navigation.navigate('SignIn');
+          dispatch(signOutUser())
+        }}
       />
     </DrawerContentScrollView>
   );
