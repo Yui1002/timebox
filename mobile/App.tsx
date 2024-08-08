@@ -14,7 +14,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import SignUp from './components/Authentication/SignUp';
 import SignIn from './components/Authentication/SignIn';
 import VerifyOTP from './components/Authentication/VerifyOTP';
-import Home from './components/Users/Home';
 import DrawerNav from './components/Users/DrawerNav';
 import Record from './components/Users/Record';
 import PersonalInfo from './components/Users/StepForms/PersonalInfo';
@@ -71,15 +70,6 @@ function App(): JSX.Element {
             options={{gestureEnabled: false}}
           />
           <Stack.Screen
-            name="Home"
-            component={Home}
-            options={({navigation}) => ({
-              headerTitle: '',
-              gestureEnabled: false,
-              headerLeft: () => null,
-            })}
-          />
-          <Stack.Screen
             name="DrawerNav"
             component={DrawerNav}
             options={({navigation}) => ({
@@ -126,7 +116,7 @@ function App(): JSX.Element {
             options={({navigation}) => ({
               headerTitle: '',
               gestureEnabled: false,
-              headerLeft: () => null
+              headerLeft: () => null,
             })}
           />
           <Stack.Screen

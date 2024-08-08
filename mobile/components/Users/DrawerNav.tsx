@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -28,26 +28,16 @@ const CustomDrawerContent = (props: any) => {
   );
 };
 
-const DrawerNav = ({navigation}: any) => {
+const DrawerNav = () => {
   const Drawer = createDrawerNavigator();
-
   return (
     <Drawer.Navigator
       initialRouteName="Home"
       drawerContent={props => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen
-        name="Home"
-        component={Home}
-      />
-      <Drawer.Screen name={'My Working Records'}>
-        {props => <WorkingHistory />}
-      </Drawer.Screen>
-      <Drawer.Screen name={'Hire Service Provider'}>
-        {props => <HireServiceProvider navigation={navigation} />}
-      </Drawer.Screen>
-      <Drawer.Screen name={'Manage Service Provider'}>
-        {props => <ManageServiceProviders navigation={navigation} />}
-      </Drawer.Screen>
+      <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="My Working Records" component={WorkingHistory} />
+      <Drawer.Screen name="Hire Service Provider" component={HireServiceProvider} />
+      <Drawer.Screen name="Manage Service Provider" component={ManageServiceProviders} />
     </Drawer.Navigator>
   );
 };

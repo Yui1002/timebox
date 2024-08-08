@@ -9,8 +9,12 @@ import InputField from '../InputField';
 import InputError from '../InputError';
 import Button from './Button';
 import Popup from '../Popup';
+import { CommonActions } from '@react-navigation/native';
 
+// const HireServiceProvider = ({route, navigation}: any) => {
 const HireServiceProvider = (props: any) => {
+  // console.log(props)
+  // console.log('navigation', navigation)
   const {firstName, lastName, email} = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -107,20 +111,24 @@ const HireServiceProvider = (props: any) => {
       [
         {
           text: 'OK',
-          onPress: () => props.navigation.navigate('DrawerNav'),
+          onPress: () => navigateToHome(),
         },
       ],
       {cancelable: false},
     );
   };
 
-  const navigateToNext = (data: any) => {
-    props.navigation.navigate('PersonalInfo', {
-      firstName: data.first_name,
-      lastName: data.last_name,
-      email: searchInput,
-    });
-  };
+  const navigateToHome = () => {
+    props.navigation.goBack()
+  }
+
+  // const navigateToNext = (data: any) => {
+  //   props.navigation.navigate('PersonalInfo', {
+  //     firstName: data.first_name,
+  //     lastName: data.last_name,
+  //     email: searchInput,
+  //   });
+  // };
 
   const clearInput = () => {
     setSearchInput('');
