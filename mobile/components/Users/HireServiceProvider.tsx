@@ -9,12 +9,8 @@ import InputField from '../InputField';
 import InputError from '../InputError';
 import Button from './Button';
 import Popup from '../Popup';
-import { CommonActions } from '@react-navigation/native';
 
-// const HireServiceProvider = ({route, navigation}: any) => {
 const HireServiceProvider = (props: any) => {
-  // console.log(props)
-  // console.log('navigation', navigation)
   const {firstName, lastName, email} = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -25,6 +21,7 @@ const HireServiceProvider = (props: any) => {
 
   useEffect(() => {
     setModalVisible(true);
+    clearInput();
   }, []);
 
   const validateEmail = (type: string): boolean => {
@@ -85,9 +82,15 @@ const HireServiceProvider = (props: any) => {
         },
       })
       .then(() => {
+        clearInput();
         showSuccessAlert();
       })
-      .catch(() => {});
+      .catch(err => {
+        setInputError({
+          type: 'DUPLICATE_EMAIL',
+          msg: err.response.data.error,
+        });
+      });
   };
 
   const showAlert = (msg: string, cancelCb: any, confirmCb: any) => {
@@ -111,24 +114,20 @@ const HireServiceProvider = (props: any) => {
       [
         {
           text: 'OK',
-          onPress: () => navigateToHome(),
+          onPress: () => props.navigation.goBack(),
         },
       ],
       {cancelable: false},
     );
   };
 
-  const navigateToHome = () => {
-    props.navigation.goBack()
-  }
-
-  // const navigateToNext = (data: any) => {
-  //   props.navigation.navigate('PersonalInfo', {
-  //     firstName: data.first_name,
-  //     lastName: data.last_name,
-  //     email: searchInput,
-  //   });
-  // };
+  const navigateToNext = (data: any) => {
+    props.navigation.navigate('PersonalInfo', {
+      firstName: data.first_name,
+      lastName: data.last_name,
+      email: searchInput,
+    });
+  };
 
   const clearInput = () => {
     setSearchInput('');
@@ -153,10 +152,12 @@ const HireServiceProvider = (props: any) => {
         <InputField.Outlined
           onChangeText={(val: any) => setSearchInput(val)}
           isEditable={true}
+          value={searchInput}
         />
         {(inputError.type === 'SEARCH_EMPTY_EMAIL' ||
           inputError.type === 'SEARCH_INVALID_FORMAT' ||
-          inputError.type === 'EMAIL_NOT_FOUND') && (
+          inputError.type === 'EMAIL_NOT_FOUND' ||
+          inputError.type === 'DUPLICATE_EMAIL') && (
           <InputError error={inputError} />
         )}
         <Button.Outlined title="Continue" onPress={searchEmail} />

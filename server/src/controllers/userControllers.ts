@@ -32,7 +32,9 @@ class UserControllers {
   async emailToNotFoundUser(req: any, res: any) {
     const {serviceProviderEmail, userInfo} = req.body;
     const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
-    result ? res.sendStatus(200) : res.sendStatus(400);
+    result ? res.sendStatus(200) : res.status(400).json({
+      error: 'You have sent the request before'
+    });
   }
 
   async sendEmailToServiceProvider(req: any, res: any) {

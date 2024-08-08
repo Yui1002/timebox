@@ -5,7 +5,7 @@ import {styles} from '../styles/inputFieldStyles.js';
 const Outlined = ({onChangeText, isEditable, value}: any) => (
   <TextInput
     style={styles.input}
-    // value={value}
+    value={value}
     autoCorrect={false}
     autoCapitalize="none"
     editable={isEditable}

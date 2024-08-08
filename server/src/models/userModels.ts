@@ -47,12 +47,12 @@ class UserModels {
       text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
     };
     try {
-      // const userId = await this.repositories.getUserId(userEmail)
-      // const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
-      // if (emailHasBeenSent) {
-      //   return false;
-      // }
-      // await this.repositories.addEmailToSentList(email, userId);
+      const userId = await this.repositories.getUserId(userEmail)
+      const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
+      if (emailHasBeenSent) {
+        return false;
+      }
+      await this.repositories.addEmailToSentList(email, userId);
       await transporter.sendMail(mailOptions);
       return true;
     } catch (err) {
