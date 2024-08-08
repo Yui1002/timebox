@@ -16,6 +16,8 @@ const workShiftsReducer = (state = initialState, action) => {
           s => JSON.stringify(s) !== JSON.stringify(action.payload),
         ),
       };
+    case 'RESET': 
+      return state;
     default:
       return state;
   }

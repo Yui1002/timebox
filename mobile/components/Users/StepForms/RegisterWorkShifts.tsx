@@ -5,11 +5,12 @@ import {styles} from '../../../styles/stepFormsStyles.js';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
-import { addShift } from '../../../redux/actions/workShiftsAction';
+import {addShift} from '../../../redux/actions/workShiftsAction';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
-  const {firstName, lastName, email, rate, rateType} = route.params;
   const dispatch = useDispatch();
+  const {firstName, lastName, email, rate, rateType} = route.params;
+  const workShifts = useSelector(state => state.workShifts);
 
   const days = [
     'Monday',
@@ -38,6 +39,13 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
       });
       return false;
     }
+    if (workShifts.workShifts.some(shift => shift['day'] === selectedDay)) {
+      setInputError({
+        type: 'DUPLICATE_DAY',
+        msg: `${selectedDay} is already registered`,
+      });
+      return false;
+    }
     if (startTime > endTime) {
       setInputError({
         type: 'INVALID_TIME',
@@ -62,9 +70,15 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
       startTime: moment(startTime).format('LT'),
       endTime: moment(endTime).format('LT'),
     };
-    dispatch(addShift(value))
+    dispatch(addShift(value));
 
-    navigation.navigate('WorkShifts', {firstName, lastName, email, rate, rateType});
+    navigation.navigate('WorkShifts', {
+      firstName,
+      lastName,
+      email,
+      rate,
+      rateType,
+    });
   };
 
   return (
@@ -73,7 +87,10 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         <Text style={{fontSize: 16, fontWeight: 500, marginVertical: 8}}>
           Select day and time
         </Text>
-        {inputError.type === 'EMPTY_DAY' && <InputError error={inputError} />}
+        {(inputError.type === 'EMPTY_DAY' ||
+          inputError.type === 'DUPLICATE_DAY') && (
+          <InputError error={inputError} />
+        )}
         <View style={styles.dayContainer}>
           {days.map((day, index) => (
             <TouchableOpacity
@@ -138,7 +155,11 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         }}>
         <View
           style={{backgroundColor: '#909090', width: '40%', borderRadius: 10}}>
-          <Button title="Cancel" color="#fff" onPress={() => navigation.goBack()} />
+          <Button
+            title="Cancel"
+            color="#fff"
+            onPress={() => navigation.goBack()}
+          />
         </View>
         <View
           style={{backgroundColor: '#24a0ed', width: '40%', borderRadius: 10}}>
