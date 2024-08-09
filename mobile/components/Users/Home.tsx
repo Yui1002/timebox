@@ -5,7 +5,7 @@ import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 
-const Home = ({route, navigation}: any) => {
+const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const {firstName, lastName, email} = userInfo;
   const [employers, setEmployers] = useState([]);
@@ -48,7 +48,7 @@ const Home = ({route, navigation}: any) => {
                       title="Record"
                       color="#fff"
                       onPress={() =>
-                        navigation.navigate('Record', {
+                        props.navigation.navigate('Record', {
                           employer: item,
                           serviceProviderEmail: email,
                         })

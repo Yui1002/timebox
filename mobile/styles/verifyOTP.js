@@ -28,6 +28,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     borderColor: '#A0A0A0',
+    textAlign: 'center'
   },
   inputError: {
     color: '#ff0000',

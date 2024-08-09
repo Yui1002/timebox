@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
-    marginTop: 10
+    marginTop: 20
   },
   buttonOpen: {
     backgroundColor: '#F194FF',
@@ -44,6 +44,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
   modalTitle: {
+    fontSize: 16,
     marginBottom: 15,
     textAlign: 'center',
     fontWeight: '500'
@@ -51,6 +52,11 @@ export const styles = StyleSheet.create({
   modalText: {
     color: '#606060',
     fontSize: 13,
-    marginBottom: 6
+    // marginBottom: 6
+  },
+  separator: {
+    borderBottomColor: '#B0B0B0',
+    borderBottomWidth: 1,
+    marginVertical: 6
   }
 });

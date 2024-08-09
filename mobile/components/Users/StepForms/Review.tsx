@@ -5,6 +5,8 @@ import StatusBar from './StatusBar';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../../config.js';
+import { useDispatch } from 'react-redux';
+import { resetShift } from '../../../redux/actions/workShiftsAction';
 
 interface Shifts {
   day: string;
@@ -13,6 +15,7 @@ interface Shifts {
 }
 
 const Review = ({route, navigation}: any) => {
+  const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType} = route.params;
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
@@ -43,6 +46,7 @@ const Review = ({route, navigation}: any) => {
         employer: userInfo,
       })
       .then(() => {
+        dispatch(resetShift())
         showSuccess()
       })
       .catch((err) => [

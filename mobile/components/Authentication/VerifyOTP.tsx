@@ -3,16 +3,20 @@ import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
+import {useDispatch} from 'react-redux';
+import {signInUser} from '../../redux/actions/signInAction';
 
 const VerifyOTP = ({route, navigation}: any) => {
+  const dispatch = useDispatch();
   const {firstName, lastName, email, password} = route.params;
   const [otp, setOtp] = useState(new Array(6).fill(''));
+  const otpBoxReference = useRef([]);
   const [inputError, setinputError] = useState({
     type: '',
     msg: '',
   });
-  const otpBoxReference = useRef([]);
 
+  // send otp when the user loads this page
   useEffect(() => {
     axios
       .post(`${LOCAL_HOST_URL}/otp/send`, {
@@ -24,16 +28,33 @@ const VerifyOTP = ({route, navigation}: any) => {
       });
   }, []);
 
+  const validateInput = () => {
+    if (otp.join('').length !== 6) {
+      setinputError({
+        type: 'INVALID_OTP',
+        msg: 'OTP has to be 6 digit',
+      });
+      return false;
+    }
+    return true;
+  };
+
   const verifyOTP = () => {
+    console.log('verify')
+    if (!validateInput()) return;
+    console.log('validated')
+
     axios
       .post(`${LOCAL_HOST_URL}/otp/verify`, {
         otp: otp.join(''),
         email,
       })
       .then(() => {
+        console.log('here')
         signUp();
       })
       .catch(err => {
+        console.log('error')
         setinputError({
           type: 'INVALID_OTP',
           msg: err.response.data.error,
@@ -49,12 +70,22 @@ const VerifyOTP = ({route, navigation}: any) => {
         email,
         password,
       })
-      .then(res => {
-        navigation.navigate('DrawerNav', {firstName, lastName, email});
+      .then(() => {
+        dispatch(
+          signInUser({
+            firstName,
+            lastName,
+            email,
+          }),
+        );
+        navigation.navigate('DrawerNav');
       });
   };
 
   const handleChange = (value: string, index: number) => {
+    if (value.length > 1) {
+      value = value[value.length - 1];
+    }
     let newArr = [...otp];
     newArr[index] = value;
     setOtp(newArr);
@@ -82,7 +113,7 @@ const VerifyOTP = ({route, navigation}: any) => {
       })
       .then(res => {})
       .catch((err): any => {
-        console.log(err)
+        console.log(err);
       });
   };
 
@@ -102,6 +133,7 @@ const VerifyOTP = ({route, navigation}: any) => {
             key={index}
             value={digit}
             style={styles.otpBox}
+            autoFocus={index === 0}
             onChangeText={e => handleChange(e, index)}
             onKeyPress={e => handleBackspaceAndEnter(e, index)}
             ref={reference => (otpBoxReference.current[index] = reference)}
@@ -109,7 +141,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         ))}
       </View>
       <View>
-        {inputError.type === 'WRONG_OTP' && (
+        {inputError.type === 'INVALID_OTP' && (
           <Text style={styles.inputError}>{inputError.msg}</Text>
         )}
       </View>

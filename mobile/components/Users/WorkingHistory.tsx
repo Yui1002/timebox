@@ -16,8 +16,7 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
 const WorkingHistory = (props: any) => {
-  const userInfo = useSelector(state => state.userInfo);
-  const {email} = userInfo;
+  const {email} = useSelector(state => state.userInfo);;
   const [employerDropdownOpen, setEmployerDropdownOpen] = useState(false);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);

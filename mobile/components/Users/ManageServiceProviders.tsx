@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { UseSelector, useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
@@ -7,7 +7,7 @@ import {styles} from '../../styles/manageServiceProvidersStyles.js';
 
 const ManageServiceProviders = (props: any) => {
   const [serviceProviders, setServiceProviders] = useState([]);
-  const userInfo = useSelector(state => state.userInfo)
+  const {email} = useSelector(state => state.userInfo);
 
   useEffect(() => {
     getServiceProviders();
@@ -17,11 +17,11 @@ const ManageServiceProviders = (props: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/serviceProviders`, {
         params: {
-          email: userInfo.email,
+          email,
         },
       })
       .then(res => {
-        const data = formatData(res.data)
+        const data = formatData(res.data);
         setServiceProviders(data);
       })
       .catch(() => {
@@ -31,7 +31,7 @@ const ManageServiceProviders = (props: any) => {
 
   const formatData = (users: any) => {
     const data = users.reduce((a, b) => {
-      const found = a.find((e) => e.email_address == b.email_address);
+      const found = a.find(e => e.email_address == b.email_address);
       const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
       return (
         found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
@@ -40,7 +40,11 @@ const ManageServiceProviders = (props: any) => {
 
     for (let i = 0; i < data.length; i++) {
       const obj = data[i];
-      if (obj.hasOwnProperty('day') || obj.hasOwnProperty('start_time') || obj.hasOwnProperty('end_time')) {
+      if (
+        obj.hasOwnProperty('day') ||
+        obj.hasOwnProperty('start_time') ||
+        obj.hasOwnProperty('end_time')
+      ) {
         delete obj['day'];
         delete obj['start_time'];
         delete obj['end_time'];
@@ -66,11 +70,10 @@ const ManageServiceProviders = (props: any) => {
     });
   };
 
-
   const navigateToProfile = user => {
     props.navigation.navigate('Profile', {
       user,
-      employerEmail: userInfo.email,
+      employerEmail: email,
     });
   };
 

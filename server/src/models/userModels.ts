@@ -41,12 +41,18 @@ class UserModels {
   async emailToNotFoundUser(email: string, userInfo: any) {
     const { firstName, lastName, userEmail } = userInfo;
     const mailOptions = {
-      from: process.env.MAIL_USER,
+      from: userEmail,
       to: email,
-      subject: `${firstName} ${lastName} added you as a service provider`,
-      text: `${firstName} ${lastName} added you as a service provider. Please download the app from this link: `,
+      subject: `Request from ${firstName} ${lastName}`,
+      text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
     };
     try {
+      const userId = await this.repositories.getUserId(userEmail)
+      const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
+      if (emailHasBeenSent) {
+        return false;
+      }
+      await this.repositories.addEmailToSentList(email, userId);
       await transporter.sendMail(mailOptions);
       return true;
     } catch (err) {

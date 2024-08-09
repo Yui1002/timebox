@@ -11,3 +11,10 @@ export const deleteShift = data => {
     payload: data,
   };
 };
+
+export const resetShift = data => {
+  return {
+    type: 'RESET',
+    payload: data,
+  }
+}

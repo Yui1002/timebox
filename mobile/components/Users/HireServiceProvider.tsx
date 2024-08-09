@@ -11,9 +11,7 @@ import Button from './Button';
 import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {
-  const userInfo = useSelector(state => state.userInfo);
-  const {firstName, lastName, email} = userInfo;
-
+  const {firstName, lastName, email} = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
@@ -23,6 +21,7 @@ const HireServiceProvider = (props: any) => {
 
   useEffect(() => {
     setModalVisible(true);
+    clearInput();
   }, []);
 
   const validateEmail = (type: string): boolean => {
@@ -55,10 +54,11 @@ const HireServiceProvider = (props: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/email/exists`, {
         params: {
-          email: searchInput
-        }
+          email: searchInput,
+        },
       })
       .then(res => {
+        clearInput();
         const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
         showAlert(msg, null, function () {
           navigateToNext(res.data[0]);
@@ -74,20 +74,23 @@ const HireServiceProvider = (props: any) => {
   const emailToNotFoundUser = () => {
     axios
       .post(`${LOCAL_HOST_URL}/not/user/send`, {
-        params: {
-          serviceProviderEmail: searchInput,
-          userInfo: {
-            firstName,
-            lastName,
-            userEmail: email,
-          },
+        serviceProviderEmail: searchInput,
+        userInfo: {
+          firstName,
+          lastName,
+          userEmail: email,
         },
       })
       .then(() => {
-        const msg = `An email has been sent to ${searchInput}. You will see the user on your home page once the request is approved. `;
-        showAlert(msg, null, navigateToHome);
+        clearInput();
+        showSuccessAlert();
       })
-      .catch(() => {});
+      .catch(err => {
+        setInputError({
+          type: 'DUPLICATE_EMAIL',
+          msg: err.response.data.error,
+        });
+      });
   };
 
   const showAlert = (msg: string, cancelCb: any, confirmCb: any) => {
@@ -104,6 +107,20 @@ const HireServiceProvider = (props: any) => {
     ]);
   };
 
+  const showSuccessAlert = () => {
+    Alert.alert(
+      'Request sent!',
+      `An request has been sent to ${searchInput}. You will see the user on your home page once the request is approved. `,
+      [
+        {
+          text: 'OK',
+          onPress: () => props.navigation.goBack(),
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   const navigateToNext = (data: any) => {
     props.navigation.navigate('PersonalInfo', {
       firstName: data.first_name,
@@ -112,8 +129,12 @@ const HireServiceProvider = (props: any) => {
     });
   };
 
-  const navigateToHome = () => {
-    props.navigation.navigate('Home');
+  const clearInput = () => {
+    setSearchInput('');
+    setInputError({
+      type: '',
+      msg: '',
+    });
   };
 
   return (
@@ -131,10 +152,12 @@ const HireServiceProvider = (props: any) => {
         <InputField.Outlined
           onChangeText={(val: any) => setSearchInput(val)}
           isEditable={true}
+          value={searchInput}
         />
         {(inputError.type === 'SEARCH_EMPTY_EMAIL' ||
           inputError.type === 'SEARCH_INVALID_FORMAT' ||
-          inputError.type === 'EMAIL_NOT_FOUND') && (
+          inputError.type === 'EMAIL_NOT_FOUND' ||
+          inputError.type === 'DUPLICATE_EMAIL') && (
           <InputError error={inputError} />
         )}
         <Button.Outlined title="Continue" onPress={searchEmail} />

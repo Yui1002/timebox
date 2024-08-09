@@ -31,7 +31,7 @@ const SignUp = ({navigation}: any) => {
     }
     axios
       .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
-      .then(res => {
+      .then(() => {
         clearInput();
         navigation.navigate('VerifyOTP', {
           firstName,
@@ -41,7 +41,6 @@ const SignUp = ({navigation}: any) => {
         });
       })
       .catch(err => {
-        console.log(err)
         setinputError({
           type: 'SIGN_UP_ERROR',
           msg: err.response.data.error,
@@ -143,6 +142,7 @@ const SignUp = ({navigation}: any) => {
               style={styles.input}
               autoCorrect={false}
               onChangeText={val => setFirstName(val)}
+              autoFocus={true}
             />
             {inputError.type === 'EMPTY_FIRST_NAME' && (
               <Text style={styles.inputError}>{inputError.msg}</Text>
