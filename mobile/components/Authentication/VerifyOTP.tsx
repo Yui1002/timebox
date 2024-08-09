@@ -28,16 +28,33 @@ const VerifyOTP = ({route, navigation}: any) => {
       });
   }, []);
 
+  const validateInput = () => {
+    if (otp.join('').length !== 6) {
+      setinputError({
+        type: 'INVALID_OTP',
+        msg: 'OTP has to be 6 digit',
+      });
+      return false;
+    }
+    return true;
+  };
+
   const verifyOTP = () => {
+    console.log('verify')
+    if (!validateInput()) return;
+    console.log('validated')
+
     axios
       .post(`${LOCAL_HOST_URL}/otp/verify`, {
         otp: otp.join(''),
         email,
       })
       .then(() => {
+        console.log('here')
         signUp();
       })
       .catch(err => {
+        console.log('error')
         setinputError({
           type: 'INVALID_OTP',
           msg: err.response.data.error,
@@ -66,6 +83,9 @@ const VerifyOTP = ({route, navigation}: any) => {
   };
 
   const handleChange = (value: string, index: number) => {
+    if (value.length > 1) {
+      value = value[value.length - 1];
+    }
     let newArr = [...otp];
     newArr[index] = value;
     setOtp(newArr);
