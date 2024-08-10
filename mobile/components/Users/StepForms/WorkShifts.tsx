@@ -12,7 +12,7 @@ interface Shifts {
 }
 
 const WorkShifts = ({route, navigation}: any) => {
-  const {firstName, lastName, email, rate, rateType} = route.params;
+  const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
   const workShifts = useSelector(state => state.workShifts);
   const dispatch = useDispatch();
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
@@ -37,6 +37,7 @@ const WorkShifts = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
+      isEnabled
     });
   };
 
@@ -53,7 +54,7 @@ const WorkShifts = ({route, navigation}: any) => {
         {
           text: 'Yes',
           onPress: () =>
-            navigation.navigate('Review', {firstName, lastName, email, rate, rateType}),
+            navigation.navigate('Review', {firstName, lastName, email, rate, rateType, isEnabled}),
         },
       ],
     );

@@ -16,7 +16,7 @@ interface Shifts {
 
 const Review = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {firstName, lastName, email, rate, rateType} = route.params;
+  const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
@@ -28,6 +28,7 @@ const Review = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
+      isEnabled
     });
   };
 
@@ -36,10 +37,12 @@ const Review = ({route, navigation}: any) => {
       firstName,
       lastName,
       email,
+      isEnabled
     });
   };
 
   const confirmServiceProvider = () => {
+    console.log()
     axios
       .post(`${LOCAL_HOST_URL}/send/notice/serviceProvider`, {
         emailTo: email,
