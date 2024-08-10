@@ -4,8 +4,6 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const Record = ({route, navigation}: any) => {
@@ -16,7 +14,7 @@ const Record = ({route, navigation}: any) => {
 
   useEffect(() => {
     getTodaysRecord();
-  }, []); 
+  }, []);
 
   const getTodaysRecord = () => {
     axios
@@ -61,27 +59,23 @@ const Record = ({route, navigation}: any) => {
       </View>
       <View style={styles.recordContainer}>
         <TouchableOpacity
-          style={
-            start !== null
-              ? [styles.checkInButton, styles.checkInButton_disabled]
-              : styles.checkInButton
-          }
+          style={start?.length ? styles.button_disabled : styles.checkInButton}
           disabled={start !== null}
           onPress={() => recordTime('checkin')}>
-          <Text style={styles.buttonText}>Check In</Text>
+          <Text style={styles.buttonText}>Start</Text>
           <View style={styles.logoContainer}>
             <AntDesign name="login" size={75} color="#fff" />
           </View>
         </TouchableOpacity>
         <TouchableOpacity
           style={
-            end !== null
-              ? [styles.checkOutButton, styles.checkOutButton_disabled]
+            end?.length || !start
+              ? styles.button_disabled
               : styles.checkOutButton
           }
           disabled={end !== null}
           onPress={() => recordTime('checkout')}>
-          <Text style={styles.buttonText}>Check Out</Text>
+          <Text style={styles.buttonText}>End</Text>
           <View style={styles.logoContainer}>
             <AntDesign name="logout" size={75} color="#fff" />
           </View>
@@ -90,12 +84,12 @@ const Record = ({route, navigation}: any) => {
       <View style={styles.todayRecordContainer}>
         <Text style={styles.subHeader}>Today's record</Text>
         <View style={styles.todayRecord}>
-          <Text>Check in</Text>
+          <Text>Start</Text>
           <Text>{start ? start : 'Not registered'}</Text>
         </View>
         <Separator />
         <View style={styles.todayRecord}>
-          <Text>Check out</Text>
+          <Text>End</Text>
           <Text>{end ? end : 'Not registered'}</Text>
         </View>
       </View>
