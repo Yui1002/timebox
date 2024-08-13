@@ -9,6 +9,7 @@ import {
   TextInput,
   Button,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import validator from 'validator';
 import {styles} from '../../styles/signInStyles.js';
@@ -27,6 +28,7 @@ const SignIn = ({navigation}: any) => {
     if (!validateEmail() || !validatePassword()) {
       return;
     }
+    console.log('validate')
     axios
       .post(`${LOCAL_HOST_URL}/signIn`, {
         email,
@@ -43,6 +45,7 @@ const SignIn = ({navigation}: any) => {
         navigation.navigate('DrawerNav');
       })
       .catch(err => {
+        console.log(err.response)
         const errMsg = err.response.data.error;
         const error = {type: 'SIGN_IN_ERROR', msg: errMsg};
         setinputError(error);
@@ -92,8 +95,8 @@ const SignIn = ({navigation}: any) => {
     setinputError({
       type: '',
       msg: '',
-    })
-  }
+    });
+  };
 
   const Separator = () => <View style={styles.separator}></View>;
 
@@ -108,7 +111,6 @@ const SignIn = ({navigation}: any) => {
               value={email}
               style={styles.input}
               autoCorrect={false}
-              
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
             />
@@ -133,9 +135,9 @@ const SignIn = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 20}} />
-          <View style={styles.button}>
-            <Button title="Sign In" color="#fff" onPress={signIn} />
-          </View>
+          <TouchableOpacity style={styles.button} onPress={signIn}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
         </View>
         <Separator />
         <View style={styles.footer}>

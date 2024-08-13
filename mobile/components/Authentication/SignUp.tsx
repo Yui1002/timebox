@@ -4,7 +4,7 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  Button,
+  TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import axios from 'axios';
@@ -221,9 +221,9 @@ const SignUp = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 14}} />
-          <View style={styles.button}>
-            <Button title="Sign Up" color="#fff" onPress={isUserRegistered} />
-          </View>
+          <TouchableOpacity style={styles.button} onPress={SignUp}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
         </View>
         <Separator />
         <View style={styles.footer}>

@@ -23,6 +23,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#24a0ed',
     borderRadius: 10,
   },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
+  },
   separator: {
     width: '100%',
     marginTop: 40,

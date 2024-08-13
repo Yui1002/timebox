@@ -22,6 +22,13 @@ export const styles = StyleSheet.create({
   button: {
     backgroundColor: '#24a0ed',
     borderRadius: 10,
+    height: 34
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
   },
   separator: {
     width: '100%',
