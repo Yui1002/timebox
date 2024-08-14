@@ -221,7 +221,7 @@ const SignUp = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 14}} />
-          <TouchableOpacity style={styles.button} onPress={SignUp}>
+          <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>

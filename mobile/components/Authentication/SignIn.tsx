@@ -7,7 +7,6 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  Button,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
@@ -28,7 +27,6 @@ const SignIn = ({navigation}: any) => {
     if (!validateEmail() || !validatePassword()) {
       return;
     }
-    console.log('validate')
     axios
       .post(`${LOCAL_HOST_URL}/signIn`, {
         email,

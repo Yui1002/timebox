@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Alert} from 'react-native';
+import {View, Text, Button, Alert, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../../config.js';
-import { useDispatch } from 'react-redux';
-import { resetShift } from '../../../redux/actions/workShiftsAction';
+import {useDispatch} from 'react-redux';
+import {resetShift} from '../../../redux/actions/workShiftsAction';
 
 interface Shifts {
   day: string;
@@ -28,7 +28,7 @@ const Review = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
-      isEnabled
+      isEnabled,
     });
   };
 
@@ -37,24 +37,22 @@ const Review = ({route, navigation}: any) => {
       firstName,
       lastName,
       email,
-      isEnabled
+      isEnabled,
     });
   };
 
   const confirmServiceProvider = () => {
-    console.log()
+    console.log();
     axios
       .post(`${LOCAL_HOST_URL}/send/notice/serviceProvider`, {
         emailTo: email,
         employer: userInfo,
       })
       .then(() => {
-        dispatch(resetShift())
-        showSuccess()
+        dispatch(resetShift());
+        showSuccess();
       })
-      .catch((err) => [
-        console.log(err)
-      ])
+      .catch(err => [console.log(err)]);
   };
 
   const showSuccess = () => {
@@ -154,20 +152,14 @@ const Review = ({route, navigation}: any) => {
           )}
         </View>
         <View style={styles.workShiftsBtn}>
-          <View style={styles.workShiftsBtn_back}>
-            <Button
-              title="Back"
-              onPress={() => navigation.goBack()}
-              color="#fff"
-            />
-          </View>
-          <View style={styles.workShiftsBtn_add}>
-            <Button
-              title="Confirm"
-              onPress={confirmServiceProvider}
-              color="#fff"
-            />
-          </View>
+          <TouchableOpacity
+            style={styles.workShiftsBtn_back}
+            onPress={() => navigation.goBack()}>
+            <Text style={styles.buttonText}>Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.workShiftsBtn_add} onPress={confirmServiceProvider}>
+            <Text style={styles.buttonText}>Confirm</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

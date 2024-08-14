@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, Button, Alert} from 'react-native';
+import {View, Text, Button, Alert, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import {deleteShift} from '../../../redux/actions/workShiftsAction';
@@ -31,13 +31,14 @@ const WorkShifts = ({route, navigation}: any) => {
   };
 
   const navigateToAddSchedule = () => {
+    console.log('here')
     navigation.navigate('RegisterWorkShifts', {
       firstName,
       lastName,
       email,
       rate,
       rateType,
-      isEnabled
+      isEnabled,
     });
   };
 
@@ -54,7 +55,14 @@ const WorkShifts = ({route, navigation}: any) => {
         {
           text: 'Yes',
           onPress: () =>
-            navigation.navigate('Review', {firstName, lastName, email, rate, rateType, isEnabled}),
+            navigation.navigate('Review', {
+              firstName,
+              lastName,
+              email,
+              rate,
+              rateType,
+              isEnabled,
+            }),
         },
       ],
     );
@@ -72,7 +80,7 @@ const WorkShifts = ({route, navigation}: any) => {
         )}
       </View>
       <View style={{marginVertical: 20, height: '60%'}}>
-        <Text style={{fontSize: 20, fontWeight: 500}}>Work Schedules</Text>
+        <Text style={{fontSize: 20, fontWeight: '500'}}>Work Schedules</Text>
         {workShifts.workShifts.length > 0 ? (
           workShifts.workShifts.map((w, index) => (
             <View style={styles.dateContainer} key={index}>
@@ -90,29 +98,25 @@ const WorkShifts = ({route, navigation}: any) => {
             No date and time selected
           </Text>
         )}
-        <View style={styles.addButton}>
-          <Button
-            title={`${String.fromCharCode(43)}  Add Schedule`}
-            color="#fff"
-            onPress={navigateToAddSchedule}
-          />
-        </View>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={navigateToAddSchedule}>
+          <Text style={styles.buttonText}>{`${String.fromCharCode(
+            43,
+          )}  Add Schedule`}</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.workShiftsBtn}>
-        <View style={styles.workShiftsBtn_back}>
-          <Button
-            title="Back"
-            onPress={() => navigation.goBack()}
-            color="#fff"
-          />
-        </View>
-        <View style={styles.workShiftsBtn_add}>
-          <Button
-            title={`Review  ${String.fromCharCode(9654)}`}
-            onPress={review}
-            color="#fff"
-          />
-        </View>
+        <TouchableOpacity
+          style={styles.workShiftsBtn_back}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.workShiftsBtn_add} onPress={review}>
+          <Text style={styles.buttonText}>{`Review  ${String.fromCharCode(
+            9654,
+          )}`}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Switch} from 'react-native';
+import {View, Text, Button, Switch, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
@@ -156,11 +156,14 @@ const PersonalInfo = ({route, navigation}: any) => {
             top: 0,
             right: 0,
           }}>
-          <Button
+          <TouchableOpacity onPress={proceed}>
+            <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(9654)}`}</Text>
+          </TouchableOpacity>
+          {/* <Button
             title={`Continue  ${String.fromCharCode(9654)}`}
             onPress={proceed}
             color="#fff"
-          />
+          /> */}
         </View>
       </View>
     </View>

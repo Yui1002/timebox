@@ -62,6 +62,12 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 20,
   },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
+  },
   separator: {
     width: '100%',
     marginVertical: 8,

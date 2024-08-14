@@ -22,5 +22,12 @@ export const styles = StyleSheet.create({
   button: {
     backgroundColor: '#24a0ed',
     borderRadius: 10,
+    width: 70
   },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
+  }
 });

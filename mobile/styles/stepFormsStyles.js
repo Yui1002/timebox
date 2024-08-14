@@ -46,7 +46,7 @@ export const styles = StyleSheet.create({
     color: '#fff',
     padding: 6,
     textAlign: 'center',
-    fontWeight: 400,
+    fontWeight: '400',
   },
   timeContainer: {
     flexDirection: 'row',
@@ -113,4 +113,10 @@ export const styles = StyleSheet.create({
     width: '40%', 
     borderRadius: 10
   },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
+  }
 });

@@ -7,7 +7,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Button,
   ScrollView,
 } from 'react-native';
 import {styles} from '../../styles/workingHistoryStyles.js';
@@ -148,9 +147,12 @@ const WorkingHistory = (props: any) => {
               }}
             />
           </View>
-          <View style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={searchRecord}>
+              <Text style={styles.buttonText}>Search</Text>
+          </TouchableOpacity>
+          {/* <View style={styles.button}>
             <Button title="Search" color="#fff" onPress={searchRecord} />
-          </View>
+          </View> */}
           {history !== null && history.length > 0 && (
             <View>
               <View style={styles.listHeader}>

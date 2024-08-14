@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {SafeAreaView, View, Text, Button, Alert, Linking} from 'react-native';
+import {SafeAreaView, View, Text, Button, Alert, Linking, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -114,9 +114,9 @@ const Profile = ({route, navigation}: any) => {
           </View>
         ))}
       </View>
-      <View style={styles.btn}>
-        <Button title="View working history" color="#fff" />
-      </View>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>View working history</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

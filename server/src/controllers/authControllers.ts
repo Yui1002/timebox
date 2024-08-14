@@ -35,9 +35,7 @@ class AuthControllers {
   }
 
   async signIn(req: any, res: any) {
-    console.log('here')
     const { email, password } = req.body;
-    console.log(email, password)
     const usersname = await this.models.getName(email);
     if (!usersname.length) {
       res.status(400).json({ error: "Incorrect email address or password" });
