@@ -264,15 +264,18 @@ class UserRepositories {
   }
 
   async emailHasBeenSent(email: string, addedBy: string) {
-    console.log(email, addedBy)
-    const sql = "SELECT * FROM email_user_sent WHERE email_address = $1 AND added_by = $2;";
-    return (await this.repositories.queryDB(sql, [email, addedBy])).rowCount > 0;
+    const sql = "SELECT * FROM requests WHERE sender = $1 AND receiver = $2;";
+    return (await this.repositories.queryDB(sql, [addedBy, email])).rowCount > 0;
   }
 
   async addEmailToSentList(email: string, addedBy: string) {
     const sql = "INSERT INTO email_user_sent VALUES (gen_random_uuid(), $1, $2);";
     await this.repositories.queryDB(sql, [email, addedBy]);
     return true;
+  }
+
+  async getNotification() {
+    const sql = ""
   }
 }
 

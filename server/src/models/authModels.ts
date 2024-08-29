@@ -70,8 +70,16 @@ class AutheModels {
     }
   }
 
+  async checkOtpExists(email: string) {
+    return await this.repositories.checkOtpExists(email);
+  }
+
   async verifyOtp(email: string, inputOtp: string) {
     return this.repositories.verifyOtp(email, inputOtp)
+  }
+
+  async updateOtp(otp: string, email: string) {
+    return this.repositories.updateOtp(otp, email);
   }
 
   async storeOtp(email: string, otp: string) {

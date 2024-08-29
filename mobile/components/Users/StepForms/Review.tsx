@@ -42,9 +42,8 @@ const Review = ({route, navigation}: any) => {
   };
 
   const confirmServiceProvider = () => {
-    console.log();
     axios
-      .post(`${LOCAL_HOST_URL}/send/notice/serviceProvider`, {
+      .post(`${LOCAL_HOST_URL}/request`, {
         emailTo: email,
         employer: userInfo,
       })

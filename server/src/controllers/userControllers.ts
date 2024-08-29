@@ -39,7 +39,9 @@ class UserControllers {
 
   async sendEmailToServiceProvider(req: any, res: any) {
     const { emailTo, employer } = req.body;
+    console.log(emailTo, employer)
     const hasBeenSent = await this.models.emailHasBeenSent(emailTo, employer.email);
+    console.log('email has been sent', hasBeenSent)
     if (hasBeenSent) {
       res.status(400).json({ error : 'You have already sent a request before'});
       return;
@@ -92,6 +94,10 @@ class UserControllers {
     const { username } = req.params;
     const record = await this.models.getRecord(username);
     res.send(record);
+  }
+
+  async getNotification(req: any, res: any) {
+    console.log('here')
   }
 }
 

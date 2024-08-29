@@ -160,7 +160,7 @@ const HireServiceProvider = (props: any) => {
           inputError.type === 'DUPLICATE_EMAIL') && (
           <InputError error={inputError} />
         )}
-        <TouchableOpacity style={styles.button} onPress={searchEmail}>
+        <TouchableOpacity style={[styles.button, {marginTop: 20}]} onPress={searchEmail}>
             <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
