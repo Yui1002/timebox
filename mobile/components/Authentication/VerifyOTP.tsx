@@ -40,21 +40,16 @@ const VerifyOTP = ({route, navigation}: any) => {
   };
 
   const verifyOTP = () => {
-    console.log('verify')
     if (!validateInput()) return;
-    console.log('validated')
-
     axios
       .post(`${LOCAL_HOST_URL}/otp/verify`, {
         otp: otp.join(''),
         email,
       })
       .then(() => {
-        console.log('here')
         signUp();
       })
       .catch(err => {
-        console.log('error')
         setinputError({
           type: 'INVALID_OTP',
           msg: err.response.data.error,

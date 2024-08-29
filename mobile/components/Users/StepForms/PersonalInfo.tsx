@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, Button, Switch, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
 import InputError from '../../InputError';
-import DropdownPicker from '../DropdownPicker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const {firstName, lastName, email} = route.params;
@@ -16,6 +16,8 @@ const PersonalInfo = ({route, navigation}: any) => {
   ]);
   const [rate, setRate] = useState<string | null>(null);
   const [rateType, setRateType] = useState<string | null>(null);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(prevState => !prevState);
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
@@ -68,6 +70,7 @@ const PersonalInfo = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
+      isEnabled,
     });
   };
 
@@ -85,7 +88,7 @@ const PersonalInfo = ({route, navigation}: any) => {
       <View style={{height: '5%'}}>
         <Text style={{fontSize: 22, fontWeight: 500}}>User Information</Text>
       </View>
-      <View style={{marginTop: 20, height: '50%'}}>
+      <View style={{marginTop: 20, height: open ? '65%' : '50%'}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '50%'}}>
             <Text style={{fontSize: 14}}>First Name</Text>
@@ -118,18 +121,32 @@ const PersonalInfo = ({route, navigation}: any) => {
             {inputError.type === 'INVALID_RATE_TYPE_FORMAT' && (
               <InputError error={inputError} />
             )}
-            <DropdownPicker.DropdownPicker
-              open={open}
-              value={rateType}
-              items={items}
-              setOpen={setOpen}
-              setValue={setRateType}
-              setItems={setItems}
-            />
+            <View>
+              <DropDownPicker
+                style={open ? {marginBottom: 80} : {marginBottom: 0}}
+                open={open}
+                value={rateType}
+                items={items}
+                setOpen={() => setOpen(!open)}
+                setValue={setRateType}
+                setItems={setItems}
+              />
+            </View>
           </View>
         </View>
+        <View style={{marginTop: 20}}>
+          <Text>Allow the service provider to modify record time</Text>
+          <Switch
+            style={{marginTop: 8}}
+            trackColor={{false: '#767577', true: '#24a0ed'}}
+            thumbColor={isEnabled ? '#fff' : '#f4f3f4'}
+            ios_backgroundColor="#ccc"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
+        </View>
       </View>
-      <View style={{width: '100%', backgroundColor: '#ddd'}}>
+      <View style={{width: '100%', height: '10%'}}>
         <View
           style={{
             backgroundColor: '#24a0ed',
@@ -139,11 +156,14 @@ const PersonalInfo = ({route, navigation}: any) => {
             top: 0,
             right: 0,
           }}>
-          <Button
+          <TouchableOpacity onPress={proceed}>
+            <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(9654)}`}</Text>
+          </TouchableOpacity>
+          {/* <Button
             title={`Continue  ${String.fromCharCode(9654)}`}
             onPress={proceed}
             color="#fff"
-          />
+          /> */}
         </View>
       </View>
     </View>

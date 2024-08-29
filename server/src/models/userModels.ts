@@ -233,7 +233,7 @@ class UserModels {
       from: email,
       to: emailTo,
       subject: `${firstName} ${lastName} requested you as a service provider`,
-      text: `${firstName} ${lastName} requested you as a service provider. Please open the link below to approve this, otherwise ignore it.`,
+      text: `${firstName} ${lastName} requested you as a service provider. Please open the app and approve this, otherwise ignore it.`,
     };
     try {
       await transporter.sendMail(mailOptions);

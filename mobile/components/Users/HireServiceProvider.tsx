@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {Text, View, SafeAreaView, Alert} from 'react-native';
+import {Text, View, SafeAreaView, Alert, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/hireServiceProviderStyles.js';
 import validator from 'validator';
 import InputField from '../InputField';
@@ -160,7 +160,9 @@ const HireServiceProvider = (props: any) => {
           inputError.type === 'DUPLICATE_EMAIL') && (
           <InputError error={inputError} />
         )}
-        <Button.Outlined title="Continue" onPress={searchEmail} />
+        <TouchableOpacity style={[styles.button, {marginTop: 20}]} onPress={searchEmail}>
+            <Text style={styles.buttonText}>Continue</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

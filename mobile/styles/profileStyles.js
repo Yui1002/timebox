@@ -23,11 +23,18 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16, 
-    fontWeight: 500, 
+    fontWeight: '500', 
     marginBottom: 4,
   },
-  btn: {
-    backgroundColor: '#24a0ed', 
-    borderRadius: 10
-  }
+  button: {
+    backgroundColor: '#24a0ed',
+    borderRadius: 10,
+    height: 34
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
+  },
 });

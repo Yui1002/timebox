@@ -80,7 +80,7 @@ const ManageServiceProviders = (props: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{marginBottom: 10, height: '5%'}}>
-        <Text style={{fontSize: 20, fontWeight: 500}}>Service Providers</Text>
+        <Text style={{fontSize: 20, fontWeight: '500'}}>Service Providers</Text>
       </View>
       <View style={{height: '90%'}}>
         {serviceProviders.map((sp, index) => (
@@ -88,7 +88,7 @@ const ManageServiceProviders = (props: any) => {
             key={index}
             onPress={() => navigateToProfile(sp)}
             style={styles.listContainer}>
-            <Text style={{fontSize: 16, fontWeight: 500}}>
+            <Text style={{fontSize: 16, fontWeight: '500'}}>
               {sp.first_name} {sp.last_name}
             </Text>
             <Text>{sp.email_address}</Text>

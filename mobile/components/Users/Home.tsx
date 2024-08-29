@@ -1,9 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, Button, FlatList} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
@@ -12,17 +20,18 @@ const Home = (props: any) => {
 
   useEffect(() => {
     getEmployers();
-  }, [])
+  }, []);
 
   const getEmployers = () => {
-    axios.get(`${LOCAL_HOST_URL}/employers/${email}`)
-    .then((res) => {
-      setEmployers(res.data);
-    })
-    .catch((err) => {
-      console.log('home error', err)
-    })
-  }
+    axios
+      .get(`${LOCAL_HOST_URL}/employers/${email}`)
+      .then(res => {
+        setEmployers(res.data);
+      })
+      .catch(err => {
+        console.log('home error', err);
+      });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,24 +46,22 @@ const Home = (props: any) => {
             renderItem={({item}: any) => (
               <View style={styles.listContainer}>
                 <View>
-                  <Text>
+                  <Text style={{fontSize: 16, fontWeight: '500'}}>
                     {item.first_name} {item.last_name}
                   </Text>
                   <Text>{item.email_address}</Text>
                 </View>
                 <View>
-                  <View style={styles.button}>
-                    <Button
-                      title="Record"
-                      color="#fff"
-                      onPress={() =>
-                        props.navigation.navigate('Record', {
-                          employer: item,
-                          serviceProviderEmail: email,
-                        })
-                      }
-                    />
-                  </View>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() =>
+                      props.navigation.navigate('Record', {
+                        employer: item,
+                        serviceProviderEmail: email,
+                      })
+                    }>
+                    <Text style={styles.buttonText}>Record</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             )}

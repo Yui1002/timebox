@@ -19,11 +19,12 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: 'space-between',
   },
-  checkInButton_disabled: {
-    backgroundColor: '#80d280'
-  },
-  checkOutButton_disabled: {
-    backgroundColor: '#ffdd80'
+  button_disabled: {
+    backgroundColor: '#D8D8D8',
+    padding: 14,
+    borderRadius: 10,
+    width: "45%",
+    height: '90%',
   },
   checkInButton: {
     width: "45%",

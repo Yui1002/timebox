@@ -8,6 +8,7 @@ import {
 import WorkingHistory from './WorkingHistory';
 import HireServiceProvider from './HireServiceProvider';
 import ManageServiceProviders from './ManageServiceProviders';
+import Notification from './Notification';
 import Home from './Home';
 import {useDispatch} from 'react-redux';
 import {signOutUser} from '../../redux/actions/signInAction';
@@ -38,6 +39,7 @@ const DrawerNav = () => {
       <Drawer.Screen name="My Working Records" component={WorkingHistory} />
       <Drawer.Screen name="Hire Service Provider" component={HireServiceProvider} />
       <Drawer.Screen name="Manage Service Provider" component={ManageServiceProviders} />
+      <Drawer.Screen name="Notifications" component={Notification} />
     </Drawer.Navigator>
   );
 };

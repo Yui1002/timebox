@@ -8,8 +8,8 @@ import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
+  const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
   const dispatch = useDispatch();
-  const {firstName, lastName, email, rate, rateType} = route.params;
   const workShifts = useSelector(state => state.workShifts);
 
   const days = [
@@ -78,13 +78,14 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
+      isEnabled
     });
   };
 
   return (
     <View style={styles.container}>
       <View style={{marginTop: 30}}>
-        <Text style={{fontSize: 16, fontWeight: 500, marginVertical: 8}}>
+        <Text style={{fontSize: 16, fontWeight: '500', marginVertical: 8}}>
           Select day and time
         </Text>
         {(inputError.type === 'EMPTY_DAY' ||
@@ -147,24 +148,15 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
           <InputError error={inputError} />
         )}
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginVertical: 40,
-        }}>
-        <View
-          style={{backgroundColor: '#909090', width: '40%', borderRadius: 10}}>
-          <Button
-            title="Cancel"
-            color="#fff"
-            onPress={() => navigation.goBack()}
-          />
-        </View>
-        <View
-          style={{backgroundColor: '#24a0ed', width: '40%', borderRadius: 10}}>
-          <Button title="Add" color="#fff" onPress={add} />
-        </View>
+      <View style={styles.workShiftsBtn}>
+        <TouchableOpacity
+          style={styles.workShiftsBtn_back}
+          onPress={() => navigation.goBack()}>
+          <Text style={styles.buttonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.workShiftsBtn_add} onPress={add}>
+          <Text style={styles.buttonText}>Add</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

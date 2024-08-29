@@ -2,17 +2,15 @@ import { EmployerInterface } from "../interfaces/EmployerInterface";
 import Repositories from "./repositories";
 
 class AuthRepositories extends Repositories {
-  // repositories: Repositories;
 
   constructor() {
     super();
-    // this.repositories = new Repositories();
   }
 
   async signUp(req: any, hashedPass: string) {
     const { firstName, lastName, email } = req;
     const sql =
-      "INSERT INTO users VALUES (gen_random_uuid(), $1, $2, $3, $4, DEFAULT, CURRENT_TIMESTAMP);";
+      "INSERT INTO users (first_name, last_name, email_address, password, status, create_date) VALUES ($1, $2, $3, $4, DEFAULT, CURRENT_TIMESTAMP);";
     await this.queryDB(sql, [
       firstName,
       lastName,
@@ -48,13 +46,16 @@ class AuthRepositories extends Repositories {
   }
 
   async checkOtpExists(email: string) {
-    const sql = "SELECT otp_id FROM otp WHERE email_address = $1;";
-    return (await this.queryDB(sql, [email])).rowCount > 0;
+    const sql = "SELECT EXISTS(SELECT 1 FROM otp WHERE email_address = $1);";
+    // const data = await this.queryDB(sql, [email]);
+    // console.log('data', data);
+    // return data;
+    return (await this.queryDB(sql, [email]))
   }
 
   async storeOtp(otp: string, email: string) {
     const sql =
-      "INSERT INTO otp VALUES (gen_random_uuid(), $1, CURRENT_TIMESTAMP, $2);";
+      "INSERT INTO otp (otp, email_address, create_date) VALUES ($1, $2, CURRENT_TIMESTAMP);";
     await this.queryDB(sql, [otp, email]);
     return true;
   }
