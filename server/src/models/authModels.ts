@@ -75,18 +75,15 @@ class AutheModels {
   }
 
   async verifyOtp(email: string, inputOtp: string) {
-    return this.repositories.verifyOtp(email, inputOtp)
+    return await this.repositories.verifyOtp(email, inputOtp)
   }
 
   async updateOtp(otp: string, email: string) {
-    return this.repositories.updateOtp(otp, email);
+    return await this.repositories.updateOtp(otp, email);
   }
 
   async storeOtp(email: string, otp: string) {
-    const otpExist = await this.repositories.checkOtpExists(email);
-    return otpExist
-      ? this.repositories.updateOtp(otp, email)
-      : this.repositories.storeOtp(otp, email);
+    return await this.repositories.storeOtp(otp, email);
   }
 
   async validateCodeExpiration(req: any) {

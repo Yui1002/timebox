@@ -1,10 +1,30 @@
 import AutheModels from "../models/authModels";
+import log4js from "log4js";
 
 class AuthControllers {
   models: AutheModels;
 
   constructor() {
     this.models = new AutheModels();
+  }
+
+  async logFile(req: any, res: any) {
+    log4js.configure({
+      appenders: {
+        app: { type: "file", filename: "app.log" },
+      },
+      categories: {
+        default: {
+          appenders: ["app"],
+          level: "info",
+        },
+      },
+    });
+
+    const logger = log4js.getLogger();
+    logger.info("This is my first log4js");
+
+    res.send("success");
   }
 
   async isUserRegistered(req: any, res: any) {
@@ -14,7 +34,7 @@ class AuthControllers {
       res.status(400).json({ error: "This email is already used" });
       return;
     }
-    res.sendStatus(200)
+    res.sendStatus(200);
   }
 
   async isEmailRegistered(req: any, res: any) {
@@ -63,14 +83,19 @@ class AuthControllers {
   async sendOTP(req: any, res: any) {
     const { email } = req.body;
     const otp = this.models.generateOtp();
-    const otpExist = this.models.checkOtpExists(email);
-    if (otpExist) {
-      console.log('otp exists')
+    try {
+      const otpExist = await this.models.checkOtpExists(email);
+      console.log(otpExist)
+      if (otpExist) {
+        await this.models.updateOtp(otp, email);
+      } else {
+        await this.models.storeOtp(email, otp);
+      }
+      await this.models.sendOtp(email, otp);
+      res.sendStatus(200);
+    } catch (e) {
+      res.sendStatus(400);
     }
-    await this.models.storeOtp(email, otp);
-    (await this.models.sendOtp(email, otp))
-      ? res.status(200)
-      : res.status(400).json({ error: "Failed to send otp" });
   }
 
   async resetPassword(req: any, res: any) {
