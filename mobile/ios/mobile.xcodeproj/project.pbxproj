@@ -16,10 +16,6 @@
 		86C0A1032C69F2B6002CCC82 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 86C0A1022C69F2B6002CCC82 /* GoogleService-Info.plist */; };
 		86C2667D2C58A82900C6EB51 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 86C2667C2C58A82900C6EB51 /* Fonts */; };
 		86C2667E2C58A82900C6EB51 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 86C2667C2C58A82900C6EB51 /* Fonts */; };
-		86C266802C58AA4300C6EB51 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86C2667F2C58AA4300C6EB51 /* FontAwesome.ttf */; };
-		86C266822C58AA5400C6EB51 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86C266812C58AA5400C6EB51 /* MaterialIcons.ttf */; };
-		86C266842C59613E00C6EB51 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86C266832C59613E00C6EB51 /* MaterialCommunityIcons.ttf */; };
-		86C266862C6170DA00C6EB51 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86C266852C6170DA00C6EB51 /* AntDesign.ttf */; };
 		AF0E8A7CF6FD7AC54461B179 /* Pods_mobile_mobileTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4E241127CEC81D426F2EA9 /* Pods_mobile_mobileTests.framework */; };
 		C795171EBAEAF6087DA7744A /* Pods_mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B89D730E1F3ABA8FFA379B23 /* Pods_mobile.framework */; };
 /* End PBXBuildFile section */
@@ -51,11 +47,7 @@
 		69BD220E8FD9719F32AFB586 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = mobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = mobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		86C0A1022C69F2B6002CCC82 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		86C2667C2C58A82900C6EB51 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = file; name = Fonts; path = ../../../../Desktop/Fonts; sourceTree = "<group>"; };
-		86C2667F2C58AA4300C6EB51 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
-		86C266812C58AA5400C6EB51 /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		86C266832C59613E00C6EB51 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
-		86C266852C6170DA00C6EB51 /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		86C2667C2C58A82900C6EB51 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = ../../../../Desktop/Fonts; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-mobile-mobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-mobileTests.release.xcconfig"; path = "Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests.release.xcconfig"; sourceTree = "<group>"; };
 		B89D730E1F3ABA8FFA379B23 /* Pods_mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF4E241127CEC81D426F2EA9 /* Pods_mobile_mobileTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mobile_mobileTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,10 +127,6 @@
 			isa = PBXGroup;
 			children = (
 				86C0A1022C69F2B6002CCC82 /* GoogleService-Info.plist */,
-				86C266852C6170DA00C6EB51 /* AntDesign.ttf */,
-				86C266832C59613E00C6EB51 /* MaterialCommunityIcons.ttf */,
-				86C266812C58AA5400C6EB51 /* MaterialIcons.ttf */,
-				86C2667F2C58AA4300C6EB51 /* FontAwesome.ttf */,
 				86C2667C2C58A82900C6EB51 /* Fonts */,
 				13B07FAE1A68108700A75B9A /* mobile */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -267,11 +255,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				86C266862C6170DA00C6EB51 /* AntDesign.ttf in Resources */,
-				86C266842C59613E00C6EB51 /* MaterialCommunityIcons.ttf in Resources */,
 				86C0A1032C69F2B6002CCC82 /* GoogleService-Info.plist in Resources */,
-				86C266822C58AA5400C6EB51 /* MaterialIcons.ttf in Resources */,
-				86C266802C58AA4300C6EB51 /* FontAwesome.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				6AC2F889FC82111FDBEDAE5A /* PrivacyInfo.xcprivacy in Resources */,

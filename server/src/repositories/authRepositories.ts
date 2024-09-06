@@ -47,10 +47,8 @@ class AuthRepositories extends Repositories {
 
   async checkOtpExists(email: string) {
     const sql = "SELECT EXISTS(SELECT 1 FROM otp WHERE email_address = $1);";
-    // const data = await this.queryDB(sql, [email]);
-    // console.log('data', data);
-    // return data;
-    return (await this.queryDB(sql, [email]))
+    const data = (await this.queryDB(sql, [email])).rows[0].exists;
+    return data;
   }
 
   async storeOtp(otp: string, email: string) {
