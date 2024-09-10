@@ -1,8 +1,6 @@
-import { EmployerInterface } from "../interfaces/EmployerInterface";
 import Repositories from "./repositories";
 
 class AuthRepositories extends Repositories {
-
   constructor() {
     super();
   }
@@ -63,6 +61,11 @@ class AuthRepositories extends Repositories {
       "UPDATE otp SET otp = $1, create_date = CURRENT_TIMESTAMP WHERE email_address = $2;";
     await this.queryDB(sql, [otp, email]);
     return true;
+  }
+
+  async deleteOtp(email: string) {
+    const sql = "DELETE FROM otp WHERE email_address = $1;";
+    await this.queryDB(sql, [email]);
   }
 
   async validateCodeExpiration(ownerId: string, submittedDate: Date) {

@@ -42,13 +42,19 @@ const Review = ({route, navigation}: any) => {
   };
 
   const confirmServiceProvider = () => {
+    const request = {
+      rate: rate,
+      rate_type: rateType,
+      shifts: workShifts.workShifts
+    }
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
         emailTo: email,
         employer: userInfo,
+        request: request
       })
       .then(() => {
-        dispatch(resetShift());
+        dispatch(resetShift(workShifts.workShifts));
         showSuccess();
       })
       .catch(err => [console.log(err)]);

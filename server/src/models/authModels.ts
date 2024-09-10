@@ -49,6 +49,22 @@ class AutheModels {
     return hashedPassword;
   }
 
+  async handleOtp(email: string) {
+    const otp = this.generateOtp();
+    try {
+      const otpExist = await this.checkOtpExists(email);
+      if (otpExist) {
+        await this.updateOtp(otp, email);
+      } else {
+        await this.storeOtp(email, otp);
+      }
+      await this.sendOtp(email, otp);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
@@ -84,6 +100,10 @@ class AutheModels {
 
   async storeOtp(email: string, otp: string) {
     return await this.repositories.storeOtp(otp, email);
+  }
+
+  async deleteOtp(email: string) {
+    return await this.repositories.deleteOtp(email);
   }
 
   async validateCodeExpiration(req: any) {

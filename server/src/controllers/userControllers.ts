@@ -30,22 +30,23 @@ class UserControllers {
   }
 
   async emailToNotFoundUser(req: any, res: any) {
-    const {serviceProviderEmail, userInfo} = req.body;
-    const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
-    result ? res.sendStatus(200) : res.status(400).json({
-      error: 'You have sent the request before'
-    });
+    // const {serviceProviderEmail, userInfo} = req.body;
+    // const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
+    // result ? res.sendStatus(200) : res.status(400).json({
+    //   error: 'You have sent the request before'
+    // });
   }
 
   async sendEmailToServiceProvider(req: any, res: any) {
-    const { emailTo, employer } = req.body;
-    console.log(emailTo, employer)
-    const hasBeenSent = await this.models.emailHasBeenSent(emailTo, employer.email);
-    console.log('email has been sent', hasBeenSent)
+    const { emailTo, employer, request } = req.body;
+    // check if the user has sent the same request before
+    const employerId = await this.models.getEmployerId(employer.email);
+    const hasBeenSent = await this.models.emailHasBeenSent(emailTo, employerId);
     if (hasBeenSent) {
-      res.status(400).json({ error : 'You have already sent a request before'});
+      res.status(400).json({ error : 'You have already sent a request before' });
       return;
     }
+    await this.models.storeRequest(emailTo, employerId, request)
     const result = await this.models.sendEmailToServiceProvider(emailTo, employer);
     result ? res.sendStatus(200) : res.sendStatus(400);
   }
@@ -97,7 +98,9 @@ class UserControllers {
   }
 
   async getNotification(req: any, res: any) {
-    console.log('here')
+    const { receiver } = req.query;
+    const notification = await this.models.getNotification(receiver);
+    res.send(notification);
   }
 }
 

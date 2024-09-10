@@ -12,6 +12,7 @@ import Notification from './Notification';
 import Home from './Home';
 import {useDispatch} from 'react-redux';
 import {signOutUser} from '../../redux/actions/signInAction';
+import {resetShift} from '../../redux/actions/workShiftsAction';
 
 const CustomDrawerContent = (props: any) => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const CustomDrawerContent = (props: any) => {
         onPress={() => {
           props.navigation.navigate('SignIn');
           dispatch(signOutUser());
+          dispatch(resetShift());
         }}
       />
     </DrawerContentScrollView>

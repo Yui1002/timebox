@@ -1,6 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
 import Repositories from "./repositories";
-import { ServiceProviderInterface } from "../interfaces/ServiceProviderInterface";
 
 class UserRepositories {
   repositories: Repositories;
@@ -263,19 +261,22 @@ class UserRepositories {
     return data;
   }
 
-  async emailHasBeenSent(email: string, addedBy: string) {
-    const sql = "SELECT * FROM requests WHERE sender = $1 AND receiver = $2;";
-    return (await this.repositories.queryDB(sql, [addedBy, email])).rowCount > 0;
+  async emailHasBeenSent(receiver: string, sender: number) {
+    const sql = "SELECT COUNT (*) FROM requests WHERE receiver = $1 AND sender = $2;";
+    const data = await this.repositories.queryDB(sql, [receiver, sender]);
+    return data.rows[0].count > 0;
   }
 
-  async addEmailToSentList(email: string, addedBy: string) {
-    const sql = "INSERT INTO email_user_sent VALUES (gen_random_uuid(), $1, $2);";
-    await this.repositories.queryDB(sql, [email, addedBy]);
+  async storeRequest(receiver: string, sender: number, request: any) {
+    const sql = "INSERT INTO requests (sender, receiver, is_approved, request_date, request_rate, request_rate_type, request_schedule_day, request_schedule_start_time, request_schedule_end_time) VALUES ($1, $2, NULL, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7);";
+    await this.repositories.queryDB(sql, [sender, receiver, request.rate, request.rate_type, request.day, request.startTime, request.endTime]);
     return true;
   }
 
-  async getNotification() {
-    const sql = ""
+  async getNotification(receiver: string) {
+    const sql = "SELECT u.first_name, u.last_name, r.request_rate, r.request_rate_type, r.request_schedule_day, r.request_schedule_start_time, r.request_schedule_end_time FROM users u INNER JOIN requests r on u.user_id = r.sender WHERE r.receiver = $1 AND r.is_approved IS NULL;";
+    const data = await this.repositories.queryDB(sql, [receiver]);
+    return data.rows[0];
   }
 }
 

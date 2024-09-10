@@ -5,47 +5,32 @@ export const styles = StyleSheet.create({
     margin: '5%',
     height: '90%'
   },
-  header: {
-    fontSize: 24,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    marginBottom: 20,
+  title: {
+    fontSize: 16,
+    fontWeight: '600'
   },
-  listContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#ddd',
-    marginVertical: 8,
-    padding: 10,
-    borderRadius: 4,
+  subTitle: {
+    fontSize: 14,
+    fontWeight: '500'
   },
-  button: {
-    backgroundColor: '#24a0ed',
+  box: {
+    height: '30%',
+    backgroundColor: '#E8E8E8',
+    position: 'relative',
     borderRadius: 10,
-    width: 70
+    padding: 14
+    // paddingHorizontal: 10,
+    // paddingVertical: 14
   },
-  buttonText: {
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: 18,
-    lineHeight: 32
+  timeText: {
+    fontSize: 12,
+    color: '#707070',
+    position: 'absolute',
+    top: 40, 
+    right: 10
   },
-  notification: {
-    backgroundColor: '#D0F0C0',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderRadius: 10,
-    height: '10%',
-    padding: 8,
-    marginBottom: 20,
-    position: 'relative'
-  },
-  notificationIcon: {
-    width: '24%', 
-    paddingLeft: 20,
-  },
-  notificationText: {
-    width: '75%', 
-    color: '#014421'
+  subContainer: {
+    // backgroundColor: '#ddd',
+    height: '100%'
   }
 });

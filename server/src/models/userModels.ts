@@ -39,27 +39,27 @@ class UserModels {
   }
 
   async emailToNotFoundUser(email: string, userInfo: any) {
-    const { firstName, lastName, userEmail } = userInfo;
-    const mailOptions = {
-      from: userEmail,
-      to: email,
-      subject: `Request from ${firstName} ${lastName}`,
-      text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
-    };
-    try {
-      const userId = await this.repositories.getUserId(userEmail)
-      const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
-      if (emailHasBeenSent) {
-        return false;
-      }
-      await this.repositories.addEmailToSentList(email, userId);
-      await transporter.sendMail(mailOptions);
-      return true;
-    } catch (err) {
-      return false;
-    } finally {
-      transporter.close();
-    }
+    // const { firstName, lastName, userEmail } = userInfo;
+    // const mailOptions = {
+    //   from: userEmail,
+    //   to: email,
+    //   subject: `Request from ${firstName} ${lastName}`,
+    //   text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
+    // };
+    // try {
+    //   const userId = await this.repositories.getUserId(userEmail)
+    //   const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
+    //   if (emailHasBeenSent) {
+    //     return false;
+    //   }
+    //   await this.repositories.storeRequest(email, userId);
+    //   await transporter.sendMail(mailOptions);
+    //   return true;
+    // } catch (err) {
+    //   return false;
+    // } finally {
+    //   transporter.close();
+    // }
   }
 
   async getUser(email: string) {
@@ -245,9 +245,18 @@ class UserModels {
     }
   }
 
-  async emailHasBeenSent(searchedEmail: string, employerEmail: string) {
-    const userId = await this.repositories.getUserId(employerEmail);
-    return await this.repositories.emailHasBeenSent(searchedEmail, userId);
+  async storeRequest(receiver: string, sender: number, request: any) {
+    return request.shifts.map(async (r: any) => {
+      await this.repositories.storeRequest(receiver, sender, r);
+    })
+  }
+
+  async emailHasBeenSent(receiver: string, sender: number) {
+    return await this.repositories.emailHasBeenSent(receiver, sender);
+  }
+
+  async getNotification(receiver: string) {
+    return await this.repositories.getNotification(receiver);
   }
 }
 

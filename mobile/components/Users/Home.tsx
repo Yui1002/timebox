@@ -6,16 +6,15 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  Linking
 } from 'react-native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const {firstName, lastName, email} = userInfo;
+  const {firstName, email} = userInfo;
   const [employers, setEmployers] = useState([]);
 
   useEffect(() => {

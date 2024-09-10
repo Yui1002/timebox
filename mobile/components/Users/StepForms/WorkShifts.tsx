@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, Button, Alert, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-import {deleteShift} from '../../../redux/actions/workShiftsAction';
+import {deleteShift, resetShift} from '../../../redux/actions/workShiftsAction';
 
 interface Shifts {
   day: string;
@@ -12,9 +12,9 @@ interface Shifts {
 }
 
 const WorkShifts = ({route, navigation}: any) => {
+  const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
   const workShifts = useSelector(state => state.workShifts);
-  const dispatch = useDispatch();
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
   const deleteDate = (day: Shifts) => {
@@ -26,12 +26,10 @@ const WorkShifts = ({route, navigation}: any) => {
       showAlert();
       return;
     }
-
     navigation.navigate('Review', {firstName, lastName, email, rate, rateType});
   };
 
   const navigateToAddSchedule = () => {
-    console.log('here')
     navigation.navigate('RegisterWorkShifts', {
       firstName,
       lastName,

@@ -12,7 +12,7 @@ class Routes {
 
     applyRouting(app: any) {
         // auth routes
-        app.get('/log', this.authControllers.logFile.bind(this.authControllers))
+        // app.get('/log', this.authControllers.logFile.bind(this.authControllers))
         app.get('/user/exists/:email', this.authControllers.isUserRegistered.bind(this.authControllers));
         app.get('/email/exists', this.authControllers.isEmailRegistered.bind(this.authControllers));
         app.post('/signUp', this.authControllers.signUp.bind(this.authControllers));
@@ -20,12 +20,11 @@ class Routes {
         app.post('/resetPassword', this.authControllers.resetPassword.bind(this.authControllers));
 
         // otp
-        app.post('/otp/send', this.authControllers.sendOTP.bind(this.authControllers));
+        app.post('/otp/resend', this.authControllers.resendOtp.bind(this.authControllers));
         app.post('/otp/verify', this.authControllers.verifyOTP.bind(this.authControllers));
 
         app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
         app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
-        // app.get('/user/exists/:email', this.userControllers.checkUserExists.bind(this.userControllers));
         app.post('/not/user/send', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
 
         app.post('/request', this.userControllers.sendEmailToServiceProvider.bind(this.userControllers))

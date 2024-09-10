@@ -17,7 +17,7 @@ const workShiftsReducer = (state = initialState, action) => {
         ),
       };
     case 'RESET': 
-      return state;
+      return initialState;
     default:
       return state;
   }

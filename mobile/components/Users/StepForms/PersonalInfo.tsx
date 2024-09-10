@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, Button, Switch, TouchableOpacity} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
 import InputError from '../../InputError';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {deleteShift, resetShift} from '../../../redux/actions/workShiftsAction';
 
 const PersonalInfo = ({route, navigation}: any) => {
+  const dispatch = useDispatch();
   const {firstName, lastName, email} = route.params;
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [open, setOpen] = useState(false);
@@ -22,6 +25,7 @@ const PersonalInfo = ({route, navigation}: any) => {
     type: '',
     msg: '',
   });
+  const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
     if (rate === null || rate.length === 0) {
@@ -73,6 +77,11 @@ const PersonalInfo = ({route, navigation}: any) => {
       isEnabled,
     });
   };
+
+  const goBack = () => {
+    dispatch(resetShift(workShifts.workShifts));
+    navigation.goBack();
+  }
 
   return (
     <View style={styles.container}>
@@ -146,25 +155,15 @@ const PersonalInfo = ({route, navigation}: any) => {
           />
         </View>
       </View>
-      <View style={{width: '100%', height: '10%'}}>
-        <View
-          style={{
-            backgroundColor: '#24a0ed',
-            width: '40%',
-            borderRadius: 10,
-            position: 'absolute',
-            top: 0,
-            right: 0,
-          }}>
-          <TouchableOpacity onPress={proceed}>
-            <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(9654)}`}</Text>
-          </TouchableOpacity>
-          {/* <Button
-            title={`Continue  ${String.fromCharCode(9654)}`}
-            onPress={proceed}
-            color="#fff"
-          /> */}
-        </View>
+      <View style={styles.workShiftsBtn}>
+        <TouchableOpacity
+          style={styles.workShiftsBtn_back}
+          onPress={goBack}>
+          <Text style={styles.buttonText}>Back</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.workShiftsBtn_add} onPress={proceed}>
+          <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(9654)}`}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

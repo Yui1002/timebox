@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  Button,
+  Keyboard,
+} from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
@@ -9,30 +16,26 @@ import {signInUser} from '../../redux/actions/signInAction';
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password} = route.params;
-  const [otp, setOtp] = useState(new Array(6).fill(''));
-  const otpBoxReference = useRef([]);
+  const [otp, setOtp] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const [inputError, setinputError] = useState({
     type: '',
     msg: '',
   });
 
-  // send otp when the user loads this page
-  useEffect(() => {
-    axios
-      .post(`${LOCAL_HOST_URL}/otp/send`, {
-        email,
-      })
-      .then(res => {})
-      .catch(err => {
-        console.log(err);
-      });
-  }, []);
-
   const validateInput = () => {
-    if (otp.join('').length !== 6) {
+    if (otp.length !== 6) {
       setinputError({
         type: 'INVALID_OTP',
         msg: 'OTP has to be 6 digit',
+      });
+      return false;
+    }
+    const regex = /^\d+$/;
+    if (!regex.test(otp)) {
+      setinputError({
+        type: 'INVALID_OTP',
+        msg: 'OTP has to be a number',
       });
       return false;
     }
@@ -43,7 +46,7 @@ const VerifyOTP = ({route, navigation}: any) => {
     if (!validateInput()) return;
     axios
       .post(`${LOCAL_HOST_URL}/otp/verify`, {
-        otp: otp.join(''),
+        otp,
         email,
       })
       .then(() => {
@@ -77,36 +80,14 @@ const VerifyOTP = ({route, navigation}: any) => {
       });
   };
 
-  const handleChange = (value: string, index: number) => {
-    if (value.length > 1) {
-      value = value[value.length - 1];
-    }
-    let newArr = [...otp];
-    newArr[index] = value;
-    setOtp(newArr);
-
-    if (value && index < 5) {
-      otpBoxReference.current[index + 1].focus();
-    }
-  };
-
-  const handleBackspaceAndEnter = (e, index) => {
-    const key = e.nativeEvent.key;
-
-    if (key === 'Backspace' && !e.target.value && index > 0) {
-      otpBoxReference.current[index - 1].focus();
-    }
-    if (key === 'Enter' && e.target.value && index < 5) {
-      otpBoxReference.current[index + 1].focus();
-    }
-  };
-
   const resendOtp = () => {
     axios
-      .post(`${LOCAL_HOST_URL}/otp/send`, {
+      .post(`${LOCAL_HOST_URL}/otp/resend`, {
         email,
       })
-      .then(res => {})
+      .then(res => {
+        setIsOtpSent(true);
+      })
       .catch((err): any => {
         console.log(err);
       });
@@ -116,32 +97,34 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{height: '10%'}}>
+      <View style={{height: '8%'}}>
         <Text style={styles.header}>Verification code</Text>
       </View>
+      {isOtpSent && (
+        <View style={styles.resend}>
+          <Text style={styles.resendText}>{`${String.fromCharCode(
+            10003,
+          )} Verification code was resent successfully`}</Text>
+        </View>
+      )}
       <View style={{height: '8%'}}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
       <View style={styles.otpContainer}>
-        {otp.map((digit, index) => (
-          <TextInput
-            key={index}
-            value={digit}
-            style={styles.otpBox}
-            autoFocus={index === 0}
-            onChangeText={e => handleChange(e, index)}
-            onKeyPress={e => handleBackspaceAndEnter(e, index)}
-            ref={reference => (otpBoxReference.current[index] = reference)}
-          />
-        ))}
+        <TextInput
+          style={styles.otpBox}
+          maxLength={6}
+          keyboardType="numeric"
+          autoFocus
+          onChangeText={val => setOtp(val)}
+        />
       </View>
       <View>
         {inputError.type === 'INVALID_OTP' && (
           <Text style={styles.inputError}>{inputError.msg}</Text>
         )}
       </View>
-      <View
-        style={{backgroundColor: '#24a0ed', borderRadius: 10, marginTop: 30}}>
+      <View style={styles.button}>
         <Button title="Verify" color="#fff" onPress={verifyOTP} />
       </View>
       <Separator />
