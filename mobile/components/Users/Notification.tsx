@@ -10,31 +10,66 @@ import moment from 'moment';
 
 const Notification = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [notifications, setNotifications] = useState([{hey: 1}]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     getNotification();
-  }, [])
+  }, []);
 
   const getNotification = () => {
-    console.log(userInfo.email)
     axios
       .get(`${LOCAL_HOST_URL}/notification`, {
         params: {
-          receiver: userInfo.email
+          receiver: userInfo.email,
         },
       })
-      .then((res) => {
-
+      .then(res => {
+        const formattedData = formatData(res.data);
+        setNotifications(formattedData);
       })
       .catch(err => {
         console.log(err);
       });
   };
 
-  const formatData = (data: any) => {
-    
-  }
+  const formatData = (notification: any) => {
+    const data = notification.reduce((a: any, b: any) => {
+      const found = a.find((e: any) => e.email_address == b.email_address);
+      const item = {
+        day: b.request_schedule_day,
+        start_time: b.request_schedule_start_time,
+        end_time: b.request_schedule_end_time,
+      };
+      return (
+        found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
+      );
+    }, []);
+
+    for (let i = 0; i < data.length; i++) {
+      const obj = data[i];
+      delete obj['request_schedule_day'];
+      delete obj['request_schedule_start_time'];
+      delete obj['request_schedule_end_time'];
+      sortDays(data[i]);
+    }
+    return data;
+  };
+
+  const sortDays = (data: any) => {
+    if (data.shifts == undefined || data.shifts[0].day === null) return;
+    const sorter = {
+      Monday: 1,
+      Tuesday: 2,
+      Wednesday: 3,
+      Thursday: 4,
+      Friday: 5,
+      Saturday: 6,
+      Sunday: 7,
+    };
+    return data.shifts.sort((a: any, b: any) => {
+      return sorter[a.day] - sorter[b.day];
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,21 +79,34 @@ const Notification = (props: any) => {
             {notifications.map((n, index) => (
               <View key={index} style={styles.box}>
                 <Text style={styles.title}>
-                  Yui Dayal requested a service provider
+                  {`${n.first_name} ${n.last_name} requested a service provider`}
                 </Text>
                 <Text style={styles.timeText}>
                   {moment().startOf('day').fromNow()}
                 </Text>
                 <View style={{marginTop: 8}}>
                   <Text style={styles.subTitle}>Request detail: </Text>
-                  <Text>{`Pay: $20/hour`}</Text>
-                  <Text>{`Schedules: Monday 5:00PM - 6:00PM`}</Text>
+                  <Text>{`Pay: $${n.request_rate} / ${n.request_rate_type}`}</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text style={{width: '25%'}}>Schedules: </Text>
+                    <View style={{width: '75%'}}>
+                      {n.shifts.map((s: any, index: number) => (
+                        <View key={index}>
+                          <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
                 </View>
                 <View
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'space-around',
-                    marginTop: 10
+                    marginTop: 10,
                   }}>
                   <TouchableOpacity
                     style={{
@@ -68,7 +116,9 @@ const Notification = (props: any) => {
                       borderRadius: 10,
                       padding: 10,
                     }}>
-                    <Text style={{textAlign: 'center', fontWeight: '500'}}>Decline</Text>
+                    <Text style={{textAlign: 'center', fontWeight: '500'}}>
+                      Decline
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{
@@ -76,9 +126,11 @@ const Notification = (props: any) => {
                       backgroundColor: 'orange',
                       marginRight: 10,
                       borderRadius: 10,
-                      padding: 10
+                      padding: 10,
                     }}>
-                    <Text style={{textAlign: 'center', fontWeight: '500'}}>Accept</Text>
+                    <Text style={{textAlign: 'center', fontWeight: '500'}}>
+                      Accept
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>

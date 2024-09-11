@@ -274,9 +274,9 @@ class UserRepositories {
   }
 
   async getNotification(receiver: string) {
-    const sql = "SELECT u.first_name, u.last_name, r.request_rate, r.request_rate_type, r.request_schedule_day, r.request_schedule_start_time, r.request_schedule_end_time FROM users u INNER JOIN requests r on u.user_id = r.sender WHERE r.receiver = $1 AND r.is_approved IS NULL;";
+    const sql = "SELECT u.first_name, u.last_name, u.email_address, r.request_rate, r.request_rate_type, r.request_schedule_day, r.request_schedule_start_time, r.request_schedule_end_time FROM users u INNER JOIN requests r on u.user_id = r.sender WHERE r.receiver = $1 AND r.is_approved IS NULL;";
     const data = await this.repositories.queryDB(sql, [receiver]);
-    return data.rows[0];
+    return data.rows;
   }
 }
 
