@@ -181,15 +181,15 @@ class UserModels {
 
   async getRecordByPeriod(req: any) {
     const { employerEmail, serviceProviderEmail } = req;
-    let {from, to} = req;
+    let { from, to } = req;
 
     if (from.length > 0 && to.length < 1) {
-      to = moment(from).add(1, 'month').format('YYYY-MM-DD')
+      to = moment(from).add(1, "month").format("YYYY-MM-DD");
     } else if (from.length < 1 && to.length > 0) {
-      from = moment(to).subtract(1, 'month').format('YYYY-MM-DD')
+      from = moment(to).subtract(1, "month").format("YYYY-MM-DD");
     } else if (from.length < 1 && to.length < 1) {
-      from = moment(new Date()).subtract(1, 'month').format('YYYY-MM-DD')
-      to = moment(new Date()).format('YYYY-MM-DD')
+      from = moment(new Date()).subtract(1, "month").format("YYYY-MM-DD");
+      to = moment(new Date()).format("YYYY-MM-DD");
     }
 
     const serviceProviderId = await this.repositories.getUserId(
@@ -248,7 +248,7 @@ class UserModels {
   async storeRequest(receiver: string, sender: number, request: any) {
     return request.shifts.map(async (r: any) => {
       await this.repositories.storeRequest(receiver, sender, r);
-    })
+    });
   }
 
   async emailHasBeenSent(receiver: string, sender: number) {
@@ -257,6 +257,33 @@ class UserModels {
 
   async getNotification(receiver: string) {
     return await this.repositories.getNotification(receiver);
+  }
+
+  async updateRequest(sender: string, receiver: string, isApproved: boolean) {
+    const senderId = await this.repositories.getUserId(sender);
+    return await this.repositories.updateRequest(
+      senderId,
+      receiver,
+      isApproved
+    );
+  }
+
+  async acceptRequest(sender: string, receiver: string, request: any) {
+    // add to user_transaction
+    const employerId = await this.repositories.getUserId(sender);
+    const serviceProviderId = await this.repositories.getUserId(receiver);
+    const transactionId = await this.repositories.addToUserTransaction(
+      employerId,
+      serviceProviderId,
+      request,
+      receiver
+    );
+    // add to user_schedule
+    request.shifts.map(async (s: any) => {
+      console.log('each', s)
+      await this.repositories.addToUserSchedule(s, serviceProviderId, transactionId);
+    });
+    return true;
   }
 }
 

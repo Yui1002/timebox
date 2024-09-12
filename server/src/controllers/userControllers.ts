@@ -43,11 +43,14 @@ class UserControllers {
     const employerId = await this.models.getEmployerId(employer.email);
     const hasBeenSent = await this.models.emailHasBeenSent(emailTo, employerId);
     if (hasBeenSent) {
-      res.status(400).json({ error : 'You have already sent a request before' });
+      res.status(400).json({ error: "You have already sent a request before" });
       return;
     }
-    await this.models.storeRequest(emailTo, employerId, request)
-    const result = await this.models.sendEmailToServiceProvider(emailTo, employer);
+    await this.models.storeRequest(emailTo, employerId, request);
+    const result = await this.models.sendEmailToServiceProvider(
+      emailTo,
+      employer
+    );
     result ? res.sendStatus(200) : res.sendStatus(400);
   }
 
@@ -101,6 +104,19 @@ class UserControllers {
     const { receiver } = req.query;
     const notification = await this.models.getNotification(receiver);
     res.send(notification);
+  }
+
+  async updateRequest(req: any, res: any) {
+    try {
+      const { sender, receiver, isApproved, request } = req.body;
+      await this.models.updateRequest(sender, receiver, isApproved);
+      if (isApproved) {
+        await this.models.acceptRequest(sender, receiver, request);
+      }
+      res.sendStatus(200);
+    } catch (err) {
+      res.status(400).json({ error: err });
+    }
   }
 }
 

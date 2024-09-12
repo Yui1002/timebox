@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
+import {Text, View, SafeAreaView, TouchableOpacity, Alert} from 'react-native';
 import {styles} from '../../styles/notificationStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 
 const Notification = (props: any) => {
@@ -71,6 +69,57 @@ const Notification = (props: any) => {
     });
   };
 
+  const updateRequest = (n: any, isApproved: boolean) => {
+    axios
+      .post(`${LOCAL_HOST_URL}/request/update`, {
+        sender: n.email_address,
+        receiver: userInfo.email,
+        isApproved: isApproved,
+        request: n,
+      })
+      .then(() => {
+        isApproved ? showSuccessAlert(n, 'accepted') : showSuccessAlert(n, 'declined');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const showAcceptAlert = (n: any) =>
+    Alert.alert(`Do you accept ${n.first_name} ${n.last_name}'s request?`, '', [
+      {
+        text: 'Yes',
+        onPress: () => updateRequest(n, true),
+      },
+      {
+        text: 'No',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+    ]);
+
+  const showDeclineAlert = (n: any) =>
+    Alert.alert(
+      `Do you decline ${n.first_name} ${n.last_name}'s request?`,
+      '',
+      [
+        {
+          text: 'Yes',
+          onPress: () => updateRequest(n, false),
+        },
+        {
+          text: 'No',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+      ],
+    );
+
+  const showSuccessAlert = (n: any, status: string) =>
+    Alert.alert(`You ${status} ${n.first_name} ${n.last_name}'s request!`, '', [
+      {text: 'Back to Home', onPress: () => props.navigation.goBack()},
+    ]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -102,35 +151,17 @@ const Notification = (props: any) => {
                     </View>
                   </View>
                 </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    marginTop: 10,
-                  }}>
+                <View style={styles.buttonContainer}>
                   <TouchableOpacity
-                    style={{
-                      width: '30%',
-                      backgroundColor: 'lightgreen',
-                      marginLeft: 10,
-                      borderRadius: 10,
-                      padding: 10,
-                    }}>
-                    <Text style={{textAlign: 'center', fontWeight: '500'}}>
-                      Decline
-                    </Text>
+                    style={[styles.button, styles.button_decline]}
+                    onPress={() => showDeclineAlert(n)}>
+                    <Text style={styles.buttonText}>Decline</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={{
-                      width: '30%',
-                      backgroundColor: 'orange',
-                      marginRight: 10,
-                      borderRadius: 10,
-                      padding: 10,
-                    }}>
-                    <Text style={{textAlign: 'center', fontWeight: '500'}}>
-                      Accept
-                    </Text>
+                    style={[styles.button, styles.button_accept]}
+                    // onPress={() => updateRequest(n, true)}>
+                    onPress={() => showAcceptAlert(n)}>
+                    <Text style={styles.buttonText}>Accept</Text>
                   </TouchableOpacity>
                 </View>
               </View>

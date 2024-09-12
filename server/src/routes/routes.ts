@@ -27,7 +27,8 @@ class Routes {
         app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
         app.post('/not/user/send', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
 
-        app.post('/request', this.userControllers.sendEmailToServiceProvider.bind(this.userControllers))
+        app.post('/request', this.userControllers.sendEmailToServiceProvider.bind(this.userControllers));
+        app.post('/request/update', this.userControllers.updateRequest.bind(this.userControllers));
         app.get('/notification', this.userControllers.getNotification.bind(this.userControllers))
 
         // user routes
