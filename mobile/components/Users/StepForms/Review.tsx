@@ -49,8 +49,8 @@ const Review = ({route, navigation}: any) => {
     }
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
-        emailTo: email,
-        employer: userInfo,
+        sender: userInfo,
+        receiver: email,
         request: request
       })
       .then(() => {

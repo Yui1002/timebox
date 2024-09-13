@@ -94,9 +94,12 @@ class AuthControllers {
 
   async resetPassword(req: any, res: any) {
     const response = await this.models.resetPassword(req.body);
-    response
-      ? res.sendStatus(200)
-      : res.status(400).json({ error: "Failed to reset password" });
+    if (response.name === 'Error') {
+      res.status(400).json({ error: response.message });
+      return;
+    }
+    console.log('here')
+    res.sendStatus(200)
   }
 }
 

@@ -83,7 +83,7 @@ const ManageServiceProviders = (props: any) => {
         <Text style={{fontSize: 20, fontWeight: '500'}}>Service Providers</Text>
       </View>
       <View style={{height: '90%'}}>
-        {serviceProviders.map((sp, index) => (
+        {(serviceProviders && serviceProviders.length > 0) ? serviceProviders.map((sp, index) => (
           <TouchableOpacity
             key={index}
             onPress={() => navigateToProfile(sp)}
@@ -94,7 +94,7 @@ const ManageServiceProviders = (props: any) => {
             <Text>{sp.email_address}</Text>
             <Text>{`$${sp.rate} / ${sp.rate_type}`}</Text>
           </TouchableOpacity>
-        ))}
+        )) : <Text>You don't have any service providers</Text>}
       </View>
     </SafeAreaView>
   );

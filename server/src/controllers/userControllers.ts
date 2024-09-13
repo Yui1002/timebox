@@ -29,29 +29,45 @@ class UserControllers {
     user.length > 0 ? res.status(200).send(user) : res.sendStatus(400);
   }
 
-  async emailToNotFoundUser(req: any, res: any) {
-    // const {serviceProviderEmail, userInfo} = req.body;
-    // const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
-    // result ? res.sendStatus(200) : res.status(400).json({
-    //   error: 'You have sent the request before'
-    // });
+  async searchEmail(req: any, res: any) {
+    try {
+      const { receiver, sender } = req.query;
+      const senderId = await this.models.getEmployerId(sender);
+      const isRequestDuplicate = await this.models.emailHasBeenSent(
+        receiver,
+        senderId
+      );
+      if (isRequestDuplicate) {
+        throw new Error("You cannot send the request multiple times");
+      } else {
+        const user = await this.models.getUser(receiver);
+        user.length > 0
+          ? res.status(200).send(user)
+          : res.status(200).send("Email not found");
+      }
+    } catch (err) {
+      res.status(400).send({ error: err.message });
+    }
   }
 
-  async sendEmailToServiceProvider(req: any, res: any) {
-    const { emailTo, employer, request } = req.body;
-    // check if the user has sent the same request before
-    const employerId = await this.models.getEmployerId(employer.email);
-    const hasBeenSent = await this.models.emailHasBeenSent(emailTo, employerId);
-    if (hasBeenSent) {
-      res.status(400).json({ error: "You have already sent a request before" });
-      return;
+  async sendRequest(req: any, res: any) {
+    try {
+      console.log(req.body)
+      const { sender, receiver } = req.body;
+      const senderId = await this.models.getEmployerId(sender.email);
+      if (req.body.hasOwnProperty('request')) {
+        const { request } = req.body;
+        await this.models.storeRequest(receiver, senderId, request);
+        await this.models.sendRequestViaEmail(receiver, sender, request);
+        res.sendStatus(200);
+      } else {
+        await this.models.storeRequest(receiver, sender, null);
+        await this.models.sendRequestViaEmail(receiver, sender, null);
+        res.sendStatus(200);
+      }
+    } catch (err) {
+      res.status(400).send({ error: err });
     }
-    await this.models.storeRequest(emailTo, employerId, request);
-    const result = await this.models.sendEmailToServiceProvider(
-      emailTo,
-      employer
-    );
-    result ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async addServiceProvider(req: any, res: any) {

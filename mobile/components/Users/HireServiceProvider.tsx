@@ -11,7 +11,7 @@ import Button from './Button';
 import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {
-  const {firstName, lastName, email} = useSelector(state => state.userInfo);
+  const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [inputError, setInputError] = useState({
@@ -39,7 +39,7 @@ const HireServiceProvider = (props: any) => {
       });
       return false;
     }
-    if (searchInput === email) {
+    if (searchInput === userInfo.email) {
       setInputError({
         type: `${type}_INVALID_FORMAT`,
         msg: 'Email should be not yours',
@@ -52,34 +52,38 @@ const HireServiceProvider = (props: any) => {
   const searchEmail = () => {
     if (!validateEmail('SEARCH')) return;
     axios
-      .get(`${LOCAL_HOST_URL}/email/exists`, {
+      .get(`${LOCAL_HOST_URL}/request/search`, {
         params: {
-          email: searchInput,
+          receiver: searchInput,
+          sender: userInfo.email
         },
       })
       .then(res => {
-        clearInput();
-        const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
-        showAlert(msg, null, function () {
-          navigateToNext(res.data[0]);
-        });
+        if (res.data === 'Email not found') {
+          const msg = `Do you want to request to ${searchInput} as a service provider?`;
+          showAlert(msg, null, function () {
+            sendRequest();
+          });
+        } else {
+          const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
+          showAlert(msg, null, function () {
+            navigateToNext(res.data[0]);
+          });
+        }
       })
-      .catch(error => {
-        const msg = `Looks like this user does not exist on the app. Do you still want to add ${searchInput} as a service provider?`;
-        showAlert(msg, null, emailToNotFoundUser);
-        return error;
+      .catch((error: any) => {
+        setInputError({
+          type: 'DUPLICATE_REQUEST',
+          msg: error.response.data.error
+        })
       });
   };
 
-  const emailToNotFoundUser = () => {
+  const sendRequest = () => {
     axios
-      .post(`${LOCAL_HOST_URL}/not/user/send`, {
-        serviceProviderEmail: searchInput,
-        userInfo: {
-          firstName,
-          lastName,
-          userEmail: email,
-        },
+      .post(`${LOCAL_HOST_URL}/request`, {
+        sender: userInfo,
+        receiver: searchInput,
       })
       .then(() => {
         clearInput();
@@ -157,11 +161,13 @@ const HireServiceProvider = (props: any) => {
         {(inputError.type === 'SEARCH_EMPTY_EMAIL' ||
           inputError.type === 'SEARCH_INVALID_FORMAT' ||
           inputError.type === 'EMAIL_NOT_FOUND' ||
-          inputError.type === 'DUPLICATE_EMAIL') && (
+          inputError.type === 'DUPLICATE_REQUEST') && (
           <InputError error={inputError} />
         )}
-        <TouchableOpacity style={[styles.button, {marginTop: 20}]} onPress={searchEmail}>
-            <Text style={styles.buttonText}>Continue</Text>
+        <TouchableOpacity
+          style={[styles.button, {marginTop: 20}]}
+          onPress={searchEmail}>
+          <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

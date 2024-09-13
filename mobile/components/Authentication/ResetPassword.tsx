@@ -43,14 +43,19 @@ const ResetPassword = ({route, navigation}: any) => {
   const resetPassword = () => {
     if (!validatePassword()) return;
     axios
-      .post(`${LOCAL_HOST_URL}/resetPassword`, {
+      .post(`${LOCAL_HOST_URL}/password/reset`, {
         email,
         password,
       })
-      .then(() => {
+      .then(res => {
         navigation.navigate('SignIn');
       })
-      .catch(err => {});
+      .catch(err => {
+        setInputError({
+          type: 'DUPLICATE_PASSWORD',
+          msg: err.response.data.error,
+        });
+      });
   };
 
   const Separator = () => <View style={styles.separator}></View>;
@@ -59,6 +64,11 @@ const ResetPassword = ({route, navigation}: any) => {
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.header}>Reset Password</Text>
+        <View style={styles.error}>
+          {inputError.type === 'DUPLICATE_PASSWORD' && (
+            <Text >{inputError.msg}</Text>
+          )}
+        </View>
         <View style={{marginVertical: 10}} />
         <View>
           <Text>Password</Text>

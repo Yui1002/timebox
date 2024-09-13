@@ -3,9 +3,6 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import {SafeAreaView, View, Text, TextInput, Button} from 'react-native';
 import {styles} from '../../styles/editProfileStyles.js';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import WorkShifts from './StepForms/WorkShifts';
 import DropdownPicker from './DropdownPicker';
 
 const EditProfile = ({route, navigation}: any) => {

@@ -101,8 +101,8 @@ const Profile = ({route, navigation}: any) => {
       </View>
       <View style={{height: '16%'}}>
         <Text style={styles.text}>Working shifts</Text>
-        {shifts.map(shift => (
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        {shifts.map((shift: any, index: number) => (
+          <View key={index} style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text
               style={{
                 width: '40%',

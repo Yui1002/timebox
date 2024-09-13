@@ -274,17 +274,17 @@ class UserRepositories {
     return data.rows[0].count > 0;
   }
 
-  async storeRequest(receiver: string, sender: number, request: any) {
+  async storeRequest(receiver: string, sender: number, rate: number, rateType: number, request: any) {
     const sql =
       "INSERT INTO requests (sender, receiver, is_approved, request_date, request_rate, request_rate_type, request_schedule_day, request_schedule_start_time, request_schedule_end_time) VALUES ($1, $2, NULL, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7);";
     await this.repositories.queryDB(sql, [
       sender,
       receiver,
-      request.rate,
-      request.rate_type,
-      request.day,
-      request.startTime,
-      request.endTime,
+      rate ? rate : null,
+      rateType ? rateType : null,
+      request ? request.day : null,
+      request ? request.startTime : null,
+      request ? request.endTime : null,
     ]);
     return true;
   }
@@ -312,14 +312,16 @@ class UserRepositories {
     const { request_rate, request_rate_type } = request;
     const sql =
       "INSERT INTO user_transaction (rate, rate_type, currency, status, update_date, update_by, employer_user_id, service_provider_id, mode) VALUES ($1, $2, NULL, DEFAULT, CURRENT_TIMESTAMP, $3, $4, $5, $6) RETURNING user_transaction_id;";
-    const transactionId = (await this.repositories.queryDB(sql, [
-      request_rate,
-      request_rate_type,
-      receiver,
-      employerId,
-      serviceProviderId,
-      null,
-    ])).rows[0].user_transaction_id;
+    const transactionId = (
+      await this.repositories.queryDB(sql, [
+        request_rate,
+        request_rate_type,
+        receiver,
+        employerId,
+        serviceProviderId,
+        null,
+      ])
+    ).rows[0].user_transaction_id;
     return transactionId;
   }
 

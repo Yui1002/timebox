@@ -33,9 +33,13 @@ const ForgotPassword = ({navigation}: any) => {
   const checkEmailRegistered = () => {
     if (!validateEmail()) return;
     axios
-      .post(`${LOCAL_HOST_URL}/checkEmailRegistered`, {email})
+      .get(`${LOCAL_HOST_URL}/email/exists`, {
+        params: {
+          email,
+        },
+      })
       .then(res => {
-        navigation.navigate('ResetPassword', {email})
+        navigation.navigate('ResetPassword', {email});
       })
       .catch(err => {
         const errMsg = 'The email is not registered. Please sign up';

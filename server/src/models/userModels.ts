@@ -38,30 +38,6 @@ class UserModels {
     return await this.repositories.getServiceProviders(userId);
   }
 
-  async emailToNotFoundUser(email: string, userInfo: any) {
-    // const { firstName, lastName, userEmail } = userInfo;
-    // const mailOptions = {
-    //   from: userEmail,
-    //   to: email,
-    //   subject: `Request from ${firstName} ${lastName}`,
-    //   text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
-    // };
-    // try {
-    //   const userId = await this.repositories.getUserId(userEmail)
-    //   const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
-    //   if (emailHasBeenSent) {
-    //     return false;
-    //   }
-    //   await this.repositories.storeRequest(email, userId);
-    //   await transporter.sendMail(mailOptions);
-    //   return true;
-    // } catch (err) {
-    //   return false;
-    // } finally {
-    //   transporter.close();
-    // }
-  }
-
   async getUser(email: string) {
     return await this.repositories.getUser(email);
   }
@@ -224,31 +200,50 @@ class UserModels {
     );
   }
 
-  async sendEmailToServiceProvider(
-    emailTo: string,
-    employer: { firstName: string; lastName: string; email: string }
+  async sendRequestViaEmail(
+    receiver: string,
+    sender: { firstName: string; lastName: string; email: string },
+    request: any
   ) {
-    const { firstName, lastName, email } = employer;
+    const { firstName, lastName, email } = sender;
     const mailOptions = {
       from: email,
-      to: emailTo,
+      to: receiver,
       subject: `${firstName} ${lastName} requested you as a service provider`,
-      text: `${firstName} ${lastName} requested you as a service provider. Please open the app and approve this, otherwise ignore it.`,
+      text: request
+        ? `${firstName} ${lastName} requested you as a service provider. Please open the app and approve this, otherwise ignore it.`
+        : `${firstName} ${lastName} requested you as a service provider. Download the app from this link: `,
     };
     try {
       await transporter.sendMail(mailOptions);
       return true;
     } catch (err) {
-      return false;
+      return new Error(`Failed to send a request to ${receiver}`);
     } finally {
       transporter.close();
     }
   }
 
   async storeRequest(receiver: string, sender: number, request: any) {
-    return request.shifts.map(async (r: any) => {
-      await this.repositories.storeRequest(receiver, sender, r);
-    });
+    if (!request) {
+      return await this.repositories.storeRequest(
+        receiver,
+        sender,
+        null,
+        null,
+        null
+      );
+    } else {
+      return request.shifts.map(async (r: any) => {
+        await this.repositories.storeRequest(
+          receiver,
+          sender,
+          request.rate,
+          request.rate_type,
+          r
+        );
+      });
+    }
   }
 
   async emailHasBeenSent(receiver: string, sender: number) {
@@ -280,8 +275,12 @@ class UserModels {
     );
     // add to user_schedule
     request.shifts.map(async (s: any) => {
-      console.log('each', s)
-      await this.repositories.addToUserSchedule(s, serviceProviderId, transactionId);
+      console.log("each", s);
+      await this.repositories.addToUserSchedule(
+        s,
+        serviceProviderId,
+        transactionId
+      );
     });
     return true;
   }

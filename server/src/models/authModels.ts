@@ -38,6 +38,7 @@ class AutheModels {
   async isPasswordMatch(email: string, password: string) {
     const hashedPassword = await this.repositories.getPassword(email);
     const isMatch = await bcrypt.compare(password, hashedPassword);
+    console.log('isMatch', isMatch)
     return isMatch;
   }
 
@@ -117,12 +118,20 @@ class AutheModels {
   }
 
   async resetPassword(req: any) {
-    const { email, password } = req;
-    const hashedPassword = await bcrypt.hash(
-      password,
-      Number(process.env.SALT_ROUNDS)
-    );
-    return await this.repositories.resetPassword(email, hashedPassword);
+    try {
+      const { email, password } = req;
+      const isPrevPwdUsed = await this.isPasswordMatch(email, password);
+      if (isPrevPwdUsed) {
+        throw new Error("You cannot set the current password")
+      }
+      const hashedPassword = await bcrypt.hash(
+        password,
+        Number(process.env.SALT_ROUNDS)
+      );
+      return await this.repositories.resetPassword(email, hashedPassword);
+    } catch (err) {
+      return err;
+    }
   }
 }
 

@@ -25,6 +25,7 @@ const Home = (props: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/employers/${email}`)
       .then(res => {
+        console.log('res.data', res.data)
         setEmployers(res.data);
       })
       .catch(err => {
