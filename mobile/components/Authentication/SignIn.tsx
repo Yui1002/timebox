@@ -43,7 +43,6 @@ const SignIn = ({navigation}: any) => {
         navigation.navigate('DrawerNav');
       })
       .catch(err => {
-        console.log(err.response)
         const errMsg = err.response.data.error;
         const error = {type: 'SIGN_IN_ERROR', msg: errMsg};
         setinputError(error);

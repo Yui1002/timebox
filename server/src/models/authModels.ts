@@ -38,7 +38,6 @@ class AutheModels {
   async isPasswordMatch(email: string, password: string) {
     const hashedPassword = await this.repositories.getPassword(email);
     const isMatch = await bcrypt.compare(password, hashedPassword);
-    console.log('isMatch', isMatch)
     return isMatch;
   }
 

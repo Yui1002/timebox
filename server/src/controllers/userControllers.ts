@@ -52,7 +52,6 @@ class UserControllers {
 
   async sendRequest(req: any, res: any) {
     try {
-      console.log(req.body)
       const { sender, receiver } = req.body;
       const senderId = await this.models.getEmployerId(sender.email);
       if (req.body.hasOwnProperty('request')) {

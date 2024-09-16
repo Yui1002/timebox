@@ -6,8 +6,8 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
-  Linking
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -16,16 +16,18 @@ const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const {firstName, email} = userInfo;
   const [employers, setEmployers] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getEmployers();
-  }, []);
+    if (isFocused) {
+      getEmployers();
+    }
+  }, [isFocused]);
 
   const getEmployers = () => {
     axios
       .get(`${LOCAL_HOST_URL}/employers/${email}`)
       .then(res => {
-        console.log('res.data', res.data)
         setEmployers(res.data);
       })
       .catch(err => {

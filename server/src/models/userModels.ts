@@ -234,15 +234,25 @@ class UserModels {
         null
       );
     } else {
-      return request.shifts.map(async (r: any) => {
-        await this.repositories.storeRequest(
+      if (request.shifts.length === 0) {
+        return await this.repositories.storeRequest(
           receiver,
           sender,
           request.rate,
           request.rate_type,
-          r
+          null
         );
-      });
+      } else {
+        return request.shifts.map(async (r: any) => {
+          await this.repositories.storeRequest(
+            receiver,
+            sender,
+            request.rate,
+            request.rate_type,
+            r
+          );
+        });
+      }
     }
   }
 
@@ -275,7 +285,6 @@ class UserModels {
     );
     // add to user_schedule
     request.shifts.map(async (s: any) => {
-      console.log("each", s);
       await this.repositories.addToUserSchedule(
         s,
         serviceProviderId,

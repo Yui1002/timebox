@@ -98,7 +98,6 @@ class AuthControllers {
       res.status(400).json({ error: response.message });
       return;
     }
-    console.log('here')
     res.sendStatus(200)
   }
 }

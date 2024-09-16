@@ -5,14 +5,18 @@ import {styles} from '../../styles/notificationStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import moment from 'moment';
+import { useIsFocused } from '@react-navigation/native';
 
 const Notification = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [notifications, setNotifications] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getNotification();
-  }, []);
+    if (isFocused) {
+      getNotification();
+    }
+  }, [isFocused]);
 
   const getNotification = () => {
     axios
