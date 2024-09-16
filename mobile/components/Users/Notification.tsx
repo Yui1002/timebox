@@ -147,11 +147,11 @@ const Notification = (props: any) => {
                     }}>
                     <Text style={{width: '25%'}}>Schedules: </Text>
                     <View style={{width: '75%'}}>
-                      {n.shifts.map((s: any, index: number) => (
+                      {n.shifts[0].day ? n.shifts.map((s: any, index: number) => (
                         <View key={index}>
                           <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
                         </View>
-                      ))}
+                      )) : <Text>Not specified</Text>}
                     </View>
                   </View>
                 </View>
@@ -163,7 +163,6 @@ const Notification = (props: any) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.button, styles.button_accept]}
-                    // onPress={() => updateRequest(n, true)}>
                     onPress={() => showAcceptAlert(n)}>
                     <Text style={styles.buttonText}>Accept</Text>
                   </TouchableOpacity>

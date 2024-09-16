@@ -9,6 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const Profile = ({route, navigation}: any) => {
   const {first_name, last_name, email_address, rate, rate_type, shifts} =
     route.params.user;
+  console.log(route.params.user)
 
   const showDeleteAlert = () => {
     Alert.alert(
@@ -101,7 +102,7 @@ const Profile = ({route, navigation}: any) => {
       </View>
       <View style={{height: '16%'}}>
         <Text style={styles.text}>Working shifts</Text>
-        {shifts.map((shift: any, index: number) => (
+        {shifts[0].day ? shifts.map((shift: any, index: number) => (
           <View key={index} style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text
               style={{
@@ -112,7 +113,7 @@ const Profile = ({route, navigation}: any) => {
                 width: '60%',
               }}>{`${shift.start_time} - ${shift.end_time}`}</Text>
           </View>
-        ))}
+        )) : <Text>Not specified</Text>}
       </View>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>View working history</Text>

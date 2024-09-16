@@ -229,8 +229,7 @@ class UserRepositories {
 
   // ---------------------  Record  --------------------------------
   async startRecord(serviceProviderEmail: string, transactionId: string) {
-    const sql =
-      "INSERT INTO time_record VALUES (gen_random_uuid(), DEFAULT, CURRENT_TIMESTAMP, $1, $2, CURRENT_TIMESTAMP, NULL) RETURNING start_time;";
+    const sql = "INSERT INTO time_record (status, start_time, end_time, update_date, update_by, id_user_transaction) VALUES (DEFAULT, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, $1, $2) RETURNING start_time"
     return (
       await this.repositories.queryDB(sql, [
         serviceProviderEmail,
