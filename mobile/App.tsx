@@ -22,8 +22,9 @@ import RegisterWorkShifts from './components/Users/StepForms/RegisterWorkShifts'
 import Review from './components/Users/StepForms/Review';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
-import Profile from './components/Users/Profile';
-import EditProfile from './components/Users/EditProfile';
+import Profile from './components/Users/Profile/Profile';
+import EditProfile from './components/Users/Profile/EditProfile';
+import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
 
 const Stack = createStackNavigator();
 
@@ -131,6 +132,14 @@ function App(): JSX.Element {
             component={EditProfile}
             options={({navigation}) => ({
               headerTitle: 'Edit Profile',
+              gestureEnabled: false,
+            })}
+          />
+          <Stack.Screen
+            name="EditWorkShifts"
+            component={EditWorkShifts}
+            options={({navigation}) => ({
+              headerTitle: 'Edit Work Shifts',
               gestureEnabled: false,
             })}
           />

@@ -92,7 +92,6 @@ const ManageServiceProviders = (props: any) => {
               {sp.first_name} {sp.last_name}
             </Text>
             <Text>{sp.email_address}</Text>
-            <Text>{`$${sp.rate} / ${sp.rate_type}`}</Text>
           </TouchableOpacity>
         )) : <Text>You don't have any service providers</Text>}
       </View>

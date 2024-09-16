@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {LOCAL_HOST_URL} from '../../config.js';
+import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
 import {SafeAreaView, View, Text, Button, Alert, Linking, TouchableOpacity} from 'react-native';
-import {styles} from '../../styles/profileStyles.js';
+import {styles} from '../../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Profile = ({route, navigation}: any) => {
-  const {first_name, last_name, email_address, rate, rate_type, shifts} =
+  const {first_name, last_name, email_address, status, rate, rate_type, shifts} =
     route.params.user;
-  console.log(route.params.user)
 
   const showDeleteAlert = () => {
     Alert.alert(
@@ -60,7 +59,7 @@ const Profile = ({route, navigation}: any) => {
   };
 
   const editProfile = () => {
-    navigation.navigate('EditProfile', {rate, rate_type, shifts});
+    navigation.navigate('EditProfile', {status, rate, rate_type, shifts});
   };
 
   return (

@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
   listContainer: {
     backgroundColor: '#E0E0E0',
     width: '100%',
-    height: '16%',
+    height: '12%',
     marginVertical: 8,
     borderRadius: 10,
     padding: '4%'
