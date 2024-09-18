@@ -49,7 +49,11 @@ const ManageServiceProviders = (props: any) => {
         delete obj['start_time'];
         delete obj['end_time'];
       }
-      sortDays(data[i]);
+      if (obj['shifts'][0]['day'] === null) {
+        obj['shifts'] = [];
+      } else {
+        sortDays(data[i]);
+      }
     }
     return data;
   };

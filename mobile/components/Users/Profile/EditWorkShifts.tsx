@@ -7,7 +7,8 @@ import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 
 const EditWorkShifts = ({route, navigation}: any) => {
-  const {status, rate, rate_type, shifts} = route.params;
+  const {editSchedule, setEditSchedule} = route.params;
+  console.log('edit schedule', editSchedule);
   const days = [
     'Monday',
     'Tuesday',
@@ -22,7 +23,6 @@ const EditWorkShifts = ({route, navigation}: any) => {
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<string>('');
-  const [schedules, setSchedules] = useState(shifts);
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
@@ -36,7 +36,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
       });
       return false;
     }
-    if (schedules.some((s: any) => s['day'] === selectedDay)) {
+    if (editSchedule.some((s: any) => s['day'] === selectedDay)) {
       setInputError({
         type: 'DUPLICATE_DAY',
         msg: `${selectedDay} is already registered`,
@@ -67,9 +67,10 @@ const EditWorkShifts = ({route, navigation}: any) => {
       startTime: moment(startTime).format('LT'),
       endTime: moment(endTime).format('LT'),
     };
-    dispatch(addShift(value));
 
-    navigation.navigate('EditProfile');
+    setEditSchedule(s => [...s, value]);
+
+    navigation.navigate('EditProfile', {editSchedule, setEditSchedule});
   };
 
   return (

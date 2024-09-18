@@ -9,34 +9,35 @@ const EditProfile = ({route, navigation}: any) => {
   const {status, rate, rate_type, shifts} = route.params;
   const [editRate, setEditRate] = useState(rate);
   const [editRateType, setEditRateType] = useState(rate_type);
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([
+  const [editStatus, setEditStatus] = useState(status);
+  const [editSchedule, setEditSchedule] = useState(shifts);
+  const [rateTypeOpen, setRateTypeOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [rateType, setRateType] = useState([
     {label: 'Hourly', value: 'hourly'},
     {label: 'Daily', value: 'daily'},
   ]);
+  const [updatedStatus, setUpdatedStatus] = useState([
+    {label: 'Active', value: 'active'},
+    {label: 'Inactive', value: 'inactive'},
+  ]);
 
-  const deleteDate = (day: any) => {};
+  const deleteDate = (item: any) => {};
 
   const saveChanges = () => {};
 
   const navigateToAddSchedule = () => {
     navigation.navigate('EditWorkShifts', {
-      status,
-      rate,
-      rate_type,
-      shifts,
+      editSchedule,
+      setEditSchedule,
     });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-        }}>
+      <View style={[styles.align, {height: '15%'}]}>
         <View style={{width: '45%'}}>
-          <Text style={styles.text}>Rate</Text>
+          <Text style={styles.text}>Rate ($)</Text>
           <TextInput
             value={`${editRate}`}
             style={styles.input}
@@ -46,31 +47,36 @@ const EditProfile = ({route, navigation}: any) => {
         <View style={{width: '45%'}}>
           <Text style={styles.rateTypeText}>Rate Type</Text>
           <DropdownPicker.DropdownPicker
-            open={open}
+            open={rateTypeOpen}
             value={editRateType}
-            items={items}
-            setOpen={setOpen}
+            items={rateType}
+            setOpen={setRateTypeOpen}
             setValue={setEditRateType}
-            setItems={setItems}
+            setItems={setRateType}
           />
         </View>
       </View>
-      <View>
+      <View style={{height: statusOpen ? '30%' : '18%', width: '45%'}}>
         <Text style={styles.text}>Status</Text>
-        <Text>{status}</Text>
+        <DropdownPicker.DropdownPicker
+          open={statusOpen}
+          value={editStatus}
+          items={updatedStatus}
+          setOpen={setStatusOpen}
+          setValue={setEditStatus}
+          setItems={setUpdatedStatus}
+        />
       </View>
-      <View>
+      <View style={{height: '45%'}}>
         <Text style={styles.text}>Schedule</Text>
-        {shifts[0].day ? (
-          shifts.map((s, index) => (
-            <View
-              key={index}
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        {editSchedule.length > 0 ? (
+          editSchedule.map((s, index) => (
+            <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
               <Text style={{width: '30%'}}>{s.day}</Text>
               <Text style={{width: '50%'}}>
-                {s.start_time} ~ {s.end_time}
+                {s.startTime} ~ {s.endTime}
               </Text>
-              <Text style={styles.delete} onPress={() => deleteDate(w)}>
+              <Text style={styles.delete} onPress={() => deleteDate(s)}>
                 Delete
               </Text>
             </View>
@@ -78,17 +84,17 @@ const EditProfile = ({route, navigation}: any) => {
         ) : (
           <Text>Not specified</Text>
         )}
+        <View style={styles.addButton}>
+          <Button
+            title={`${String.fromCharCode(43)}  Add Schedule`}
+            color="#fff"
+            onPress={navigateToAddSchedule}
+          />
+        </View>
       </View>
-      <View style={styles.addButton}>
-        <Button
-          title={`${String.fromCharCode(43)}  Add Schedule`}
-          color="#fff"
-          onPress={navigateToAddSchedule}
-        />
-      </View>
-      {/* <View style={{width: '100%', backgroundColor: '#24a0ed', borderRadius: 10}}>
+      <View style={styles.saveButton}>
         <Button title="Save" color="#fff" onPress={saveChanges} />
-      </View> */}
+      </View>
     </SafeAreaView>
   );
 };

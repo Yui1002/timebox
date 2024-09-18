@@ -1,14 +1,29 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
-import {SafeAreaView, View, Text, Button, Alert, Linking, TouchableOpacity} from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  Button,
+  Alert,
+  Linking,
+  TouchableOpacity,
+} from 'react-native';
 import {styles} from '../../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Profile = ({route, navigation}: any) => {
-  const {first_name, last_name, email_address, status, rate, rate_type, shifts} =
-    route.params.user;
+  const {
+    first_name,
+    last_name,
+    email_address,
+    status,
+    rate,
+    rate_type,
+    shifts,
+  } = route.params.user;
 
   const showDeleteAlert = () => {
     Alert.alert(
@@ -101,18 +116,24 @@ const Profile = ({route, navigation}: any) => {
       </View>
       <View style={{height: '16%'}}>
         <Text style={styles.text}>Working shifts</Text>
-        {shifts[0].day ? shifts.map((shift: any, index: number) => (
-          <View key={index} style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text
-              style={{
-                width: '40%',
-              }}>{`${String.fromCharCode(8226)} ${shift.day}`}</Text>
-            <Text
-              style={{
-                width: '60%',
-              }}>{`${shift.start_time} - ${shift.end_time}`}</Text>
-          </View>
-        )) : <Text>Not specified</Text>}
+        {shifts.length > 0 ? (
+          shifts.map((shift: any, index: number) => (
+            <View
+              key={index}
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text
+                style={{
+                  width: '40%',
+                }}>{`${String.fromCharCode(8226)} ${shift.day}`}</Text>
+              <Text
+                style={{
+                  width: '60%',
+                }}>{`${shift.start_time} - ${shift.end_time}`}</Text>
+            </View>
+          ))
+        ) : (
+          <Text>Not specified</Text>
+        )}
       </View>
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>View working history</Text>
