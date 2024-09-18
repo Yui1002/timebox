@@ -7,8 +7,9 @@ import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 
 const EditWorkShifts = ({route, navigation}: any) => {
-  const {editSchedule, setEditSchedule} = route.params;
-  console.log('edit schedule', editSchedule);
+  const {status, rate, rate_type, shifts, editSchedule, setEditSchedule} =
+    route.params;
+
   const days = [
     'Monday',
     'Tuesday',
@@ -70,7 +71,14 @@ const EditWorkShifts = ({route, navigation}: any) => {
 
     setEditSchedule(s => [...s, value]);
 
-    navigation.navigate('EditProfile', {editSchedule, setEditSchedule});
+    navigation.navigate('EditProfile', {
+      status,
+      rate,
+      rate_type,
+      shifts,
+      editSchedule,
+      setEditSchedule,
+    });
   };
 
   return (

@@ -75,9 +75,8 @@ class UserControllers {
   }
 
   async editServiceProvider(req: any, res: any) {
-    const response = await this.models.editServiceProvider(req.body);
-    // const response = await this.models.addServiceProvider(req.body);
-    // response ? res.sendStatus(200) : res.sendStatus(400);
+    const response = await this.models.editServiceProvider(req.body.params);
+    res.send('hello')
   }
 
   async deleteServiceProvider(req: any, res: any) {

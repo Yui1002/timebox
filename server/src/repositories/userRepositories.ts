@@ -74,17 +74,10 @@ class UserRepositories {
       .rows[0].user_id;
   }
 
-  async updateServiceProviderInfo(
-    firstName: string,
-    lastName: string,
-    email: string,
-    status: string
-  ) {
-    const sql =
-      "UPDATE users SET first_name = $1, last_name = $2, email_address = $3, status = $4 WHERE user_id = $5;";
-    await this.repositories.queryDB(sql, [firstName, lastName, email, status]);
-    return true;
+  async editServiceProvider() {
+    console.log('hello')
   }
+
 
   async addRateInfo(
     rate: string,
@@ -105,6 +98,34 @@ class UserRepositories {
         serviceProviderId,
       ])
     ).rows[0].user_transaction_id;
+  }
+
+  /**
+   * First get the original user transaction
+   * @param req {key: value}
+   */
+  async updateUserTransaction(req: any) {
+    const sql = `INSERT INTO user_transaction 
+                    (user_transaction_id, rate, rate_type, currency, status, update_date, update_by, employer_user_id, service_provider_id, mode) 
+                  VALUES ($1, 1, "hourly", NULL, "active", CURRENT_TIMESTAMP, "", "", "", NULL)
+                  ON CONFLICT (user_transaction_id) DO UPDATE `
+    
+      let builder = this.updateUserBuilderQuery(sql, req);
+      let params = Object.values(req)
+      await this.repositories.queryDB(builder, params);
+      return true
+  }
+
+  private updateUserBuilderQuery(baseQuery: string, req: any): string {
+      let columnsToUpdate = ["rate", "rate_type", "status"]
+      let counter = 2;
+      for (let col in columnsToUpdate) {
+        if (req[col]) {
+          baseQuery += ` SET ${col} = $${counter++}`
+        }
+      }
+
+      return baseQuery + ";"
   }
 
   async updateRateInfo(

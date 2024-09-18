@@ -22,12 +22,40 @@ const EditProfile = ({route, navigation}: any) => {
     {label: 'Inactive', value: 'inactive'},
   ]);
 
-  const deleteDate = (item: any) => {};
+  const deleteDate = (item: any) => {
+    setEditSchedule(s =>
+      s.filter(i => JSON.stringify(i) !== JSON.stringify(item)),
+    );
+  };
 
-  const saveChanges = () => {};
+  const saveChanges = () => {
+    const params: any = {};
+    if (rate !== Number(editRate)) {
+      params['rate'] = editRate;
+    }
+    if (rate_type !== editRateType) {
+      params['rate_type'] = editRateType;
+    }
+    if (status !== editStatus) {
+      params['status'] = editStatus;
+    }
+    console.log(shifts, editSchedule);
+    if (JSON.stringify(shifts) !== JSON.stringify(editSchedule)) {
+      params['shift'] = editSchedule;
+    }
+
+    console.log('params', params);
+    axios.post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
+      params,
+    });
+  };
 
   const navigateToAddSchedule = () => {
     navigation.navigate('EditWorkShifts', {
+      status,
+      rate,
+      rate_type,
+      shifts,
       editSchedule,
       setEditSchedule,
     });

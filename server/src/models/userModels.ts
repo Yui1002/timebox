@@ -73,24 +73,30 @@ class UserModels {
   }
 
   async editServiceProvider(req: any) {
-    // Frances wants to change
-    const {
-      email_address,
-      updatedFirstName,
-      updatedLastName,
-      updatedEmail,
-      updatedStatus,
-    } = req;
-    // update users table
-    const userId = await this.repositories.getUserId(email_address);
-    await this.repositories.updateServiceProviderInfo(
-      updatedFirstName,
-      updatedLastName,
-      updatedEmail,
-      updatedStatus
-    );
-    // update user_transaction table
-    // update user_schedule table
+    let data: {[key: string]: string; } = {}
+    let properties = ["rate", "rate_type", "status", "shift"]
+    for (let prop in properties) {
+      if (req.hasOwnProperty(prop)) data[prop] = req.prop
+    }
+
+    let transact = await this.repositories.getUserTransactionId("10", "11")
+    if (!transact) {
+      //throw exception
+    }
+
+    data["user_transaction_id"] = transact[0]
+    await this.repositories.updateUserTransaction(data)
+    
+    
+    /**
+     * affected tables
+     * => user_transaction, user_schedule
+     */
+    // if (req.hasOwnProperty('rate') || req.hasOwnProperty('rate_type') || req.hasOwnProperty('shift')) {
+    //   await this.repositories.updateUserTransaction(req);
+    // }
+    // if there is a change in status, rate, rate_type update user_transaction table,
+    // if there is a change in shifts, update user_schedule table 
   }
 
   async editUser(req: any) {
