@@ -74,7 +74,13 @@ const Profile = ({route, navigation}: any) => {
   };
 
   const editProfile = () => {
-    navigation.navigate('EditProfile', {status, rate, rate_type, shifts});
+    navigation.navigate('EditProfile', {
+      status,
+      rate,
+      rate_type,
+      shifts,
+      email_address,
+    });
   };
 
   return (

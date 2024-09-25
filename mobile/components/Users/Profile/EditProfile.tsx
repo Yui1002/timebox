@@ -4,9 +4,12 @@ import axios from 'axios';
 import {SafeAreaView, View, Text, TextInput, Button} from 'react-native';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from '../DropdownPicker';
+import { useSelector } from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
-  const {status, rate, rate_type, shifts} = route.params;
+  const {status, rate, rate_type, shifts, email_address} = route.params;
+  console.log(route.params)
+  const userInfo = useSelector(state => state.userInfo);
   const [editRate, setEditRate] = useState(rate);
   const [editRateType, setEditRateType] = useState(rate_type);
   const [editStatus, setEditStatus] = useState(status);
@@ -39,14 +42,13 @@ const EditProfile = ({route, navigation}: any) => {
     if (status !== editStatus) {
       params['status'] = editStatus;
     }
-    console.log(shifts, editSchedule);
     if (JSON.stringify(shifts) !== JSON.stringify(editSchedule)) {
       params['shift'] = editSchedule;
     }
-
-    console.log('params', params);
     axios.post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
-      params,
+      params: params,
+      spEmail: email_address,
+      epEmail: userInfo.email
     });
   };
 
@@ -56,6 +58,7 @@ const EditProfile = ({route, navigation}: any) => {
       rate,
       rate_type,
       shifts,
+      email_address,
       editSchedule,
       setEditSchedule,
     });
@@ -102,7 +105,7 @@ const EditProfile = ({route, navigation}: any) => {
             <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
               <Text style={{width: '30%'}}>{s.day}</Text>
               <Text style={{width: '50%'}}>
-                {s.startTime} ~ {s.endTime}
+                {s.start_time} ~ {s.end_time}
               </Text>
               <Text style={styles.delete} onPress={() => deleteDate(s)}>
                 Delete

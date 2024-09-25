@@ -7,8 +7,15 @@ import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 
 const EditWorkShifts = ({route, navigation}: any) => {
-  const {status, rate, rate_type, shifts, editSchedule, setEditSchedule} =
-    route.params;
+  const {
+    status,
+    rate,
+    rate_type,
+    shifts,
+    email_address,
+    editSchedule,
+    setEditSchedule,
+  } = route.params;
 
   const days = [
     'Monday',
@@ -65,8 +72,8 @@ const EditWorkShifts = ({route, navigation}: any) => {
     if (!validateInput()) return;
     const value = {
       day: selectedDay,
-      startTime: moment(startTime).format('LT'),
-      endTime: moment(endTime).format('LT'),
+      start_time: moment(startTime).format('LT'),
+      end_time: moment(endTime).format('LT'),
     };
 
     setEditSchedule(s => [...s, value]);
@@ -76,6 +83,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
       rate,
       rate_type,
       shifts,
+      email_address,
       editSchedule,
       setEditSchedule,
     });

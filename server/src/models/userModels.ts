@@ -73,30 +73,33 @@ class UserModels {
   }
 
   async editServiceProvider(req: any) {
-    let data: {[key: string]: string; } = {}
-    let properties = ["rate", "rate_type", "status", "shift"]
-    for (let prop in properties) {
-      if (req.hasOwnProperty(prop)) data[prop] = req.prop
-    }
+    const { params, spEmail, epEmail } = req;
+    console.log('req', req);
+    const data: {[key: string]: string | number; } = {}
 
-    let transact = await this.repositories.getUserTransactionId("10", "11")
-    if (!transact) {
-      //throw exception
-    }
+    try {
+      const epId = await this.repositories.getUserId(epEmail);
+      const spId = await this.repositories.getUserId(spEmail);
 
-    data["user_transaction_id"] = transact[0]
-    await this.repositories.updateUserTransaction(data)
-    
-    
-    /**
-     * affected tables
-     * => user_transaction, user_schedule
-     */
-    // if (req.hasOwnProperty('rate') || req.hasOwnProperty('rate_type') || req.hasOwnProperty('shift')) {
-    //   await this.repositories.updateUserTransaction(req);
-    // }
-    // if there is a change in status, rate, rate_type update user_transaction table,
-    // if there is a change in shifts, update user_schedule table 
+      if (epId && spId) {
+        data.employer_user_id = epId;
+        data.service_provider_id = spId;
+
+        const properties = ["rate", "rate_type", "status"]
+        for (const prop of properties) {
+          if (params.hasOwnProperty(prop)) data[prop] = params[prop];
+        }
+        await this.repositories.updateUserTransaction(data)
+      }
+      if (req.params.hasOwnProperty('shift')) {
+        const transactionId = await this.repositories.getUserTransactionId(epId, spId);
+        req.params.shift.map(async (s: any) => {
+          await this.repositories.updateUserSchedule(s, spId, transactionId);
+        })
+      }
+    } catch (err) {
+      throw new Error('transaction id not found')
+    }
   }
 
   async editUser(req: any) {

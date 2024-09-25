@@ -54,7 +54,7 @@ class UserControllers {
     try {
       const { sender, receiver } = req.body;
       const senderId = await this.models.getEmployerId(sender.email);
-      if (req.body.hasOwnProperty('request')) {
+      if (req.body.hasOwnProperty("request")) {
         const { request } = req.body;
         await this.models.storeRequest(receiver, senderId, request);
         await this.models.sendRequestViaEmail(receiver, sender, request);
@@ -75,8 +75,8 @@ class UserControllers {
   }
 
   async editServiceProvider(req: any, res: any) {
-    const response = await this.models.editServiceProvider(req.body.params);
-    res.send('hello')
+    const response = await this.models.editServiceProvider(req.body);
+    res.send("hello");
   }
 
   async deleteServiceProvider(req: any, res: any) {
