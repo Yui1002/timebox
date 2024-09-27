@@ -24,6 +24,11 @@ class UserControllers {
     res.send(serviceProviders);
   }
 
+  async getServiceProvider(req: any, res: any) {
+    const response = await this.models.getServiceProvider(req.query);
+    res.send(response);
+  }
+
   async checkUserExists(req: any, res: any) {
     const user = await this.models.getUser(req.params.email);
     user.length > 0 ? res.status(200).send(user) : res.sendStatus(400);
@@ -76,15 +81,12 @@ class UserControllers {
 
   async editServiceProvider(req: any, res: any) {
     const response = await this.models.editServiceProvider(req.body);
-    res.send("hello");
+    response ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async deleteServiceProvider(req: any, res: any) {
-    const { employerEmail, serviceProviderEmail } = req.query;
-    const response = await this.models.deleteServiceProvider(
-      employerEmail,
-      serviceProviderEmail
-    );
+    const { epEmail, spEmail } = req.query;
+    const response = await this.models.deleteServiceProvider(epEmail, spEmail);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 

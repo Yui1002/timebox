@@ -25,6 +25,7 @@ import ResetPassword from './components/Authentication/ResetPassword';
 import Profile from './components/Users/Profile/Profile';
 import EditProfile from './components/Users/Profile/EditProfile';
 import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
+import ManageServiceProviders from './components/Users/ManageServiceProviders';
 
 const Stack = createStackNavigator();
 
@@ -140,6 +141,14 @@ function App(): JSX.Element {
             component={EditWorkShifts}
             options={({navigation}) => ({
               headerTitle: 'Edit Work Shifts',
+              gestureEnabled: false,
+            })}
+          />
+          <Stack.Screen
+            name="ManageServiceProviders"
+            component={ManageServiceProviders}
+            options={({navigation}) => ({
+              headerTitle: 'Manage Service Providers',
               gestureEnabled: false,
             })}
           />

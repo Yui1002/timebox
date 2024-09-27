@@ -13,17 +13,80 @@ import {
 import {styles} from '../../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useIsFocused} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const Profile = ({route, navigation}: any) => {
-  const {
-    first_name,
-    last_name,
-    email_address,
-    status,
-    rate,
-    rate_type,
-    shifts,
-  } = route.params.user;
+  const isFocused = useIsFocused();
+  const userInfo = useSelector(state => state.userInfo);
+  const {first_name, last_name, email_address} = route.params.user;
+  const [workInfo, setWorkInfo] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (isFocused) {
+      getUserWorkInfo();
+    }
+  }, [isFocused]);
+
+  const getUserWorkInfo = () => {
+    axios
+      .get(`${LOCAL_HOST_URL}/serviceProvider`, {
+        params: {
+          spEmail: email_address,
+          epEmail: userInfo.email,
+        },
+      })
+      .then(res => {
+        const formattedData = formatData(res.data);
+        setWorkInfo(formattedData);
+      });
+  };
+
+  const formatData = (data: any) => {
+    const sorted = data.reduce((a, b) => {
+      const found = a.find(e => e.rate == b.rate);
+      const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
+      return (
+        found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
+      );
+    }, []);
+
+    for (let i = 0; i < sorted.length; i++) {
+      const obj = sorted[i];
+      if (
+        obj.hasOwnProperty('day') ||
+        obj.hasOwnProperty('start_time') ||
+        obj.hasOwnProperty('end_time')
+      ) {
+        delete obj['day'];
+        delete obj['start_time'];
+        delete obj['end_time'];
+      }
+      if (obj['shifts'][0]['day'] === null) {
+        obj['shifts'] = [];
+      } else {
+        sortDays(sorted[i]);
+      }
+    }
+    return sorted;
+  };
+
+  const sortDays = (data: any) => {
+    if (data.shifts == undefined || data.shifts[0].day === null) return;
+    const sorter = {
+      Monday: 1,
+      Tuesday: 2,
+      Wednesday: 3,
+      Thursday: 4,
+      Friday: 5,
+      Saturday: 6,
+      Sunday: 7,
+    };
+    return data.shifts.sort((a, b) => {
+      return sorter[a.day] - sorter[b.day];
+    });
+  };
 
   const showDeleteAlert = () => {
     Alert.alert(
@@ -43,7 +106,7 @@ const Profile = ({route, navigation}: any) => {
     );
   };
 
-  const showSuccessAlert = () => {
+  const alertSuccess = () => {
     Alert.alert(
       'Deleted!',
       `${first_name} ${last_name} was successfully deleted!`,
@@ -59,14 +122,14 @@ const Profile = ({route, navigation}: any) => {
 
   const deleteProfile = () => {
     axios
-      .delete(`${LOCAL_HOST_URL}/user`, {
+      .delete(`${LOCAL_HOST_URL}/serviceProvider`, {
         params: {
-          employerEmail: route.params.employerEmail,
-          serviceProviderEmail: email_address,
+          epEmail: userInfo.email,
+          spEmail: email_address,
         },
       })
       .then(() => {
-        showSuccessAlert();
+        alertSuccess();
       })
       .catch((err): any => {
         console.log(err);
@@ -75,11 +138,10 @@ const Profile = ({route, navigation}: any) => {
 
   const editProfile = () => {
     navigation.navigate('EditProfile', {
-      status,
-      rate,
-      rate_type,
-      shifts,
+      user: route.params.user,
       email_address,
+      workInfo,
+      setWorkInfo,
     });
   };
 
@@ -112,21 +174,31 @@ const Profile = ({route, navigation}: any) => {
           onPress={showDeleteAlert}
         />
       </View>
-      <View style={{height: '10%'}}>
-        <Text style={styles.text}>Status</Text>
-        <Text>Active</Text>
-      </View>
-      <View style={{height: '10%'}}>
-        <Text style={styles.text}>Rate</Text>
-        <Text>{`$${rate} / ${rate_type}`}</Text>
-      </View>
+      {workInfo.length ? (
+        <View style={{height: '10%'}}>
+          <Text style={styles.text}>Status</Text>
+          <Text>{workInfo[0].status}</Text>
+        </View>
+      ) : (
+        <View>
+          <Text>Not specified</Text>
+        </View>
+      )}
+      {workInfo.length ? (
+        <View style={{height: '10%'}}>
+          <Text style={styles.text}>Rate</Text>
+          <Text>{`$${workInfo[0].rate} / ${workInfo[0].rate_type}`}</Text>
+        </View>
+      ) : (
+        <View>
+          <Text>Not specified</Text>
+        </View>
+      )}
       <View style={{height: '16%'}}>
         <Text style={styles.text}>Working shifts</Text>
-        {shifts.length > 0 ? (
-          shifts.map((shift: any, index: number) => (
-            <View
-              key={index}
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        {workInfo.length ? (
+          workInfo[0].shifts.map((shift: any, index: number) => (
+            <View key={index} style={styles.shiftText}>
               <Text
                 style={{
                   width: '40%',
@@ -141,9 +213,11 @@ const Profile = ({route, navigation}: any) => {
           <Text>Not specified</Text>
         )}
       </View>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>View working history</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>View working history</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };

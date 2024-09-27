@@ -14,7 +14,6 @@ const Notification = (props: any) => {
 
   useEffect(() => {
     if (isFocused) {
-      console.log('get notification called')
       getNotification();
     }
   }, [isFocused]);

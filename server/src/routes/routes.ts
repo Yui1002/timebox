@@ -27,19 +27,16 @@ class Routes {
 
         app.get('/request/search', this.userControllers.searchEmail.bind(this.userControllers));
         app.post('/request', this.userControllers.sendRequest.bind(this.userControllers));
-        // app.post('/request/not/user', this.userControllers.emailToNotFoundUser.bind(this.userControllers))
         app.post('/request/update', this.userControllers.updateRequest.bind(this.userControllers));
         app.get('/notification', this.userControllers.getNotification.bind(this.userControllers))
 
         // user routes
+        app.get('/serviceProvider', this.userControllers.getServiceProvider.bind(this.userControllers));
         app.get('/serviceProviders', this.userControllers.getServiceProviders.bind(this.userControllers));
-        // app.get('/users/:email', this.userControllers.getUsers.bind(this.userControllers));
-        app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
+        app.delete('/serviceProvider', this.userControllers.deleteServiceProvider.bind(this.userControllers));
         app.post('/addServiceProvider', this.userControllers.addServiceProvider.bind(this.userControllers));
-        // app.post('/user', this.userControllers.addUser.bind(this.userControllers));
+        app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
         app.post('/edit/serviceProvider', this.userControllers.editServiceProvider.bind(this.userControllers));
-        // app.post('/user/duplicate', this.userControllers.isUserRegistered.bind(this.userControllers));
-        app.delete('/user', this.userControllers.deleteServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));
         app.get('/record', this.userControllers.getRecordByPeriod.bind(this.userControllers));

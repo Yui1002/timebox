@@ -38,6 +38,17 @@ class UserModels {
     return await this.repositories.getServiceProviders(userId);
   }
 
+  async getServiceProvider(req: any) {
+    const { spEmail, epEmail } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
+    );
+    return await this.repositories.getServiceProvider(transactionId);
+  }
+
   async getUser(email: string) {
     return await this.repositories.getUser(email);
   }
@@ -74,8 +85,7 @@ class UserModels {
 
   async editServiceProvider(req: any) {
     const { params, spEmail, epEmail } = req;
-    console.log('req', req);
-    const data: {[key: string]: string | number; } = {}
+    const data: { [key: string]: string | number } = {};
 
     try {
       const epId = await this.repositories.getUserId(epEmail);
@@ -85,49 +95,35 @@ class UserModels {
         data.employer_user_id = epId;
         data.service_provider_id = spId;
 
-        const properties = ["rate", "rate_type", "status"]
+        const properties = ["rate", "rate_type", "status"];
         for (const prop of properties) {
           if (params.hasOwnProperty(prop)) data[prop] = params[prop];
         }
-        await this.repositories.updateUserTransaction(data)
+        if (Object.keys(data).length > 2) {
+          await this.repositories.updateUserTransaction(data);
+        }
       }
-      if (req.params.hasOwnProperty('shift')) {
-        const transactionId = await this.repositories.getUserTransactionId(epId, spId);
+      if (req.params.hasOwnProperty("shift")) {
+        const transactionId = await this.repositories.getUserTransactionId(
+          epId,
+          spId
+        );
         req.params.shift.map(async (s: any) => {
           await this.repositories.updateUserSchedule(s, spId, transactionId);
-        })
+        });
       }
+      return true;
     } catch (err) {
-      throw new Error('transaction id not found')
+      throw new Error("transaction id not found");
     }
   }
 
-  async editUser(req: any) {
-    const userId = await this.repositories.getUserId(req.user_name);
-    await this.repositories.editUser(req, userId);
-    const schedule = await this.repositories.getScheduleByUserId(userId);
-    return req.finalShifts.map(
-      async (s: { day: string; start_time: string; end_time: number }) => {
-        await this.repositories.editSchedule(userId, s);
-        // const isMatch = schedule.some((d: any) => d.day === s.day);
-        // if (isMatch) {
-        //   await this.repositories.editSchedule(userId, s);
-        // }
-      }
-    );
-  }
-
-  async deleteServiceProvider(
-    employerEmail: string,
-    serviceProviderEmail: string
-  ) {
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
-    );
+  async deleteServiceProvider(epEmail: string, spEmail: string) {
+    const epId = await this.repositories.getUserId(epEmail);
+    const spId = await this.repositories.getUserId(spEmail);
     const transactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
+      epId,
+      spId
     );
     await this.repositories.deleteSchedules(transactionId);
     return await this.repositories.deleteServiceProvider(transactionId);

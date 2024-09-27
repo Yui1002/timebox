@@ -58,9 +58,17 @@ class UserRepositories {
   }
 
   async getServiceProviders(employerId: string) {
-    const sql =
-      "SELECT u.first_name, u.last_name, u.email_address, u.status, ut.rate, ut.rate_type, us.day, us.start_time, us.end_time FROM users u INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id INNER JOIN user_schedule us ON ut.service_provider_id = us.service_provider_id WHERE employer_user_id = $1;";
+    const sql = `SELECT u.first_name, u.last_name, u.email_address FROM users u
+                  INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id
+                  WHERE employer_user_id = $1;`
     return (await this.repositories.queryDB(sql, [employerId])).rows;
+  }
+
+  async getServiceProvider(transactionId: string) {
+    const sql = `SELECT ut.rate, ut.rate_type, ut.status, us.day, us.start_time, us.end_time FROM user_transaction ut
+                  INNER JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
+                  WHERE ut.user_transaction_id = $1;`;
+    return (await this.repositories.queryDB(sql, [transactionId])).rows;
   }
 
   async addServiceProviderInfo(
@@ -72,10 +80,6 @@ class UserRepositories {
       "INSERT INTO users VALUES (gen_random_uuid(), $1, $2, $3, NULL, DEFAULT, CURRENT_TIMESTAMP) RETURNING user_id;";
     return (await this.repositories.queryDB(sql, [firstName, lastName, email]))
       .rows[0].user_id;
-  }
-
-  async editServiceProvider() {
-    console.log("hello");
   }
 
   async addRateInfo(
@@ -202,12 +206,12 @@ class UserRepositories {
     return true;
   }
 
-  async deleteServiceProvider(transactionId: string) {
+  async deleteServiceProvider(transactionId: number) {
     const sql = "DELETE FROM user_transaction WHERE user_transaction_id = $1;";
     return await this.repositories.queryDB(sql, [transactionId]);
   }
 
-  async deleteSchedules(transactionId: string) {
+  async deleteSchedules(transactionId: number) {
     const sql = "DELETE FROM user_schedule WHERE user_transaction_id = $1;";
     return await this.repositories.queryDB(sql, [transactionId]);
   }

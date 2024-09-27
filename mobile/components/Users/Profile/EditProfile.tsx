@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
-import {SafeAreaView, View, Text, TextInput, Button} from 'react-native';
+import {SafeAreaView, View, Text, TextInput, Button, Alert} from 'react-native';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from '../DropdownPicker';
 import { useSelector } from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
-  const {status, rate, rate_type, shifts, email_address} = route.params;
-  console.log(route.params)
+  const {rate, rate_type, status, shifts} = route.params.workInfo[0];
+  const email_address = route.params.email_address;
   const userInfo = useSelector(state => state.userInfo);
   const [editRate, setEditRate] = useState(rate);
   const [editRateType, setEditRateType] = useState(rate_type);
@@ -31,7 +31,7 @@ const EditProfile = ({route, navigation}: any) => {
     );
   };
 
-  const saveChanges = () => {
+  const formatParams = () => {
     const params: any = {};
     if (rate !== Number(editRate)) {
       params['rate'] = editRate;
@@ -45,20 +45,43 @@ const EditProfile = ({route, navigation}: any) => {
     if (JSON.stringify(shifts) !== JSON.stringify(editSchedule)) {
       params['shift'] = editSchedule;
     }
+    return params;
+  }
+
+  const saveChanges = () => {
+    const params = formatParams();
+
     axios.post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
       params: params,
       spEmail: email_address,
       epEmail: userInfo.email
-    });
+    })
+    .then((res) => {
+      if (res.data === 'OK') {
+        navigation.navigate('Profile', {user: route.params.user})
+      }
+    })
+  };
+
+  const showSuccessAlert = () => {
+    Alert.alert(
+      'Saved changes!',
+      ``,
+      [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Profile'),
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   const navigateToAddSchedule = () => {
     navigation.navigate('EditWorkShifts', {
-      status,
-      rate,
-      rate_type,
-      shifts,
       email_address,
+      workInfo: route.params.workInfo,
+      user: route.params.user,
       editSchedule,
       setEditSchedule,
     });
@@ -100,7 +123,7 @@ const EditProfile = ({route, navigation}: any) => {
       </View>
       <View style={{height: '45%'}}>
         <Text style={styles.text}>Schedule</Text>
-        {editSchedule.length > 0 ? (
+        {editSchedule.length ? (
           editSchedule.map((s, index) => (
             <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
               <Text style={{width: '30%'}}>{s.day}</Text>

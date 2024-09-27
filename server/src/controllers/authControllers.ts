@@ -8,25 +8,6 @@ class AuthControllers {
     this.models = new AutheModels();
   }
 
-  // async logFile(req: any, res: any) {
-  //   log4js.configure({
-  //     appenders: {
-  //       app: { type: "file", filename: "app.log" },
-  //     },
-  //     categories: {
-  //       default: {
-  //         appenders: ["app"],
-  //         level: "info",
-  //       },
-  //     },
-  //   });
-
-  //   const logger = log4js.getLogger();
-  //   logger.info("This is my first log4js");
-
-  //   res.send("success");
-  // }
-
   async isUserRegistered(req: any, res: any) {
     const { email } = req.params;
     const isUserRegistered = await this.models.isUserRegistered(email);
@@ -34,7 +15,6 @@ class AuthControllers {
       res.status(400).json({ error: "This email is already used" });
       return;
     }
-    // send otp
     const otpSuccess = await this.models.handleOtp(email);
     otpSuccess ? res.sendStatus(200) : res.sendStatus(400);
   }

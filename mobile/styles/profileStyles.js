@@ -26,7 +26,15 @@ export const styles = StyleSheet.create({
     fontWeight: '500', 
     marginBottom: 4,
   },
+  buttonContainer: {
+    position: 'relative',
+    backgroundColor: '#ddd'
+  },
   button: {
+    width: '100%',
+    position: 'absolute',
+    top: 120,
+    left: 0,
     backgroundColor: '#24a0ed',
     borderRadius: 10,
     height: 34
@@ -37,4 +45,9 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 32
   },
+  shiftText: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between',
+    marginVertical: 2
+  }
 });
