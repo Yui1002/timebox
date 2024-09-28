@@ -4,13 +4,14 @@ import axios from 'axios';
 import {SafeAreaView, View, Text, TextInput, Button, Alert} from 'react-native';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from '../DropdownPicker';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
   const {rate, rate_type, status, shifts} = route.params.workInfo[0];
+  console.log('yahoo', rate, rate_type, status, shifts);
   const email_address = route.params.email_address;
   const userInfo = useSelector(state => state.userInfo);
-  const [editRate, setEditRate] = useState(rate);
+  const [editRate, setEditRate] = useState(rate ? rate : 0);
   const [editRateType, setEditRateType] = useState(rate_type);
   const [editStatus, setEditStatus] = useState(status);
   const [editSchedule, setEditSchedule] = useState(shifts);
@@ -24,11 +25,33 @@ const EditProfile = ({route, navigation}: any) => {
     {label: 'Active', value: 'active'},
     {label: 'Inactive', value: 'inactive'},
   ]);
+  const [inputError, setInputError] = useState({
+    type: '',
+    msg: '',
+  });
 
   const deleteDate = (item: any) => {
     setEditSchedule(s =>
       s.filter(i => JSON.stringify(i) !== JSON.stringify(item)),
     );
+  };
+
+  const validateInput = () => {
+    if (isNaN(editRate) || editRate < 1) {
+      setInputError({
+        type: 'INVALID_RATE',
+        msg: 'Must be number or more than 0',
+      });
+      return false;
+    }
+    if (!editRateType) {
+      setInputError({
+        type: 'EMPTY_RATE_TYPE',
+        msg: 'This field is required',
+      });
+      return false;
+    }
+    return true;
   };
 
   const formatParams = () => {
@@ -46,21 +69,23 @@ const EditProfile = ({route, navigation}: any) => {
       params['shift'] = editSchedule;
     }
     return params;
-  }
+  };
 
   const saveChanges = () => {
+    if (!validateInput()) return;
     const params = formatParams();
 
-    axios.post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
-      params: params,
-      spEmail: email_address,
-      epEmail: userInfo.email
-    })
-    .then((res) => {
-      if (res.data === 'OK') {
-        navigation.navigate('Profile', {user: route.params.user})
-      }
-    })
+    axios
+      .post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
+        params: params,
+        spEmail: email_address,
+        epEmail: userInfo.email,
+      })
+      .then(res => {
+        if (res.data === 'OK') {
+          navigation.navigate('Profile', {user: route.params.user});
+        }
+      });
   };
 
   const showSuccessAlert = () => {
@@ -93,10 +118,15 @@ const EditProfile = ({route, navigation}: any) => {
         <View style={{width: '45%'}}>
           <Text style={styles.text}>Rate ($)</Text>
           <TextInput
+            keyboardType="numeric"
+            maxLength={10}
             value={`${editRate}`}
             style={styles.input}
             onChangeText={val => setEditRate(val)}
           />
+          {inputError.type === 'INVALID_RATE' && (
+            <Text style={styles.error}>{inputError.msg}</Text>
+          )}
         </View>
         <View style={{width: '45%'}}>
           <Text style={styles.rateTypeText}>Rate Type</Text>
@@ -108,6 +138,9 @@ const EditProfile = ({route, navigation}: any) => {
             setValue={setEditRateType}
             setItems={setRateType}
           />
+          {inputError.type === 'EMPTY_RATE_TYPE' && (
+            <Text style={styles.error}>{inputError.msg}</Text>
+          )}
         </View>
       </View>
       <View style={{height: statusOpen ? '30%' : '18%', width: '45%'}}>
@@ -124,7 +157,7 @@ const EditProfile = ({route, navigation}: any) => {
       <View style={{height: '45%'}}>
         <Text style={styles.text}>Schedule</Text>
         {editSchedule.length ? (
-          editSchedule.map((s, index) => (
+          editSchedule.map((s: any, index: number) => (
             <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
               <Text style={{width: '30%'}}>{s.day}</Text>
               <Text style={{width: '50%'}}>

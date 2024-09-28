@@ -7,7 +7,6 @@ import {styles} from '../../styles/hireServiceProviderStyles.js';
 import validator from 'validator';
 import InputField from '../InputField';
 import InputError from '../InputError';
-import Button from './Button';
 import Popup from '../Popup';
 
 const HireServiceProvider = (props: any) => {

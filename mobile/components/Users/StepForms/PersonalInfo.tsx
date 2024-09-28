@@ -19,8 +19,7 @@ const PersonalInfo = ({route, navigation}: any) => {
   ]);
   const [rate, setRate] = useState<string | null>(null);
   const [rateType, setRateType] = useState<string | null>(null);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(prevState => !prevState);
+  const [isEnabled, setIsEnabled] = useState<boolean | null>(null);
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
@@ -63,6 +62,14 @@ const PersonalInfo = ({route, navigation}: any) => {
       });
       return false;
     }
+    if (isEnabled === null) {
+      setInputError({
+        type: 'INVALID_IS_ENABLED',
+        msg: 'This field is requred',
+      });
+      return false;
+    }
+
     return true;
   };
 
@@ -81,7 +88,7 @@ const PersonalInfo = ({route, navigation}: any) => {
   const goBack = () => {
     dispatch(resetShift(workShifts.workShifts));
     navigation.goBack();
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -143,26 +150,71 @@ const PersonalInfo = ({route, navigation}: any) => {
             </View>
           </View>
         </View>
-        <View style={{marginTop: 20}}>
-          <Text>Allow the service provider to modify record time</Text>
-          <Switch
-            style={{marginTop: 8}}
-            trackColor={{false: '#767577', true: '#24a0ed'}}
-            thumbColor={isEnabled ? '#fff' : '#f4f3f4'}
-            ios_backgroundColor="#ccc"
-            onValueChange={toggleSwitch}
-            value={isEnabled}
-          />
+        <View style={{marginTop: 30, height: '30%'}}>
+          <Text style={{height: '20%'}}>
+            Allow the service provider to modify record time?
+          </Text>
+          {inputError.type === 'INVALID_IS_ENABLED' && (
+            <Text style={{color: 'red', fontSize: 12}}>{inputError.msg}</Text>
+          )}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              marginTop: 10,
+              height: '40%',
+            }}>
+            <TouchableOpacity
+              style={{
+                width: '40%',
+                height: '100%',
+                borderWidth: 1,
+                borderColor: '#000',
+                borderRadius: 10,
+                backgroundColor: isEnabled ? '#24a0ed' : '#fff',
+              }}
+              onPress={() => setIsEnabled(true)}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  lineHeight: 30,
+                  fontSize: 16,
+                  color: isEnabled ? '#fff' : '#000',
+                }}>
+                Yes
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                width: '40%',
+                height: '100%',
+                borderWidth: 1,
+                borderColor: '#000',
+                borderRadius: 10,
+                backgroundColor: isEnabled === false ? '#24a0ed' : '#fff',
+              }}
+              onPress={() => setIsEnabled(false)}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  lineHeight: 30,
+                  fontSize: 16,
+                  color: isEnabled === false ? '#fff' : '#000',
+                }}>
+                No
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
       <View style={styles.workShiftsBtn}>
-        <TouchableOpacity
-          style={styles.workShiftsBtn_back}
-          onPress={goBack}>
+        <TouchableOpacity style={styles.workShiftsBtn_back} onPress={goBack}>
           <Text style={styles.buttonText}>Back</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.workShiftsBtn_add} onPress={proceed}>
-          <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(9654)}`}</Text>
+          <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(
+            9654,
+          )}`}</Text>
         </TouchableOpacity>
       </View>
     </View>

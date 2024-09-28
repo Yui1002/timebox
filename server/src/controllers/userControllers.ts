@@ -18,9 +18,8 @@ class UserControllers {
   }
 
   async getServiceProviders(req: any, res: any) {
-    const serviceProviders = await this.models.getServiceProviders(
-      req.query.email
-    );
+    const { email } = req.query;
+    const serviceProviders = await this.models.getServiceProviders(email);
     res.send(serviceProviders);
   }
 
@@ -37,7 +36,7 @@ class UserControllers {
   async searchEmail(req: any, res: any) {
     try {
       const { receiver, sender } = req.query;
-      const senderId = await this.models.getEmployerId(sender);
+      const senderId = await this.models.getUserId(sender);
       const isRequestDuplicate = await this.models.emailHasBeenSent(
         receiver,
         senderId
@@ -58,25 +57,20 @@ class UserControllers {
   async sendRequest(req: any, res: any) {
     try {
       const { sender, receiver } = req.body;
-      const senderId = await this.models.getEmployerId(sender.email);
+      const senderId = await this.models.getUserId(sender.email);
       if (req.body.hasOwnProperty("request")) {
         const { request } = req.body;
         await this.models.storeRequest(receiver, senderId, request);
         await this.models.sendRequestViaEmail(receiver, sender, request);
         res.sendStatus(200);
       } else {
-        await this.models.storeRequest(receiver, sender, null);
+        await this.models.storeRequest(receiver, senderId, null);
         await this.models.sendRequestViaEmail(receiver, sender, null);
         res.sendStatus(200);
       }
     } catch (err) {
       res.status(400).send({ error: err });
     }
-  }
-
-  async addServiceProvider(req: any, res: any) {
-    const response = await this.models.addServiceProvider(req.body);
-    response ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async editServiceProvider(req: any, res: any) {

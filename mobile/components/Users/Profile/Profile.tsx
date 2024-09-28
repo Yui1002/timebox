@@ -5,8 +5,6 @@ import {
   SafeAreaView,
   View,
   Text,
-  Button,
-  Alert,
   Linking,
   TouchableOpacity,
 } from 'react-native';
@@ -20,8 +18,14 @@ const Profile = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
   const userInfo = useSelector(state => state.userInfo);
   const {first_name, last_name, email_address} = route.params.user;
-  const [workInfo, setWorkInfo] = useState([]);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [workInfo, setWorkInfo] = useState([
+    {
+      rate: '' || null,
+      rate_type: '' || null,
+      status: '' || null,
+      shifts: [],
+    },
+  ]);
 
   useEffect(() => {
     if (isFocused) {
@@ -39,6 +43,7 @@ const Profile = ({route, navigation}: any) => {
       })
       .then(res => {
         const formattedData = formatData(res.data);
+        console.log(formattedData);
         setWorkInfo(formattedData);
       });
   };
@@ -88,54 +93,6 @@ const Profile = ({route, navigation}: any) => {
     });
   };
 
-  const showDeleteAlert = () => {
-    Alert.alert(
-      `Delete`,
-      `Are you sure you want to delete ${first_name} ${last_name}?`,
-      [
-        {
-          text: 'No',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: () => deleteProfile(),
-        },
-      ],
-    );
-  };
-
-  const alertSuccess = () => {
-    Alert.alert(
-      'Deleted!',
-      `${first_name} ${last_name} was successfully deleted!`,
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('ManageServiceProviders'),
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
-  const deleteProfile = () => {
-    axios
-      .delete(`${LOCAL_HOST_URL}/serviceProvider`, {
-        params: {
-          epEmail: userInfo.email,
-          spEmail: email_address,
-        },
-      })
-      .then(() => {
-        alertSuccess();
-      })
-      .catch((err): any => {
-        console.log(err);
-      });
-  };
-
   const editProfile = () => {
     navigation.navigate('EditProfile', {
       user: route.params.user,
@@ -144,6 +101,12 @@ const Profile = ({route, navigation}: any) => {
       setWorkInfo,
     });
   };
+
+  const viewWorkingHistory = () => {
+    navigation.navigate('ViewWorkingHistory', {
+      spEmail: email_address
+    })
+  }
 
   return (
     <SafeAreaView style={[styles.container, {height: '100%'}]}>
@@ -167,12 +130,6 @@ const Profile = ({route, navigation}: any) => {
           color="#000"
           onPress={() => Linking.openURL('mailto:yuimurayama1002@gmail.com')}
         />
-        <MaterialCommunityIcons
-          name="trash-can-outline"
-          size={30}
-          color="#000"
-          onPress={showDeleteAlert}
-        />
       </View>
       {workInfo.length ? (
         <View style={{height: '10%'}}>
@@ -187,7 +144,11 @@ const Profile = ({route, navigation}: any) => {
       {workInfo.length ? (
         <View style={{height: '10%'}}>
           <Text style={styles.text}>Rate</Text>
-          <Text>{`$${workInfo[0].rate} / ${workInfo[0].rate_type}`}</Text>
+          {workInfo[0].rate && workInfo[0].rate_type ? (
+            <Text>{`$${workInfo[0].rate} / ${workInfo[0].rate_type}`}</Text>
+          ) : (
+            <Text>Not specified</Text>
+          )}
         </View>
       ) : (
         <View>
@@ -196,7 +157,7 @@ const Profile = ({route, navigation}: any) => {
       )}
       <View style={{height: '16%'}}>
         <Text style={styles.text}>Working shifts</Text>
-        {workInfo.length ? (
+        {workInfo.length && workInfo[0].shifts.length ? (
           workInfo[0].shifts.map((shift: any, index: number) => (
             <View key={index} style={styles.shiftText}>
               <Text
@@ -214,7 +175,7 @@ const Profile = ({route, navigation}: any) => {
         )}
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={viewWorkingHistory}>
           <Text style={styles.buttonText}>View working history</Text>
         </TouchableOpacity>
       </View>

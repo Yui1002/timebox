@@ -26,6 +26,7 @@ import Profile from './components/Users/Profile/Profile';
 import EditProfile from './components/Users/Profile/EditProfile';
 import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
 import ManageServiceProviders from './components/Users/ManageServiceProviders';
+import ViewWorkingHistory from './components/Users/Profile/ViewWorkingHistory';
 
 const Stack = createStackNavigator();
 
@@ -150,6 +151,13 @@ function App(): JSX.Element {
             options={({navigation}) => ({
               headerTitle: 'Manage Service Providers',
               gestureEnabled: false,
+            })}
+          />
+          <Stack.Screen
+            name="ViewWorkingHistory"
+            component={ViewWorkingHistory}
+            options={({navigation}) => ({
+              headerTitle: 'Working History',
             })}
           />
         </Stack.Navigator>

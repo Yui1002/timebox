@@ -5,7 +5,7 @@ import {styles} from '../../styles/notificationStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import moment from 'moment';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 
 const Notification = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
@@ -82,7 +82,9 @@ const Notification = (props: any) => {
         request: n,
       })
       .then(() => {
-        isApproved ? showSuccessAlert(n, 'accepted') : showSuccessAlert(n, 'declined');
+        isApproved
+          ? showSuccessAlert(n, 'accepted')
+          : showSuccessAlert(n, 'declined');
       })
       .catch(err => {
         console.log(err);
@@ -129,46 +131,66 @@ const Notification = (props: any) => {
       <View>
         {notifications.length ? (
           <View style={styles.subContainer}>
-            {notifications.map((n, index) => (
-              <View key={index} style={styles.box}>
-                <Text style={styles.title}>
-                  {`${n.first_name} ${n.last_name} requested a service provider`}
-                </Text>
-                <Text style={styles.timeText}>
-                  {moment().startOf('day').fromNow()}
-                </Text>
-                <View style={{marginTop: 8}}>
-                  <Text style={styles.subTitle}>Request detail: </Text>
-                  <Text>{`Pay: $${n.request_rate} / ${n.request_rate_type}`}</Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
-                    <Text style={{width: '25%'}}>Schedules: </Text>
-                    <View style={{width: '75%'}}>
-                      {n.shifts[0].day ? n.shifts.map((s: any, index: number) => (
-                        <View key={index}>
-                          <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
+            {notifications.map(
+              (
+                n: {
+                  first_name: string;
+                  last_name: string;
+                  request_date: string;
+                  request_rate: string | null;
+                  request_rate_type: string | null;
+                  shifts: [
+                    {
+                      day: string;
+                      start_time: string;
+                      end_time: string;
+                    },
+                  ];
+                },
+                index,
+              ) => (
+                <View key={index} style={styles.box}>
+                  <Text style={styles.title}>
+                    {`${n.first_name} ${n.last_name} requested a service provider`}
+                  </Text>
+                  <Text style={styles.timeText}>
+                    {moment(n.request_date).startOf('day').fromNow()}
+                  </Text>
+                  {n.request_rate || n.request_rate_type ? (
+                    <View style={{marginTop: 8}}>
+                      <Text style={styles.subTitle}>Request detail: </Text>
+                      <Text>{`Pay: $${n.request_rate} / ${n.request_rate_type}`}</Text>
+                      <View style={styles.flex}>
+                        <Text style={{width: '25%'}}>Schedules: </Text>
+                        <View style={{width: '75%'}}>
+                          {n.shifts[0].day ? (
+                            n.shifts.map((s: any, index: number) => (
+                              <View key={index}>
+                                <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
+                              </View>
+                            ))
+                          ) : (
+                            <Text>Not specified</Text>
+                          )}
                         </View>
-                      )) : <Text>Not specified</Text>}
+                      </View>
                     </View>
+                  ) : null}
+                  <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                      style={[styles.button, styles.button_decline]}
+                      onPress={() => showDeclineAlert(n)}>
+                      <Text style={styles.buttonText}>Decline</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.button, styles.button_accept]}
+                      onPress={() => showAcceptAlert(n)}>
+                      <Text style={styles.buttonText}>Accept</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-                <View style={styles.buttonContainer}>
-                  <TouchableOpacity
-                    style={[styles.button, styles.button_decline]}
-                    onPress={() => showDeclineAlert(n)}>
-                    <Text style={styles.buttonText}>Decline</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.button, styles.button_accept]}
-                    onPress={() => showAcceptAlert(n)}>
-                    <Text style={styles.buttonText}>Accept</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
+              ),
+            )}
           </View>
         ) : (
           <Text>There are no notifications</Text>

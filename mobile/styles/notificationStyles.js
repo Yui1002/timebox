@@ -14,11 +14,12 @@ export const styles = StyleSheet.create({
     fontWeight: '500'
   },
   box: {
-    height: '32%',
     backgroundColor: '#E8E8E8',
     position: 'relative',
     borderRadius: 10,
-    padding: 14
+    padding: 14,
+    position: 'relative',
+    height: '20%'
   },
   timeText: {
     fontSize: 12,
@@ -34,9 +35,12 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 10,
+    position: 'absolute',
+    bottom: 10,
+    right: 30
   },
   button: {
-    width: '30%',
+    width: '40%',
     marginRight: 10,
     borderRadius: 10,
     padding: 10,
@@ -50,5 +54,9 @@ export const styles = StyleSheet.create({
   buttonText: {
     textAlign: 'center', 
     fontWeight: '500'
+  },
+  flex: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   }
 });

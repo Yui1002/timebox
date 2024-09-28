@@ -25,10 +25,6 @@ class UserModels {
     return await this.repositories.getEmployers(serviceProviderId);
   }
 
-  async getEmployerId(email: string) {
-    return await this.repositories.getEmployerId(email);
-  }
-
   async getServiceProviderId(email: string) {
     return await this.repositories.getServiceProviderId(email);
   }
@@ -53,34 +49,12 @@ class UserModels {
     return await this.repositories.getUser(email);
   }
 
-  async checkUserExists(email: string) {
-    return await this.repositories.checkUserExists(email);
+  async getUserId(email: string) {
+    return await this.repositories.getUserId(email);
   }
 
-  async addServiceProvider(req: any) {
-    const {
-      firstName,
-      lastName,
-      serviceProviderEmail,
-      employerEmail,
-      rate,
-      rateType,
-      lists,
-    } = req;
-    const userId = await this.repositories.addServiceProviderInfo(
-      firstName,
-      lastName,
-      serviceProviderEmail
-    );
-    const employerId = await this.repositories.getEmployerId(employerEmail);
-    const transactionId = await this.repositories.addRateInfo(
-      rate,
-      rateType,
-      employerEmail,
-      employerId,
-      userId
-    );
-    return await this.repositories.addSchedule(userId, transactionId, lists);
+  async checkUserExists(email: string) {
+    return await this.repositories.checkUserExists(email);
   }
 
   async editServiceProvider(req: any) {
@@ -161,7 +135,7 @@ class UserModels {
   }
 
   async getRecordByPeriod(req: any) {
-    const { employerEmail, serviceProviderEmail } = req;
+    const { epEmail, spEmail } = req;
     let { from, to } = req;
 
     if (from.length > 0 && to.length < 1) {
@@ -173,19 +147,13 @@ class UserModels {
       to = moment(new Date()).format("YYYY-MM-DD");
     }
 
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
     );
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const userTransactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
-    );
-    return await this.repositories.getRecordByPeriod(
-      userTransactionId,
-      from,
-      to
-    );
+    return await this.repositories.getRecordByPeriod(transactionId, from, to);
   }
 
   async searchByDateYear(req: any) {
@@ -216,7 +184,7 @@ class UserModels {
       to: receiver,
       subject: `${firstName} ${lastName} requested you as a service provider`,
       text: request
-        ? `${firstName} ${lastName} requested you as a service provider. Please open the app and approve this, otherwise ignore it.`
+        ? `${firstName} ${lastName} requested you as a service provider. Please open the app, check notification page and approve or decline this request.`
         : `${firstName} ${lastName} requested you as a service provider. Download the app from this link: `,
     };
     try {
@@ -229,11 +197,11 @@ class UserModels {
     }
   }
 
-  async storeRequest(receiver: string, sender: number, request: any) {
+  async storeRequest(receiver: string, senderId: number, request: any) {
     if (!request) {
       return await this.repositories.storeRequest(
         receiver,
-        sender,
+        senderId,
         null,
         null,
         null
@@ -242,7 +210,7 @@ class UserModels {
       if (request.shifts.length === 0) {
         return await this.repositories.storeRequest(
           receiver,
-          sender,
+          senderId,
           request.rate,
           request.rate_type,
           null
@@ -251,7 +219,7 @@ class UserModels {
         return request.shifts.map(async (r: any) => {
           await this.repositories.storeRequest(
             receiver,
-            sender,
+            senderId,
             request.rate,
             request.rate_type,
             r

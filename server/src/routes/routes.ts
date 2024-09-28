@@ -34,7 +34,6 @@ class Routes {
         app.get('/serviceProvider', this.userControllers.getServiceProvider.bind(this.userControllers));
         app.get('/serviceProviders', this.userControllers.getServiceProviders.bind(this.userControllers));
         app.delete('/serviceProvider', this.userControllers.deleteServiceProvider.bind(this.userControllers));
-        app.post('/addServiceProvider', this.userControllers.addServiceProvider.bind(this.userControllers));
         app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
         app.post('/edit/serviceProvider', this.userControllers.editServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));

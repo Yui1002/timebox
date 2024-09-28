@@ -153,8 +153,12 @@ const Review = ({route, navigation}: any) => {
               </View>
             ))
           ) : (
-            <Text>No days selected</Text>
+            <Text style={{fontSize: 18}}>No days selected</Text>
           )}
+        </View>
+        <View style={{marginTop: 20}}>
+          <Text style={{fontSize: 14}}>Allow service provider to edit record time</Text>
+          <Text style={{fontSize: 18}}>{isEnabled ? 'Yes' : 'No'}</Text>
         </View>
         <View style={styles.workShiftsBtn}>
           <TouchableOpacity

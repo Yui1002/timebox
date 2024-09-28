@@ -51,5 +51,9 @@ export const styles = StyleSheet.create({
     left: '15%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  error: {
+    color: 'red',
+    fontSize: 10
   }
 });

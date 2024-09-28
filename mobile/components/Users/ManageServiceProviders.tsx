@@ -37,7 +37,7 @@ const ManageServiceProviders = (props: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{marginBottom: 10, height: '5%'}}>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>Service Providers</Text>
+        <Text style={{fontSize: 20, fontWeight: '500'}}>Current Service Providers</Text>
       </View>
       <View style={{height: '90%'}}>
         {serviceProviders && serviceProviders.length > 0 ? (

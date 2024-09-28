@@ -16,6 +16,8 @@ const Outlined = ({onChangeText, isEditable, value}: any) => (
 const Underlined = ({onChangeText}: any) => {
   return (
     <TextInput
+      keyboardType='numeric'
+      maxLength={10}
       style={styles.underLineInput}
       autoCorrect={false}
       autoCapitalize="none"

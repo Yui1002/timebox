@@ -5,7 +5,7 @@ import {
   SafeAreaView,
   TextInput,
   Button,
-  Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -22,12 +22,13 @@ const VerifyOTP = ({route, navigation}: any) => {
     type: '',
     msg: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const validateInput = () => {
     if (otp.length !== 6) {
       setinputError({
         type: 'INVALID_OTP',
-        msg: 'OTP has to be 6 digit',
+        msg: 'Verification code has to be 6 digit',
       });
       return false;
     }
@@ -35,7 +36,7 @@ const VerifyOTP = ({route, navigation}: any) => {
     if (!regex.test(otp)) {
       setinputError({
         type: 'INVALID_OTP',
-        msg: 'OTP has to be a number',
+        msg: 'Verification code has to be a number',
       });
       return false;
     }
