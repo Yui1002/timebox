@@ -150,9 +150,6 @@ const WorkingHistory = (props: any) => {
           <TouchableOpacity style={styles.button} onPress={searchRecord}>
               <Text style={styles.buttonText}>Search</Text>
           </TouchableOpacity>
-          {/* <View style={styles.button}>
-            <Button title="Search" color="#fff" onPress={searchRecord} />
-          </View> */}
           {history !== null && history.length > 0 && (
             <View>
               <View style={styles.listHeader}>

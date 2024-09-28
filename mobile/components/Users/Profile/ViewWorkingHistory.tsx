@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {UseSelector, useSelector} from 'react-redux';
+import React, {useState} from 'react';
+import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
 import {SafeAreaView, View, Text, TouchableOpacity} from 'react-native';
@@ -8,15 +8,19 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 
+interface searchResult {
+  start_time: string;
+  end_time: string;
+}
+
 const ViewWorkingHistory = ({route, navigation}: any) => {
   const epEmail = useSelector(state => state.userInfo).email;
   const {spEmail} = route.params;
-  console.log(spEmail);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);
   const [from, setFrom] = useState<string>('');
   const [to, setTo] = useState<string>('');
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState<[] | null>(null);
 
   const onPeriodChange = (type: string, date: string) => {
     type === 'from'
@@ -25,8 +29,6 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
   };
 
   const search = () => {
-    console.log(epEmail, spEmail, from, to);
-
     axios
       .get(`${LOCAL_HOST_URL}/record`, {
         params: {
@@ -39,7 +41,9 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
       .then(res => {
         setSearchResult(res.data);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
@@ -86,14 +90,35 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
       <TouchableOpacity style={styles.searchBtn} onPress={search}>
         <Text style={styles.searchBtnText}>Search</Text>
       </TouchableOpacity>
-      <View style={{marginTop: 20}}>
-        <View style={styles.align}>
-          <Text>Date</Text>
-          <Text>Check In</Text>
-          <Text>Check Out</Text>
-          <Text>Total</Text>
-        </View>
+      <View style={styles.align}>
+        <Text>Date</Text>
+        <Text>Check In</Text>
+        <Text>Check Out</Text>
+        <Text>Total</Text>
       </View>
+      <View style={styles.separator}></View>
+      {searchResult && searchResult.length > 0 && (
+        <View>
+          {searchResult.map((s: searchResult, index: number) => {
+            const start = moment(s.start_time);
+            const end = moment(s.end_time);
+            const total = end.diff(start, 'hours');
+            return (
+              <View style={styles.align} key={index}>
+                <Text>{start.format('YYYY/MM/DD')}</Text>
+                <Text>{start.format('LT')}</Text>
+                <Text>{end.format('LT')}</Text>
+                <Text>{`${total}h`}</Text>
+              </View>
+            );
+          })}
+        </View>
+      )}
+      {searchResult && !searchResult.length && (
+        <View style={{marginTop: 20}}>
+          <Text style={styles.noMatchFound}>No match found</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

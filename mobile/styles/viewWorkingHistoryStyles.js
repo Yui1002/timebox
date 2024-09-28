@@ -32,7 +32,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#24a0ed',
     borderRadius: 10,
     height: 30,
-    marginVertical: 8,
+    marginTop: 20,
+    marginBottom: 30
   },
   searchBtnText: {
     color: '#fff',
@@ -40,5 +41,16 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     lineHeight: 30,
+  },
+  separator: {
+    width: '100%',
+    marginVertical: 8,
+    borderBottomColor: '#737373',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  noMatchFound: {
+    textAlign: 'center',
+    fontSize: 14
   }
+
 });
