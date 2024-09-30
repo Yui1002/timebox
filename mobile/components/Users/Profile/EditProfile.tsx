@@ -8,7 +8,6 @@ import {useSelector} from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
   const {rate, rate_type, status, shifts} = route.params.workInfo[0];
-  console.log('yahoo', rate, rate_type, status, shifts);
   const email_address = route.params.email_address;
   const userInfo = useSelector(state => state.userInfo);
   const [editRate, setEditRate] = useState(rate ? rate : 0);

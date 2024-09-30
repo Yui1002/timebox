@@ -3,10 +3,14 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '100%'
+    height: '94%',
+  },
+  align: {
+    flexDirection: 'row',
+    height: '8%'
   },
   subContainer: {
-    height: '90%'
+    height: '84%',
   },
   title: {
     marginBottom: 10, 
@@ -16,10 +20,20 @@ export const styles = StyleSheet.create({
     fontSize: 20, 
     fontWeight: '500'
   },
+  checkBox: {
+    borderWidth: 0.3, 
+    height: 20,
+    width: 20,
+    marginLeft: 100
+  },
+  checkBoxText: {
+    marginLeft: 10,
+    lineHeight: 20
+  },
   listContainer: {
     backgroundColor: '#E0E0E0',
     width: '100%',
-    height: '12%',
+    height: 64,
     marginVertical: 8,
     borderRadius: 10,
     padding: '4%'

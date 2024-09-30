@@ -47,9 +47,9 @@ class UserRepositories {
   }
 
   async getServiceProviders(employerId: string) {
-    const sql = `SELECT u.first_name, u.last_name, u.email_address FROM users u
+    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.status FROM users u
                   INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id
-                  WHERE employer_user_id = $1 AND ut.status = 'active';`;
+                  WHERE employer_user_id = $1;`;
     return (await this.repositories.queryDB(sql, [employerId])).rows;
   }
 
