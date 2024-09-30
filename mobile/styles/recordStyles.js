@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
   todayRecordContainer: {
     marginHorizontal: 30,
     paddingRight: 30,
-    height: '30%'
+    height: '20%'
   },
   todayRecord: {
     flexDirection: 'row',

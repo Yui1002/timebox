@@ -88,20 +88,6 @@ const EditProfile = ({route, navigation}: any) => {
       });
   };
 
-  const showSuccessAlert = () => {
-    Alert.alert(
-      'Saved changes!',
-      ``,
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('Profile'),
-        },
-      ],
-      {cancelable: false},
-    );
-  };
-
   const navigateToAddSchedule = () => {
     navigation.navigate('EditWorkShifts', {
       email_address,

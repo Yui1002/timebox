@@ -93,6 +93,28 @@ const Record = ({route, navigation}: any) => {
           <Text>{end ? end : 'Not registered'}</Text>
         </View>
       </View>
+      <View style={{position: 'relative', backgroundColor: '#ddd'}}>
+        <TouchableOpacity
+          style={{
+            width: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            backgroundColor: '#24a0ed',
+            borderRadius: 10,
+            // height: 34,
+          }}>
+          <Text
+            style={{
+              textAlign: 'center',
+              color: '#fff',
+              fontSize: 18,
+              lineHeight: 32,
+            }}>
+            Edit working record
+          </Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
