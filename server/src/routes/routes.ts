@@ -25,8 +25,8 @@ class Routes {
         app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
         app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
 
-        app.get('/request/search', this.userControllers.searchEmail.bind(this.userControllers));
         app.post('/request', this.userControllers.sendRequest.bind(this.userControllers));
+        app.get('/request/search', this.userControllers.searchEmail.bind(this.userControllers));
         app.post('/request/update', this.userControllers.updateRequest.bind(this.userControllers));
         app.get('/notification', this.userControllers.getNotification.bind(this.userControllers))
 

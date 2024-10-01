@@ -5,10 +5,14 @@ import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import DatePicker from 'react-native-date-picker';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Record = ({route, navigation}: any) => {
   const {first_name, last_name, email_address} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
+  const [startOpen, setStartOpen] = useState(false);
+  const [endOpen, setEndOpen] = useState(false);
   const [start, setStart] = useState<string | null>(null);
   const [end, setEnd] = useState<string | null>(null);
 
@@ -48,6 +52,12 @@ const Record = ({route, navigation}: any) => {
       .catch(err => {});
   };
 
+  const onDateChange = (type: string, date: any) => {
+    date = moment(date).format('LT');
+    if (date)
+    type === 'start' ? setStart(date) : setEnd(date);
+  };
+
   const Separator = () => <View style={styles.separator}></View>;
 
   return (
@@ -57,19 +67,62 @@ const Record = ({route, navigation}: any) => {
           Employer: {first_name} {last_name}
         </Text>
       </View>
-      <View style={styles.recordContainer}>
+      {/* <View>
+        <Text>Edit record</Text>
+      </View> */}
+      <View style={styles.dateContainer}>
         <TouchableOpacity
-          style={start?.length ? styles.button_disabled : styles.checkInButton}
+          style={styles.dateBox}
+          onPress={() => setStartOpen(!startOpen)}>
+          <Text style={styles.dateText}>
+            Set start{'\n'}
+            <Text style={styles.subText}>Please select ...</Text>
+          </Text>
+          <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setEndOpen(!endOpen)}>
+          <Text style={styles.dateText}>
+            Set end{'\n'}
+            <Text style={styles.subText}>Please select ...</Text>
+          </Text>
+          <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.recordContainer}>
+        <DatePicker
+          modal
+          open={startOpen}
+          mode="datetime"
+          date={new Date()}
+          onConfirm={d => onDateChange('start', d)}
+          onCancel={() => {
+            setStartOpen(false);
+          }}
+        />
+        <DatePicker
+          modal
+          open={endOpen}
+          mode="datetime"
+          date={new Date()}
+          onConfirm={d => onDateChange('end', d)}
+          onCancel={() => {
+            setEndOpen(false);
+          }}
+        />
+        {/* <TouchableOpacity
+          style={start ? styles.button_disabled : styles.checkInButton}
           disabled={start !== null}
           onPress={() => recordTime('checkin')}>
           <Text style={styles.buttonText}>Start</Text>
           <View style={styles.logoContainer}>
             <AntDesign name="login" size={75} color="#fff" />
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </TouchableOpacity> */}
+        {/* <TouchableOpacity
           style={
-            end?.length || !start
+            end || !start
               ? styles.button_disabled
               : styles.checkOutButton
           }
@@ -79,7 +132,7 @@ const Record = ({route, navigation}: any) => {
           <View style={styles.logoContainer}>
             <AntDesign name="logout" size={75} color="#fff" />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={styles.todayRecordContainer}>
         <Text style={styles.subHeader}>Today's record</Text>
@@ -92,28 +145,6 @@ const Record = ({route, navigation}: any) => {
           <Text>End</Text>
           <Text>{end ? end : 'Not registered'}</Text>
         </View>
-      </View>
-      <View style={{position: 'relative', backgroundColor: '#ddd'}}>
-        <TouchableOpacity
-          style={{
-            width: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            backgroundColor: '#24a0ed',
-            borderRadius: 10,
-            // height: 34,
-          }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: '#fff',
-              fontSize: 18,
-              lineHeight: 32,
-            }}>
-            Edit working record
-          </Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

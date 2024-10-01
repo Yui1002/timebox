@@ -81,7 +81,7 @@ const HireServiceProvider = (props: any) => {
   const sendRequest = () => {
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
-        sender: userInfo,
+        sender: userInfo.email,
         receiver: searchInput,
       })
       .then(() => {

@@ -204,27 +204,37 @@ class UserModels {
         senderId,
         null,
         null,
+        null,
         null
       );
     } else {
-      if (request.shifts.length === 0) {
-        return await this.repositories.storeRequest(
-          receiver,
-          senderId,
-          request.rate,
-          request.rate_type,
-          null
+      const { rate, rate_type, mode, shifts } = request;
+      if (shifts.length > 0) {
+        shifts.map(
+          async (shift: {
+            day: string;
+            startTime: string;
+            endTime: string;
+          }) => {
+            await this.repositories.storeRequest(
+              receiver,
+              senderId,
+              rate,
+              rate_type,
+              mode,
+              shift
+            );
+          }
         );
       } else {
-        return request.shifts.map(async (r: any) => {
-          await this.repositories.storeRequest(
-            receiver,
-            senderId,
-            request.rate,
-            request.rate_type,
-            r
-          );
-        });
+        await this.repositories.storeRequest(
+          receiver,
+          senderId,
+          rate,
+          rate_type,
+          mode,
+          null
+        );
       }
     }
   }

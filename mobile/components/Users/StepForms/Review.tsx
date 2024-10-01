@@ -17,6 +17,7 @@ interface Shifts {
 const Review = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
+  console.log('is enabled in review', isEnabled)
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
@@ -45,13 +46,14 @@ const Review = ({route, navigation}: any) => {
     const request = {
       rate: rate,
       rate_type: rateType,
-      shifts: workShifts.workShifts
-    }
+      mode: isEnabled,
+      shifts: workShifts.workShifts,
+    };
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
-        sender: userInfo,
+        sender: userInfo.email,
         receiver: email,
-        request: request
+        request: request,
       })
       .then(() => {
         dispatch(resetShift(workShifts.workShifts));
@@ -86,8 +88,8 @@ const Review = ({route, navigation}: any) => {
         )}
       </View>
       <View>
-        <View style={{marginVertical: 10}}>
-          <Text style={{fontSize: 20, fontWeight: '500'}}>Review</Text>
+        <View>
+          <Text style={styles.headerText}>Review</Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '50%'}}>
@@ -157,7 +159,9 @@ const Review = ({route, navigation}: any) => {
           )}
         </View>
         <View style={{marginTop: 20}}>
-          <Text style={{fontSize: 14}}>Allow service provider to edit record time</Text>
+          <Text style={{fontSize: 14}}>
+            Allow service provider to edit record time
+          </Text>
           <Text style={{fontSize: 18}}>{isEnabled ? 'Yes' : 'No'}</Text>
         </View>
         <View style={styles.workShiftsBtn}>
@@ -166,7 +170,9 @@ const Review = ({route, navigation}: any) => {
             onPress={() => navigation.goBack()}>
             <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.workShiftsBtn_add} onPress={confirmServiceProvider}>
+          <TouchableOpacity
+            style={styles.workShiftsBtn_add}
+            onPress={confirmServiceProvider}>
             <Text style={styles.buttonText}>Confirm</Text>
           </TouchableOpacity>
         </View>

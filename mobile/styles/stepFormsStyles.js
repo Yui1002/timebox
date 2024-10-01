@@ -5,13 +5,37 @@ export const styles = StyleSheet.create({
     margin: '5%',
     height: '94%',
   },
-  header: {
-    marginVertical: 20,
-    fontSize: 24
-  },
   statusBarContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    height: '10%'
+  },
+  subContainer: {
+    marginTop: 20,
+
+  },
+  header: {
+    height: '10%'
+  },
+  headerText: {
+    fontSize: 22, 
+    fontWeight: 500,
+  },
+  align: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  margin: {
+    marginTop: 20,
+  },
+  width: {
+    width: '50%',
+  },
+  font_1: {
+    fontSize: 14,
+  },
+  font_2: {
+    fontSize: 18,
   },
   workShiftsContainer: {
     marginTop: 30
@@ -118,5 +142,17 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     lineHeight: 32
+  },
+  mode: {
+    width: '40%',
+    height: '100%',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 10,
+  },
+  modeText: {
+    textAlign: 'center',
+    lineHeight: 30,
+    fontSize: 16,
   }
 });

@@ -27,7 +27,6 @@ const ManageServiceProviders = (props: any) => {
   const [isBoxChecked, setIsBoxChecked] = useState(false);
 
   useEffect(() => {
-    console.log('called')
     if (isFocused) {
       getServiceProviders();
     }

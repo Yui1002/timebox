@@ -14,18 +14,18 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
+interface WorkInfo {
+  rate: string | null;
+  rate_type: string | null;
+  status: 'active';
+  shifts: [];
+}
+
 const Profile = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
   const userInfo = useSelector(state => state.userInfo);
   const {first_name, last_name, email_address} = route.params.user;
-  const [workInfo, setWorkInfo] = useState([
-    {
-      rate: '' || null,
-      rate_type: '' || null,
-      status: '' || null,
-      shifts: [],
-    },
-  ]);
+  const [workInfo, setWorkInfo] = useState<WorkInfo[]>([]);
 
   useEffect(() => {
     if (isFocused) {
@@ -43,6 +43,7 @@ const Profile = ({route, navigation}: any) => {
       })
       .then(res => {
         const formattedData = formatData(res.data);
+        console.log('workinfo', workInfo)
         setWorkInfo(formattedData);
       });
   };
@@ -92,7 +93,7 @@ const Profile = ({route, navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, {height: '100%'}]}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
         <MaterialCommunityIcons name="account" size={46} color="#000" />
         <Text style={{fontSize: 20}}>

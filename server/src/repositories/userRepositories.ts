@@ -189,20 +189,27 @@ class UserRepositories {
   async storeRequest(
     receiver: string,
     sender: number,
-    rate: number,
-    rateType: number,
-    request: any
+    rate: number | null,
+    rateType: string | null,
+    mode: boolean | null,
+    shift: {
+      day: string,
+      startTime: string,
+      endTime: string
+    } | null
   ) {
-    const sql =
-      "INSERT INTO requests (sender, receiver, is_approved, request_date, request_rate, request_rate_type, request_schedule_day, request_schedule_start_time, request_schedule_end_time) VALUES ($1, $2, NULL, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7);";
+    console.log('here', rate, rateType, mode, shift);
+    const sql = `INSERT INTO requests
+        VALUES (DEFAULT, $1, $2, NULL, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7, $8);`;
     await this.repositories.queryDB(sql, [
       sender,
       receiver,
-      rate ? rate : null,
-      rateType ? rateType : null,
-      request ? request.day : null,
-      request ? request.startTime : null,
-      request ? request.endTime : null,
+      rate,
+      rateType,
+      shift ? shift.day : null,
+      shift ? shift.startTime : null,
+      shift ? shift.endTime : null,
+      mode,
     ]);
     return true;
   }

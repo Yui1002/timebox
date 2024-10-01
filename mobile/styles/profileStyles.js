@@ -3,15 +3,12 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '100%'
+    height: '94%'
   },
   logoContainer: {
     height: '16%',
     paddingLeft: 8,
-    width: '100%',
-    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'flex-start',
   },
   optionContainer: {
     flexDirection: 'row',

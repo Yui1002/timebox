@@ -14,6 +14,7 @@ interface Shifts {
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
+  console.log('is enabled', isEnabled)
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
@@ -26,7 +27,7 @@ const WorkShifts = ({route, navigation}: any) => {
       showAlert();
       return;
     }
-    navigation.navigate('Review', {firstName, lastName, email, rate, rateType});
+    navigation.navigate('Review', {firstName, lastName, email, rate, rateType, isEnabled});
   };
 
   const navigateToAddSchedule = () => {
@@ -67,8 +68,8 @@ const WorkShifts = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={[styles.container, {height: '100%'}]}>
-      <View style={[styles.statusBarContainer, {height: '10%'}]}>
+    <View style={styles.container}>
+      <View style={styles.statusBarContainer}>
         {statusTitles.map((val, index) =>
           statusTitles[index] === 'Work Shifts' ? (
             <StatusBar key={index} title={val} isFocused={true} />
@@ -77,8 +78,10 @@ const WorkShifts = ({route, navigation}: any) => {
           ),
         )}
       </View>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Work Schedules</Text>
+      </View>
       <View style={{marginVertical: 20, height: '60%'}}>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>Work Schedules</Text>
         {workShifts.workShifts.length > 0 ? (
           workShifts.workShifts.map((w, index) => (
             <View style={styles.dateContainer} key={index}>

@@ -92,7 +92,7 @@ const PersonalInfo = ({route, navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.statusBarContainer, {height: '10%'}]}>
+      <View style={styles.statusBarContainer}>
         {statusTitles.map((val, index) =>
           statusTitles[index] === 'Information' ? (
             <StatusBar key={index} title={val} isFocused={true} />
@@ -101,38 +101,33 @@ const PersonalInfo = ({route, navigation}: any) => {
           ),
         )}
       </View>
-      <View style={{height: '5%'}}>
-        <Text style={{fontSize: 22, fontWeight: 500}}>User Information</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>User Information</Text>
       </View>
-      <View style={{marginTop: 20, height: open ? '65%' : '50%'}}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: '50%'}}>
-            <Text style={{fontSize: 14}}>First Name</Text>
-            <Text style={{fontSize: 18}}>{firstName}</Text>
+      <View style={{height: open ? '65%' : '50%'}}>
+        <View style={styles.align}>
+          <View style={styles.width}>
+            <Text style={styles.font_1}>First Name</Text>
+            <Text style={styles.font_2}>{firstName}</Text>
           </View>
-          <View style={{width: '50%'}}>
-            <Text style={{fontSize: 14}}>Last Name</Text>
-            <Text style={{fontSize: 18}}>{lastName}</Text>
+          <View style={styles.width}>
+            <Text style={styles.font_1}>Last Name</Text>
+            <Text style={styles.font_2}>{lastName}</Text>
           </View>
         </View>
-        <View style={{marginTop: 20}}>
-          <Text style={{fontSize: 14}}>Email Address</Text>
-          <Text style={{fontSize: 18}}>{email}</Text>
+        <View style={styles.margin}>
+          <Text style={styles.font_1}>Email Address</Text>
+          <Text style={styles.font_2}>{email}</Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 20,
-          }}>
-          <View style={{width: '50%'}}>
+        <View style={[styles.align, styles.margin]}>
+          <View style={styles.width}>
             <Text>Rate ($)</Text>
             {inputError.type === 'INVALID_RATE_FORMAT' && (
               <InputError error={inputError} />
             )}
             <InputField.Underlined onChangeText={setRate} />
           </View>
-          <View style={{width: '50%'}}>
+          <View style={styles.width}>
             <Text>Rate Type</Text>
             {inputError.type === 'INVALID_RATE_TYPE_FORMAT' && (
               <InputError error={inputError} />
@@ -165,42 +160,27 @@ const PersonalInfo = ({route, navigation}: any) => {
               height: '40%',
             }}>
             <TouchableOpacity
-              style={{
-                width: '40%',
-                height: '100%',
-                borderWidth: 1,
-                borderColor: '#000',
-                borderRadius: 10,
-                backgroundColor: isEnabled ? '#24a0ed' : '#fff',
-              }}
+              style={[
+                styles.mode,
+                {backgroundColor: isEnabled ? '#24a0ed' : '#fff'},
+              ]}
               onPress={() => setIsEnabled(true)}>
               <Text
-                style={{
-                  textAlign: 'center',
-                  lineHeight: 30,
-                  fontSize: 16,
-                  color: isEnabled ? '#fff' : '#000',
-                }}>
+                style={[styles.modeText, {color: isEnabled ? '#fff' : '#000'}]}>
                 Yes
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{
-                width: '40%',
-                height: '100%',
-                borderWidth: 1,
-                borderColor: '#000',
-                borderRadius: 10,
-                backgroundColor: isEnabled === false ? '#24a0ed' : '#fff',
-              }}
+              style={[
+                styles.mode,
+                {backgroundColor: isEnabled === false ? '#24a0ed' : '#fff'},
+              ]}
               onPress={() => setIsEnabled(false)}>
               <Text
-                style={{
-                  textAlign: 'center',
-                  lineHeight: 30,
-                  fontSize: 16,
-                  color: isEnabled === false ? '#fff' : '#000',
-                }}>
+                style={[
+                  styles.modeText,
+                  {color: isEnabled === false ? '#fff' : '#000'},
+                ]}>
                 No
               </Text>
             </TouchableOpacity>

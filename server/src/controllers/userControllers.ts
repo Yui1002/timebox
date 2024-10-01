@@ -57,8 +57,9 @@ class UserControllers {
   async sendRequest(req: any, res: any) {
     try {
       const { sender, receiver } = req.body;
-      const senderId = await this.models.getUserId(sender.email);
+      const senderId = await this.models.getUserId(sender);
       if (req.body.hasOwnProperty("request")) {
+        console.log('here?')
         const { request } = req.body;
         await this.models.storeRequest(receiver, senderId, request);
         await this.models.sendRequestViaEmail(receiver, sender, request);
@@ -69,6 +70,7 @@ class UserControllers {
         res.sendStatus(200);
       }
     } catch (err) {
+      console.log(err);
       res.status(400).send({ error: err });
     }
   }
