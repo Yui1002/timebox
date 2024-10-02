@@ -7,9 +7,24 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 
+interface Notification {
+  first_name: string;
+  last_name: string;
+  request_date: string;
+  request_rate: string | null;
+  request_rate_type: string | null;
+  shifts: [
+    {
+      day: string;
+      start_time: string;
+      end_time: string;
+    },
+  ];
+}
+
 const Notification = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState(new Map());
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -26,7 +41,11 @@ const Notification = (props: any) => {
         },
       })
       .then(res => {
+        // console.log('original', res.data);
+        console.log('original', res.data);
         const formattedData = formatData(res.data);
+        // console.log(formattedData.size);
+        console.log('format data', formattedData);
         setNotifications(formattedData);
       })
       .catch(err => {
@@ -35,30 +54,75 @@ const Notification = (props: any) => {
   };
 
   const formatData = (notification: any) => {
-    const data = notification.reduce((a: any, b: any) => {
-      const found = a.find((e: any) => e.email_address == b.email_address);
-      const item = {
-        day: b.request_schedule_day,
-        start_time: b.request_schedule_start_time,
-        end_time: b.request_schedule_end_time,
-      };
-      return (
-        found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
-      );
-    }, []);
+    const map = new Map();
 
-    for (let i = 0; i < data.length; i++) {
-      const obj = data[i];
-      delete obj['request_schedule_day'];
-      delete obj['request_schedule_start_time'];
-      delete obj['request_schedule_end_time'];
-      sortDays(data[i]);
+    for (const n of notification) {
+      const shift = {
+        day: n.request_schedule_day,
+        start_time: n.request_schedule_start_time,
+        end_time: n.request_schedule_end_time,
+      };
+      const value = map.get(n.email_address);
+      if (value) {
+        value.shifts.push(shift);
+      } else {
+        map.set(n.email_address, {
+          first_name: n.first_name,
+          last_name: n.last_name,
+          request_date: n.request_date,
+          rate: n.request_rate,
+          rate_type: n.request_rate_type,
+          mode: n.request_mode,
+          shifts: [],
+        });
+        if (
+          n.request_schedule_day &&
+          n.request_schedule_start_time &&
+          n.request_schedule_end_time
+        ) {
+          map.get(n.email_address).shifts.push(shift);
+        }
+      }
     }
-    return data;
+    // console.log('mapped result', map);
+    return map;
+    // const sorted = notification.reduce((a, b) => {
+    //   const found = a.find(e => e.email_address == b.email_address);
+    //   const item = {day: b.request_schedule_day, start_time: b.request_schedule_start_time, end_time: b.request_schedule_end_time};
+    //   ['request_schedule_day', 'request_schedule_start_time', 'request_schedule_end_time'].forEach(val => delete b[val]);
+    //   if (!item.day && !item.start_time && !item.end_time) return a;
+    //   return (
+    //     found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
+    //   );
+    // }, []);
+    // sorted.forEach(s => sortDays(s));
+    // console.log('sorted', sorted)
+    // return sorted;
+    //
+    // console.log('notification', notification)
+    // const data = notification.reduce((a: any, b: any) => {
+    //   const found = a.find((e: any) => e.email_address == b.email_address);
+    //   const item = {
+    //     day: b.request_schedule_day,
+    //     start_time: b.request_schedule_start_time,
+    //     end_time: b.request_schedule_end_time,
+    //   };
+    //   return (
+    //     found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
+    //   );
+    // }, []);
+
+    // for (let i = 0; i < data.length; i++) {
+    //   const obj = data[i];
+    //   delete obj['request_schedule_day'];
+    //   delete obj['request_schedule_start_time'];
+    //   delete obj['request_schedule_end_time'];
+    //   sortDays(data[i]);
+    // }
+    // return data;
   };
 
   const sortDays = (data: any) => {
-    if (data.shifts == undefined || data.shifts[0].day === null) return;
     const sorter = {
       Monday: 1,
       Tuesday: 2,
@@ -129,53 +193,55 @@ const Notification = (props: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        {notifications.length ? (
+        {notifications.size ? (
           <View style={styles.subContainer}>
-            {notifications.map(
-              (
-                n: {
-                  first_name: string;
-                  last_name: string;
-                  request_date: string;
-                  request_rate: string | null;
-                  request_rate_type: string | null;
-                  shifts: [
-                    {
-                      day: string;
-                      start_time: string;
-                      end_time: string;
-                    },
-                  ];
-                },
-                index,
-              ) => (
+            {[...notifications.keys()].map((n, index) => {
+              const {
+                first_name,
+                last_name,
+                request_date,
+                rate,
+                rate_type,
+                shifts,
+              } = notifications.get(n);
+              return (
                 <View key={index} style={styles.box}>
                   <Text style={styles.title}>
-                    {`${n.first_name} ${n.last_name} requested a service provider`}
+                    {`Request from ${first_name} ${last_name}`}
                   </Text>
-                  <Text style={styles.timeText}>
-                    {moment(n.request_date).startOf('day').fromNow()}
+                  <Text style={styles.timeText}>{`${moment(request_date).format('L')} ${moment(
+                    request_date,
+                  ).format('LT')}`}</Text>
+                  <Text style={styles.subText}>
+                    {`Pay: ${
+                      rate && rate_type
+                        ? `$${rate} / ${rate_type}`
+                        : `Not specified`
+                    }`}
                   </Text>
-                  {n.request_rate || n.request_rate_type ? (
-                    <View style={{marginTop: 8}}>
-                      <Text style={styles.subTitle}>Request detail: </Text>
-                      <Text>{`Pay: $${n.request_rate} / ${n.request_rate_type}`}</Text>
-                      <View style={styles.flex}>
-                        <Text style={{width: '25%'}}>Schedules: </Text>
-                        <View style={{width: '75%'}}>
-                          {n.shifts[0].day ? (
-                            n.shifts.map((s: any, index: number) => (
-                              <View key={index}>
-                                <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
-                              </View>
-                            ))
-                          ) : (
-                            <Text>Not specified</Text>
-                          )}
-                        </View>
-                      </View>
-                    </View>
-                  ) : null}
+                  <Text style={styles.subText}>{`Schedules: ${
+                    !shifts.length ? `Not specified` : ''
+                  }`}</Text>
+                  <View>
+                    {shifts.length
+                      ? shifts.map(
+                          (
+                            s: {
+                              day: string;
+                              start_time: string;
+                              end_time: string;
+                            },
+                            index: number,
+                          ) => (
+                            <View key={index}>
+                              <Text style={styles.subText}>{`${String.fromCharCode(8226)} ${s.day} ${
+                                s.start_time
+                              } - ${s.end_time}`}</Text>
+                            </View>
+                          ),
+                        )
+                      : null}
+                  </View>
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
                       style={[styles.button, styles.button_decline]}
@@ -189,13 +255,83 @@ const Notification = (props: any) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-              ),
-            )}
+              );
+            })}
           </View>
         ) : (
           <Text>There are no notifications</Text>
         )}
       </View>
+      {/* <View>
+        {notifications.size ? (
+          <View style={styles.subContainer}>
+            {notifications.map((n: Notification, index) => (
+              <View key={index} style={styles.box}>
+                <Text style={styles.title}>
+                  {`${n.first_name} ${n.last_name} requested a service provider`}
+                </Text>
+                <Text style={styles.timeText}>
+                  {`${moment(n.request_date).format('L')} ${moment(
+                    n.request_date,
+                  ).format('LT')}`}
+                </Text>
+                <Text>
+                  {`Pay: ${
+                    n.request_rate && n.request_rate_type
+                      ? `${n.request_rate}/${n.request_rate_type}`
+                      : `Not specified`
+                  }`}
+                </Text>
+                <Text>Schedules: </Text>
+                <View style={{width: '75%'}}>
+                  {n.shifts.length > 0 ? (
+                    n.shifts.map((s: any, index: number) => (
+                      <View key={index}>
+                        <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
+                      </View>
+                    ))
+                  ) : (
+                    <Text>Not specified</Text>
+                  )}
+                </View>
+                {n.request_rate || n.request_rate_type ? (
+                  <View style={{marginTop: 8}}>
+                    <Text>{`Pay: $${n.request_rate} / ${n.request_rate_type}`}</Text>
+                    <View style={styles.flex}>
+                      <Text style={{width: '25%'}}>Schedules: </Text>
+                      <View style={{width: '75%'}}>
+                        {n.shifts[0].day ? (
+                          n.shifts.map((s: any, index: number) => (
+                            <View key={index}>
+                              <Text>{`${s['day']} ${s['start_time']} - ${s['end_time']}`}</Text>
+                            </View>
+                          ))
+                        ) : (
+                          <Text>Not specified</Text>
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                ) : null}
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[styles.button, styles.button_decline]}
+                    onPress={() => showDeclineAlert(n)}>
+                    <Text style={styles.buttonText}>Decline</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.button, styles.button_accept]}
+                    onPress={() => showAcceptAlert(n)}>
+                    <Text style={styles.buttonText}>Accept</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text>There are no notifications</Text>
+        )}
+      </View> */}
     </SafeAreaView>
   );
 };

@@ -1,63 +1,59 @@
 import Repositories from "./repositories";
 
-class UserRepositories {
-  repositories: Repositories;
-
+class UserRepositories extends Repositories {
   constructor() {
-    this.repositories = new Repositories();
+    super();
   }
 
-  // ---------------------  Owners  -------------------------------
   async getUserId(email: string) {
     const sql = "SELECT user_id FROM users WHERE email_address = $1;";
-    const data = (await this.repositories.queryDB(sql, [email])).rows;
+    const data = (await this.queryDB(sql, [email])).rows;
     return data[0].user_id;
   }
 
   async getServiceProviderId(email: string) {
     const sql =
       "SELECT id FROM service_provider WHERE EXISTS (SELECT id FROM application_user WHERE email_address = $1);";
-    return (await this.repositories.queryDB(sql, [email])).rows[0].id;
+    return (await this.queryDB(sql, [email])).rows[0].id;
   }
 
   async getServiceProviderIds(userId: string) {
     const sql =
       "SELECT service_provider_id FROM user_transaction WHERE employer_user_id = $1;";
-    return (await this.repositories.queryDB(sql, [userId])).rows[0];
+    return (await this.queryDB(sql, [userId])).rows[0];
   }
 
   async getUserTransactionId(employerId: number, serviceProviderId: number) {
     const sql =
       "SELECT user_transaction_id FROM user_transaction WHERE employer_user_id = $1 AND service_provider_id = $2;";
-    return (
-      await this.repositories.queryDB(sql, [employerId, serviceProviderId])
-    ).rows[0].user_transaction_id;
+    return (await this.queryDB(sql, [employerId, serviceProviderId])).rows[0]
+      .user_transaction_id;
   }
 
   async checkUserExists(email: string) {
     const sql = "SELECT COUNT (*) FROM users WHERE email_address = $1;";
-    return (await this.repositories.queryDB(sql, [email])).rowCount > 0;
+    return (await this.queryDB(sql, [email])).rowCount > 0;
   }
 
   // ---------------------  Users  --------------------------------
   async getEmployers(serviceProviderId: string) {
     const sql =
       "SELECT u.first_name, u.last_name, u.email_address FROM users u INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id WHERE ut.service_provider_id = $1;";
-    return (await this.repositories.queryDB(sql, [serviceProviderId])).rows;
+    return (await this.queryDB(sql, [serviceProviderId])).rows;
   }
 
   async getServiceProviders(employerId: string) {
     const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.status FROM users u
                   INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id
                   WHERE employer_user_id = $1;`;
-    return (await this.repositories.queryDB(sql, [employerId])).rows;
+    return (await this.queryDB(sql, [employerId])).rows;
   }
 
   async getServiceProvider(transactionId: string) {
     const sql = `SELECT ut.rate, ut.rate_type, ut.status, us.day, us.start_time, us.end_time FROM user_transaction ut
                   INNER JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
                   WHERE ut.user_transaction_id = $1;`;
-    return (await this.repositories.queryDB(sql, [transactionId])).rows;
+    return (await this.queryDB(sql, [transactionId])).rows;
   }
 
   /**
@@ -72,7 +68,7 @@ class UserRepositories {
                   ON CONFLICT (employer_user_id, service_provider_id) DO UPDATE SET`;
     const builder = this.updateUserBuilderQuery(sql, req);
     queryArgs = queryArgs.concat(builder.queryArgs);
-    await this.repositories.queryDB(builder.baseQuery, queryArgs);
+    await this.queryDB(builder.baseQuery, queryArgs);
     return true;
   }
 
@@ -102,7 +98,7 @@ class UserRepositories {
                   ON CONFLICT (day, user_transaction_id) DO UPDATE SET`;
     const builder = this.updateUserScheduleBuilderrQuery(sql, req);
     queryArgs = queryArgs.concat(builder.queryArgs);
-    await this.repositories.queryDB(builder.baseQuery, queryArgs);
+    await this.queryDB(builder.baseQuery, queryArgs);
   }
 
   private updateUserScheduleBuilderrQuery(baseQuery: string, req: any) {
@@ -123,42 +119,37 @@ class UserRepositories {
   async getUser(email: string) {
     const sql =
       "SELECT first_name, last_name, email_address FROM users WHERE email_address = $1;";
-    return (await this.repositories.queryDB(sql, [email])).rows;
+    return (await this.queryDB(sql, [email])).rows;
   }
 
   async deleteServiceProvider(transactionId: string) {
     const sql = "DELETE FROM user_transaction WHERE user_transaction_id = $1;";
-    return await this.repositories.queryDB(sql, [transactionId]);
+    return await this.queryDB(sql, [transactionId]);
   }
 
   async deleteSchedules(transactionId: string) {
     const sql = "DELETE FROM user_schedule WHERE user_transaction_id = $1;";
-    return await this.repositories.queryDB(sql, [transactionId]);
+    return await this.queryDB(sql, [transactionId]);
   }
 
   // ---------------------  Record  --------------------------------
   async startRecord(serviceProviderEmail: string, transactionId: string) {
     const sql =
       "INSERT INTO time_record (status, start_time, end_time, update_date, update_by, id_user_transaction) VALUES (DEFAULT, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, $1, $2) RETURNING start_time";
-    return (
-      await this.repositories.queryDB(sql, [
-        serviceProviderEmail,
-        transactionId,
-      ])
-    ).rows[0].start_time;
+    return (await this.queryDB(sql, [serviceProviderEmail, transactionId]))
+      .rows[0].start_time;
   }
 
   async endRecord(transactionId: string) {
     const sql =
       "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 AND start_time::DATE = CURRENT_DATE RETURNING end_time;";
-    return (await this.repositories.queryDB(sql, [transactionId])).rows[0]
-      .end_time;
+    return (await this.queryDB(sql, [transactionId])).rows[0].end_time;
   }
 
   async getTodaysRecord(transactionId: string) {
     const sql =
       "SELECT start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = CURRENT_DATE AND end_time::DATE = CURRENT_DATE);";
-    return (await this.repositories.queryDB(sql, [transactionId])).rows[0];
+    return (await this.queryDB(sql, [transactionId])).rows[0];
   }
 
   async getRecordByPeriod(transactionId: number, from: string, to: string) {
@@ -167,22 +158,20 @@ class UserRepositories {
                   WHERE id_user_transaction = $1 AND
                         start_time::DATE >= $2 AND
                         start_time::DATE <= $3;`;
-    return (await this.repositories.queryDB(sql, [transactionId, from, to]))
-      .rows;
+    return (await this.queryDB(sql, [transactionId, from, to])).rows;
   }
 
   async searchByDateYear(year: string, month: string, userId: string) {
     const sql =
       "SELECT start_time, end_time FROM time_record_v2 WHERE date_part('year', start_time) = $1 AND date_part('month', start_time) = $2 AND user_id = $3;";
-    const data = (await this.repositories.queryDB(sql, [year, month, userId]))
-      .rows;
+    const data = (await this.queryDB(sql, [year, month, userId])).rows;
     return data;
   }
 
   async emailHasBeenSent(receiver: string, sender: number) {
     const sql =
       "SELECT COUNT (*) FROM requests WHERE receiver = $1 AND sender = $2;";
-    const data = await this.repositories.queryDB(sql, [receiver, sender]);
+    const data = await this.queryDB(sql, [receiver, sender]);
     return data.rows[0].count > 0;
   }
 
@@ -193,15 +182,15 @@ class UserRepositories {
     rateType: string | null,
     mode: boolean | null,
     shift: {
-      day: string,
-      startTime: string,
-      endTime: string
+      day: string;
+      startTime: string;
+      endTime: string;
     } | null
   ) {
-    console.log('here', rate, rateType, mode, shift);
+    console.log("here", rate, rateType, mode, shift);
     const sql = `INSERT INTO requests
         VALUES (DEFAULT, $1, $2, NULL, CURRENT_TIMESTAMP, $3, $4, $5, $6, $7, $8);`;
-    await this.repositories.queryDB(sql, [
+    await this.queryDB(sql, [
       sender,
       receiver,
       rate,
@@ -215,16 +204,27 @@ class UserRepositories {
   }
 
   async getNotification(receiver: string) {
-    const sql =
-      "SELECT u.first_name, u.last_name, u.email_address, r.request_date, r.request_rate, r.request_rate_type, r.request_schedule_day, r.request_schedule_start_time, r.request_schedule_end_time FROM users u INNER JOIN requests r on u.user_id = r.sender WHERE r.receiver = $1 AND r.is_approved IS NULL;";
-    const data = await this.repositories.queryDB(sql, [receiver]);
+    const sql = `SELECT
+        u.first_name,
+        u.last_name,
+        u.email_address,
+        r.request_date,
+        r.request_rate,
+        r.request_rate_type,
+        r.request_schedule_day,
+        r.request_schedule_start_time,
+        r.request_schedule_end_time,
+        r.request_mode
+      FROM users u INNER JOIN requests r on u.user_id = r.sender
+      WHERE r.receiver = $1 AND r.is_approved IS NULL;`;
+    const data = await this.queryDB(sql, [receiver]);
     return data.rows;
   }
 
   async updateRequest(sender: number, receiver: string, isApproved: boolean) {
     const sql =
       "UPDATE requests SET is_approved = $1 WHERE sender = $2 AND receiver = $3;";
-    await this.repositories.queryDB(sql, [isApproved, sender, receiver]);
+    await this.queryDB(sql, [isApproved, sender, receiver]);
     return true;
   }
 
@@ -238,7 +238,7 @@ class UserRepositories {
     const sql =
       "INSERT INTO user_transaction (rate, rate_type, currency, status, update_date, update_by, employer_user_id, service_provider_id, mode) VALUES ($1, $2, NULL, DEFAULT, CURRENT_TIMESTAMP, $3, $4, $5, $6) RETURNING user_transaction_id;";
     const transactionId = (
-      await this.repositories.queryDB(sql, [
+      await this.queryDB(sql, [
         request_rate,
         request_rate_type,
         receiver,
@@ -258,7 +258,7 @@ class UserRepositories {
     const { day, start_time, end_time } = schedule;
     const sql =
       "INSERT INTO user_schedule (day, start_time, end_time, service_provider_id, user_transaction_id) VALUES ($1, $2, $3, $4, $5);";
-    await this.repositories.queryDB(sql, [
+    await this.queryDB(sql, [
       day,
       start_time,
       end_time,

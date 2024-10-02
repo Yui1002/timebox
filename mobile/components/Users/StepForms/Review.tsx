@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Alert, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import {useSelector} from 'react-redux';
@@ -17,10 +23,11 @@ interface Shifts {
 const Review = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
-  console.log('is enabled in review', isEnabled)
+  console.log('is enabled in review', isEnabled);
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
+  const [loading, setLoading] = useState(false);
 
   const editDay = () => {
     navigation.navigate('WorkShifts', {
@@ -49,17 +56,22 @@ const Review = ({route, navigation}: any) => {
       mode: isEnabled,
       shifts: workShifts.workShifts,
     };
+    setLoading(true);
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
-        sender: userInfo.email,
+        sender: userInfo,
         receiver: email,
         request: request,
       })
       .then(() => {
+        setLoading(false);
         dispatch(resetShift(workShifts.workShifts));
         showSuccess();
       })
-      .catch(err => [console.log(err)]);
+      .catch(err => {
+        setLoading(false);
+        console.log(err);
+      });
   };
 
   const showSuccess = () => {
@@ -170,11 +182,15 @@ const Review = ({route, navigation}: any) => {
             onPress={() => navigation.goBack()}>
             <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.workShiftsBtn_add}
-            onPress={confirmServiceProvider}>
-            <Text style={styles.buttonText}>Confirm</Text>
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator color="#0000ff" />
+          ) : (
+            <TouchableOpacity
+              style={styles.workShiftsBtn_add}
+              onPress={confirmServiceProvider}>
+              <Text style={styles.buttonText}>Confirm</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>

@@ -2,7 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {Text, View, SafeAreaView, Alert, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {styles} from '../../styles/hireServiceProviderStyles.js';
 import validator from 'validator';
 import InputField from '../InputField';
@@ -13,6 +20,7 @@ const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const [inputError, setInputError] = useState({
     type: '',
     msg: '',
@@ -50,45 +58,52 @@ const HireServiceProvider = (props: any) => {
 
   const searchEmail = () => {
     if (!validateEmail('SEARCH')) return;
+    setLoading(true);
     axios
       .get(`${LOCAL_HOST_URL}/request/search`, {
         params: {
           receiver: searchInput,
-          sender: userInfo.email
+          sender: userInfo.email,
         },
       })
       .then(res => {
+        setLoading(false);
         if (res.data === 'Email not found') {
           const msg = `Do you want to request to ${searchInput} as a service provider?`;
           showAlert(msg, null, function () {
+            setLoading(true);
             sendRequest();
           });
         } else {
           const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
           showAlert(msg, null, function () {
+            setLoading(true);
             navigateToNext(res.data[0]);
           });
         }
       })
       .catch((error: any) => {
+        setLoading(false);
         setInputError({
           type: 'DUPLICATE_REQUEST',
-          msg: error.response.data.error
-        })
+          msg: error.response.data.error,
+        });
       });
   };
 
   const sendRequest = () => {
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
-        sender: userInfo.email,
+        sender: userInfo,
         receiver: searchInput,
       })
       .then(() => {
+        setLoading(false);
         clearInput();
         showSuccessAlert();
       })
       .catch(err => {
+        setLoading(false);
         setInputError({
           type: 'DUPLICATE_EMAIL',
           msg: err.response.data.error,
@@ -163,11 +178,15 @@ const HireServiceProvider = (props: any) => {
           inputError.type === 'DUPLICATE_REQUEST') && (
           <InputError error={inputError} />
         )}
-        <TouchableOpacity
-          style={[styles.button, {marginTop: 20}]}
-          onPress={searchEmail}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator color="#24a0ed" style={styles.indicator} />
+        ) : (
+          <TouchableOpacity
+            style={[styles.button, {marginTop: 20}]}
+            onPress={searchEmail}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </SafeAreaView>
   );

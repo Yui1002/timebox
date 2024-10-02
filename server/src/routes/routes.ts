@@ -11,14 +11,12 @@ class Routes {
     }
 
     applyRouting(app: any) {
-        // auth routes
         app.get('/user/exists/:email', this.authControllers.isUserRegistered.bind(this.authControllers));
         app.get('/email/exists', this.authControllers.isEmailRegistered.bind(this.authControllers));
         app.post('/signUp', this.authControllers.signUp.bind(this.authControllers));
         app.post('/signIn', this.authControllers.signIn.bind(this.authControllers));
         app.post('/password/reset', this.authControllers.resetPassword.bind(this.authControllers));
 
-        // otp
         app.post('/otp/resend', this.authControllers.resendOtp.bind(this.authControllers));
         app.post('/otp/verify', this.authControllers.verifyOTP.bind(this.authControllers));
 
@@ -30,7 +28,6 @@ class Routes {
         app.post('/request/update', this.userControllers.updateRequest.bind(this.userControllers));
         app.get('/notification', this.userControllers.getNotification.bind(this.userControllers))
 
-        // user routes
         app.get('/serviceProvider', this.userControllers.getServiceProvider.bind(this.userControllers));
         app.get('/serviceProviders', this.userControllers.getServiceProviders.bind(this.userControllers));
         app.delete('/serviceProvider', this.userControllers.deleteServiceProvider.bind(this.userControllers));

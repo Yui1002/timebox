@@ -221,7 +221,7 @@ const SignUp = ({navigation}: any) => {
           </View>
           <View style={{marginVertical: 14}} />
           {loading ? (
-            <ActivityIndicator color="fff" />
+            <ActivityIndicator color="#24a0ed" />
           ) : (
             <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
               <Text style={styles.buttonText}>Sign Up</Text>

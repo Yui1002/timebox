@@ -51,6 +51,12 @@ export const styles = StyleSheet.create({
     marginLeft: 'auto',
     marginTop: 30
   },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    lineHeight: 32
+  },
   resend: {
     height: '5%',
     borderWidth: 1,

@@ -6,6 +6,7 @@ import {
   TextInput,
   Button,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -45,6 +46,7 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   const verifyOTP = () => {
     if (!validateInput()) return;
+    setLoading(true);
     axios
       .post(`${LOCAL_HOST_URL}/otp/verify`, {
         otp,
@@ -54,6 +56,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         signUp();
       })
       .catch(err => {
+        setLoading(false);
         setinputError({
           type: 'INVALID_OTP',
           msg: err.response.data.error,
@@ -70,6 +73,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         password,
       })
       .then(() => {
+        setLoading(false);
         dispatch(
           signInUser({
             firstName,
@@ -125,9 +129,13 @@ const VerifyOTP = ({route, navigation}: any) => {
           <Text style={styles.inputError}>{inputError.msg}</Text>
         )}
       </View>
-      <View style={styles.button}>
-        <Button title="Verify" color="#fff" onPress={verifyOTP} />
-      </View>
+      {loading ? (
+        <ActivityIndicator color="#24a0ed" />
+      ) : (
+        <TouchableOpacity style={styles.button} onPress={verifyOTP}>
+          <Text style={styles.buttonText}>Verify</Text>
+        </TouchableOpacity>
+      )}
       <Separator />
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <View>

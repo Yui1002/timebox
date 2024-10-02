@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '500'
   },
   subTitle: {
     fontSize: 14,
@@ -15,18 +15,18 @@ export const styles = StyleSheet.create({
   },
   box: {
     backgroundColor: '#E8E8E8',
-    position: 'relative',
     borderRadius: 10,
     padding: 14,
-    position: 'relative',
-    height: '20%'
+    height: 'auto'
   },
   timeText: {
     fontSize: 12,
     color: '#707070',
-    position: 'absolute',
-    top: 40, 
-    right: 10
+    marginLeft: 'auto',
+    marginRight: 0
+  },
+  subText: {
+    marginVertical: 1
   },
   subContainer: {
     height: '100%'
@@ -35,9 +35,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 10,
-    position: 'absolute',
-    bottom: 10,
-    right: 30
   },
   button: {
     width: '40%',
