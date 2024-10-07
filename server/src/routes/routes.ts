@@ -36,8 +36,7 @@ class Routes {
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));
         app.get('/record', this.userControllers.getRecordByPeriod.bind(this.userControllers));
-        app.post('/searchByDateYear', this.userControllers.searchByDateYear.bind(this.userControllers));
-        app.get('/getRecord/:username', this.userControllers.getRecord.bind(this.userControllers));
+        app.get('/record/duplicate', this.userControllers.checkRecordDuplicate.bind(this.userControllers));
     }
 }
 

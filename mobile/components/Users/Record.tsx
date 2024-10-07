@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
+import {Text, View, SafeAreaView, TouchableOpacity, Alert} from 'react-native';
 import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -13,8 +13,8 @@ const Record = ({route, navigation}: any) => {
   const serviceProviderEmail = route.params.serviceProviderEmail;
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
-  const [start, setStart] = useState<string | null>(null);
-  const [end, setEnd] = useState<string | null>(null);
+  const [start, setStart] = useState<Date | null>(null);
+  const [end, setEnd] = useState<Date | null>(null);
 
   useEffect(() => {
     getTodaysRecord();
@@ -29,33 +29,86 @@ const Record = ({route, navigation}: any) => {
         },
       })
       .then((res): any => {
-        res.data.start_time
-          ? setStart(moment(res.data.start_time).format('LT'))
-          : setStart(null);
-        res.data.end_time
-          ? setEnd(moment(res.data.end_time).format('LT'))
-          : setEnd(null);
+        res.data.start_time ? setStart(res.data.start_time) : setStart(null);
+        res.data.end_time ? setEnd(res.data.end_time) : setEnd(null);
       });
   };
 
-  const recordTime = (type: string) => {
+  const recordTime = (type: string, date: Date, mode: string) => {
     axios
       .post(`${LOCAL_HOST_URL}/record`, {
-        type: type,
-        employerEmail: email_address,
-        serviceProviderEmail,
+        type,
+        start: date,
+        end: date,
+        epEmail: email_address,
+        spEmail: serviceProviderEmail,
+        mode,
       })
       .then(res => {
-        const time = moment(res.data).format('LT');
-        type === 'checkin' ? setStart(time) : setEnd(time);
+        console.log('data', res.data);
+        // const time = moment(res.data).format('LT');
+        type === 'start'
+          ? setStart(res.data)
+          : setEnd(res.data);
       })
       .catch(err => {});
   };
 
-  const onDateChange = (type: string, date: any) => {
-    date = moment(date).format('LT');
-    if (date)
-    type === 'start' ? setStart(date) : setEnd(date);
+  const checkDuplicate = (type: string, date: Date) => {
+    axios
+      .get(`${LOCAL_HOST_URL}/record/duplicate`, {
+        params: {
+          date,
+          epEmail: email_address,
+          spEmail: serviceProviderEmail,
+        },
+      })
+      .then((res: any) => {
+        // there is no duplicate
+        alertAdd(type, date);
+      })
+      .catch(err => {
+        // there is a duplicate
+        alertDuplicate(type, date);
+      });
+  };
+
+  const alertAdd = (type: string, date: Date) => {
+    const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
+    Alert.alert(
+      'Make changes',
+      `Do you want to set ${type} time to ${formatedDate}?`,
+      [
+        {
+          text: 'Yes',
+          onPress: () => recordTime(type, date, 'add'),
+        },
+        {
+          text: 'No',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+      ],
+    );
+  };
+
+  const alertDuplicate = (type: string, date: Date) => {
+    const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
+    Alert.alert(
+      'This date record is existed',
+      `Do you want to overwrite ${type} time to ${formatedDate}?`,
+      [
+        {
+          text: 'Yes',
+          onPress: () => recordTime(type, date, 'overwrite'),
+        },
+        {
+          text: 'No',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+      ],
+    );
   };
 
   const Separator = () => <View style={styles.separator}></View>;
@@ -67,9 +120,6 @@ const Record = ({route, navigation}: any) => {
           Employer: {first_name} {last_name}
         </Text>
       </View>
-      {/* <View>
-        <Text>Edit record</Text>
-      </View> */}
       <View style={styles.dateContainer}>
         <TouchableOpacity
           style={styles.dateBox}
@@ -96,54 +146,42 @@ const Record = ({route, navigation}: any) => {
           open={startOpen}
           mode="datetime"
           date={new Date()}
-          onConfirm={d => onDateChange('start', d)}
+          onConfirm={d => checkDuplicate('start', d)}
           onCancel={() => {
             setStartOpen(false);
           }}
+          minimumDate={new Date('2000-01-01')}
+          maximumDate={new Date()}
         />
         <DatePicker
           modal
           open={endOpen}
           mode="datetime"
           date={new Date()}
-          onConfirm={d => onDateChange('end', d)}
+          onConfirm={d => checkDuplicate('end', d)}
           onCancel={() => {
             setEndOpen(false);
           }}
+          minimumDate={new Date('2000-01-01')}
+          maximumDate={new Date()}
         />
-        {/* <TouchableOpacity
-          style={start ? styles.button_disabled : styles.checkInButton}
-          disabled={start !== null}
-          onPress={() => recordTime('checkin')}>
-          <Text style={styles.buttonText}>Start</Text>
-          <View style={styles.logoContainer}>
-            <AntDesign name="login" size={75} color="#fff" />
-          </View>
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity
-          style={
-            end || !start
-              ? styles.button_disabled
-              : styles.checkOutButton
-          }
-          disabled={end !== null}
-          onPress={() => recordTime('checkout')}>
-          <Text style={styles.buttonText}>End</Text>
-          <View style={styles.logoContainer}>
-            <AntDesign name="logout" size={75} color="#fff" />
-          </View>
-        </TouchableOpacity> */}
       </View>
       <View style={styles.todayRecordContainer}>
-        <Text style={styles.subHeader}>Today's record</Text>
+        <Text style={styles.subHeader}>{`Record date: ${
+          start
+            ? moment(start).format('MM/DD/YYYY')
+            : moment().format('MM/DD/YYYY')
+        }`}</Text>
         <View style={styles.todayRecord}>
           <Text>Start</Text>
-          <Text>{start ? start : 'Not registered'}</Text>
+          <Text>{start ? moment(start).format('LT') : 'Not registered'}</Text>
         </View>
         <Separator />
         <View style={styles.todayRecord}>
           <Text>End</Text>
-          <Text>{end ? end : 'Not registered'}</Text>
+          <Text>
+            {end ? moment(end).format('MM/DD/YYYY') : 'Not registered'}
+          </Text>
         </View>
       </View>
     </SafeAreaView>

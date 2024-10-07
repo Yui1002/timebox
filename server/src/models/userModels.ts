@@ -104,20 +104,16 @@ class UserModels {
   }
 
   async recordTime(req: any) {
-    const { type, employerEmail, serviceProviderEmail } = req;
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
-    );
-    const employerId = await this.repositories.getUserId(employerEmail);
+    const { type, start, end, epEmail, spEmail, mode } = req;
+    console.log('req', req)
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
     const userTransactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
+      epId,
+      spId
     );
-    return type === "checkin"
-      ? await this.repositories.startRecord(
-          serviceProviderEmail,
-          userTransactionId
-        )
+    return type === "start"
+      ? await this.repositories.startRecord(start, spEmail, userTransactionId, mode)
       : await this.repositories.endRecord(userTransactionId);
   }
 
@@ -156,21 +152,13 @@ class UserModels {
     return await this.repositories.getRecordByPeriod(transactionId, from, to);
   }
 
-  async searchByDateYear(req: any) {
-    const { year, month, username } = req;
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.searchByDateYear(year, month, userId);
-  }
-
-  async getRecord(username: string) {
-    const currentYear = new Date().getFullYear().toString();
-    const currentMonth = (new Date().getMonth() + 1).toString();
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.searchByDateYear(
-      currentYear,
-      currentMonth,
-      userId
-    );
+  async checkRecordDuplicate(req: any) {
+    const { date, epEmail, spEmail } = req;
+    const epId = await this.repositories.getUserId(epEmail);
+    const spId = await this.repositories.getUserId(spEmail);
+    const transactionId = await this.repositories.getUserTransactionId(epId, spId);
+    const rows = await this.repositories.checkDuplicate(date, transactionId);
+    return rows.length > 0;
   }
 
   async sendRequestViaEmail(

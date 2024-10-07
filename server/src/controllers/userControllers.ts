@@ -64,7 +64,6 @@ class UserControllers {
         await this.models.sendRequestViaEmail(receiver, sender, request);
         res.sendStatus(200);
       } else {
-        console.log('here')
         await this.models.storeRequest(receiver, senderId, null);
         await this.models.sendRequestViaEmail(receiver, sender, null);
         res.sendStatus(200);
@@ -100,15 +99,9 @@ class UserControllers {
     res.send(records);
   }
 
-  async searchByDateYear(req: any, res: any) {
-    const record = await this.models.searchByDateYear(req.body);
-    res.send(record);
-  }
-
-  async getRecord(req: any, res: any) {
-    const { username } = req.params;
-    const record = await this.models.getRecord(username);
-    res.send(record);
+  async checkRecordDuplicate(req: any, res: any) {
+    const isDuplicated = await this.models.checkRecordDuplicate(req.query);
+    isDuplicated ? res.sendStatus(400) : res.sendStatus(200);
   }
 
   async getNotification(req: any, res: any) {

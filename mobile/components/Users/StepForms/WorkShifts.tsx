@@ -14,7 +14,6 @@ interface Shifts {
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
-  console.log('is enabled', isEnabled)
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 

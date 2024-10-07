@@ -23,7 +23,6 @@ interface Shifts {
 const Review = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
-  console.log('is enabled in review', isEnabled);
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];

@@ -41,11 +41,7 @@ const Notification = (props: any) => {
         },
       })
       .then(res => {
-        // console.log('original', res.data);
-        console.log('original', res.data);
         const formattedData = formatData(res.data);
-        // console.log(formattedData.size);
-        console.log('format data', formattedData);
         setNotifications(formattedData);
       })
       .catch(err => {
