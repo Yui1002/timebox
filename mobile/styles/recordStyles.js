@@ -6,26 +6,24 @@ export const styles = StyleSheet.create({
     margin: '5%',
   },
   header: {
-    height: '10%',
+    height: '14%',
   },
   headerText: {
     fontSize: 20,
     fontWeight: '500',
   },
-  recordContainer: {
-    height: '50%',
-    flexDirection: "row",
-    justifyContent: 'space-between',
+  headerSubText: {
+    fontSize: 16,
   },
   dateContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-between',
   },
   dateBox: {
     borderWidth: 1,
     borderColor: '#909090',
     borderRadius: 10,
-    width: '44%',
+    width: '46%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 50
@@ -74,8 +72,8 @@ export const styles = StyleSheet.create({
   },
   todayRecordContainer: {
     marginHorizontal: 30,
+    marginVertical: 30,
     paddingRight: 30,
-    height: '20%'
   },
   todayRecord: {
     flexDirection: 'row',
@@ -87,4 +85,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  error: {
+    color: 'red',
+  }
 });

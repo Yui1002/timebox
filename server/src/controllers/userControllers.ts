@@ -99,8 +99,14 @@ class UserControllers {
     res.send(records);
   }
 
+  async getRecordByDay(req: any, res: any) {
+    const record = await this.models.getRecordByDay(req.query);
+    res.send(record);
+  }
+
   async checkRecordDuplicate(req: any, res: any) {
     const isDuplicated = await this.models.checkRecordDuplicate(req.query);
+    console.log('isDuplicated', isDuplicated)
     isDuplicated ? res.sendStatus(400) : res.sendStatus(200);
   }
 

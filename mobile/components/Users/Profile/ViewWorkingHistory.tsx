@@ -30,7 +30,7 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
 
   const search = () => {
     axios
-      .get(`${LOCAL_HOST_URL}/record`, {
+      .get(`${LOCAL_HOST_URL}/record/period`, {
         params: {
           epEmail,
           spEmail,

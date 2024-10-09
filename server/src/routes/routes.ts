@@ -35,7 +35,8 @@ class Routes {
         app.post('/edit/serviceProvider', this.userControllers.editServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));
-        app.get('/record', this.userControllers.getRecordByPeriod.bind(this.userControllers));
+        app.get('/record/period', this.userControllers.getRecordByPeriod.bind(this.userControllers));
+        app.get('/record/day', this.userControllers.getRecordByDay.bind(this.userControllers));
         app.get('/record/duplicate', this.userControllers.checkRecordDuplicate.bind(this.userControllers));
     }
 }

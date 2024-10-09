@@ -42,7 +42,7 @@ const WorkingHistory = (props: any) => {
   const searchRecord = () => {
     if (!validateInput()) return;
     axios
-      .get(`${LOCAL_HOST_URL}/record`, {
+      .get(`${LOCAL_HOST_URL}/record/period`, {
         params: {
           employerEmail: selectedEmployer,
           serviceProviderEmail: email,

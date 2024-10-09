@@ -105,7 +105,6 @@ class UserModels {
 
   async recordTime(req: any) {
     const { type, start, end, epEmail, spEmail, mode } = req;
-    console.log('req', req)
     const spId = await this.repositories.getUserId(spEmail);
     const epId = await this.repositories.getUserId(epEmail);
     const userTransactionId = await this.repositories.getUserTransactionId(
@@ -113,21 +112,24 @@ class UserModels {
       spId
     );
     return type === "start"
-      ? await this.repositories.startRecord(start, spEmail, userTransactionId, mode)
+      ? await this.repositories.startRecord(
+          start,
+          spEmail,
+          userTransactionId,
+          mode
+        )
       : await this.repositories.endRecord(userTransactionId);
   }
 
   async getTodaysRecord(req: any) {
-    const { employerEmail, serviceProviderEmail } = req;
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
+    const { epEmail, spEmail } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
     );
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const userTransactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
-    );
-    return await this.repositories.getTodaysRecord(userTransactionId);
+    return await this.repositories.getTodaysRecord(transactionId);
   }
 
   async getRecordByPeriod(req: any) {
@@ -152,12 +154,26 @@ class UserModels {
     return await this.repositories.getRecordByPeriod(transactionId, from, to);
   }
 
-  async checkRecordDuplicate(req: any) {
+  async getRecordByDay(req: any) {
     const { date, epEmail, spEmail } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
+    );
+    return await this.repositories.getRecordByDay(transactionId, date);
+  }
+
+  async checkRecordDuplicate(req: any) {
+    const { type, date, epEmail, spEmail } = req;
     const epId = await this.repositories.getUserId(epEmail);
     const spId = await this.repositories.getUserId(spEmail);
-    const transactionId = await this.repositories.getUserTransactionId(epId, spId);
-    const rows = await this.repositories.checkDuplicate(date, transactionId);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
+    );
+    const rows = await this.repositories.checkDuplicate2(type, date, transactionId);
     return rows.length > 0;
   }
 

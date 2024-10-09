@@ -139,25 +139,24 @@ class UserRepositories extends Repositories {
     transactionId: string,
     mode: string
   ) {
-    console.log(start, email, transactionId, mode)
     const d = new Date(start);
     const date = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
     const addSql = `INSERT INTO time_record VALUES (
                       DEFAULT, DEFAULT, $1, NULL, CURRENT_TIMESTAMP, $2, $3)
                       RETURNING start_time;`;
-    const overWriteSql = `UPDATE time_record SET start_time = $1
-                            WHERE id_user_transaction = $2 AND start_time::DATE = $3
+    const overWriteSql = `UPDATE time_record SET start_time = $1, update_by = $2
+                            WHERE id_user_transaction = $3 AND start_time::DATE = $4
                             RETURNING start_time;`;
     if (mode === "add") {
-      console.log('add')
-      return (await this.queryDB(addSql, [start, email, transactionId])).rows[0]
-        .start_time;
+      const data = await this.queryDB(addSql, [start, email, transactionId]);
+      return data.rows[0].start_time;
     } else if (mode === "overwrite") {
-      console.log('overwrite')
-      const data = await this.queryDB(overWriteSql, [start, transactionId, date])
-      // return (await this.queryDB(overWriteSql, [start, transactionId, date]))
-        // .rows[0].start_time;
-      console.log('data', data)
+      const data = await this.queryDB(overWriteSql, [
+        start,
+        email,
+        transactionId,
+        date,
+      ]);
       return data.rows[0].start_time;
     } else {
       return null;
@@ -174,7 +173,7 @@ class UserRepositories extends Repositories {
     const sql = `SELECT start_time, end_time
         FROM time_record
         WHERE id_user_transaction = $1 AND
-        (start_time::DATE = CURRENT_DATE AND end_time::DATE = CURRENT_DATE);`;
+        (start_time::DATE = CURRENT_DATE OR end_time::DATE = CURRENT_DATE);`;
     return (await this.queryDB(sql, [transactionId])).rows;
   }
 
@@ -185,6 +184,30 @@ class UserRepositories extends Repositories {
                         start_time::DATE >= $2 AND
                         start_time::DATE <= $3;`;
     return (await this.queryDB(sql, [transactionId, from, to])).rows;
+  }
+
+  async getRecordByDay(transactionId: number, date: Date) {
+    const sql = `SELECT start_time, end_time FROM time_record
+                  WHERE id_user_transaction = $1 AND
+                        start_time::DATE = $2 AND
+                        end_time::DATE = $3;`;
+    return (await this.queryDB(sql, [transactionId, date, date])).rows;
+  }
+
+  async checkDuplicate2(type: string, date: string, transactionId: string) {
+    const d = new Date(date);
+    const match = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    const startSql = `SELECT start_time FROM time_record
+                  WHERE start_time::DATE = $1 AND id_user_transaction = $2;`;
+    const endSql = `SELECT end_time FROM time_record
+                  WHERE end_time::DATE = $1 AND id_user_transaction = $2;`;
+    if (type === "start") {
+      return (await this.queryDB(startSql, [match, transactionId])).rows;
+    } else if (type === "end") {
+      return (await this.queryDB(endSql, [match, transactionId])).rows;
+    } else {
+      return null;
+    }
   }
 
   async checkDuplicate(date: string, transactionId: number) {
