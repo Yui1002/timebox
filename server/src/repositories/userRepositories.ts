@@ -189,7 +189,7 @@ class UserRepositories extends Repositories {
   async getRecordByDay(transactionId: number, date: Date) {
     const sql = `SELECT start_time, end_time FROM time_record
                   WHERE id_user_transaction = $1 AND
-                        start_time::DATE = $2 AND
+                        start_time::DATE = $2 OR
                         end_time::DATE = $3;`;
     return (await this.queryDB(sql, [transactionId, date, date])).rows;
   }
