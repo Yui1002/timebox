@@ -12,10 +12,10 @@ const Record = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
   const {first_name, last_name, email_address} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
+  const [dateOpen, setDateOpen] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date>(new Date());
   const [start, setStart] = useState<Date | null>(null);
   const [end, setEnd] = useState<Date | null>(null);
   useEffect(() => {
@@ -38,65 +38,61 @@ const Record = ({route, navigation}: any) => {
       });
   };
 
-  const validateInput = (type: string, datetime: Date) => {
-    const s = moment(start);
-    const e = moment(end);
-    console.log('start', start, 'end', end)
+  const onDateConfirm = (date: Date) => {
+    setDate(date);
 
-    if (!start && !end) return true;
-    if (type === 'start') {
-      const duration = e.diff(moment(datetime), 'hours');
-      if (duration < 1) {
-        alertError('Start time has to occur before end time');
-        return false;
-      }
-    }
-    if (type === 'end') {
-      const duration = moment(datetime).diff(s, 'hours');
-      if (duration < 0) {
-        alertError('End time has to occur after start time');
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const onConfirm = (type: string, datetime: Date) => {
-    if (!validateInput(type, datetime)) return;
     axios
       .get(`${LOCAL_HOST_URL}/record/day`, {
         params: {
-          date: datetime,
+          date,
           epEmail: email_address,
           spEmail: serviceProviderEmail,
         },
       })
       .then((res: any) => {
-        console.log('res.data', res.data)
         res.data.length ? setStart(res.data[0].start_time) : setStart(null);
         res.data.length ? setEnd(res.data[0].end_time) : setEnd(null);
-
-        if (isDuplicated(type, res.data)) {
-          alertDuplicate(type, datetime);
-        } else {
-          alertAdd(type, datetime);
-        }
       })
       .catch(error => {
         console.log(error);
       });
   };
 
-  const isDuplicated = (type: string, data: any) => {
-    if (!data.length) return false;
-    if (type === 'start' && data[0].start_time !== null) {
-      return true;
+  const onTimeConfirm = (type: string, time: Date) => {
+    if (!validateInput(type, time)) return;
+    if (type === 'start') {
+      start === null ? alertAdd('start', time) : alertDuplicate('start', time);
+    } else {
+      end === null ? alertAdd('end', time) : alertDuplicate('end', time);
     }
-    if (type === 'end' && data[0].end_time !== null) {
-      return true;
-    }
-    return false;
   };
+
+  const validateInput = (type: string, time: Date) => {
+    if (date.toDateString() !== time.toDateString()) {
+      alertError('Date has to match the selected date above');
+      return false;
+    };
+    if (!start && !end) return true;
+    if (type === 'start') {
+      if (end) {
+        const diff = (new Date(end).getTime() - new Date(time).getTime()) / (1000 * 60 * 60);
+        if (diff <= 0) {
+          alertError('Start time has to occur before end time');
+          return false;
+        }
+      }
+    }
+    if (type === 'end') {
+      if (start) {
+        const diff = (new Date(time).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
+        if (diff <= 0) {
+          alertError('End time has to occur after start time');
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 
   const alertAdd = (type: string, date: Date) => {
     const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
@@ -172,6 +168,30 @@ const Record = ({route, navigation}: any) => {
         </Text>
       </View>
       <View>
+        <View>
+          <TouchableOpacity
+            style={{flexDirection: 'row'}}
+            onPress={() => setDateOpen(!dateOpen)}>
+            <Text style={styles.subHeader}>
+              {`Selected date: ${moment(date).format('MM/DD/YYYY')}`}
+            </Text>
+            <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
+          </TouchableOpacity>
+        </View>
+        <DatePicker
+          modal
+          open={dateOpen}
+          mode="date"
+          date={date}
+          onConfirm={d => onDateConfirm(d)}
+          onCancel={() => {
+            setDateOpen(false);
+          }}
+          minimumDate={new Date('2000-01-01')}
+          maximumDate={new Date()}
+        />
+      </View>
+      <View>
         <View style={styles.dateContainer}>
           <TouchableOpacity
             style={styles.dateBox}
@@ -197,38 +217,31 @@ const Record = ({route, navigation}: any) => {
             modal
             open={startOpen}
             mode="datetime"
-            date={new Date()}
-            onConfirm={d => onConfirm('start', d)}
+            date={date}
+            onConfirm={t => onTimeConfirm('start', t)}
             onCancel={() => {
               setStartOpen(false);
             }}
             minimumDate={new Date('2000-01-01')}
             maximumDate={new Date()}
+            title="Select start time"
           />
           <DatePicker
             modal
             open={endOpen}
             mode="datetime"
-            date={new Date()}
-            onConfirm={d => onConfirm('end', d)}
+            date={date}
+            onConfirm={t => onTimeConfirm('end', t)}
             onCancel={() => {
               setEndOpen(false);
             }}
             minimumDate={new Date('2000-01-01')}
             maximumDate={new Date()}
+            title="Select end time"
           />
         </View>
       </View>
       <View style={styles.todayRecordContainer}>
-        <View>
-          <TouchableOpacity
-            style={{flexDirection: 'row'}}
-            onPress={() => setDateOpen(!dateOpen)}>
-            <Text style={styles.subHeader}>
-              {`Selected date: ${moment(start).format('MM/DD/YYYY')}`}
-            </Text>
-          </TouchableOpacity>
-        </View>
         <View style={styles.todayRecord}>
           <Text>Start</Text>
           <Text>{start ? moment(start).format('LT') : 'Not registered'}</Text>
