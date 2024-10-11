@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import {styles} from '../../styles/homeStyles.js';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -26,7 +26,11 @@ const Home = (props: any) => {
 
   const getEmployers = () => {
     axios
-      .get(`${LOCAL_HOST_URL}/employers/${email}`)
+      .get(`${LOCAL_HOST_URL}/employers`, {
+        params: {
+          email,
+        },
+      })
       .then(res => {
         setEmployers(res.data);
       })

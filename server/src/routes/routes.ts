@@ -20,7 +20,7 @@ class Routes {
         app.post('/otp/resend', this.authControllers.resendOtp.bind(this.authControllers));
         app.post('/otp/verify', this.authControllers.verifyOTP.bind(this.authControllers));
 
-        app.get('/employers/:email', this.userControllers.getEmployers.bind(this.userControllers));
+        app.get('/employers', this.userControllers.getEmployers.bind(this.userControllers));
         app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
 
         app.post('/request', this.userControllers.sendRequest.bind(this.userControllers));

@@ -37,8 +37,11 @@ class UserRepositories extends Repositories {
 
   // ---------------------  Users  --------------------------------
   async getEmployers(serviceProviderId: string) {
-    const sql =
-      "SELECT u.first_name, u.last_name, u.email_address FROM users u INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id WHERE ut.service_provider_id = $1;";
+    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode 
+        FROM users u 
+        INNER JOIN user_transaction ut 
+        ON ut.employer_user_id = u.user_id 
+        WHERE ut.service_provider_id = $1;`;
     return (await this.queryDB(sql, [serviceProviderId])).rows;
   }
 
@@ -164,11 +167,10 @@ class UserRepositories extends Repositories {
   }
 
   async endRecord(start: string, end: string, transactionId: string) {
-    const sql =
-      `UPDATE time_record SET end_time = $1
+    const sql = `UPDATE time_record SET end_time = $1
         WHERE id_user_transaction = $2 AND
               start_time::DATE = $3 RETURNING start_time, end_time;`;
-    const data = await this.queryDB(sql, [end, transactionId, start])
+    const data = await this.queryDB(sql, [end, transactionId, start]);
     return data.rows;
   }
 

@@ -13,7 +13,7 @@ class UserControllers {
   }
 
   async getEmployers(req: any, res: any) {
-    const response = await this.models.getEmployers(req.params.email);
+    const response = await this.models.getEmployers(req.query.email);
     res.send(response);
   }
 

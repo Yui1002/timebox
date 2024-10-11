@@ -10,7 +10,7 @@ import {useIsFocused} from '@react-navigation/native';
 
 const Record = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
-  const {first_name, last_name, email_address} = route.params.employer;
+  const {first_name, last_name, email_address, mode} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
   const [dateOpen, setDateOpen] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
@@ -64,7 +64,6 @@ const Record = ({route, navigation}: any) => {
   };
 
   const onTimeConfirm = (type: string, time: Date) => {
-    console.log(start, end);
     if (!validateInput(type, time)) return;
     if (type === 'start') {
       start === null ? alertAdd('start', time) : alertDuplicate('start', time);
@@ -143,7 +142,6 @@ const Record = ({route, navigation}: any) => {
   };
 
   const recordTime = (type: string, date: Date, mode: string) => {
-    console.log('type', type, 'start', start, 'end', end, 'date', date)
     axios
       .post(`${LOCAL_HOST_URL}/record`, {
         type,
@@ -154,7 +152,6 @@ const Record = ({route, navigation}: any) => {
         mode,
       })
       .then(res => {
-        console.log('record time', res.data);
         setStart(res.data[0].start_time);
         setEnd(res.data[0].end_time);
       })
@@ -180,16 +177,24 @@ const Record = ({route, navigation}: any) => {
         </Text>
       </View>
       <View>
-        <View>
-          <TouchableOpacity
-            style={{flexDirection: 'row'}}
-            onPress={() => setDateOpen(!dateOpen)}>
+        {mode === true ? (
+          <View>
+            <TouchableOpacity
+              style={{flexDirection: 'row'}}
+              onPress={() => setDateOpen(!dateOpen)}>
+              <Text style={styles.subHeader}>
+                {`Selected date: ${moment(date).format('MM/DD/YYYY')}`}
+              </Text>
+              <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View>
             <Text style={styles.subHeader}>
-              {`Selected date: ${moment(date).format('MM/DD/YYYY')}`}
+              {`Today's date: ${moment(new Date()).format('MM/DD/YYYY')}`}
             </Text>
-            <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
-          </TouchableOpacity>
-        </View>
+          </View>
+        )}
         <DatePicker
           modal
           open={dateOpen}
@@ -224,34 +229,52 @@ const Record = ({route, navigation}: any) => {
             <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
           </TouchableOpacity>
         </View>
-        <View>
-          <DatePicker
-            modal
-            open={startOpen}
-            mode="datetime"
-            date={date}
-            onConfirm={t => onTimeConfirm('start', t)}
-            onCancel={() => {
-              setStartOpen(false);
-            }}
-            minimumDate={new Date('2000-01-01')}
-            maximumDate={new Date()}
-            title="Select start time"
-          />
-          <DatePicker
-            modal
-            open={endOpen}
-            mode="datetime"
-            date={date}
-            onConfirm={t => onTimeConfirm('end', t)}
-            onCancel={() => {
-              setEndOpen(false);
-            }}
-            minimumDate={new Date('2000-01-01')}
-            maximumDate={new Date()}
-            title="Select end time"
-          />
-        </View>
+        {mode === true ? (
+          <View>
+            <DatePicker
+              modal
+              open={startOpen}
+              mode="datetime"
+              date={date}
+              onConfirm={t => onTimeConfirm('start', t)}
+              onCancel={() => {
+                setStartOpen(false);
+              }}
+              minimumDate={new Date('2000-01-01')}
+              maximumDate={new Date()}
+              title="Select start time"
+            />
+          </View>
+        ) : (
+          <View>
+            <DatePicker
+              modal
+              open={startOpen}
+              mode="time"
+              date={new Date()}
+              onConfirm={t => onTimeConfirm('start', t)}
+              onCancel={() => {
+                setStartOpen(false);
+              }}
+              minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              maximumDate={new Date(new Date().setHours(23, 59, 59, 999))}
+              title="Select start time"
+            />
+            <DatePicker
+              modal
+              open={endOpen}
+              mode="time"
+              date={new Date()}
+              onConfirm={t => onTimeConfirm('end', t)}
+              onCancel={() => {
+                setEndOpen(false);
+              }}
+              minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              maximumDate={new Date()}
+              title="Select end time"
+            />
+          </View>
+        )}
       </View>
       <View style={styles.todayRecordContainer}>
         <View style={styles.todayRecord}>
