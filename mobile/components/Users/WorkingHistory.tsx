@@ -13,9 +13,11 @@ import {styles} from '../../styles/workingHistoryStyles.js';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {useIsFocused} from '@react-navigation/native';
 
 const WorkingHistory = (props: any) => {
-  const {email} = useSelector(state => state.userInfo);;
+  const {email} = useSelector(state => state.userInfo);
+  const isFocused = useIsFocused();
   const [employerDropdownOpen, setEmployerDropdownOpen] = useState(false);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);
@@ -30,13 +32,24 @@ const WorkingHistory = (props: any) => {
   });
 
   useEffect(() => {
-    getEmployers();
-  }, []);
+    if (isFocused) {
+      getEmployers();
+    }
+  }, [isFocused]);
 
   const getEmployers = () => {
-    axios.get(`${LOCAL_HOST_URL}/employers/${email}`).then((res): any => {
-      setItems(formatData(res.data));
-    });
+    axios
+      .get(`${LOCAL_HOST_URL}/employers`, {
+        params: {
+          email,
+        },
+      })
+      .then((res): any => {
+        setItems(formatData(res.data));
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   };
 
   const searchRecord = () => {
@@ -44,16 +57,20 @@ const WorkingHistory = (props: any) => {
     axios
       .get(`${LOCAL_HOST_URL}/record/period`, {
         params: {
-          employerEmail: selectedEmployer,
-          serviceProviderEmail: email,
+          epEmail: selectedEmployer,
+          spEmail: email,
           from,
           to,
         },
       })
       .then(res => {
-        setHistory(res.data);
+        const sorted = sortRecords(res.data);
+        console.log('sorted', sorted)
+        setHistory(sorted);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const validateInput = () => {
@@ -77,6 +94,16 @@ const WorkingHistory = (props: any) => {
     });
     return result;
   };
+
+  const sortRecords = (data: [{
+    start_time: string,
+    end_time: string
+  }]) => {
+    if (!data.length) return data;
+    return data.sort((a, b) => {
+      return new Date(a.start_time).valueOf() - new Date(b.start_time).valueOf();
+    })
+  }
 
   const onPeriodChange = (type, data) => {
     setFromDropDown(false);
@@ -148,7 +175,7 @@ const WorkingHistory = (props: any) => {
             />
           </View>
           <TouchableOpacity style={styles.button} onPress={searchRecord}>
-              <Text style={styles.buttonText}>Search</Text>
+            <Text style={styles.buttonText}>Search</Text>
           </TouchableOpacity>
           {history !== null && history.length > 0 && (
             <View>
@@ -160,21 +187,29 @@ const WorkingHistory = (props: any) => {
               </View>
               <Separator />
               <ScrollView>
-                {history.map((h, index) => {
-                  const a = moment(h.start_time)
-                  const b = moment(h.end_time)
-                  const total = b.diff(a, 'hours')
-                  return (
-                    <View style={styles.list} key={index}>
-                      <Text>
-                        {moment(h.start_time).format('YYYY/MM/DD')}
-                      </Text>
-                      <Text>{moment(h.start_time).format('LT')}</Text>
-                      <Text>{moment(h.end_time).format('LT')}</Text>
-                      <Text>{`${total}h`}</Text>
-                    </View>
-                  );
-                })}
+                {history.map(
+                  (
+                    h: {
+                      start_time: string;
+                      end_time: string;
+                    },
+                    index: number,
+                  ) => {
+                    const a = h.start_time ? moment(h.start_time) : null;
+                    const b = h.end_time ? moment(h.end_time) : null;
+                    const total = a && b ? `${b.diff(a, 'hours')}h` : 'N/A';
+                    return (
+                      <View style={styles.list} key={index}>
+                        <Text>
+                          {a ? `${moment(a || b).format('YYYY/MM/DD')}` : 'N/A'}
+                        </Text>
+                        <Text>{a ? `${a.format('LT')}` : 'N/A'}</Text>
+                        <Text>{b ? `${b.format('LT')}` : 'N/A'}</Text>
+                        <Text>{`${total}`}</Text>
+                      </View>
+                    );
+                  },
+                )}
               </ScrollView>
             </View>
           )}

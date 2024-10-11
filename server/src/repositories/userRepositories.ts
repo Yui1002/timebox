@@ -37,10 +37,10 @@ class UserRepositories extends Repositories {
 
   // ---------------------  Users  --------------------------------
   async getEmployers(serviceProviderId: string) {
-    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode 
-        FROM users u 
-        INNER JOIN user_transaction ut 
-        ON ut.employer_user_id = u.user_id 
+    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode
+        FROM users u
+        INNER JOIN user_transaction ut
+        ON ut.employer_user_id = u.user_id
         WHERE ut.service_provider_id = $1;`;
     return (await this.queryDB(sql, [serviceProviderId])).rows;
   }
