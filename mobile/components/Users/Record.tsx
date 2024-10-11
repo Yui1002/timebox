@@ -33,8 +33,13 @@ const Record = ({route, navigation}: any) => {
         },
       })
       .then((res): any => {
-        setStart(res.data[0]?.start_time);
-        setEnd(res.data[0]?.end_time);
+        if (!res.data.length) {
+          setStart(null);
+          setEnd(null);
+        } else {
+          setStart(res.data[0].start_time);
+          setEnd(res.data[0].end_time);
+        }
       });
   };
 
@@ -59,6 +64,7 @@ const Record = ({route, navigation}: any) => {
   };
 
   const onTimeConfirm = (type: string, time: Date) => {
+    console.log(start, end);
     if (!validateInput(type, time)) return;
     if (type === 'start') {
       start === null ? alertAdd('start', time) : alertDuplicate('start', time);
@@ -71,11 +77,13 @@ const Record = ({route, navigation}: any) => {
     if (date.toDateString() !== time.toDateString()) {
       alertError('Date has to match the selected date above');
       return false;
-    };
+    }
     if (!start && !end) return true;
     if (type === 'start') {
       if (end) {
-        const diff = (new Date(end).getTime() - new Date(time).getTime()) / (1000 * 60 * 60);
+        const diff =
+          (new Date(end).getTime() - new Date(time).getTime()) /
+          (1000 * 60 * 60);
         if (diff <= 0) {
           alertError('Start time has to occur before end time');
           return false;
@@ -84,7 +92,9 @@ const Record = ({route, navigation}: any) => {
     }
     if (type === 'end') {
       if (start) {
-        const diff = (new Date(time).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
+        const diff =
+          (new Date(time).getTime() - new Date(start).getTime()) /
+          (1000 * 60 * 60);
         if (diff <= 0) {
           alertError('End time has to occur after start time');
           return false;
@@ -92,7 +102,7 @@ const Record = ({route, navigation}: any) => {
       }
     }
     return true;
-  }
+  };
 
   const alertAdd = (type: string, date: Date) => {
     const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
@@ -133,18 +143,20 @@ const Record = ({route, navigation}: any) => {
   };
 
   const recordTime = (type: string, date: Date, mode: string) => {
+    console.log('type', type, 'start', start, 'end', end, 'date', date)
     axios
       .post(`${LOCAL_HOST_URL}/record`, {
         type,
-        start: date,
-        end: date,
+        start: type === 'start' ? date : start,
+        end: type === 'end' ? date : end,
         epEmail: email_address,
         spEmail: serviceProviderEmail,
         mode,
       })
       .then(res => {
         console.log('record time', res.data);
-        type === 'start' ? setStart(res.data) : setEnd(res.data);
+        setStart(res.data[0].start_time);
+        setEnd(res.data[0].end_time);
       })
       .catch(err => {});
   };

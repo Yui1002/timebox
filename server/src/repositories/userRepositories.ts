@@ -143,13 +143,13 @@ class UserRepositories extends Repositories {
     const date = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
     const addSql = `INSERT INTO time_record VALUES (
                       DEFAULT, DEFAULT, $1, NULL, CURRENT_TIMESTAMP, $2, $3)
-                      RETURNING start_time;`;
+                      RETURNING start_time, end_time;`;
     const overWriteSql = `UPDATE time_record SET start_time = $1, update_by = $2
                             WHERE id_user_transaction = $3 AND start_time::DATE = $4
-                            RETURNING start_time;`;
+                            RETURNING start_time, end_time;`;
     if (mode === "add") {
       const data = await this.queryDB(addSql, [start, email, transactionId]);
-      return data.rows[0].start_time;
+      return data.rows[0];
     } else if (mode === "overwrite") {
       const data = await this.queryDB(overWriteSql, [
         start,
@@ -157,16 +157,19 @@ class UserRepositories extends Repositories {
         transactionId,
         date,
       ]);
-      return data.rows[0].start_time;
+      return data.rows[0];
     } else {
       return null;
     }
   }
 
-  async endRecord(transactionId: string) {
+  async endRecord(start: string, end: string, transactionId: string) {
     const sql =
-      "UPDATE time_record SET end_time = CURRENT_TIMESTAMP WHERE id_user_transaction = $1 AND start_time::DATE = CURRENT_DATE RETURNING end_time;";
-    return (await this.queryDB(sql, [transactionId])).rows[0].end_time;
+      `UPDATE time_record SET end_time = $1
+        WHERE id_user_transaction = $2 AND
+              start_time::DATE = $3 RETURNING start_time, end_time;`;
+    const data = await this.queryDB(sql, [end, transactionId, start])
+    return data.rows;
   }
 
   async getTodaysRecord(transactionId: number) {

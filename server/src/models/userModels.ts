@@ -118,7 +118,7 @@ class UserModels {
           userTransactionId,
           mode
         )
-      : await this.repositories.endRecord(userTransactionId);
+      : await this.repositories.endRecord(start, end, userTransactionId);
   }
 
   async getTodaysRecord(req: any) {
