@@ -107,18 +107,13 @@ class UserModels {
     const { type, start, end, epEmail, spEmail, mode } = req;
     const spId = await this.repositories.getUserId(spEmail);
     const epId = await this.repositories.getUserId(epEmail);
-    const userTransactionId = await this.repositories.getUserTransactionId(
+    const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
     );
     return type === "start"
-      ? await this.repositories.startRecord(
-          start,
-          spEmail,
-          userTransactionId,
-          mode
-        )
-      : await this.repositories.endRecord(start, end, userTransactionId);
+      ? await this.repositories.startRecord(start, spEmail, transactionId, mode)
+      : await this.repositories.endRecord(start, end, transactionId);
   }
 
   async getTodaysRecord(req: any) {
@@ -173,7 +168,11 @@ class UserModels {
       epId,
       spId
     );
-    const rows = await this.repositories.checkDuplicate2(type, date, transactionId);
+    const rows = await this.repositories.checkDuplicate2(
+      type,
+      date,
+      transactionId
+    );
     return rows.length > 0;
   }
 

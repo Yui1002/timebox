@@ -149,7 +149,7 @@ class UserRepositories extends Repositories {
                             RETURNING start_time, end_time;`;
     if (mode === "add") {
       const data = await this.queryDB(addSql, [start, email, transactionId]);
-      return data.rows[0];
+      return data.rows;
     } else if (mode === "overwrite") {
       const data = await this.queryDB(overWriteSql, [
         start,
@@ -157,7 +157,7 @@ class UserRepositories extends Repositories {
         transactionId,
         date,
       ]);
-      return data.rows[0];
+      return data.rows;
     } else {
       return null;
     }

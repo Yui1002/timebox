@@ -86,6 +86,7 @@ class UserControllers {
 
   async recordTime(req: any, res: any) {
     const response = await this.models.recordTime(req.body);
+    console.log('response', response)
     res.send(response);
   }
 
