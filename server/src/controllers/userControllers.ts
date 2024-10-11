@@ -107,7 +107,6 @@ class UserControllers {
 
   async checkRecordDuplicate(req: any, res: any) {
     const isDuplicated = await this.models.checkRecordDuplicate(req.query);
-    console.log('isDuplicated', isDuplicated)
     isDuplicated ? res.sendStatus(400) : res.sendStatus(200);
   }
 

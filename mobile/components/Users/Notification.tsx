@@ -80,42 +80,7 @@ const Notification = (props: any) => {
         }
       }
     }
-    // console.log('mapped result', map);
     return map;
-    // const sorted = notification.reduce((a, b) => {
-    //   const found = a.find(e => e.email_address == b.email_address);
-    //   const item = {day: b.request_schedule_day, start_time: b.request_schedule_start_time, end_time: b.request_schedule_end_time};
-    //   ['request_schedule_day', 'request_schedule_start_time', 'request_schedule_end_time'].forEach(val => delete b[val]);
-    //   if (!item.day && !item.start_time && !item.end_time) return a;
-    //   return (
-    //     found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
-    //   );
-    // }, []);
-    // sorted.forEach(s => sortDays(s));
-    // console.log('sorted', sorted)
-    // return sorted;
-    //
-    // console.log('notification', notification)
-    // const data = notification.reduce((a: any, b: any) => {
-    //   const found = a.find((e: any) => e.email_address == b.email_address);
-    //   const item = {
-    //     day: b.request_schedule_day,
-    //     start_time: b.request_schedule_start_time,
-    //     end_time: b.request_schedule_end_time,
-    //   };
-    //   return (
-    //     found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
-    //   );
-    // }, []);
-
-    // for (let i = 0; i < data.length; i++) {
-    //   const obj = data[i];
-    //   delete obj['request_schedule_day'];
-    //   delete obj['request_schedule_start_time'];
-    //   delete obj['request_schedule_end_time'];
-    //   sortDays(data[i]);
-    // }
-    // return data;
   };
 
   const sortDays = (data: any) => {

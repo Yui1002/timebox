@@ -22,13 +22,13 @@ export const styles = StyleSheet.create({
   },
   checkBox: {
     borderWidth: 0.3, 
-    height: 20,
-    width: 20,
+    height: 14,
+    width: 14,
     marginLeft: 100
   },
   checkBoxText: {
     marginLeft: 10,
-    lineHeight: 20
+    lineHeight: 14
   },
   listContainer: {
     backgroundColor: '#E0E0E0',

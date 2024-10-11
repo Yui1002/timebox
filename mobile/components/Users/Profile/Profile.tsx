@@ -42,6 +42,7 @@ const Profile = ({route, navigation}: any) => {
         },
       })
       .then(res => {
+        console.log('res.data', res.data)
         const formattedData = formatData(res.data);
         setWorkInfo(formattedData);
       });

@@ -52,11 +52,14 @@ class UserRepositories extends Repositories {
     return (await this.queryDB(sql, [employerId])).rows;
   }
 
-  async getServiceProvider(transactionId: string) {
-    const sql = `SELECT ut.rate, ut.rate_type, ut.status, us.day, us.start_time, us.end_time FROM user_transaction ut
+  async getServiceProvider(transactionId: number) {
+    const sql = `SELECT
+                  ut.rate, ut.rate_type, ut.status,
+                  us.day, us.start_time, us.end_time FROM user_transaction ut
                   INNER JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
                   WHERE ut.user_transaction_id = $1;`;
-    return (await this.queryDB(sql, [transactionId])).rows;
+    const data = await this.queryDB(sql, [transactionId]);
+    return data.rows;
   }
 
   /**

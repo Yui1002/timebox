@@ -65,7 +65,6 @@ const WorkingHistory = (props: any) => {
       })
       .then(res => {
         const sorted = sortRecords(res.data);
-        console.log('sorted', sorted)
         setHistory(sorted);
       })
       .catch((err) => {
