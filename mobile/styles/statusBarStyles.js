@@ -6,8 +6,8 @@ export const styles = StyleSheet.create({
     textAlign: 'center'
   },
   bar: {
-    width: 114,
-    height: 10,
+    width: '100%',
+    height: '20%',
     backgroundColor: '#ddd',
     borderRadius: 20
   },

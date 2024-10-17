@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, Button, Switch, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
@@ -93,110 +93,114 @@ const PersonalInfo = ({route, navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.statusBarContainer}>
-        {statusTitles.map((val, index) =>
-          statusTitles[index] === 'Information' ? (
-            <StatusBar key={index} title={val} isFocused={true} />
-          ) : (
-            <StatusBar key={index} title={val} isFocused={false} />
-          ),
-        )}
+        {statusTitles.map((val, index) => (
+          <StatusBar
+            key={index}
+            title={val}
+            isFocused={statusTitles[index] === 'Information'}
+          />
+        ))}
       </View>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>User Information</Text>
-      </View>
-      <View style={{height: open ? '65%' : '50%'}}>
-        <View style={styles.align}>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>First Name</Text>
-            <Text style={styles.font_2}>{firstName}</Text>
-          </View>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>Last Name</Text>
-            <Text style={styles.font_2}>{lastName}</Text>
-          </View>
+      <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>User Information</Text>
         </View>
-        <View style={styles.margin}>
-          <Text style={styles.font_1}>Email Address</Text>
-          <Text style={styles.font_2}>{email}</Text>
-        </View>
-        <View style={[styles.align, styles.margin]}>
-          <View style={styles.width}>
-            <Text>Rate ($)</Text>
-            {inputError.type === 'INVALID_RATE_FORMAT' && (
-              <InputError error={inputError} />
-            )}
-            <InputField.Underlined onChangeText={setRate} />
+        <View>
+          <View style={styles.align}>
+            <View style={styles.width}>
+              <Text style={styles.font_1}>First Name</Text>
+              <Text style={styles.font_2}>{firstName}</Text>
+            </View>
+            <View style={styles.width}>
+              <Text style={styles.font_1}>Last Name</Text>
+              <Text style={styles.font_2}>{lastName}</Text>
+            </View>
           </View>
-          <View style={styles.width}>
-            <Text>Rate Type</Text>
-            {inputError.type === 'INVALID_RATE_TYPE_FORMAT' && (
-              <InputError error={inputError} />
-            )}
-            <View>
+          <View style={styles.margin}>
+            <Text style={styles.font_1}>Email Address</Text>
+            <Text style={styles.font_2}>{email}</Text>
+          </View>
+          <View style={[styles.align, styles.margin]}>
+            <View style={styles.width}>
+              <Text>Rate ($)</Text>
+              {inputError.type === 'INVALID_RATE_FORMAT' && (
+                <InputError error={inputError} />
+              )}
+              <InputField.Underlined onChangeText={setRate} />
+            </View>
+            <View style={styles.width}>
+              <Text>Rate Type</Text>
+              {inputError.type === 'INVALID_RATE_TYPE_FORMAT' && (
+                <InputError error={inputError} />
+              )}
               <DropDownPicker
-                style={open ? {marginBottom: 80} : {marginBottom: 0}}
+                style={open ? {zIndex: 3} : null}
                 open={open}
                 value={rateType}
                 items={items}
                 setOpen={() => setOpen(!open)}
                 setValue={setRateType}
                 setItems={setItems}
+                listMode="SCROLLVIEW"
               />
             </View>
           </View>
-        </View>
-        <View style={{marginTop: 30, height: '30%'}}>
-          <Text style={{height: '20%'}}>
-            Allow the service provider to modify record time?
-          </Text>
-          {inputError.type === 'INVALID_IS_ENABLED' && (
-            <Text style={{color: 'red', fontSize: 12}}>{inputError.msg}</Text>
-          )}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              marginTop: 10,
-              height: '40%',
-            }}>
-            <TouchableOpacity
-              style={[
-                styles.mode,
-                {backgroundColor: isEnabled ? '#24a0ed' : '#fff'},
-              ]}
-              onPress={() => setIsEnabled(true)}>
-              <Text
-                style={[styles.modeText, {color: isEnabled ? '#fff' : '#000'}]}>
-                Yes
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.mode,
-                {backgroundColor: isEnabled === false ? '#24a0ed' : '#fff'},
-              ]}
-              onPress={() => setIsEnabled(false)}>
-              <Text
+          <View style={{marginTop: 30, height: '26%'}}>
+            <Text style={{height: '20%'}}>
+              Allow the service provider to modify record time?
+            </Text>
+            {inputError.type === 'INVALID_IS_ENABLED' && (
+              <Text style={{color: 'red', fontSize: 12}}>{inputError.msg}</Text>
+            )}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 10,
+                height: '40%',
+              }}>
+              <TouchableOpacity
                 style={[
-                  styles.modeText,
-                  {color: isEnabled === false ? '#fff' : '#000'},
-                ]}>
-                No
-              </Text>
-            </TouchableOpacity>
+                  styles.mode,
+                  {backgroundColor: isEnabled ? '#24a0ed' : '#fff'},
+                ]}
+                onPress={() => setIsEnabled(true)}>
+                <Text
+                  style={[
+                    styles.modeText,
+                    {color: isEnabled ? '#fff' : '#000'},
+                  ]}>
+                  Yes
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.mode,
+                  {backgroundColor: isEnabled === false ? '#24a0ed' : '#fff'},
+                ]}
+                onPress={() => setIsEnabled(false)}>
+                <Text
+                  style={[
+                    styles.modeText,
+                    {color: isEnabled === false ? '#fff' : '#000'},
+                  ]}>
+                  No
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.workShiftsBtn}>
-        <TouchableOpacity style={styles.workShiftsBtn_back} onPress={goBack}>
-          <Text style={styles.buttonText}>Back</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.workShiftsBtn_add} onPress={proceed}>
-          <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(
-            9654,
-          )}`}</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.workShiftsBtn}>
+          <TouchableOpacity style={styles.workShiftsBtn_back} onPress={goBack}>
+            <Text style={styles.buttonText}>Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.workShiftsBtn_add} onPress={proceed}>
+            <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(
+              9654,
+            )}`}</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };

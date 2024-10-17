@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, Button, Alert, TouchableOpacity} from 'react-native';
+import {View, Text, Button, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import {deleteShift, resetShift} from '../../../redux/actions/workShiftsAction';
@@ -26,7 +26,14 @@ const WorkShifts = ({route, navigation}: any) => {
       showAlert();
       return;
     }
-    navigation.navigate('Review', {firstName, lastName, email, rate, rateType, isEnabled});
+    navigation.navigate('Review', {
+      firstName,
+      lastName,
+      email,
+      rate,
+      rateType,
+      isEnabled,
+    });
   };
 
   const navigateToAddSchedule = () => {
@@ -67,20 +74,20 @@ const WorkShifts = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.statusBarContainer}>
-        {statusTitles.map((val, index) =>
-          statusTitles[index] === 'Work Shifts' ? (
-            <StatusBar key={index} title={val} isFocused={true} />
-          ) : (
-            <StatusBar key={index} title={val} isFocused={false} />
-          ),
-        )}
+        {statusTitles.map((val, index) => (
+          <StatusBar
+            key={index}
+            title={val}
+            isFocused={statusTitles[index] === 'Work Shifts'}
+          />
+        ))}
       </View>
       <View style={styles.header}>
         <Text style={styles.headerText}>Work Schedules</Text>
       </View>
-      <View style={{marginVertical: 20, height: '60%'}}>
+      <View style={{marginVertical: 10}}>
         {workShifts.workShifts.length > 0 ? (
           workShifts.workShifts.map((w, index) => (
             <View style={styles.dateContainer} key={index}>
@@ -118,7 +125,7 @@ const WorkShifts = ({route, navigation}: any) => {
           )}`}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

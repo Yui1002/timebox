@@ -5,6 +5,7 @@ import {
   Alert,
   TouchableOpacity,
   ActivityIndicator,
+  ScrollView
 } from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
@@ -88,15 +89,15 @@ const Review = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.statusBarContainer}>
-        {statusTitles.map((val, index) =>
-          statusTitles[index] === 'Review' ? (
-            <StatusBar key={index} title={val} isFocused={true} />
-          ) : (
-            <StatusBar key={index} title={val} isFocused={false} />
-          ),
-        )}
+        {statusTitles.map((val, index) => (
+          <StatusBar
+            key={index}
+            title={val}
+            isFocused={statusTitles[index] === 'Review'}
+          />
+        ))}
       </View>
       <View>
         <View>
@@ -192,7 +193,7 @@ const Review = ({route, navigation}: any) => {
           )}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

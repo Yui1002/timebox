@@ -3,12 +3,13 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '94%',
+    flex: 1,
   },
   statusBarContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: '10%'
+    height: '10%',
+    width: '100%',
   },
   subContainer: {
     marginTop: 20,
@@ -114,10 +115,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#24a0ed',
     borderRadius: 10,
     width: '50%',
-    marginVertical: 20,
-    position: 'absolute',
-    top: '30%',
-    left: '25%',
+    margin: 'auto',
+    marginTop: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -125,7 +124,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 50
+    marginVertical: 50,
   },
   workShiftsBtn_back: {
     backgroundColor: '#909090', 
