@@ -7,6 +7,7 @@ import {
   Text,
   Linking,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {styles} from '../../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,15 +18,26 @@ import {useSelector} from 'react-redux';
 interface WorkInfo {
   rate: string | null;
   rate_type: string | null;
-  status: 'active';
+  status: string | null;
   shifts: [];
+}
+
+interface Shift {
+  day: string;
+  start_time: string;
+  end_time: string;
 }
 
 const Profile = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
   const userInfo = useSelector(state => state.userInfo);
-  const {first_name, last_name, email_address} = route.params.user;
-  const [workInfo, setWorkInfo] = useState<WorkInfo[]>([]);
+  const {first_name, last_name, email_address} = route.params.sp;
+  const [workInfo, setWorkInfo] = useState<WorkInfo>({
+    rate: null,
+    rate_type: null,
+    status: null,
+    shifts: [],
+  });
 
   useEffect(() => {
     if (isFocused) {
@@ -42,13 +54,21 @@ const Profile = ({route, navigation}: any) => {
         },
       })
       .then(res => {
-        console.log('res.data', res.data)
         const formattedData = formatData(res.data);
-        setWorkInfo(formattedData);
+        setWorkInfo(formattedData[0]);
       });
   };
 
   const formatData = (data: any) => {
+    if (!data[0]['day'] && !data[0]['start_time'] && !data[0]['end_time']) {
+      data[0]['shifts'] = [];
+      delete data[0]['day'];
+      delete data[0]['start_time'];
+      delete data[0]['end_time'];
+
+      return data;
+    }
+
     const sorted = data.reduce((a, b) => {
       const found = a.find(e => e.rate == b.rate);
       const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
@@ -58,7 +78,8 @@ const Profile = ({route, navigation}: any) => {
         found ? found.shifts.push(item) : a.push({...b, shifts: [item]}), a
       );
     }, []);
-    sorted.forEach(s => sortDays(s));
+
+    sorted.forEach((s: Shift) => sortDays(s));
     return sorted;
   };
 
@@ -79,7 +100,7 @@ const Profile = ({route, navigation}: any) => {
 
   const editProfile = () => {
     navigation.navigate('EditProfile', {
-      user: route.params.user,
+      sp: route.params.sp,
       email_address,
       workInfo,
       setWorkInfo,
@@ -94,75 +115,60 @@ const Profile = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.logoContainer}>
-        <MaterialCommunityIcons name="account" size={46} color="#000" />
-        <Text style={{fontSize: 20}}>
-          {first_name} {last_name}
-        </Text>
-        <Text style={{fontSize: 14}}>{email_address}</Text>
-      </View>
-      <View style={styles.optionContainer}>
-        <MaterialIcons
-          name="edit"
-          size={30}
-          color="#000"
-          onPress={editProfile}
-        />
-        <MaterialCommunityIcons
-          name="message-processing-outline"
-          size={30}
-          color="#000"
-          onPress={() => Linking.openURL('mailto:yuimurayama1002@gmail.com')}
-        />
-      </View>
-      {workInfo.length ? (
-        <View style={{height: '10%'}}>
+      <ScrollView>
+        <View style={styles.logoContainer}>
+          <MaterialCommunityIcons name="account" size={46} color="#000" />
+          <Text style={{fontSize: 20}}>
+            {first_name} {last_name}
+          </Text>
+          <Text style={{fontSize: 14}}>{email_address}</Text>
+        </View>
+        <View style={styles.iconContainer}>
+          <MaterialIcons
+            name="edit"
+            size={30}
+            color="#000"
+            onPress={editProfile}
+          />
+          <MaterialCommunityIcons
+            name="message-processing-outline"
+            size={30}
+            color="#000"
+            onPress={() => Linking.openURL(`mailto:${userInfo.email}`)}
+          />
+        </View>
+        <View style={styles.title}>
           <Text style={styles.text}>Status</Text>
-          <Text>{workInfo[0].status}</Text>
+          <Text>{workInfo.status}</Text>
         </View>
-      ) : (
-        <View>
-          <Text>Not specified</Text>
-        </View>
-      )}
-      {workInfo.length ? (
-        <View style={{height: '10%'}}>
+        <View style={styles.title}>
           <Text style={styles.text}>Rate</Text>
-          {workInfo[0].rate && workInfo[0].rate_type ? (
-            <Text>{`$${workInfo[0].rate} / ${workInfo[0].rate_type}`}</Text>
+          <Text>
+            {workInfo.rate === null && workInfo.rate_type === null
+              ? `Not specified`
+              : `$${workInfo.rate} / ${workInfo.rate_type}`}
+          </Text>
+        </View>
+        <View>
+          <Text style={styles.text}>Working shifts</Text>
+          {workInfo.shifts.length ? (
+            workInfo.shifts.map((s: Shift, index) => (
+              <View key={index} style={styles.shiftText}>
+                <Text style={styles.day}>{`${String.fromCharCode(8226)} ${
+                  s.day
+                }`}</Text>
+                <Text
+                  style={styles.time}>{`${s.start_time} - ${s.end_time}`}</Text>
+              </View>
+            ))
           ) : (
             <Text>Not specified</Text>
           )}
         </View>
-      ) : (
-        <View>
-          <Text>Not specified</Text>
-        </View>
-      )}
-      <View style={{height: '16%'}}>
-        <Text style={styles.text}>Working shifts</Text>
-        {workInfo.length && workInfo[0].shifts.length ? (
-          workInfo[0].shifts.map((shift: any, index: number) => (
-            <View key={index} style={styles.shiftText}>
-              <Text
-                style={{
-                  width: '40%',
-                }}>{`${String.fromCharCode(8226)} ${shift.day}`}</Text>
-              <Text
-                style={{
-                  width: '60%',
-                }}>{`${shift.start_time} - ${shift.end_time}`}</Text>
-            </View>
-          ))
-        ) : (
-          <Text>Not specified</Text>
-        )}
-      </View>
-      <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={viewWorkingHistory}>
           <Text style={styles.buttonText}>View working history</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

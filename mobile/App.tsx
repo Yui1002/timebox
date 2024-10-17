@@ -125,7 +125,7 @@ function App(): JSX.Element {
             name="Profile"
             component={Profile}
             options={({navigation}) => ({
-              headerTitle: 'Profile',
+              headerTitle: 'Service Provider Profile',
               gestureEnabled: false,
             })}
           />

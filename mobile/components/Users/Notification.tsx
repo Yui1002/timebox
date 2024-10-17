@@ -98,10 +98,11 @@ const Notification = (props: any) => {
     });
   };
 
-  const updateRequest = (n: any, isApproved: boolean) => {
+  const updateRequest = (sender: string, n: any, isApproved: boolean) => {
+    console.log('here', n)
     axios
       .post(`${LOCAL_HOST_URL}/request/update`, {
-        sender: n.email_address,
+        sender: sender,
         receiver: userInfo.email,
         isApproved: isApproved,
         request: n,
@@ -116,27 +117,27 @@ const Notification = (props: any) => {
       });
   };
 
-  const showAcceptAlert = (n: any) =>
+  const showAcceptAlert = (sender: string, n: any) => {
     Alert.alert(`Do you accept ${n.first_name} ${n.last_name}'s request?`, '', [
       {
         text: 'Yes',
-        onPress: () => updateRequest(n, true),
+        onPress: () => updateRequest(sender, n, true),
       },
       {
         text: 'No',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-    ]);
+    ])};
 
-  const showDeclineAlert = (n: any) =>
+  const showDeclineAlert = (sender: string, n: any) =>
     Alert.alert(
       `Do you decline ${n.first_name} ${n.last_name}'s request?`,
       '',
       [
         {
           text: 'Yes',
-          onPress: () => updateRequest(n, false),
+          onPress: () => updateRequest(sender, n, false),
         },
         {
           text: 'No',
@@ -165,6 +166,7 @@ const Notification = (props: any) => {
                 rate_type,
                 shifts,
               } = notifications.get(n);
+              console.log('n', n)
               return (
                 <View key={index} style={styles.box}>
                   <Text style={styles.title}>
@@ -206,12 +208,12 @@ const Notification = (props: any) => {
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
                       style={[styles.button, styles.button_decline]}
-                      onPress={() => showDeclineAlert(n)}>
+                      onPress={() => showDeclineAlert(n, notifications.get(n))}>
                       <Text style={styles.buttonText}>Decline</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[styles.button, styles.button_accept]}
-                      onPress={() => showAcceptAlert(n)}>
+                      onPress={() => showAcceptAlert(n, notifications.get(n))}>
                       <Text style={styles.buttonText}>Accept</Text>
                     </TouchableOpacity>
                   </View>

@@ -56,7 +56,7 @@ class UserRepositories extends Repositories {
     const sql = `SELECT
                   ut.rate, ut.rate_type, ut.status,
                   us.day, us.start_time, us.end_time FROM user_transaction ut
-                  INNER JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
+                  LEFT JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
                   WHERE ut.user_transaction_id = $1;`;
     const data = await this.queryDB(sql, [transactionId]);
     return data.rows;
@@ -97,13 +97,22 @@ class UserRepositories extends Repositories {
   }
 
   async updateUserSchedule(req: any, spId: string, transactionId: number) {
+    console.log("req", req);
     let queryArgs = [];
-    queryArgs.push(req.day, req.start_time, req.end_time, spId, transactionId);
+    queryArgs.push(
+      req ? req.day : null,
+      req ? req.start_time : null,
+      req ? req.end_time : null,
+      spId,
+      transactionId
+    );
+    console.log("query args", queryArgs);
     const sql = `INSERT INTO user_schedule
                   VALUES (DEFAULT, $1, $2, $3, $4, $5)
                   ON CONFLICT (day, user_transaction_id) DO UPDATE SET`;
     const builder = this.updateUserScheduleBuilderrQuery(sql, req);
     queryArgs = queryArgs.concat(builder.queryArgs);
+    // console.log("query", queryArg);
     await this.queryDB(builder.baseQuery, queryArgs);
   }
 
@@ -113,12 +122,18 @@ class UserRepositories extends Repositories {
     const queryArgs = [];
 
     for (const col of columnsToUpdate) {
-      if (req[col]) {
+      // if (req[col]) {
+      if (req.hasOwnProperty(col)) {
         baseQuery += ` ${col} = $${counter++},`;
-        queryArgs.push(req[col]);
+        queryArgs.push(req ? [col] : null);
+      } else {
+        baseQuery += ` ${col} = $${counter++},`;
+        queryArgs.push(null);
       }
     }
     baseQuery = baseQuery.substring(0, baseQuery.length - 1);
+    console.log('base query', baseQuery)
+    console.log('args', queryArgs)
     return { baseQuery: baseQuery + ";", queryArgs };
   }
 
@@ -280,6 +295,7 @@ class UserRepositories extends Repositories {
   }
 
   async updateRequest(sender: number, receiver: string, isApproved: boolean) {
+    console.log(sender, receiver, isApproved);
     const sql =
       "UPDATE requests SET is_approved = $1 WHERE sender = $2 AND receiver = $3;";
     await this.queryDB(sql, [isApproved, sender, receiver]);

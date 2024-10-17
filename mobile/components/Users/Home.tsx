@@ -41,13 +41,14 @@ const Home = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{height: '10%'}}>
+      <View>
         <Text style={styles.header}>Hi {firstName}!</Text>
       </View>
-      <View style={{height: '80%'}}>
-        <Text style={{fontSize: 20, fontWeight: '500'}}>My Employers</Text>
+      <View>
+        <Text style={styles.title}>My Employers</Text>
         {employers !== null && employers.length > 0 ? (
           <FlatList
+            style={styles.subContainer}
             data={employers}
             renderItem={({item}: any) => (
               <View style={styles.listContainer}>

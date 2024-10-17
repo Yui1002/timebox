@@ -1,45 +1,42 @@
 import {StyleSheet} from 'react-native';
+// import { width, height } from './metric';
 
 export const styles = StyleSheet.create({
   container: {
+    flex: 1,
     margin: '5%',
-    height: '94%',
-  },
-  align: {
-    flexDirection: 'row',
-    height: '8%'
-  },
-  subContainer: {
-    height: '84%',
   },
   title: {
-    marginBottom: 10, 
-    height: '5%'
+    flex: 0.5,
   },
   titleText: {
     fontSize: 20, 
     fontWeight: '500'
   },
+  checkBoxContainer: {
+    flex: 0.5,
+    flexDirection: 'row',
+    marginLeft: 'auto',
+  },
   checkBox: {
-    borderWidth: 0.3, 
-    height: 14,
-    width: 14,
-    marginLeft: 100
+    width: 20,
+    height: 20
   },
   checkBoxText: {
-    marginLeft: 10,
-    lineHeight: 14
+    marginLeft: '8%',
+  },
+  subContainer: {
+    flexGrow: 3,
   },
   listContainer: {
     backgroundColor: '#E0E0E0',
     width: '100%',
-    height: 64,
-    marginVertical: 8,
     borderRadius: 10,
-    padding: '4%'
+    padding: '2%',
+    lineHeight: 30
   },
   listText: {
     fontSize: 16, 
-    fontWeight: '500'
+    fontWeight: '500',
   }
 });

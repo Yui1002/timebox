@@ -82,9 +82,13 @@ class UserModels {
           epId,
           spId
         );
-        req.params.shift.map(async (s: any) => {
-          await this.repositories.updateUserSchedule(s, spId, transactionId);
-        });
+        if (req.params.shift.length > 0) {
+          req.params.shift.map(async (s: any) => {
+            await this.repositories.updateUserSchedule(s, spId, transactionId);
+          });
+        } else {
+          await this.repositories.updateUserSchedule({}, spId, transactionId)
+        }
       }
       return true;
     } catch (err) {
@@ -187,8 +191,11 @@ class UserModels {
       to: receiver,
       subject: `${firstName} ${lastName} requested you as a service provider`,
       text: request
-        ? `${firstName} ${lastName} requested you as a service provider. Please open the app, check notification page and approve or decline this request.`
-        : `${firstName} ${lastName} requested you as a service provider. Download the app from this link: `,
+        ? `${firstName} ${lastName} requested you as a service provider.
+          Open the app, check notification page and approve or decline the request.`
+        : `${firstName} ${lastName} requested you as a service provider.
+          Download the app and create an account using this email address: ${receiver}.
+          After sign in, go to notification page to approve or decline the request.`,
     };
     try {
       await transporter.sendMail(mailOptions);

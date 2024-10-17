@@ -7,7 +7,7 @@ import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 
 const EditWorkShifts = ({route, navigation}: any) => {
-  const {email_address, workInfo, user, editSchedule, setEditSchedule} = route.params;
+  const {email_address, workInfo, sp, editSchedule, setEditSchedule} = route.params;
 
   const days = [
     'Monday',
@@ -36,7 +36,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
       });
       return false;
     }
-    if (editSchedule.some((s: any) => s['day'] === selectedDay)) {
+    if (editSchedule && editSchedule.some((s: any) => s['day'] === selectedDay)) {
       setInputError({
         type: 'DUPLICATE_DAY',
         msg: `${selectedDay} is already registered`,
@@ -73,7 +73,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
     navigation.navigate('EditProfile', {
       email_address,
       workInfo,
-      user,
+      sp,
       editSchedule,
       setEditSchedule,
     });

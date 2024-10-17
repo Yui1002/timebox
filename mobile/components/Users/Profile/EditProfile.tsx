@@ -7,7 +7,9 @@ import DropdownPicker from '../DropdownPicker';
 import {useSelector} from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
-  const {rate, rate_type, status, shifts} = route.params.workInfo[0];
+  // console.log('params', route.params.workInfo)
+  const {rate, rate_type, status, shifts} = route.params.workInfo;
+  console.log('shifts', shifts)
   const email_address = route.params.email_address;
   const userInfo = useSelector(state => state.userInfo);
   const [editRate, setEditRate] = useState(rate ? rate : 0);
@@ -72,17 +74,15 @@ const EditProfile = ({route, navigation}: any) => {
 
   const saveChanges = () => {
     if (!validateInput()) return;
-    const params = formatParams();
-
     axios
       .post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
-        params: params,
+        params: formatParams(),
         spEmail: email_address,
         epEmail: userInfo.email,
       })
       .then(res => {
         if (res.data === 'OK') {
-          navigation.navigate('Profile', {user: route.params.user});
+          navigation.navigate('Profile', {sp: route.params.sp});
         }
       });
   };
@@ -91,7 +91,7 @@ const EditProfile = ({route, navigation}: any) => {
     navigation.navigate('EditWorkShifts', {
       email_address,
       workInfo: route.params.workInfo,
-      user: route.params.user,
+      sp: route.params.sp,
       editSchedule,
       setEditSchedule,
     });
@@ -103,7 +103,6 @@ const EditProfile = ({route, navigation}: any) => {
         <View style={{width: '45%'}}>
           <Text style={styles.text}>Rate ($)</Text>
           <TextInput
-            keyboardType="numeric"
             maxLength={10}
             value={`${editRate}`}
             style={styles.input}
@@ -141,7 +140,7 @@ const EditProfile = ({route, navigation}: any) => {
       </View>
       <View style={{height: '45%'}}>
         <Text style={styles.text}>Schedule</Text>
-        {editSchedule.length ? (
+        {editSchedule && editSchedule.length ? (
           editSchedule.map((s: any, index: number) => (
             <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
               <Text style={{width: '30%'}}>{s.day}</Text>

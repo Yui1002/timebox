@@ -47,9 +47,9 @@ const ManageServiceProviders = (props: any) => {
       });
   };
 
-  const navigateToProfile = (user: ServiceProvider) => {
+  const navigateToProfile = (sp: ServiceProvider) => {
     props.navigation.navigate('Profile', {
-      user,
+      sp,
     });
   };
 
@@ -58,7 +58,7 @@ const ManageServiceProviders = (props: any) => {
       <View style={styles.title}>
         <Text style={styles.titleText}>Current Service Providers</Text>
       </View>
-      <View style={styles.align}>
+      <View style={styles.checkBoxContainer}>
         <CheckBox
           style={styles.checkBox}
           boxType="square"
@@ -71,18 +71,19 @@ const ManageServiceProviders = (props: any) => {
         {serviceProviders && serviceProviders.length > 0 ? (
           serviceProviders.map((sp: ServiceProvider, index: number) => {
             if (isBoxChecked || sp.status === 'active') {
+              const {first_name, last_name, email_address} = sp;
               return (
                 <TouchableOpacity
-                key={index}
-                style={styles.listContainer}
-                onPress={() => navigateToProfile(sp)}>
-                <Text style={styles.listText}>
-                  {sp.first_name} {sp.last_name}
-                </Text>
-                <Text>{sp.email_address}</Text>
-              </TouchableOpacity>
-              )
-            } 
+                  key={index}
+                  style={styles.listContainer}
+                  onPress={() => navigateToProfile(sp)}>
+                  <Text style={styles.listText}>
+                    {first_name} {last_name}
+                  </Text>
+                  <Text>{email_address}</Text>
+                </TouchableOpacity>
+              );
+            }
           })
         ) : (
           <Text>You don't have current service providers</Text>

@@ -1,22 +1,27 @@
 import {StyleSheet} from 'react-native';
+import { horizontalScale, verticalScale, moderateScale } from './metric';
 
 export const styles = StyleSheet.create({
   container: {
-    margin: '5%',
-    height: '90%'
+    flex: 1,
+    margin: verticalScale(30),
   },
   header: {
-    fontSize: 24,
+    fontSize: moderateScale(18),
     textAlign: 'center',
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: verticalScale(30),
+  },
+  title: {
+    fontSize: moderateScale(14), 
+    fontWeight: '500'
   },
   listContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#ddd',
-    marginVertical: 8,
-    padding: 10,
+    marginVertical: verticalScale(8),
+    padding: horizontalScale(10),
     borderRadius: 4,
   },
   button: {

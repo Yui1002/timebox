@@ -3,28 +3,17 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '94%'
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    flex: 1,
   },
   subHeader: {
-    fontSize: 14,
-    marginTop: 6,
-    marginBottom: 4
+    fontSize: 16,
+    fontWeight: '500',
+    marginVertical: 6
   },
-  dropdownContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+  dropdownOpen: {
+    zIndex: -1,
   },
-  dropwdown: {
-    marginVertical: 4,
-  },
-  dropdown_2: {
-    height: 40,
+  dropdown: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderRadius: 10,
@@ -82,5 +71,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 4,
+  },
+  error: {
+    fontSize: 12, 
+    color: '#FF0000'
+  },
+  noMatch: {
+    textAlign: 'center',
+    marginVertical: 10
   }
 });
