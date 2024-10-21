@@ -36,7 +36,7 @@ class UserRepositories extends Repositories {
   }
 
   // ---------------------  Users  --------------------------------
-  async getEmployers(serviceProviderId: string) {
+  async getEmployers(serviceProviderId: number) {
     const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode
         FROM users u
         INNER JOIN user_transaction ut
@@ -132,8 +132,6 @@ class UserRepositories extends Repositories {
       }
     }
     baseQuery = baseQuery.substring(0, baseQuery.length - 1);
-    console.log('base query', baseQuery)
-    console.log('args', queryArgs)
     return { baseQuery: baseQuery + ";", queryArgs };
   }
 
@@ -308,17 +306,17 @@ class UserRepositories extends Repositories {
     request: any,
     receiver: string
   ) {
-    const { request_rate, request_rate_type } = request;
+    const { rate, rate_type, mode } = request;
     const sql =
       "INSERT INTO user_transaction (rate, rate_type, currency, status, update_date, update_by, employer_user_id, service_provider_id, mode) VALUES ($1, $2, NULL, DEFAULT, CURRENT_TIMESTAMP, $3, $4, $5, $6) RETURNING user_transaction_id;";
     const transactionId = (
       await this.queryDB(sql, [
-        request_rate,
-        request_rate_type,
+        rate,
+        rate_type,
         receiver,
         employerId,
         serviceProviderId,
-        null,
+        mode,
       ])
     ).rows[0].user_transaction_id;
     return transactionId;

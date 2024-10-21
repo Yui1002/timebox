@@ -7,9 +7,7 @@ import DropdownPicker from '../DropdownPicker';
 import {useSelector} from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
-  // console.log('params', route.params.workInfo)
   const {rate, rate_type, status, shifts} = route.params.workInfo;
-  console.log('shifts', shifts)
   const email_address = route.params.email_address;
   const userInfo = useSelector(state => state.userInfo);
   const [editRate, setEditRate] = useState(rate ? rate : 0);

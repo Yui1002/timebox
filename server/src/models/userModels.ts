@@ -21,8 +21,8 @@ class UserModels {
   }
 
   async getEmployers(email: string) {
-    const serviceProviderId = await this.repositories.getUserId(email);
-    return await this.repositories.getEmployers(serviceProviderId);
+    const spId = await this.repositories.getUserId(email);
+    return await this.repositories.getEmployers(spId);
   }
 
   async getServiceProviderId(email: string) {

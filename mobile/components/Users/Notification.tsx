@@ -99,7 +99,6 @@ const Notification = (props: any) => {
   };
 
   const updateRequest = (sender: string, n: any, isApproved: boolean) => {
-    console.log('here', n)
     axios
       .post(`${LOCAL_HOST_URL}/request/update`, {
         sender: sender,
@@ -166,7 +165,6 @@ const Notification = (props: any) => {
                 rate_type,
                 shifts,
               } = notifications.get(n);
-              console.log('n', n)
               return (
                 <View key={index} style={styles.box}>
                   <Text style={styles.title}>

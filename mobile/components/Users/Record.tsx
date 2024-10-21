@@ -8,7 +8,7 @@ import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
 
-const Record = ({route, navigation}: any) => {
+const Record = ({route}: any) => {
   const isFocused = useIsFocused();
   const {first_name, last_name, email_address, mode} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
@@ -64,6 +64,10 @@ const Record = ({route, navigation}: any) => {
   };
 
   const onTimeConfirm = (type: string, time: Date) => {
+    time.setFullYear(new Date(date).getFullYear());
+    time.setMonth(new Date(date).getMonth());
+    time.setDate(new Date(date).getDate());
+
     if (!validateInput(type, time)) return;
     if (type === 'start') {
       start === null ? alertAdd('start', time) : alertDuplicate('start', time);
@@ -75,6 +79,10 @@ const Record = ({route, navigation}: any) => {
   const validateInput = (type: string, time: Date) => {
     if (date.toDateString() !== time.toDateString()) {
       alertError('Date has to match the selected date above');
+      return false;
+    }
+    if (new Date(time) > new Date()) {
+      alertError('No future time allowed');
       return false;
     }
     if (!start && !end) return true;
@@ -177,7 +185,7 @@ const Record = ({route, navigation}: any) => {
         </Text>
       </View>
       <View>
-        {mode === true ? (
+        {mode ? (
           <View>
             <TouchableOpacity
               style={{flexDirection: 'row'}}
@@ -256,8 +264,8 @@ const Record = ({route, navigation}: any) => {
               onCancel={() => {
                 setStartOpen(false);
               }}
-              minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              maximumDate={new Date(new Date().setHours(23, 59, 59, 999))}
+              // minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              // maximumDate={new Date(new Date().setHours(23, 59, 59, 999))}
               title="Select start time"
             />
             <DatePicker
@@ -269,8 +277,8 @@ const Record = ({route, navigation}: any) => {
               onCancel={() => {
                 setEndOpen(false);
               }}
-              minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              maximumDate={new Date()}
+              // minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
+              // maximumDate={new Date()}
               title="Select end time"
             />
           </View>
