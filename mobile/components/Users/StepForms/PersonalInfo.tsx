@@ -134,7 +134,7 @@ const PersonalInfo = ({route, navigation}: any) => {
                 <InputError error={inputError} />
               )}
               <DropDownPicker
-                style={open ? {zIndex: 3} : null}
+                // style={open ? {zIndex: 3} : {zIndex: 1}}
                 open={open}
                 value={rateType}
                 items={items}
@@ -145,7 +145,13 @@ const PersonalInfo = ({route, navigation}: any) => {
               />
             </View>
           </View>
-          <View style={{marginTop: 30, height: '26%'}}>
+          {/* <View style={{open ? marginTop: 30, height: '26%'}}> */}
+          <View
+            style={
+              open
+                ? {zIndex: -1, height: '26%', marginTop: 30}
+                : {zIndex: 1, height: '26%', marginTop: 30}
+            }>
             <Text style={{height: '20%'}}>
               Allow the service provider to modify record time?
             </Text>

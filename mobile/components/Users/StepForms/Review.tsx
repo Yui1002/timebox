@@ -56,7 +56,6 @@ const Review = ({route, navigation}: any) => {
       mode: isEnabled,
       shifts: workShifts.workShifts,
     };
-    setLoading(true);
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
         sender: userInfo,
@@ -64,12 +63,10 @@ const Review = ({route, navigation}: any) => {
         request: request,
       })
       .then(() => {
-        setLoading(false);
         dispatch(resetShift(workShifts.workShifts));
         showSuccess();
       })
       .catch(err => {
-        setLoading(false);
         console.log(err);
       });
   };
@@ -79,9 +76,9 @@ const Review = ({route, navigation}: any) => {
       'Success',
       `We have sent an email to ${firstName} ${lastName}. Once this request is approved, you will see this person on your service provider list.`,
       [
-        {
+        { 
           text: 'OK',
-          onPress: () => navigation.navigate('DrawerNav'),
+          onPress: () => navigation.navigate('Home'),
         },
       ],
       {cancelable: false},

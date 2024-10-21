@@ -58,7 +58,6 @@ const HireServiceProvider = (props: any) => {
 
   const searchEmail = () => {
     if (!validateEmail('SEARCH')) return;
-    setLoading(true);
     axios
       .get(`${LOCAL_HOST_URL}/request/search`, {
         params: {
@@ -67,23 +66,19 @@ const HireServiceProvider = (props: any) => {
         },
       })
       .then(res => {
-        setLoading(false);
         if (res.data === 'Email not found') {
           const msg = `Do you want to request to ${searchInput} as a service provider?`;
           showAlert(msg, null, function () {
-            setLoading(true);
             sendRequest();
           });
         } else {
           const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
           showAlert(msg, null, function () {
-            setLoading(true);
             navigateToNext(res.data[0]);
           });
         }
       })
       .catch((error: any) => {
-        setLoading(false);
         setInputError({
           type: 'DUPLICATE_REQUEST',
           msg: error.response.data.error,
@@ -98,12 +93,10 @@ const HireServiceProvider = (props: any) => {
         receiver: searchInput,
       })
       .then(() => {
-        setLoading(false);
         clearInput();
         showSuccessAlert();
       })
       .catch(err => {
-        setLoading(false);
         setInputError({
           type: 'DUPLICATE_EMAIL',
           msg: err.response.data.error,
