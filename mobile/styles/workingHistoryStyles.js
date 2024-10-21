@@ -12,11 +12,12 @@ export const styles = StyleSheet.create({
   },
   dropdownOpen: {
     zIndex: -1,
+    backgroundColor: 'lightgreen'
   },
   dropdown: {
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 10, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10

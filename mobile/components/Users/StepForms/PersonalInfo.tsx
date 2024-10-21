@@ -134,7 +134,6 @@ const PersonalInfo = ({route, navigation}: any) => {
                 <InputError error={inputError} />
               )}
               <DropDownPicker
-                // style={open ? {zIndex: 3} : {zIndex: 1}}
                 open={open}
                 value={rateType}
                 items={items}
@@ -145,7 +144,6 @@ const PersonalInfo = ({route, navigation}: any) => {
               />
             </View>
           </View>
-          {/* <View style={{open ? marginTop: 30, height: '26%'}}> */}
           <View
             style={
               open

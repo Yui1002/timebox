@@ -30,7 +30,7 @@ const WorkingHistory = (props: any) => {
   const [selectedEmployer, setSelectedEmployer] = useState<string>('');
   const [from, setFrom] = useState<string>('');
   const [to, setTo] = useState<string>('');
-  const [items, setItems] = useState([]);
+  const [employers, setEmployers] = useState([]);
   const [history, setHistory] = useState<[] | null>(null);
   const [inputError, setInputError] = useState({
     type: '',
@@ -51,7 +51,7 @@ const WorkingHistory = (props: any) => {
         },
       })
       .then((res): any => {
-        setItems(formatData(res.data));
+        setEmployers(formatData(res.data));
       })
       .catch((err: any) => {
         console.log(err);
@@ -100,14 +100,7 @@ const WorkingHistory = (props: any) => {
     return result;
   };
 
-  const sortRecords = (
-    data: [
-      {
-        start_time: string;
-        end_time: string;
-      },
-    ],
-  ) => {
+  const sortRecords = (data: History[]) => {
     if (!data.length) return data;
     return data.sort((a, b) => {
       return (
@@ -116,91 +109,83 @@ const WorkingHistory = (props: any) => {
     });
   };
 
-  const onPeriodChange = (type, data) => {
+  const onPeriodChange = (type: string, data: Date) => {
     setFromDropDown(false);
-    type === 'from'
-      ? setFrom(moment(data).format('YYYY-MM-DD'))
-      : setTo(moment(data).format('YYYY-MM-DD'));
+    const selected = moment(data).format('YYYY-MM-DD');
+    type === 'from' ? setFrom(selected) : setTo(selected);
   };
 
   const Separator = () => <View style={styles.separator}></View>;
 
-  const Header = () => (
-    <View>
-      <View>
-        <Text style={styles.subHeader}>Select employer's name</Text>
-        {inputError.type === 'EMPLOYER_EMPTY' && (
-          <Text style={styles.error}>{inputError.msg}</Text>
-        )}
-        <DropDownPicker
-          open={employerDropdownOpen}
-          value={selectedEmployer}
-          items={items}
-          setOpen={setEmployerDropdownOpen}
-          setValue={setSelectedEmployer}
-          setItems={setItems}
-          placeholder="Employer's name"
-        />
-      </View>
-      <View style={employerDropdownOpen ? styles.dropdownOpen : null}>
-        <Text style={styles.subHeader}>Select period</Text>
-        <TouchableOpacity
-          onPress={() => setFromDropDown(!fromDropdown)}
-          style={styles.dropdown}>
-          <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
-          <View style={styles.arrow} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setToDropDown(!toDropdown)}
-          style={styles.dropdown}>
-          <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
-          <View style={styles.arrow} />
-        </TouchableOpacity>
-      </View>
-      <View>
-        <DatePicker
-          modal
-          open={fromDropdown}
-          mode="date"
-          date={new Date()}
-          onConfirm={d => onPeriodChange('from', d)}
-          onCancel={() => {
-            setFromDropDown(false);
-          }}
-        />
-        <DatePicker
-          modal
-          open={toDropdown}
-          mode="date"
-          date={new Date()}
-          onConfirm={d => onPeriodChange('to', d)}
-          onCancel={() => {
-            setToDropDown(false);
-          }}
-        />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={searchRecord}>
-        <Text style={styles.buttonText}>Search</Text>
-      </TouchableOpacity>
-      <View style={styles.listHeader}>
-        <Text>Date</Text>
-        <Text>Check In</Text>
-        <Text>Check Out</Text>
-        <Text>Total</Text>
-      </View>
-      <Separator />
-    </View>
-  );
-
   return (
     <SafeAreaView style={styles.container}>
-      {items.length > 0 ? (
-        <View>
-          <FlatList
-            data={history}
-            renderItem={({item}) => {
-              const a = item.start_time ? moment(item.start_time) : null;
-              const b = item.end_time ? moment(item.end_time) : null;
+      {employers.length ? (
+        <ScrollView>
+          <View>
+            <Text style={styles.subHeader}>Select employer's name</Text>
+            <Text style={styles.error}>{inputError.msg}</Text>
+            <DropDownPicker
+              open={employerDropdownOpen}
+              value={selectedEmployer}
+              items={employers}
+              setOpen={setEmployerDropdownOpen}
+              setValue={setSelectedEmployer}
+              setItems={setEmployers}
+              placeholder="Employer's name"
+              listMode="SCROLLVIEW"
+            />
+          </View>
+          <View style={employerDropdownOpen ? styles.dropdownOpen : null}>
+            <Text style={styles.subHeader}>Select period</Text>
+            <TouchableOpacity
+              onPress={() => setFromDropDown(!fromDropdown)}
+              style={[styles.dropdown, {backgroundColor: 'pink'}]}>
+              <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
+              <View style={styles.arrow} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setToDropDown(!toDropdown)}
+              style={[styles.dropdown, {backgroundColor: 'pink'}]}>
+              <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
+              <View style={styles.arrow} />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <DatePicker
+              modal
+              open={fromDropdown}
+              mode="date"
+              date={new Date()}
+              onConfirm={d => onPeriodChange('from', d)}
+              onCancel={() => {
+                setFromDropDown(false);
+              }}
+            />
+            <DatePicker
+              modal
+              open={toDropdown}
+              mode="date"
+              date={new Date()}
+              onConfirm={d => onPeriodChange('to', d)}
+              onCancel={() => {
+                setToDropDown(false);
+              }}
+            />
+          </View>
+          <TouchableOpacity style={styles.button} onPress={searchRecord}>
+            <Text style={styles.buttonText}>Search</Text>
+          </TouchableOpacity>
+          <View style={styles.listHeader}>
+            <Text>Date</Text>
+            <Text>Check In</Text>
+            <Text>Check Out</Text>
+            <Text>Total</Text>
+          </View>
+          <Separator />
+          {history && history.length > 0 ? (
+            history.map((h: History) => {
+              const a = h.start_time ? moment(h.start_time) : null;
+              const b = h.end_time ? moment(h.end_time) : null;
               const total = a && b ? `${b.diff(a, 'hours')}h` : 'N/A';
               return (
                 <View style={styles.list}>
@@ -212,15 +197,13 @@ const WorkingHistory = (props: any) => {
                   <Text>{`${total}`}</Text>
                 </View>
               );
-            }}
-            ListHeaderComponent={<Header />}
-          />
-          {!history?.length && <Text style={styles.noMatch}>No records matched</Text>}
-        </View>
+            })
+          ) : (
+            <Text style={styles.noMatch}>No records matched</Text>
+          )}
+        </ScrollView>
       ) : (
-        <View>
-          <Text>You currenly have no working records</Text>
-        </View>
+        <Text>You currenly have no working records</Text>
       )}
     </SafeAreaView>
   );
