@@ -100,15 +100,17 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
       {searchResult && searchResult.length > 0 && (
         <View>
           {searchResult.map((s: searchResult, index: number) => {
-            const start = moment(s.start_time);
-            const end = moment(s.end_time);
-            const total = end.diff(start, 'hours');
+            const a = s.start_time ? moment(s.start_time) : null;
+            const b = s.end_time ? moment(s.end_time) : null;
+            const total = a && b ? `${b.diff(a, 'hours')}h` : 'N/A';
             return (
               <View style={styles.align} key={index}>
-                <Text>{start.format('YYYY/MM/DD')}</Text>
-                <Text>{start.format('LT')}</Text>
-                <Text>{end.format('LT')}</Text>
-                <Text>{`${total}h`}</Text>
+                <Text>
+                  {a ? `${moment(a || b).format('YYYY/MM/DD')}` : 'N/A'}
+                </Text>
+                <Text>{a ? `${a.format('LT')}` : 'N/A'}</Text>
+                <Text>{b ? `${b.format('LT')}` : 'N/A'}</Text>
+                <Text>{`${total}`}</Text>
               </View>
             );
           })}

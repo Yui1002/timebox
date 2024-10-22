@@ -139,13 +139,13 @@ const WorkingHistory = (props: any) => {
             <Text style={styles.subHeader}>Select period</Text>
             <TouchableOpacity
               onPress={() => setFromDropDown(!fromDropdown)}
-              style={[styles.dropdown, {backgroundColor: 'pink'}]}>
+              style={styles.dropdown}>
               <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setToDropDown(!toDropdown)}
-              style={[styles.dropdown, {backgroundColor: 'pink'}]}>
+              style={styles.dropdown}>
               <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>

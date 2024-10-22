@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
-import {SafeAreaView, View, Text, TextInput, Button, Alert} from 'react-native';
+import {SafeAreaView, View, Text, TextInput, Button, ScrollView} from 'react-native';
 import {styles} from '../../../styles/editProfileStyles.js';
-import DropdownPicker from '../DropdownPicker';
+import DropdownPicker from 'react-native-dropdown-picker';
 import {useSelector} from 'react-redux';
 
 const EditProfile = ({route, navigation}: any) => {
@@ -97,73 +97,77 @@ const EditProfile = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={[styles.align, {height: '15%'}]}>
-        <View style={{width: '45%'}}>
-          <Text style={styles.text}>Rate ($)</Text>
-          <TextInput
-            maxLength={10}
-            value={`${editRate}`}
-            style={styles.input}
-            onChangeText={val => setEditRate(val)}
-          />
-          {inputError.type === 'INVALID_RATE' && (
-            <Text style={styles.error}>{inputError.msg}</Text>
-          )}
+      <ScrollView>
+        <View style={styles.align}>
+          <View style={{width: '45%'}}>
+            <Text style={styles.text}>Rate ($)</Text>
+            <TextInput
+              maxLength={10}
+              value={`${editRate}`}
+              style={styles.input}
+              onChangeText={val => setEditRate(val)}
+            />
+            {inputError.type === 'INVALID_RATE' && (
+              <Text style={styles.error}>{inputError.msg}</Text>
+            )}
+          </View>
+          <View style={{width: '45%'}}>
+            <Text style={styles.rateTypeText}>Rate Type</Text>
+            <DropdownPicker
+              open={rateTypeOpen}
+              value={editRateType}
+              items={rateType}
+              setOpen={setRateTypeOpen}
+              setValue={setEditRateType}
+              setItems={setRateType}
+              listMode='SCROLLVIEW'
+            />
+            {inputError.type === 'EMPTY_RATE_TYPE' && (
+              <Text style={styles.error}>{inputError.msg}</Text>
+            )}
+          </View>
         </View>
         <View style={{width: '45%'}}>
-          <Text style={styles.rateTypeText}>Rate Type</Text>
-          <DropdownPicker.DropdownPicker
-            open={rateTypeOpen}
-            value={editRateType}
-            items={rateType}
-            setOpen={setRateTypeOpen}
-            setValue={setEditRateType}
-            setItems={setRateType}
+          <Text style={styles.text}>Status</Text>
+          <DropdownPicker
+            open={statusOpen}
+            value={editStatus}
+            items={updatedStatus}
+            setOpen={setStatusOpen}
+            setValue={setEditStatus}
+            setItems={setUpdatedStatus}
+            listMode='SCROLLVIEW'
           />
-          {inputError.type === 'EMPTY_RATE_TYPE' && (
-            <Text style={styles.error}>{inputError.msg}</Text>
+        </View>
+        <View style={statusOpen ? {zIndex: -1} : null}>
+          <Text style={styles.text}>Schedule</Text>
+          {editSchedule && editSchedule.length ? (
+            editSchedule.map((s: any, index: number) => (
+              <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
+                <Text style={{width: '30%'}}>{s.day}</Text>
+                <Text style={{width: '50%'}}>
+                  {s.start_time} ~ {s.end_time}
+                </Text>
+                <Text style={styles.delete} onPress={() => deleteDate(s)}>
+                  Delete
+                </Text>
+              </View>
+            ))
+          ) : (
+            <Text>Not specified</Text>
           )}
+          <View style={styles.addButton}>
+            <Button
+              title={`${String.fromCharCode(43)}  Add Schedule`}
+              color="#fff"
+              onPress={navigateToAddSchedule}
+            />
+          </View>
         </View>
-      </View>
-      <View style={{height: statusOpen ? '30%' : '18%', width: '45%'}}>
-        <Text style={styles.text}>Status</Text>
-        <DropdownPicker.DropdownPicker
-          open={statusOpen}
-          value={editStatus}
-          items={updatedStatus}
-          setOpen={setStatusOpen}
-          setValue={setEditStatus}
-          setItems={setUpdatedStatus}
-        />
-      </View>
-      <View style={{height: '45%'}}>
-        <Text style={styles.text}>Schedule</Text>
-        {editSchedule && editSchedule.length ? (
-          editSchedule.map((s: any, index: number) => (
-            <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
-              <Text style={{width: '30%'}}>{s.day}</Text>
-              <Text style={{width: '50%'}}>
-                {s.start_time} ~ {s.end_time}
-              </Text>
-              <Text style={styles.delete} onPress={() => deleteDate(s)}>
-                Delete
-              </Text>
-            </View>
-          ))
-        ) : (
-          <Text>Not specified</Text>
-        )}
-        <View style={styles.addButton}>
-          <Button
-            title={`${String.fromCharCode(43)}  Add Schedule`}
-            color="#fff"
-            onPress={navigateToAddSchedule}
-          />
+        <View style={styles.saveButton}>
+          <Button title="Save" color="#fff" onPress={saveChanges} />
         </View>
-      </View>
-      <View style={styles.saveButton}>
-        <Button title="Save" color="#fff" onPress={saveChanges} />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

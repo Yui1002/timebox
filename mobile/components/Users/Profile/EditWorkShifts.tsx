@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Button} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
@@ -80,7 +80,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={{marginTop: 30}}>
         <Text style={{fontSize: 16, fontWeight: '500', marginVertical: 8}}>
           Select day and time
@@ -155,7 +155,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

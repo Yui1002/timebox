@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '94%',
+    flex: 1
   },
   align: {
     flexDirection: 'row',
@@ -39,18 +39,15 @@ export const styles = StyleSheet.create({
     backgroundColor: '#24a0ed',
     borderRadius: 10,
     width: '50%',
-    marginVertical: 'auto',
-    marginHorizontal: '24%',
+    marginVertical: '4%',
+    marginHorizontal: 'auto'
   },
   saveButton: {
     backgroundColor: '#F28C28',
     borderRadius: 10,
-    width: '70%',
-    position: 'absolute',
-    top: '80%',
-    left: '15%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '50%',
+    marginVertical: '4%',
+    marginHorizontal: 'auto'
   },
   error: {
     color: 'red',
