@@ -3,15 +3,40 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '94%',
-  },
-  header: {
-    marginVertical: 20,
-    fontSize: 24
+    flex: 1,
   },
   statusBarContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    height: '10%',
+    width: '100%',
+  },
+  subContainer: {
+    marginTop: 20,
+
+  },
+  header: {
+    height: '10%'
+  },
+  headerText: {
+    fontSize: 22, 
+    fontWeight: 500,
+  },
+  align: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  margin: {
+    marginTop: 20,
+  },
+  width: {
+    width: '50%',
+  },
+  font_1: {
+    fontSize: 14,
+  },
+  font_2: {
+    fontSize: 18,
   },
   workShiftsContainer: {
     marginTop: 30
@@ -90,10 +115,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#24a0ed',
     borderRadius: 10,
     width: '50%',
-    marginVertical: 20,
-    position: 'absolute',
-    top: '30%',
-    left: '25%',
+    margin: 'auto',
+    marginTop: 30,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -101,7 +124,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20
+    marginVertical: 50,
   },
   workShiftsBtn_back: {
     backgroundColor: '#909090', 
@@ -118,5 +141,17 @@ export const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     lineHeight: 32
+  },
+  mode: {
+    width: '40%',
+    height: '100%',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 10,
+  },
+  modeText: {
+    textAlign: 'center',
+    lineHeight: 30,
+    fontSize: 16,
   }
 });

@@ -22,8 +22,11 @@ import RegisterWorkShifts from './components/Users/StepForms/RegisterWorkShifts'
 import Review from './components/Users/StepForms/Review';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
-import Profile from './components/Users/Profile';
-import EditProfile from './components/Users/EditProfile';
+import Profile from './components/Users/Profile/Profile';
+import EditProfile from './components/Users/Profile/EditProfile';
+import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
+import ManageServiceProviders from './components/Users/ManageServiceProviders';
+import ViewWorkingHistory from './components/Users/Profile/ViewWorkingHistory';
 
 const Stack = createStackNavigator();
 
@@ -122,7 +125,7 @@ function App(): JSX.Element {
             name="Profile"
             component={Profile}
             options={({navigation}) => ({
-              headerTitle: 'Profile',
+              headerTitle: 'Service Provider Profile',
               gestureEnabled: false,
             })}
           />
@@ -132,6 +135,29 @@ function App(): JSX.Element {
             options={({navigation}) => ({
               headerTitle: 'Edit Profile',
               gestureEnabled: false,
+            })}
+          />
+          <Stack.Screen
+            name="EditWorkShifts"
+            component={EditWorkShifts}
+            options={({navigation}) => ({
+              headerTitle: 'Edit Work Shifts',
+              gestureEnabled: false,
+            })}
+          />
+          <Stack.Screen
+            name="ManageServiceProviders"
+            component={ManageServiceProviders}
+            options={({navigation}) => ({
+              headerTitle: 'Manage Service Providers',
+              gestureEnabled: false,
+            })}
+          />
+          <Stack.Screen
+            name="ViewWorkingHistory"
+            component={ViewWorkingHistory}
+            options={({navigation}) => ({
+              headerTitle: 'Working History',
             })}
           />
         </Stack.Navigator>

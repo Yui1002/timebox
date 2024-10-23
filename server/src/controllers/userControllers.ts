@@ -13,15 +13,19 @@ class UserControllers {
   }
 
   async getEmployers(req: any, res: any) {
-    const response = await this.models.getEmployers(req.params.email);
+    const response = await this.models.getEmployers(req.query.email);
     res.send(response);
   }
 
   async getServiceProviders(req: any, res: any) {
-    const serviceProviders = await this.models.getServiceProviders(
-      req.query.email
-    );
+    const { email } = req.query;
+    const serviceProviders = await this.models.getServiceProviders(email);
     res.send(serviceProviders);
+  }
+
+  async getServiceProvider(req: any, res: any) {
+    const response = await this.models.getServiceProvider(req.query);
+    res.send(response);
   }
 
   async checkUserExists(req: any, res: any) {
@@ -29,44 +33,54 @@ class UserControllers {
     user.length > 0 ? res.status(200).send(user) : res.sendStatus(400);
   }
 
-  async emailToNotFoundUser(req: any, res: any) {
-    const {serviceProviderEmail, userInfo} = req.body;
-    const result = await this.models.emailToNotFoundUser(serviceProviderEmail, userInfo);
-    result ? res.sendStatus(200) : res.status(400).json({
-      error: 'You have sent the request before'
-    });
-  }
-
-  async sendEmailToServiceProvider(req: any, res: any) {
-    const { emailTo, employer } = req.body;
-    console.log(emailTo, employer)
-    const hasBeenSent = await this.models.emailHasBeenSent(emailTo, employer.email);
-    console.log('email has been sent', hasBeenSent)
-    if (hasBeenSent) {
-      res.status(400).json({ error : 'You have already sent a request before'});
-      return;
+  async searchEmail(req: any, res: any) {
+    try {
+      const { receiver, sender } = req.query;
+      const senderId = await this.models.getUserId(sender);
+      const isRequestDuplicate = await this.models.emailHasBeenSent(
+        receiver,
+        senderId
+      );
+      if (isRequestDuplicate) {
+        throw new Error("You cannot send the request multiple times");
+      } else {
+        const user = await this.models.getUser(receiver);
+        user.length > 0
+          ? res.status(200).send(user)
+          : res.status(200).send("Email not found");
+      }
+    } catch (err) {
+      res.status(400).send({ error: err.message });
     }
-    const result = await this.models.sendEmailToServiceProvider(emailTo, employer);
-    result ? res.sendStatus(200) : res.sendStatus(400);
   }
 
-  async addServiceProvider(req: any, res: any) {
-    const response = await this.models.addServiceProvider(req.body);
-    response ? res.sendStatus(200) : res.sendStatus(400);
+  async sendRequest(req: any, res: any) {
+    try {
+      const { sender, receiver } = req.body;
+      const senderId = await this.models.getUserId(sender.email);
+      if (req.body.hasOwnProperty("request")) {
+        const { request } = req.body;
+        await this.models.storeRequest(receiver, senderId, request);
+        await this.models.sendRequestViaEmail(receiver, sender, request);
+        res.sendStatus(200);
+      } else {
+        await this.models.storeRequest(receiver, senderId, null);
+        await this.models.sendRequestViaEmail(receiver, sender, null);
+        res.sendStatus(200);
+      }
+    } catch (err) {
+      res.status(400).send({ error: err });
+    }
   }
 
   async editServiceProvider(req: any, res: any) {
     const response = await this.models.editServiceProvider(req.body);
-    // const response = await this.models.addServiceProvider(req.body);
-    // response ? res.sendStatus(200) : res.sendStatus(400);
+    response ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async deleteServiceProvider(req: any, res: any) {
-    const { employerEmail, serviceProviderEmail } = req.query;
-    const response = await this.models.deleteServiceProvider(
-      employerEmail,
-      serviceProviderEmail
-    );
+    const { epEmail, spEmail } = req.query;
+    const response = await this.models.deleteServiceProvider(epEmail, spEmail);
     response ? res.sendStatus(200) : res.sendStatus(400);
   }
 
@@ -85,19 +99,33 @@ class UserControllers {
     res.send(records);
   }
 
-  async searchByDateYear(req: any, res: any) {
-    const record = await this.models.searchByDateYear(req.body);
+  async getRecordByDay(req: any, res: any) {
+    const record = await this.models.getRecordByDay(req.query);
     res.send(record);
   }
 
-  async getRecord(req: any, res: any) {
-    const { username } = req.params;
-    const record = await this.models.getRecord(username);
-    res.send(record);
+  async checkRecordDuplicate(req: any, res: any) {
+    const isDuplicated = await this.models.checkRecordDuplicate(req.query);
+    isDuplicated ? res.sendStatus(400) : res.sendStatus(200);
   }
 
   async getNotification(req: any, res: any) {
-    console.log('here')
+    const { receiver } = req.query;
+    const notification = await this.models.getNotification(receiver);
+    res.send(notification);
+  }
+
+  async updateRequest(req: any, res: any) {
+    try {
+      const { sender, receiver, isApproved, request } = req.body;
+      await this.models.updateRequest(sender, receiver, isApproved);
+      if (isApproved) {
+        await this.models.acceptRequest(sender, receiver, request);
+      }
+      res.sendStatus(200);
+    } catch (err) {
+      res.status(400).json({ error: err });
+    }
   }
 }
 

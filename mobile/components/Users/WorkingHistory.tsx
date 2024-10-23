@@ -8,21 +8,29 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import {styles} from '../../styles/workingHistoryStyles.js';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {useIsFocused} from '@react-navigation/native';
+
+interface History {
+  start_time: string;
+  end_time: string;
+}
 
 const WorkingHistory = (props: any) => {
-  const {email} = useSelector(state => state.userInfo);;
+  const {email} = useSelector(state => state.userInfo);
+  const isFocused = useIsFocused();
   const [employerDropdownOpen, setEmployerDropdownOpen] = useState(false);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);
   const [selectedEmployer, setSelectedEmployer] = useState<string>('');
   const [from, setFrom] = useState<string>('');
   const [to, setTo] = useState<string>('');
-  const [items, setItems] = useState([]);
+  const [employers, setEmployers] = useState([]);
   const [history, setHistory] = useState<[] | null>(null);
   const [inputError, setInputError] = useState({
     type: '',
@@ -30,30 +38,44 @@ const WorkingHistory = (props: any) => {
   });
 
   useEffect(() => {
-    getEmployers();
-  }, []);
+    if (isFocused) {
+      getEmployers();
+    }
+  }, [isFocused]);
 
   const getEmployers = () => {
-    axios.get(`${LOCAL_HOST_URL}/employers/${email}`).then((res): any => {
-      setItems(formatData(res.data));
-    });
+    axios
+      .get(`${LOCAL_HOST_URL}/employers`, {
+        params: {
+          email,
+        },
+      })
+      .then((res): any => {
+        setEmployers(formatData(res.data));
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
   };
 
   const searchRecord = () => {
     if (!validateInput()) return;
     axios
-      .get(`${LOCAL_HOST_URL}/record`, {
+      .get(`${LOCAL_HOST_URL}/record/period`, {
         params: {
-          employerEmail: selectedEmployer,
-          serviceProviderEmail: email,
+          epEmail: selectedEmployer,
+          spEmail: email,
           from,
           to,
         },
       })
       .then(res => {
-        setHistory(res.data);
+        const sorted = sortRecords(res.data);
+        setHistory(sorted);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   const validateInput = () => {
@@ -78,49 +100,52 @@ const WorkingHistory = (props: any) => {
     return result;
   };
 
-  const onPeriodChange = (type, data) => {
+  const sortRecords = (data: History[]) => {
+    if (!data.length) return data;
+    return data.sort((a, b) => {
+      return (
+        new Date(a.start_time).valueOf() - new Date(b.start_time).valueOf()
+      );
+    });
+  };
+
+  const onPeriodChange = (type: string, data: Date) => {
     setFromDropDown(false);
-    type === 'from'
-      ? setFrom(moment(data).format('YYYY-MM-DD'))
-      : setTo(moment(data).format('YYYY-MM-DD'));
+    const selected = moment(data).format('YYYY-MM-DD');
+    type === 'from' ? setFrom(selected) : setTo(selected);
   };
 
   const Separator = () => <View style={styles.separator}></View>;
 
   return (
     <SafeAreaView style={styles.container}>
-      {items.length > 0 ? (
-        <View>
+      {employers.length ? (
+        <ScrollView>
           <View>
             <Text style={styles.subHeader}>Select employer's name</Text>
-            {inputError.type === 'EMPLOYER_EMPTY' && (
-              <Text style={{fontSize: 12, color: '#FF0000'}}>
-                {inputError.msg}
-              </Text>
-            )}
+            <Text style={styles.error}>{inputError.msg}</Text>
             <DropDownPicker
-              style={styles.dropwdown}
               open={employerDropdownOpen}
               value={selectedEmployer}
-              items={items}
+              items={employers}
               setOpen={setEmployerDropdownOpen}
               setValue={setSelectedEmployer}
-              setItems={setItems}
+              setItems={setEmployers}
               placeholder="Employer's name"
+              listMode="SCROLLVIEW"
             />
           </View>
-          <View
-            style={employerDropdownOpen ? {marginTop: 120} : {marginTop: 10}}>
+          <View style={employerDropdownOpen ? styles.dropdownOpen : null}>
             <Text style={styles.subHeader}>Select period</Text>
             <TouchableOpacity
               onPress={() => setFromDropDown(!fromDropdown)}
-              style={styles.dropdown_2}>
+              style={styles.dropdown}>
               <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setToDropDown(!toDropdown)}
-              style={styles.dropdown_2}>
+              style={styles.dropdown}>
               <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
@@ -148,51 +173,37 @@ const WorkingHistory = (props: any) => {
             />
           </View>
           <TouchableOpacity style={styles.button} onPress={searchRecord}>
-              <Text style={styles.buttonText}>Search</Text>
+            <Text style={styles.buttonText}>Search</Text>
           </TouchableOpacity>
-          {/* <View style={styles.button}>
-            <Button title="Search" color="#fff" onPress={searchRecord} />
-          </View> */}
-          {history !== null && history.length > 0 && (
-            <View>
-              <View style={styles.listHeader}>
-                <Text>Date</Text>
-                <Text>Check In</Text>
-                <Text>Check Out</Text>
-                <Text>Total</Text>
-              </View>
-              <Separator />
-              <ScrollView>
-                {history.map((h, index) => {
-                  const a = moment(h.start_time)
-                  const b = moment(h.end_time)
-                  const total = b.diff(a, 'hours')
-                  return (
-                    <View style={styles.list} key={index}>
-                      <Text>
-                        {moment(h.start_time).format('YYYY/MM/DD')}
-                      </Text>
-                      <Text>{moment(h.start_time).format('LT')}</Text>
-                      <Text>{moment(h.end_time).format('LT')}</Text>
-                      <Text>{`${total}h`}</Text>
-                    </View>
-                  );
-                })}
-              </ScrollView>
-            </View>
+          <View style={styles.listHeader}>
+            <Text>Date</Text>
+            <Text>Check In</Text>
+            <Text>Check Out</Text>
+            <Text>Total</Text>
+          </View>
+          <Separator />
+          {history && history.length > 0 ? (
+            history.map((h: History) => {
+              const a = h.start_time ? moment(h.start_time) : null;
+              const b = h.end_time ? moment(h.end_time) : null;
+              const total = a && b ? `${b.diff(a, 'hours')}h` : 'N/A';
+              return (
+                <View style={styles.list}>
+                  <Text>
+                    {a ? `${moment(a || b).format('YYYY/MM/DD')}` : 'N/A'}
+                  </Text>
+                  <Text>{a ? `${a.format('LT')}` : 'N/A'}</Text>
+                  <Text>{b ? `${b.format('LT')}` : 'N/A'}</Text>
+                  <Text>{`${total}`}</Text>
+                </View>
+              );
+            })
+          ) : (
+            <Text style={styles.noMatch}>No records matched</Text>
           )}
-          {history !== null && history.length === 0 && (
-            <View>
-              <Text style={{textAlign: 'center', marginTop: 50}}>
-                No records matched
-              </Text>
-            </View>
-          )}
-        </View>
+        </ScrollView>
       ) : (
-        <View>
-          <Text>You currenly have no working records</Text>
-        </View>
+        <Text>You currenly have no working records</Text>
       )}
     </SafeAreaView>
   );

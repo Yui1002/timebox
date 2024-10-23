@@ -49,6 +49,22 @@ class AutheModels {
     return hashedPassword;
   }
 
+  async handleOtp(email: string) {
+    const otp = this.generateOtp();
+    try {
+      const otpExist = await this.checkOtpExists(email);
+      if (otpExist) {
+        await this.updateOtp(otp, email);
+      } else {
+        await this.storeOtp(email, otp);
+      }
+      await this.sendOtp(email, otp);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
@@ -86,6 +102,10 @@ class AutheModels {
     return await this.repositories.storeOtp(otp, email);
   }
 
+  async deleteOtp(email: string) {
+    return await this.repositories.deleteOtp(email);
+  }
+
   async validateCodeExpiration(req: any) {
     const { ownerEmail, submittedDate } = req;
     const ownerId = await this.repositories.getUserId(ownerEmail);
@@ -97,12 +117,20 @@ class AutheModels {
   }
 
   async resetPassword(req: any) {
-    const { email, password } = req;
-    const hashedPassword = await bcrypt.hash(
-      password,
-      Number(process.env.SALT_ROUNDS)
-    );
-    return await this.repositories.resetPassword(email, hashedPassword);
+    try {
+      const { email, password } = req;
+      const isPrevPwdUsed = await this.isPasswordMatch(email, password);
+      if (isPrevPwdUsed) {
+        throw new Error("You cannot set the current password")
+      }
+      const hashedPassword = await bcrypt.hash(
+        password,
+        Number(process.env.SALT_ROUNDS)
+      );
+      return await this.repositories.resetPassword(email, hashedPassword);
+    } catch (err) {
+      return err;
+    }
   }
 }
 

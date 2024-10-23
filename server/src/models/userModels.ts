@@ -21,12 +21,8 @@ class UserModels {
   }
 
   async getEmployers(email: string) {
-    const serviceProviderId = await this.repositories.getUserId(email);
-    return await this.repositories.getEmployers(serviceProviderId);
-  }
-
-  async getEmployerId(email: string) {
-    return await this.repositories.getEmployerId(email);
+    const spId = await this.repositories.getUserId(email);
+    return await this.repositories.getEmployers(spId);
   }
 
   async getServiceProviderId(email: string) {
@@ -38,216 +34,257 @@ class UserModels {
     return await this.repositories.getServiceProviders(userId);
   }
 
-  async emailToNotFoundUser(email: string, userInfo: any) {
-    const { firstName, lastName, userEmail } = userInfo;
-    const mailOptions = {
-      from: userEmail,
-      to: email,
-      subject: `Request from ${firstName} ${lastName}`,
-      text: `${firstName} ${lastName} want to add you as a service provider. If you approve this request, download the app from this link: `,
-    };
-    try {
-      const userId = await this.repositories.getUserId(userEmail)
-      const emailHasBeenSent = await this.repositories.emailHasBeenSent(email, userId)
-      if (emailHasBeenSent) {
-        return false;
-      }
-      await this.repositories.addEmailToSentList(email, userId);
-      await transporter.sendMail(mailOptions);
-      return true;
-    } catch (err) {
-      return false;
-    } finally {
-      transporter.close();
-    }
+  async getServiceProvider(req: any) {
+    const { spEmail, epEmail } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
+    );
+    return await this.repositories.getServiceProvider(transactionId);
   }
 
   async getUser(email: string) {
     return await this.repositories.getUser(email);
   }
 
+  async getUserId(email: string) {
+    return await this.repositories.getUserId(email);
+  }
+
   async checkUserExists(email: string) {
     return await this.repositories.checkUserExists(email);
   }
 
-  async addServiceProvider(req: any) {
-    const {
-      firstName,
-      lastName,
-      serviceProviderEmail,
-      employerEmail,
-      rate,
-      rateType,
-      lists,
-    } = req;
-    const userId = await this.repositories.addServiceProviderInfo(
-      firstName,
-      lastName,
-      serviceProviderEmail
-    );
-    const employerId = await this.repositories.getEmployerId(employerEmail);
-    const transactionId = await this.repositories.addRateInfo(
-      rate,
-      rateType,
-      employerEmail,
-      employerId,
-      userId
-    );
-    return await this.repositories.addSchedule(userId, transactionId, lists);
-  }
-
   async editServiceProvider(req: any) {
-    // Frances wants to change
-    const {
-      email_address,
-      updatedFirstName,
-      updatedLastName,
-      updatedEmail,
-      updatedStatus,
-    } = req;
-    // update users table
-    const userId = await this.repositories.getUserId(email_address);
-    await this.repositories.updateServiceProviderInfo(
-      updatedFirstName,
-      updatedLastName,
-      updatedEmail,
-      updatedStatus
-    );
-    // update user_transaction table
-    // update user_schedule table
-  }
+    const { params, spEmail, epEmail } = req;
+    const data: { [key: string]: string | number } = {};
 
-  async editUser(req: any) {
-    const userId = await this.repositories.getUserId(req.user_name);
-    await this.repositories.editUser(req, userId);
-    const schedule = await this.repositories.getScheduleByUserId(userId);
-    return req.finalShifts.map(
-      async (s: { day: string; start_time: string; end_time: number }) => {
-        await this.repositories.editSchedule(userId, s);
-        // const isMatch = schedule.some((d: any) => d.day === s.day);
-        // if (isMatch) {
-        //   await this.repositories.editSchedule(userId, s);
-        // }
+    try {
+      const epId = await this.repositories.getUserId(epEmail);
+      const spId = await this.repositories.getUserId(spEmail);
+
+      if (epId && spId) {
+        data.employer_user_id = epId;
+        data.service_provider_id = spId;
+
+        const properties = ["rate", "rate_type", "status"];
+        for (const prop of properties) {
+          if (params.hasOwnProperty(prop)) data[prop] = params[prop];
+        }
+        if (Object.keys(data).length > 2) {
+          await this.repositories.updateUserTransaction(data);
+        }
       }
-    );
+      if (req.params.hasOwnProperty("shift")) {
+        const transactionId = await this.repositories.getUserTransactionId(
+          epId,
+          spId
+        );
+        if (req.params.shift.length > 0) {
+          req.params.shift.map(async (s: any) => {
+            await this.repositories.updateUserSchedule(s, spId, transactionId);
+          });
+        } else {
+          await this.repositories.updateUserSchedule({}, spId, transactionId)
+        }
+      }
+      return true;
+    } catch (err) {
+      throw new Error("transaction id not found");
+    }
   }
 
-  async deleteServiceProvider(
-    employerEmail: string,
-    serviceProviderEmail: string
-  ) {
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
-    );
+  async deleteServiceProvider(epEmail: string, spEmail: string) {
+    const epId = await this.repositories.getUserId(epEmail);
+    const spId = await this.repositories.getUserId(spEmail);
     const transactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
+      epId,
+      spId
     );
     await this.repositories.deleteSchedules(transactionId);
     return await this.repositories.deleteServiceProvider(transactionId);
   }
 
   async recordTime(req: any) {
-    const { type, employerEmail, serviceProviderEmail } = req;
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
+    const { type, start, end, epEmail, spEmail, mode } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
     );
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const userTransactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
-    );
-    return type === "checkin"
-      ? await this.repositories.startRecord(
-          serviceProviderEmail,
-          userTransactionId
-        )
-      : await this.repositories.endRecord(userTransactionId);
+    return type === "start"
+      ? await this.repositories.startRecord(start, spEmail, transactionId, mode)
+      : await this.repositories.endRecord(start, end, transactionId);
   }
 
   async getTodaysRecord(req: any) {
-    const { employerEmail, serviceProviderEmail } = req;
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
+    const { epEmail, spEmail } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
     );
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const userTransactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
-    );
-    return await this.repositories.getTodaysRecord(userTransactionId);
+    return await this.repositories.getTodaysRecord(transactionId);
   }
 
   async getRecordByPeriod(req: any) {
-    const { employerEmail, serviceProviderEmail } = req;
-    let {from, to} = req;
+    const { epEmail, spEmail } = req;
+    let { from, to } = req;
 
     if (from.length > 0 && to.length < 1) {
-      to = moment(from).add(1, 'month').format('YYYY-MM-DD')
+      to = moment(from).add(1, "month").format("YYYY-MM-DD");
     } else if (from.length < 1 && to.length > 0) {
-      from = moment(to).subtract(1, 'month').format('YYYY-MM-DD')
+      from = moment(to).subtract(1, "month").format("YYYY-MM-DD");
     } else if (from.length < 1 && to.length < 1) {
-      from = moment(new Date()).subtract(1, 'month').format('YYYY-MM-DD')
-      to = moment(new Date()).format('YYYY-MM-DD')
+      from = moment(new Date()).subtract(1, "month").format("YYYY-MM-DD");
+      to = moment(new Date()).format("YYYY-MM-DD");
     }
 
-    const serviceProviderId = await this.repositories.getUserId(
-      serviceProviderEmail
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
     );
-    const employerId = await this.repositories.getUserId(employerEmail);
-    const userTransactionId = await this.repositories.getUserTransactionId(
-      employerId,
-      serviceProviderId
-    );
-    return await this.repositories.getRecordByPeriod(
-      userTransactionId,
-      from,
-      to
-    );
+    return await this.repositories.getRecordByPeriod(transactionId, from, to);
   }
 
-  async searchByDateYear(req: any) {
-    const { year, month, username } = req;
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.searchByDateYear(year, month, userId);
-  }
-
-  async getRecord(username: string) {
-    const currentYear = new Date().getFullYear().toString();
-    const currentMonth = (new Date().getMonth() + 1).toString();
-    const userId = await this.repositories.getUserId(username);
-    return await this.repositories.searchByDateYear(
-      currentYear,
-      currentMonth,
-      userId
+  async getRecordByDay(req: any) {
+    const { date, epEmail, spEmail } = req;
+    const spId = await this.repositories.getUserId(spEmail);
+    const epId = await this.repositories.getUserId(epEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
     );
+    return await this.repositories.getRecordByDay(transactionId, date);
   }
 
-  async sendEmailToServiceProvider(
-    emailTo: string,
-    employer: { firstName: string; lastName: string; email: string }
+  async checkRecordDuplicate(req: any) {
+    const { type, date, epEmail, spEmail } = req;
+    const epId = await this.repositories.getUserId(epEmail);
+    const spId = await this.repositories.getUserId(spEmail);
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
+    );
+    const rows = await this.repositories.checkDuplicate2(
+      type,
+      date,
+      transactionId
+    );
+    return rows.length > 0;
+  }
+
+  async sendRequestViaEmail(
+    receiver: string,
+    sender: { firstName: string; lastName: string; email: string },
+    request: any
   ) {
-    const { firstName, lastName, email } = employer;
+    const { firstName, lastName, email } = sender;
     const mailOptions = {
       from: email,
-      to: emailTo,
+      to: receiver,
       subject: `${firstName} ${lastName} requested you as a service provider`,
-      text: `${firstName} ${lastName} requested you as a service provider. Please open the app and approve this, otherwise ignore it.`,
+      text: request
+        ? `${firstName} ${lastName} requested you as a service provider.
+          Open the app, check notification page and approve or decline the request.`
+        : `${firstName} ${lastName} requested you as a service provider.
+          Download the app and create an account using this email address: ${receiver}.
+          After sign in, go to notification page to approve or decline the request.`,
     };
     try {
       await transporter.sendMail(mailOptions);
       return true;
     } catch (err) {
-      return false;
+      return new Error(`Failed to send a request to ${receiver}`);
     } finally {
       transporter.close();
     }
   }
 
-  async emailHasBeenSent(searchedEmail: string, employerEmail: string) {
-    const userId = await this.repositories.getUserId(employerEmail);
-    return await this.repositories.emailHasBeenSent(searchedEmail, userId);
+  async storeRequest(receiver: string, senderId: number, request: any) {
+    if (!request) {
+      return await this.repositories.storeRequest(
+        receiver,
+        senderId,
+        null,
+        null,
+        null,
+        null
+      );
+    } else {
+      const { rate, rate_type, mode, shifts } = request;
+      if (shifts.length > 0) {
+        shifts.map(
+          async (shift: {
+            day: string;
+            startTime: string;
+            endTime: string;
+          }) => {
+            await this.repositories.storeRequest(
+              receiver,
+              senderId,
+              rate,
+              rate_type,
+              mode,
+              shift
+            );
+          }
+        );
+      } else {
+        await this.repositories.storeRequest(
+          receiver,
+          senderId,
+          rate,
+          rate_type,
+          mode,
+          null
+        );
+      }
+    }
+  }
+
+  async emailHasBeenSent(receiver: string, sender: number) {
+    return await this.repositories.emailHasBeenSent(receiver, sender);
+  }
+
+  async getNotification(receiver: string) {
+    return await this.repositories.getNotification(receiver);
+  }
+
+  async updateRequest(sender: string, receiver: string, isApproved: boolean) {
+    const senderId = await this.repositories.getUserId(sender);
+    return await this.repositories.updateRequest(
+      senderId,
+      receiver,
+      isApproved
+    );
+  }
+
+  async acceptRequest(sender: string, receiver: string, request: any) {
+    // add to user_transaction
+    const employerId = await this.repositories.getUserId(sender);
+    const serviceProviderId = await this.repositories.getUserId(receiver);
+    const transactionId = await this.repositories.addToUserTransaction(
+      employerId,
+      serviceProviderId,
+      request,
+      receiver
+    );
+    // add to user_schedule
+    request.shifts.map(async (s: any) => {
+      await this.repositories.addToUserSchedule(
+        s,
+        serviceProviderId,
+        transactionId
+      );
+    });
+    return true;
   }
 }
 

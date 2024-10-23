@@ -21,4 +21,7 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 32
   },
+  indicator: {
+    marginTop: 20,
+  }
 });

@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -24,22 +26,27 @@ const SignUp = ({navigation}: any) => {
     type: '',
     msg: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const isUserRegistered = () => {
     if (!validateName() || !validateEmail() || !validatePassword()) {
       return;
     }
+
+    setLoading(true);
     axios
       .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
       .then(() => {
+        setLoading(false);
         navigation.navigate('VerifyOTP', {
           firstName,
           lastName,
           email,
-          password
+          password,
         });
       })
       .catch(err => {
+        setLoading(false);
         setinputError({
           type: 'SIGN_UP_ERROR',
           msg: err.response.data.error,
@@ -152,6 +159,7 @@ const SignUp = ({navigation}: any) => {
             <Text>Email</Text>
             <TextInput
               style={styles.input}
+              keyboardType="email-address"
               autoCorrect={false}
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
@@ -170,6 +178,8 @@ const SignUp = ({navigation}: any) => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 secureTextEntry={!showPassword}
+                blurOnSubmit={false}
+                onSubmitEditing={() => Keyboard.dismiss()}
                 onChangeText={val => setPassword(val)}
               />
               <Text
@@ -192,6 +202,8 @@ const SignUp = ({navigation}: any) => {
                 style={styles.input}
                 autoCorrect={false}
                 autoCapitalize="none"
+                blurOnSubmit={false}
+                onSubmitEditing={() => Keyboard.dismiss()}
                 secureTextEntry={!showPassword}
                 onChangeText={val => setConfirmedPassword(val)}
               />
@@ -208,9 +220,13 @@ const SignUp = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 14}} />
-          <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator color="#24a0ed" />
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
+              <Text style={styles.buttonText}>Sign Up</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Separator />
         <View style={styles.footer}>

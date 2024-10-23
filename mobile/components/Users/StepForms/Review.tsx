@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, Button, Alert, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView
+} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import {useSelector} from 'react-redux';
@@ -20,6 +27,7 @@ const Review = ({route, navigation}: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
+  const [loading, setLoading] = useState(false);
 
   const editDay = () => {
     navigation.navigate('WorkShifts', {
@@ -42,16 +50,25 @@ const Review = ({route, navigation}: any) => {
   };
 
   const confirmServiceProvider = () => {
+    const request = {
+      rate: rate,
+      rate_type: rateType,
+      mode: isEnabled,
+      shifts: workShifts.workShifts,
+    };
     axios
       .post(`${LOCAL_HOST_URL}/request`, {
-        emailTo: email,
-        employer: userInfo,
+        sender: userInfo,
+        receiver: email,
+        request: request,
       })
       .then(() => {
-        dispatch(resetShift());
+        dispatch(resetShift(workShifts.workShifts));
         showSuccess();
       })
-      .catch(err => [console.log(err)]);
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   const showSuccess = () => {
@@ -59,9 +76,9 @@ const Review = ({route, navigation}: any) => {
       'Success',
       `We have sent an email to ${firstName} ${lastName}. Once this request is approved, you will see this person on your service provider list.`,
       [
-        {
+        { 
           text: 'OK',
-          onPress: () => navigation.navigate('DrawerNav'),
+          onPress: () => navigation.navigate('Home'),
         },
       ],
       {cancelable: false},
@@ -69,19 +86,19 @@ const Review = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.statusBarContainer}>
-        {statusTitles.map((val, index) =>
-          statusTitles[index] === 'Review' ? (
-            <StatusBar key={index} title={val} isFocused={true} />
-          ) : (
-            <StatusBar key={index} title={val} isFocused={false} />
-          ),
-        )}
+        {statusTitles.map((val, index) => (
+          <StatusBar
+            key={index}
+            title={val}
+            isFocused={statusTitles[index] === 'Review'}
+          />
+        ))}
       </View>
       <View>
-        <View style={{marginVertical: 10}}>
-          <Text style={{fontSize: 20, fontWeight: '500'}}>Review</Text>
+        <View>
+          <Text style={styles.headerText}>Review</Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <View style={{width: '50%'}}>
@@ -147,8 +164,14 @@ const Review = ({route, navigation}: any) => {
               </View>
             ))
           ) : (
-            <Text>No days selected</Text>
+            <Text style={{fontSize: 18}}>No days selected</Text>
           )}
+        </View>
+        <View style={{marginTop: 20}}>
+          <Text style={{fontSize: 14}}>
+            Allow service provider to edit record time
+          </Text>
+          <Text style={{fontSize: 18}}>{isEnabled ? 'Yes' : 'No'}</Text>
         </View>
         <View style={styles.workShiftsBtn}>
           <TouchableOpacity
@@ -156,12 +179,18 @@ const Review = ({route, navigation}: any) => {
             onPress={() => navigation.goBack()}>
             <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.workShiftsBtn_add} onPress={confirmServiceProvider}>
-            <Text style={styles.buttonText}>Confirm</Text>
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator color="#0000ff" />
+          ) : (
+            <TouchableOpacity
+              style={styles.workShiftsBtn_add}
+              onPress={confirmServiceProvider}>
+              <Text style={styles.buttonText}>Confirm</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

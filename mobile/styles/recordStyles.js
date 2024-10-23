@@ -2,40 +2,49 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    height: '100%',
     height: '94%',
     margin: '5%',
   },
   header: {
-    height: '20%',
+    height: '14%',
   },
   headerText: {
     fontSize: 20,
     fontWeight: '500',
-    marginVertical: '12%'
   },
-  recordContainer: {
-    height: '50%',
-    flexDirection: "row",
+  headerSubText: {
+    fontSize: 16,
+  },
+  dateContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  dateBox: {
+    borderWidth: 1,
+    borderColor: '#909090',
+    borderRadius: 10,
+    width: '46%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 50
   },
   button_disabled: {
     backgroundColor: '#D8D8D8',
     padding: 14,
     borderRadius: 10,
     width: "45%",
-    height: '90%',
+    height: '80%',
   },
   checkInButton: {
     width: "45%",
-    height: '90%',
+    height: '80%',
     backgroundColor: '#26b226',
     padding: 14,
     borderRadius: 10,
   },
   checkOutButton: {
     width: "45%",
-    height: '90%',
+    height: '80%',
     backgroundColor: '#F28C28',
     padding: 14,
     borderRadius: 10,
@@ -50,7 +59,10 @@ export const styles = StyleSheet.create({
     marginVertical: 10
   },
   dateText: {
-    textAlign: 'center'
+    padding: 6
+  },
+  subText: {
+    color: '#707070'
   },
   buttonText: {
     color: '#fff',
@@ -60,8 +72,8 @@ export const styles = StyleSheet.create({
   },
   todayRecordContainer: {
     marginHorizontal: 30,
+    marginVertical: 30,
     paddingRight: 30,
-    height: '30%'
   },
   todayRecord: {
     flexDirection: 'row',
@@ -73,4 +85,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  error: {
+    color: 'red',
+  }
 });

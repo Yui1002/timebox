@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     color: '#ff0000',
     fontSize: 12,
   },
-  signInError: {
+  error: {
     width: '100%',
     backgroundColor: '#FFCCCB'
   }

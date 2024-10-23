@@ -3,16 +3,18 @@ import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     margin: '5%',
-    height: '100%'
+    flex: 1
   },
-  subContainer: {
-    height: '50%', 
-    marginHorizontal: 14
+  align: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
-  infoContainer: {
+  align_2: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: '20%',
+  },
+  subContainer: {
+    height: '15%', 
   },
   text: {
     fontSize: 14,
@@ -37,11 +39,18 @@ export const styles = StyleSheet.create({
     backgroundColor: '#24a0ed',
     borderRadius: 10,
     width: '50%',
-    marginVertical: 20,
-    position: 'absolute',
-    top: '30%',
-    left: '25%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginVertical: '4%',
+    marginHorizontal: 'auto'
   },
+  saveButton: {
+    backgroundColor: '#F28C28',
+    borderRadius: 10,
+    width: '50%',
+    marginVertical: '4%',
+    marginHorizontal: 'auto'
+  },
+  error: {
+    color: 'red',
+    fontSize: 10
+  }
 });

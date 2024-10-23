@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {
@@ -9,6 +9,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import validator from 'validator';
 import {styles} from '../../styles/signInStyles.js';
@@ -22,28 +23,27 @@ const SignIn = ({navigation}: any) => {
     type: '',
     msg: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const signIn = () => {
     if (!validateEmail() || !validatePassword()) {
       return;
     }
+
+    setLoading(true);
     axios
       .post(`${LOCAL_HOST_URL}/signIn`, {
         email,
         password,
       })
       .then(res => {
-        const value = {
-          firstName: res.data.firstName,
-          lastName: res.data.lastName,
-          email: email,
-        };
-        dispatch(signInUser(value));
+        setLoading(false);
+        dispatchUser(res);
         clearInput();
         navigation.navigate('DrawerNav');
       })
       .catch(err => {
-        console.log(err.response)
+        setLoading(false);
         const errMsg = err.response.data.error;
         const error = {type: 'SIGN_IN_ERROR', msg: errMsg};
         setinputError(error);
@@ -96,13 +96,33 @@ const SignIn = ({navigation}: any) => {
     });
   };
 
+  const navigateToSignUp = () => {
+    navigation.navigate('SignUp');
+    clearInput();
+    setinputError({
+      type: '',
+      msg: '',
+    });
+  };
+
+  const dispatchUser = (res: any) => {
+    const value = {
+      firstName: res.data.firstName,
+      lastName: res.data.lastName,
+      email: email,
+    };
+    dispatch(signInUser(value));
+  }
+
   const Separator = () => <View style={styles.separator}></View>;
 
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
         <View>
-          {inputError.type === 'SIGN_IN_ERROR' && <SignInError />}
+          <View style={{marginVertical: 10}}>
+            {inputError.type === 'SIGN_IN_ERROR' && <SignInError />}
+          </View>
           <View>
             <Text>Email</Text>
             <TextInput
@@ -133,17 +153,19 @@ const SignIn = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 20}} />
-          <TouchableOpacity style={styles.button} onPress={signIn}>
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator color="#24a0ed" />
+          ) : (
+            <TouchableOpacity style={styles.button} onPress={signIn}>
+              <Text style={styles.buttonText}>Sign In</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Separator />
         <View style={styles.footer}>
           <View>
             <Text>New user?</Text>
-            <Text
-              style={styles.link}
-              onPress={() => navigation.navigate('SignUp')}>
+            <Text style={styles.link} onPress={navigateToSignUp}>
               Sign Up
             </Text>
           </View>

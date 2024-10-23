@@ -8,25 +8,6 @@ class AuthControllers {
     this.models = new AutheModels();
   }
 
-  async logFile(req: any, res: any) {
-    log4js.configure({
-      appenders: {
-        app: { type: "file", filename: "app.log" },
-      },
-      categories: {
-        default: {
-          appenders: ["app"],
-          level: "info",
-        },
-      },
-    });
-
-    const logger = log4js.getLogger();
-    logger.info("This is my first log4js");
-
-    res.send("success");
-  }
-
   async isUserRegistered(req: any, res: any) {
     const { email } = req.params;
     const isUserRegistered = await this.models.isUserRegistered(email);
@@ -34,7 +15,8 @@ class AuthControllers {
       res.status(400).json({ error: "This email is already used" });
       return;
     }
-    res.sendStatus(200);
+    const otpSuccess = await this.models.handleOtp(email);
+    otpSuccess ? res.sendStatus(200) : res.sendStatus(400);
   }
 
   async isEmailRegistered(req: any, res: any) {
@@ -72,37 +54,31 @@ class AuthControllers {
     });
   }
 
+  async resendOtp(req: any, res: any) {
+    const {email} = req.body;
+    const otpSuccess = await this.models.handleOtp(email);
+    otpSuccess ? res.sendStatus(200) : res.sendStatus(400);
+  }
+
   async verifyOTP(req: any, res: any) {
     const { otp, email } = req.body;
     const isOtpVerified = await this.models.verifyOtp(email, otp);
-    isOtpVerified
-      ? res.sendStatus(200)
-      : res.status(400).json({ error: "Entered OTP is invalid or expired" });
-  }
-
-  async sendOTP(req: any, res: any) {
-    const { email } = req.body;
-    const otp = this.models.generateOtp();
-    try {
-      const otpExist = await this.models.checkOtpExists(email);
-      console.log(otpExist)
-      if (otpExist) {
-        await this.models.updateOtp(otp, email);
-      } else {
-        await this.models.storeOtp(email, otp);
-      }
-      await this.models.sendOtp(email, otp);
+    if (isOtpVerified) {
+      await this.models.deleteOtp(email);
       res.sendStatus(200);
-    } catch (e) {
-      res.sendStatus(400);
+      return;
     }
+
+    res.status(400).json({ error: "Entered OTP is invalid or expired" });
   }
 
   async resetPassword(req: any, res: any) {
     const response = await this.models.resetPassword(req.body);
-    response
-      ? res.sendStatus(200)
-      : res.status(400).json({ error: "Failed to reset password" });
+    if (response.name === 'Error') {
+      res.status(400).json({ error: response.message });
+      return;
+    }
+    res.sendStatus(200)
   }
 }
 
