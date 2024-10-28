@@ -59,42 +59,93 @@ class UserModels {
 
   async editServiceProvider(req: any) {
     const { params, spEmail, epEmail } = req;
+    const epId = await this.repositories.getUserId(epEmail);
+    const spId = await this.repositories.getUserId(spEmail);
+    await this.editUserTransaction(params, epId, spId);
+    await this.editUserSchedule(params, epId, spId);
+    return true;
+    // const { params, spEmail, epEmail } = req;
+    // const data: { [key: string]: string | number } = {};
+
+    // try {
+    //   const epId = await this.repositories.getUserId(epEmail);
+    //   const spId = await this.repositories.getUserId(spEmail);
+
+    //   if (epId && spId) {
+    //     data.employer_user_id = epId;
+    //     data.service_provider_id = spId;
+
+    //     const properties = ["rate", "rate_type", "status"];
+    //     for (const prop of properties) {
+    //       if (params.hasOwnProperty(prop)) data[prop] = params[prop];
+    //     }
+    //     if (Object.keys(data).length > 2) {
+    //       await this.repositories.updateUserTransaction(data);
+    //     }
+    //   }
+    //   if (req.params.hasOwnProperty("shift")) {
+    //     const transactionId = await this.repositories.getUserTransactionId(
+    //       epId,
+    //       spId
+    //     );
+    //     if (req.params.shift.length > 0) {
+    //       req.params.shift.map(async (s: any) => {
+    //         await this.repositories.updateUserSchedule(s, spId, transactionId);
+    //       });
+    //     } else {
+    //       await this.repositories.updateUserSchedule({}, spId, transactionId)
+    //     }
+    //   }
+    //   return true;
+    // } catch (err) {
+    //   throw new Error("transaction id not found");
+    // }
+  }
+
+  async editUserTransaction(params: any, epId: number, spId: number) {
+    if (
+      !params.hasOwnProperty("rate") &&
+      !params.hasOwnProperty("rate_type") &&
+      !params.hasOwnProperty("status")
+    ) {
+      return;
+    }
     const data: { [key: string]: string | number } = {};
 
     try {
-      const epId = await this.repositories.getUserId(epEmail);
-      const spId = await this.repositories.getUserId(spEmail);
+      data.employer_user_id = epId;
+      data.service_provider_id = spId;
 
-      if (epId && spId) {
-        data.employer_user_id = epId;
-        data.service_provider_id = spId;
-
-        const properties = ["rate", "rate_type", "status"];
-        for (const prop of properties) {
-          if (params.hasOwnProperty(prop)) data[prop] = params[prop];
-        }
-        if (Object.keys(data).length > 2) {
-          await this.repositories.updateUserTransaction(data);
-        }
+      const properties = ["rate", "rate_type", "status"];
+      for (const prop of properties) {
+        if (params.hasOwnProperty(prop)) data[prop] = params[prop];
       }
-      if (req.params.hasOwnProperty("shift")) {
-        const transactionId = await this.repositories.getUserTransactionId(
-          epId,
-          spId
-        );
-        if (req.params.shift.length > 0) {
-          req.params.shift.map(async (s: any) => {
-            await this.repositories.updateUserSchedule(s, spId, transactionId);
-          });
-        } else {
-          await this.repositories.updateUserSchedule({}, spId, transactionId)
-        }
+      if (Object.keys(data).length > 2) {
+        return await this.repositories.updateUserTransaction(data);
       }
-      return true;
     } catch (err) {
-      throw new Error("transaction id not found");
+      return err;
     }
   }
+
+  async editUserSchedule(params: any, epId: number, spId: number) {
+    if (!params.hasOwnProperty("shift")) return;
+    const transactionId = await this.repositories.getUserTransactionId(
+      epId,
+      spId
+    );
+    try {
+      const deleted = await this.repositories.deleteSchedules(transactionId);
+      if (deleted) {
+        params.shift.map(async (s: any) => {
+          await this.repositories.updateUserSchedule(s, spId, transactionId);
+        })
+      }
+    } catch (err) {
+      return err;
+    }
+  }
+
 
   async deleteServiceProvider(epEmail: string, spEmail: string) {
     const epId = await this.repositories.getUserId(epEmail);
