@@ -33,10 +33,16 @@ export const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
     padding: '2%',
-    lineHeight: 30
+    lineHeight: 30,
+    marginVertical: 4
   },
   listText: {
     fontSize: 16, 
     fontWeight: '500',
+  },
+  statusText: {
+    marginLeft: 'auto',
+    marginRight: 0,
+    fontSize: 12
   }
 });

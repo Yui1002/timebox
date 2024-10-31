@@ -31,7 +31,7 @@ interface Shift {
 const Profile = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
   const userInfo = useSelector(state => state.userInfo);
-  const {first_name, last_name, email_address} = route.params.sp;
+  const {first_name, last_name, email_address, request_status} = route.params.sp;
   const [workInfo, setWorkInfo] = useState<WorkInfo>({
     rate: null,
     rate_type: null,
@@ -139,7 +139,7 @@ const Profile = ({route, navigation}: any) => {
         </View>
         <View style={styles.title}>
           <Text style={styles.text}>Status</Text>
-          <Text>{workInfo.status}</Text>
+          <Text>{request_status}</Text>
         </View>
         <View style={styles.title}>
           <Text style={styles.text}>Rate</Text>
