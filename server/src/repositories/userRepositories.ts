@@ -62,6 +62,12 @@ class UserRepositories extends Repositories {
     return data.rows;
   }
 
+  async getRequests(senderId: number) {
+    const sql = `SELECT * FROM requests WHERE sender = $1;`;
+    const data = await this.queryDB(sql, [senderId]);
+    return data.rows;
+  }
+
   /**
    * First get the original user transaction
    * @param req {key: value}

@@ -17,7 +17,7 @@ interface ServiceProvider {
   first_name: string;
   last_name: string;
   email_address: string;
-  status: string;
+  request_status: string;
 }
 
 const ManageServiceProviders = (props: any) => {
@@ -40,7 +40,8 @@ const ManageServiceProviders = (props: any) => {
         },
       })
       .then(res => {
-        setServiceProviders(res.data);
+        console.log(res.data);
+        setServiceProviders(sortStatus(res.data));
       })
       .catch(err => {
         console.log(err);
@@ -51,6 +52,15 @@ const ManageServiceProviders = (props: any) => {
     props.navigation.navigate('Profile', {
       sp,
     });
+  };
+
+  const sortStatus = (item: []) => {
+    const order = ['Active', 'Rejected', 'Pending'];
+    item.sort(
+      (a: ServiceProvider, b: ServiceProvider) =>
+        order.indexOf(a.request_status) - order.indexOf(b.request_status),
+    );
+    return item;
   };
 
   return (
@@ -70,15 +80,24 @@ const ManageServiceProviders = (props: any) => {
       <ScrollView style={styles.subContainer}>
         {serviceProviders && serviceProviders.length > 0 ? (
           serviceProviders.map((sp: ServiceProvider, index: number) => {
-            if (isBoxChecked || sp.status === 'active') {
-              const {first_name, last_name, email_address} = sp;
+            if (isBoxChecked || sp.request_status === 'Active') {
+              const {first_name, last_name, email_address, request_status} = sp;
               return (
                 <TouchableOpacity
                   key={index}
                   style={styles.listContainer}
-                  onPress={() => navigateToProfile(sp)}>
+                  onPress={
+                    request_status === 'Active'
+                      ? () => navigateToProfile(sp)
+                      : () => null
+                  }>
+                  <Text style={styles.statusText}>{request_status}</Text>
                   <Text style={styles.listText}>
-                    {first_name} {last_name}
+                    {`${
+                      first_name
+                        ? `${first_name} ${last_name}`
+                        : `Name not specified`
+                    }`}
                   </Text>
                   <Text>{email_address}</Text>
                 </TouchableOpacity>

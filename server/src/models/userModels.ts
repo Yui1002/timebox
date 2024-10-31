@@ -34,6 +34,11 @@ class UserModels {
     return await this.repositories.getServiceProviders(userId);
   }
 
+  async getRequests(email: string) {
+    const senderId = await this.repositories.getUserId(email);
+    return await this.repositories.getRequests(senderId);
+  }
+
   async getServiceProvider(req: any) {
     const { spEmail, epEmail } = req;
     const spId = await this.repositories.getUserId(spEmail);
