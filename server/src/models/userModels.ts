@@ -309,6 +309,10 @@ class UserModels {
     return await this.repositories.emailHasBeenSent(receiver, sender);
   }
 
+  async getRequestStatus(sender: number, receiver: string) {
+    return await this.repositories.getRequestStatus(sender, receiver)
+  }
+
   async getNotification(receiver: string) {
     return await this.repositories.getNotification(receiver);
   }

@@ -263,6 +263,13 @@ class UserRepositories extends Repositories {
     return data.rows[0].count > 0;
   }
 
+  async getRequestStatus(sender: number, receiver: string) {
+    const sql = `SELECT is_approved FROM requests
+                  WHERE sender = $1 AND receiver = $2;`;
+    const data = await this.queryDB(sql, [sender, receiver])
+    return data.rows[0].is_approved;
+  }
+
   async storeRequest(
     receiver: string,
     sender: number,

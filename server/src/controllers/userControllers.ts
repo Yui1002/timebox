@@ -63,6 +63,12 @@ class UserControllers {
     try {
       const { receiver, sender } = req.query;
       const senderId = await this.models.getUserId(sender);
+      /**
+       * 1. request is already approved => cannot send again
+       * 2. request is denied => can send after 30 minutes
+       * 3. request is pending => can send after 3 days
+       */
+      const status = this.models.getRequestStatus(senderId, receiver)
       const isRequestDuplicate = await this.models.emailHasBeenSent(
         receiver,
         senderId
