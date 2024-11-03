@@ -21,7 +21,6 @@ class Routes {
         app.post('/otp/verify', this.authControllers.verifyOTP.bind(this.authControllers));
 
         app.get('/employers', this.userControllers.getEmployers.bind(this.userControllers));
-        app.get('/user/:email', this.userControllers.getUser.bind(this.userControllers));
 
         app.get('/requests', this.userControllers.getRequests.bind(this.userControllers));
         app.post('/request', this.userControllers.sendRequest.bind(this.userControllers));
@@ -32,7 +31,6 @@ class Routes {
         app.get('/serviceProvider', this.userControllers.getServiceProvider.bind(this.userControllers));
         app.get('/serviceProviders', this.userControllers.getServiceProviders.bind(this.userControllers));
         app.delete('/serviceProvider', this.userControllers.deleteServiceProvider.bind(this.userControllers));
-        app.get('/user/:username', this.userControllers.getUser.bind(this.userControllers));
         app.post('/edit/serviceProvider', this.userControllers.editServiceProvider.bind(this.userControllers));
         app.post('/record', this.userControllers.recordTime.bind(this.userControllers));
         app.get('/record/today', this.userControllers.getTodaysRecord.bind(this.userControllers));

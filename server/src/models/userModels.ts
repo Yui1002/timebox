@@ -1,5 +1,7 @@
 import UserRepositories from "../repositories/userRepositories";
-import { ServiceProviderInterface } from "../interfaces/ServiceProviderInterface";
+import { Employer } from "../interfaces/Employer";
+import { User } from "../interfaces/User"
+import { ServiceProvider } from "../interfaces/ServiceProvider";
 import dotenv from "dotenv";
 dotenv.config();
 import nodemailer from "nodemailer";
@@ -20,29 +22,28 @@ class UserModels {
     this.repositories = new UserRepositories();
   }
 
-  async getEmployers(email: string) {
-    const spId = await this.repositories.getUserId(email);
+  async getEmployers(email: string): Promise<Employer> {
+    const spId: number = (await this.repositories.getUser(email))?.user_id;
     return await this.repositories.getEmployers(spId);
   }
 
-  async getServiceProviderId(email: string) {
-    return await this.repositories.getServiceProviderId(email);
+  async getUser(email: string): Promise<User> {
+    return await this.repositories.getUser(email);
   }
 
-  async getServiceProviders(employerEmail: string) {
-    const userId = await this.repositories.getUserId(employerEmail);
-    return await this.repositories.getServiceProviders(userId);
+  async getServiceProviders(email: string): Promise<ServiceProvider> {
+    return await this.repositories.getServiceProviders(email);
   }
 
   async getRequests(email: string) {
-    const senderId = await this.repositories.getUserId(email);
+    const senderId: number = (await this.repositories.getUser(email)).user_id;
     return await this.repositories.getRequests(senderId);
   }
 
   async getServiceProvider(req: any) {
     const { spEmail, epEmail } = req;
-    const spId = await this.repositories.getUserId(spEmail);
-    const epId = await this.repositories.getUserId(epEmail);
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -50,22 +51,15 @@ class UserModels {
     return await this.repositories.getServiceProvider(transactionId);
   }
 
-  async getUser(email: string) {
-    return await this.repositories.getUser(email);
-  }
 
   async getUserId(email: string) {
-    return await this.repositories.getUserId(email);
-  }
-
-  async checkUserExists(email: string) {
-    return await this.repositories.checkUserExists(email);
+    // return await this.repositories.getUserId(email);
   }
 
   async editServiceProvider(req: any) {
     const { params, spEmail, epEmail } = req;
-    const epId = await this.repositories.getUserId(epEmail);
-    const spId = await this.repositories.getUserId(spEmail);
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
     await this.editUserTransaction(params, epId, spId);
     await this.editUserSchedule(params, epId, spId);
     return true;
@@ -153,8 +147,8 @@ class UserModels {
 
 
   async deleteServiceProvider(epEmail: string, spEmail: string) {
-    const epId = await this.repositories.getUserId(epEmail);
-    const spId = await this.repositories.getUserId(spEmail);
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -165,8 +159,8 @@ class UserModels {
 
   async recordTime(req: any) {
     const { type, start, end, epEmail, spEmail, mode } = req;
-    const spId = await this.repositories.getUserId(spEmail);
-    const epId = await this.repositories.getUserId(epEmail);
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -178,8 +172,8 @@ class UserModels {
 
   async getTodaysRecord(req: any) {
     const { epEmail, spEmail } = req;
-    const spId = await this.repositories.getUserId(spEmail);
-    const epId = await this.repositories.getUserId(epEmail);
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -200,8 +194,8 @@ class UserModels {
       to = moment(new Date()).format("YYYY-MM-DD");
     }
 
-    const spId = await this.repositories.getUserId(spEmail);
-    const epId = await this.repositories.getUserId(epEmail);
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -211,8 +205,8 @@ class UserModels {
 
   async getRecordByDay(req: any) {
     const { date, epEmail, spEmail } = req;
-    const spId = await this.repositories.getUserId(spEmail);
-    const epId = await this.repositories.getUserId(epEmail);
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -222,8 +216,8 @@ class UserModels {
 
   async checkRecordDuplicate(req: any) {
     const { type, date, epEmail, spEmail } = req;
-    const epId = await this.repositories.getUserId(epEmail);
-    const spId = await this.repositories.getUserId(spEmail);
+    const spId: number = (await this.repositories.getUser(spEmail)).user_id;
+    const epId: number = (await this.repositories.getUser(epEmail)).user_id;
     const transactionId = await this.repositories.getUserTransactionId(
       epId,
       spId
@@ -318,7 +312,7 @@ class UserModels {
   }
 
   async updateRequest(sender: string, receiver: string, isApproved: boolean) {
-    const senderId = await this.repositories.getUserId(sender);
+    const senderId: number = (await this.repositories.getUser(sender)).user_id;
     return await this.repositories.updateRequest(
       senderId,
       receiver,
@@ -328,11 +322,11 @@ class UserModels {
 
   async acceptRequest(sender: string, receiver: string, request: any) {
     // add to user_transaction
-    const employerId = await this.repositories.getUserId(sender);
-    const serviceProviderId = await this.repositories.getUserId(receiver);
+    const spId: number = (await this.repositories.getUser(sender)).user_id;
+    const epId: number = (await this.repositories.getUser(receiver)).user_id;
     const transactionId = await this.repositories.addToUserTransaction(
-      employerId,
-      serviceProviderId,
+      epId,
+      spId,
       request,
       receiver
     );
@@ -340,7 +334,7 @@ class UserModels {
     request.shifts.map(async (s: any) => {
       await this.repositories.addToUserSchedule(
         s,
-        serviceProviderId,
+        spId,
         transactionId
       );
     });

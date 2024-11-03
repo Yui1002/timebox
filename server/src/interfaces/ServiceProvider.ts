@@ -1,6 +1,6 @@
-export interface ServiceProviderInterface {
-    firstName: string,
-    lastName: string,
+export interface ServiceProvider {
+    first_name: string,
+    last_name: string,
     email: string,
     password: string,
     rate: number,

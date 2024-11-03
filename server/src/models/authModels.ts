@@ -1,5 +1,4 @@
 import AuthRepositories from "../repositories/authRepositories";
-import { EmployerInterface } from "../interfaces/EmployerInterface";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();

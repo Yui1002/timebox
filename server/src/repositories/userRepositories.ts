@@ -1,26 +1,41 @@
 import Repositories from "./repositories";
+import { Employer } from "../interfaces/Employer";
+import { User } from "../interfaces/User";
+import { ServiceProvider } from "../interfaces/ServiceProvider";
 
 class UserRepositories extends Repositories {
   constructor() {
     super();
   }
 
-  async getUserId(email: string) {
-    const sql = "SELECT user_id FROM users WHERE email_address = $1;";
-    const data = (await this.queryDB(sql, [email])).rows;
-    return data[0].user_id;
+  async getEmployers(serviceProviderId: number): Promise<Employer> {
+    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode
+        FROM users u
+        INNER JOIN user_transaction ut
+        ON ut.employer_user_id = u.user_id
+        WHERE ut.service_provider_id = $1;`;
+    const data = (await this.queryDB(sql, [serviceProviderId]))?.rows;
+    return data;
   }
 
-  async getServiceProviderId(email: string) {
-    const sql =
-      "SELECT id FROM service_provider WHERE EXISTS (SELECT id FROM application_user WHERE email_address = $1);";
-    return (await this.queryDB(sql, [email])).rows[0].id;
+  async getUser(email: string): Promise<User> {
+    const sql = `SELECT
+        user_id, first_name, last_name, email_address, status
+        FROM users WHERE email_address = $1;`;
+    const data = await this.queryDB(sql, [email]);
+    console.log("data", data?.rows[0]);
+    return data?.rows[0];
   }
 
-  async getServiceProviderIds(userId: string) {
-    const sql =
-      "SELECT service_provider_id FROM user_transaction WHERE employer_user_id = $1;";
-    return (await this.queryDB(sql, [userId])).rows[0];
+  async getServiceProviders(email: string): Promise<ServiceProvider> {
+    const sql = `SELECT
+      r.receiver email, r.is_approved status, r.request_rate rate, r.request_rate_type rate_type, r.request_schedule_day AS day, r.request_schedule_start_time start_time, r.request_schedule_end_time end_time, r.request_mode allow_edit, u2.first_name, u2.last_name
+      FROM requests r
+      INNER JOIN users u ON r.sender = u.user_id
+      LEFT JOIN users u2 ON r.receiver = u2.email_address
+      WHERE u.email_address = $1;`;
+    const data = (await this.queryDB(sql, [email]))?.rows;
+    return data;
   }
 
   async getUserTransactionId(employerId: number, serviceProviderId: number) {
@@ -28,28 +43,6 @@ class UserRepositories extends Repositories {
       "SELECT user_transaction_id FROM user_transaction WHERE employer_user_id = $1 AND service_provider_id = $2;";
     return (await this.queryDB(sql, [employerId, serviceProviderId])).rows[0]
       .user_transaction_id;
-  }
-
-  async checkUserExists(email: string) {
-    const sql = "SELECT COUNT (*) FROM users WHERE email_address = $1;";
-    return (await this.queryDB(sql, [email])).rowCount > 0;
-  }
-
-  // ---------------------  Users  --------------------------------
-  async getEmployers(serviceProviderId: number) {
-    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode
-        FROM users u
-        INNER JOIN user_transaction ut
-        ON ut.employer_user_id = u.user_id
-        WHERE ut.service_provider_id = $1;`;
-    return (await this.queryDB(sql, [serviceProviderId])).rows;
-  }
-
-  async getServiceProviders(employerId: string) {
-    const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.status FROM users u
-                  INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id
-                  WHERE employer_user_id = $1;`;
-    return (await this.queryDB(sql, [employerId])).rows;
   }
 
   async getServiceProvider(transactionId: number) {
@@ -103,8 +96,8 @@ class UserRepositories extends Repositories {
   }
 
   async updateUserSchedule(schedule: any, spId: number, transactionId: number) {
-    console.log('schedule', schedule)
-    const {day, start_time, end_time} = schedule;
+    console.log("schedule", schedule);
+    const { day, start_time, end_time } = schedule;
     const sql = `INSERT INTO user_schedule VALUES (DEFAULT, $1, $2, $3, $4, $5);`;
     await this.queryDB(sql, [day, start_time, end_time, spId, transactionId]);
     return true;
@@ -144,12 +137,6 @@ class UserRepositories extends Repositories {
     }
     baseQuery = baseQuery.substring(0, baseQuery.length - 1);
     return { baseQuery: baseQuery + ";", queryArgs };
-  }
-
-  async getUser(email: string) {
-    const sql =
-      "SELECT first_name, last_name, email_address FROM users WHERE email_address = $1;";
-    return (await this.queryDB(sql, [email])).rows;
   }
 
   async deleteServiceProvider(transactionId: string) {
@@ -266,7 +253,7 @@ class UserRepositories extends Repositories {
   async getRequestStatus(sender: number, receiver: string) {
     const sql = `SELECT is_approved FROM requests
                   WHERE sender = $1 AND receiver = $2;`;
-    const data = await this.queryDB(sql, [sender, receiver])
+    const data = await this.queryDB(sql, [sender, receiver]);
     return data.rows[0].is_approved;
   }
 

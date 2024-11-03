@@ -12,19 +12,30 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from '../../styles/manageServiceProvidersStyles.js';
+import {JsonObject, JsonProperty} from 'json2typescript';
 
 interface ServiceProvider {
   first_name: string;
   last_name: string;
-  email_address: string;
-  request_status: string;
+  email: string;
+  status: boolean | null;
+  rate: number | null;
+  rate_type: string | null;
+  workSchedule: WorkSchedule[] | [],
+  allow_edit: boolean
+}
+
+interface WorkSchedule {
+  day: string,
+  start_time: string,
+  end_time: string
 }
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
   const {email} = useSelector(state => state.userInfo);
-  const [serviceProviders, setServiceProviders] = useState([]);
-  const [isBoxChecked, setIsBoxChecked] = useState(false);
+  const [serviceProviders, setServiceProviders] = useState<Array<ServiceProvider>>([]);
+  const [isBoxChecked, setIsBoxChecked] = useState<boolean>(false);
 
   useEffect(() => {
     if (isFocused) {
@@ -32,7 +43,7 @@ const ManageServiceProviders = (props: any) => {
     }
   }, [isFocused]);
 
-  const getServiceProviders = () => {
+  const getServiceProviders = (): void => {
     axios
       .get(`${LOCAL_HOST_URL}/serviceProviders`, {
         params: {
@@ -40,7 +51,6 @@ const ManageServiceProviders = (props: any) => {
         },
       })
       .then(res => {
-        console.log(res.data);
         setServiceProviders(sortStatus(res.data));
       })
       .catch(err => {
@@ -48,20 +58,26 @@ const ManageServiceProviders = (props: any) => {
       });
   };
 
-  const navigateToProfile = (sp: ServiceProvider) => {
+  const formatData = (data: string): ServiceProvider[] => {
+    const result = [];
+    if ()
+  }
+
+  const sortStatus = (item: ServiceProvider[]): ServiceProvider[] => {
+    const order = [true, false, null];
+    item.sort(
+      (a: ServiceProvider, b: ServiceProvider) =>
+        order.indexOf(a.status) - order.indexOf(b.status),
+    );
+    return item;
+  };
+
+  const navigateToProfile = (sp: ServiceProvider): void => {
     props.navigation.navigate('Profile', {
       sp,
     });
   };
 
-  const sortStatus = (item: []) => {
-    const order = ['Active', 'Rejected', 'Pending'];
-    item.sort(
-      (a: ServiceProvider, b: ServiceProvider) =>
-        order.indexOf(a.request_status) - order.indexOf(b.request_status),
-    );
-    return item;
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,20 +94,22 @@ const ManageServiceProviders = (props: any) => {
         <Text style={styles.checkBoxText}>Show not currently employed</Text>
       </View>
       <ScrollView style={styles.subContainer}>
-        {serviceProviders && serviceProviders.length > 0 ? (
+        {serviceProviders?.length ? (
           serviceProviders.map((sp: ServiceProvider, index: number) => {
-            if (isBoxChecked || sp.request_status === 'Active') {
-              const {first_name, last_name, email_address, request_status} = sp;
+            if (isBoxChecked || sp.status) {
+              const {first_name, last_name, email, status} = sp;
               return (
                 <TouchableOpacity
                   key={index}
                   style={styles.listContainer}
-                  onPress={
-                    request_status === 'Active'
-                      ? () => navigateToProfile(sp)
-                      : () => null
-                  }>
-                  <Text style={styles.statusText}>{request_status}</Text>
+                  onPress={status ? () => navigateToProfile(sp) : () => null}>
+                  <Text style={styles.statusText}>
+                    {status === true
+                      ? 'Active'
+                      : status === false
+                      ? 'Declined'
+                      : 'Pending'}
+                  </Text>
                   <Text style={styles.listText}>
                     {`${
                       first_name
@@ -99,7 +117,7 @@ const ManageServiceProviders = (props: any) => {
                         : `Name not specified`
                     }`}
                   </Text>
-                  <Text>{email_address}</Text>
+                  <Text>{email}</Text>
                 </TouchableOpacity>
               );
             }

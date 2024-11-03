@@ -1,4 +1,5 @@
 import UserModels from "../models/userModels";
+import { Employer } from "../interfaces/Employer";
 
 class UserControllers {
   models: UserModels;
@@ -7,40 +8,29 @@ class UserControllers {
     this.models = new UserModels();
   }
 
-  async getUser(req: any, res: any) {
-    const user = await this.models.getUser(req.params.email);
-    res.send(user);
-  }
-
+  /**
+   *
+   * @param req
+   * @param res
+   */
   async getEmployers(req: any, res: any) {
-    const response = await this.models.getEmployers(req.query.email);
-    res.send(response);
+    const email: string = req.query?.email;
+    if (!email) {
+      res.sendStatus(400);
+      return;
+    }
+    const employers: Employer | [] = await this.models.getEmployers(email);
+    res.send(employers);
   }
 
   async getServiceProviders(req: any, res: any) {
-    const requests = await this.models.getRequests(req.query.email);
-    const x = await requests.map(async (r: any) => {
-      const sp = await this.models.getUser(r.receiver);
-      // console.log("sp", sp);
-      const status = r.is_approved
-        ? "Active"
-        : r.is_approved === null
-        ? "Pending"
-        : "Rejected";
-      if (!sp.length) {
-        const data: any = {};
-        data.email_address = r.receiver;
-        data.request_status = status;
-        sp.push(data);
-      } else {
-        sp[0].request_status = status;
-      }
-      return sp[0]
-    });
-    // console.log('data', x)
-    Promise.all(x).then((d) => res.send(d))
-    // const serviceProviders = await this.models.getServiceProviders(email);
-    // res.send(serviceProviders);
+    const email: string = req.query?.email;
+    if (!email) {
+      res.sendStatus(400);
+      return;
+    }
+    const serviceProviders = await this.models.getServiceProviders(email);
+    res.send(serviceProviders);
   }
 
   async getRequests(req: any, res: any) {
@@ -56,53 +46,53 @@ class UserControllers {
 
   async checkUserExists(req: any, res: any) {
     const user = await this.models.getUser(req.params.email);
-    user.length > 0 ? res.status(200).send(user) : res.sendStatus(400);
+    user ? res.status(200).send(user) : res.sendStatus(400);
   }
 
   async searchEmail(req: any, res: any) {
-    try {
-      const { receiver, sender } = req.query;
-      const senderId = await this.models.getUserId(sender);
-      /**
-       * 1. request is already approved => cannot send again
-       * 2. request is denied => can send after 30 minutes
-       * 3. request is pending => can send after 3 days
-       */
-      const status = this.models.getRequestStatus(senderId, receiver)
-      const isRequestDuplicate = await this.models.emailHasBeenSent(
-        receiver,
-        senderId
-      );
-      if (isRequestDuplicate) {
-        throw new Error("You cannot send the request multiple times");
-      } else {
-        const user = await this.models.getUser(receiver);
-        user.length > 0
-          ? res.status(200).send(user)
-          : res.status(200).send("Email not found");
-      }
-    } catch (err) {
-      res.status(400).send({ error: err.message });
-    }
+    // try {
+    //   const { receiver, sender } = req.query;
+    //   const senderId = await this.models.getUserId(sender);
+    //   /**
+    //    * 1. request is already approved => cannot send again
+    //    * 2. request is denied => can send after 30 minutes
+    //    * 3. request is pending => can send after 3 days
+    //    */
+    //   const status = this.models.getRequestStatus(senderId, receiver);
+    //   const isRequestDuplicate = await this.models.emailHasBeenSent(
+    //     receiver,
+    //     senderId
+    //   );
+    //   if (isRequestDuplicate) {
+    //     throw new Error("You cannot send the request multiple times");
+    //   } else {
+    //     const user = await this.models.getUser(receiver);
+    //     user
+    //       ? res.status(200).send(user)
+    //       : res.status(200).send("Email not found");
+    //   }
+    // } catch (err) {
+    //   res.status(400).send({ error: err.message });
+    // }
   }
 
   async sendRequest(req: any, res: any) {
-    try {
-      const { sender, receiver } = req.body;
-      const senderId = await this.models.getUserId(sender.email);
-      if (req.body.hasOwnProperty("request")) {
-        const { request } = req.body;
-        await this.models.storeRequest(receiver, senderId, request);
-        await this.models.sendRequestViaEmail(receiver, sender, request);
-        res.sendStatus(200);
-      } else {
-        await this.models.storeRequest(receiver, senderId, null);
-        await this.models.sendRequestViaEmail(receiver, sender, null);
-        res.sendStatus(200);
-      }
-    } catch (err) {
-      res.status(400).send({ error: err });
-    }
+    // try {
+    //   const { sender, receiver } = req.body;
+    //   const senderId = await this.models.getUserId(sender.email);
+    //   if (req.body.hasOwnProperty("request")) {
+    //     const { request } = req.body;
+    //     await this.models.storeRequest(receiver, senderId, request);
+    //     await this.models.sendRequestViaEmail(receiver, sender, request);
+    //     res.sendStatus(200);
+    //   } else {
+    //     await this.models.storeRequest(receiver, senderId, null);
+    //     await this.models.sendRequestViaEmail(receiver, sender, null);
+    //     res.sendStatus(200);
+    //   }
+    // } catch (err) {
+    //   res.status(400).send({ error: err });
+    // }
   }
 
   async editServiceProvider(req: any, res: any) {

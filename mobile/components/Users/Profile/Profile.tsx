@@ -15,12 +15,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
-interface WorkInfo {
-  rate: string | null;
-  rate_type: string | null;
-  status: string | null;
-  shifts: [];
-}
+// interface WorkInfo {
+//   rate: string | null;
+//   rate_type: string | null;
+//   status: string | null;
+//   shifts: [];
+// }
 
 interface Shift {
   day: string;
@@ -31,33 +31,34 @@ interface Shift {
 const Profile = ({route, navigation}: any) => {
   const isFocused = useIsFocused();
   const userInfo = useSelector(state => state.userInfo);
-  const {first_name, last_name, email_address, request_status} = route.params.sp;
-  const [workInfo, setWorkInfo] = useState<WorkInfo>({
-    rate: null,
-    rate_type: null,
-    status: null,
-    shifts: [],
-  });
+  const {first_name, last_name, email, status, rate, rate_type} =
+    route.params.sp;
+  // const [workInfo, setWorkInfo] = useState<WorkInfo>({
+  //   rate: null,
+  //   rate_type: null,
+  //   status: null,
+  //   shifts: [],
+  // });
 
-  useEffect(() => {
-    if (isFocused) {
-      getUserWorkInfo();
-    }
-  }, [isFocused]);
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     getUserWorkInfo();
+  //   }
+  // }, [isFocused]);
 
-  const getUserWorkInfo = () => {
-    axios
-      .get(`${LOCAL_HOST_URL}/serviceProvider`, {
-        params: {
-          spEmail: email_address,
-          epEmail: userInfo.email,
-        },
-      })
-      .then(res => {
-        const formattedData = formatData(res.data);
-        setWorkInfo(formattedData[0]);
-      });
-  };
+  // const getUserWorkInfo = () => {
+  //   axios
+  //     .get(`${LOCAL_HOST_URL}/serviceProvider`, {
+  //       params: {
+  //         spEmail: email_address,
+  //         epEmail: userInfo.email,
+  //       },
+  //     })
+  //     .then(res => {
+  //       const formattedData = formatData(res.data);
+  //       setWorkInfo(formattedData[0]);
+  //     });
+  // };
 
   const formatData = (data: any) => {
     if (!data[0]['day'] && !data[0]['start_time'] && !data[0]['end_time']) {
@@ -101,15 +102,15 @@ const Profile = ({route, navigation}: any) => {
   const editProfile = () => {
     navigation.navigate('EditProfile', {
       sp: route.params.sp,
-      email_address,
-      workInfo,
-      setWorkInfo,
+      // email_address,
+      // workInfo,
+      // setWorkInfo,
     });
   };
 
   const viewWorkingHistory = () => {
     navigation.navigate('ViewWorkingHistory', {
-      spEmail: email_address,
+      spEmail: email,
     });
   };
 
@@ -121,7 +122,7 @@ const Profile = ({route, navigation}: any) => {
           <Text style={{fontSize: 20}}>
             {first_name} {last_name}
           </Text>
-          <Text style={{fontSize: 14}}>{email_address}</Text>
+          <Text style={{fontSize: 14}}>{email}</Text>
         </View>
         <View style={styles.iconContainer}>
           <MaterialIcons
@@ -139,20 +140,18 @@ const Profile = ({route, navigation}: any) => {
         </View>
         <View style={styles.title}>
           <Text style={styles.text}>Status</Text>
-          <Text>{request_status}</Text>
+          <Text>{status}</Text>
         </View>
         <View style={styles.title}>
           <Text style={styles.text}>Rate</Text>
           <Text>
-            {workInfo.rate === null && workInfo.rate_type === null
-              ? `Not specified`
-              : `$${workInfo.rate} / ${workInfo.rate_type}`}
+            {!rate && !rate_type ? `Not specified` : `$${rate} / ${rate_type}`}
           </Text>
         </View>
         <View>
           <Text style={styles.text}>Working shifts</Text>
-          {workInfo.shifts.length ? (
-            workInfo.shifts.map((s: Shift, index) => (
+          {shifts.length ? (
+            shifts.map((s: Shift, index: number) => (
               <View key={index} style={styles.shiftText}>
                 <Text style={styles.day}>{`${String.fromCharCode(8226)} ${
                   s.day
