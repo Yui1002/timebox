@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from '../../styles/manageServiceProvidersStyles.js';
-import {JsonObject, JsonProperty} from 'json2typescript';
 
 interface ServiceProvider {
   first_name: string;
