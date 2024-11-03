@@ -103,47 +103,10 @@ class UserRepositories extends Repositories {
   }
 
   async updateUserSchedule(schedule: any, spId: number, transactionId: number) {
-    console.log('schedule', schedule)
     const {day, start_time, end_time} = schedule;
     const sql = `INSERT INTO user_schedule VALUES (DEFAULT, $1, $2, $3, $4, $5);`;
     await this.queryDB(sql, [day, start_time, end_time, spId, transactionId]);
     return true;
-    // console.log("req", req);
-    // let queryArgs = [];
-    // queryArgs.push(
-    //   req ? req.day : null,
-    //   req ? req.start_time : null,
-    //   req ? req.end_time : null,
-    //   spId,
-    //   transactionId
-    // );
-    // console.log("query args", queryArgs);
-    // const sql = `INSERT INTO user_schedule
-    //               VALUES (DEFAULT, $1, $2, $3, $4, $5)
-    //               ON CONFLICT (day, user_transaction_id) DO UPDATE SET`;
-    // const builder = this.updateUserScheduleBuilderrQuery(sql, req);
-    // queryArgs = queryArgs.concat(builder.queryArgs);
-    // // console.log("query", queryArg);
-    // await this.queryDB(builder.baseQuery, queryArgs);
-  }
-
-  private updateUserScheduleBuilderrQuery(baseQuery: string, req: any) {
-    const columnsToUpdate = ["day", "start_time", "end_time"];
-    let counter = 6;
-    const queryArgs = [];
-
-    for (const col of columnsToUpdate) {
-      // if (req[col]) {
-      if (req.hasOwnProperty(col)) {
-        baseQuery += ` ${col} = $${counter++},`;
-        queryArgs.push(req ? [col] : null);
-      } else {
-        baseQuery += ` ${col} = $${counter++},`;
-        queryArgs.push(null);
-      }
-    }
-    baseQuery = baseQuery.substring(0, baseQuery.length - 1);
-    return { baseQuery: baseQuery + ";", queryArgs };
   }
 
   async getUser(email: string) {
