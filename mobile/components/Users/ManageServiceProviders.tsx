@@ -40,8 +40,8 @@ const ManageServiceProviders = (props: any) => {
         },
       })
       .then(res => {
-        console.log(res.data);
-        setServiceProviders(sortStatus(res.data));
+        const formated = formatData(res.data);
+        setServiceProviders(sortStatus(formated));
       })
       .catch(err => {
         console.log(err);
@@ -53,6 +53,17 @@ const ManageServiceProviders = (props: any) => {
       sp,
     });
   };
+
+  const formatData = (data: any[]) => {
+    const sorted = data.reduce((a, b) => {
+      const found = a.find(e => e.email_address == b.email_address);
+      console.log('found', found)
+        return (
+          found ? found : a.push({...b}), a
+        );
+    }, []);
+    return sorted;
+  }
 
   const sortStatus = (item: []) => {
     const order = ['Active', 'Rejected', 'Pending'];

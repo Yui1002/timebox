@@ -25,7 +25,6 @@ export const styles = StyleSheet.create({
     marginLeft: '8%',
   },
   subContainer: {
-    backgroundColor: 'pink',
     flexGrow: 3,
   },
   listContainer: {

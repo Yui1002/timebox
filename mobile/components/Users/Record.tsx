@@ -30,9 +30,11 @@ const Record = ({route}: any) => {
         params: {
           epEmail: email_address,
           spEmail: serviceProviderEmail,
+          date: new Date()
         },
       })
       .then((res): any => {
+        console.log('res.data', res.data)
         if (!res.data.length) {
           setStart(null);
           setEnd(null);
