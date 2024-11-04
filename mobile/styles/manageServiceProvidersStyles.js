@@ -1,5 +1,4 @@
 import {StyleSheet} from 'react-native';
-// import { width, height } from './metric';
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,14 +6,14 @@ export const styles = StyleSheet.create({
     margin: '5%',
   },
   title: {
-    flex: 0.5,
+    flexGrow: 0.5
   },
   titleText: {
     fontSize: 20, 
     fontWeight: '500'
   },
   checkBoxContainer: {
-    flex: 0.5,
+    flexGrow: 0.5,
     flexDirection: 'row',
     marginLeft: 'auto',
   },
@@ -26,6 +25,7 @@ export const styles = StyleSheet.create({
     marginLeft: '8%',
   },
   subContainer: {
+    backgroundColor: 'pink',
     flexGrow: 3,
   },
   listContainer: {
