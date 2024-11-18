@@ -14,7 +14,6 @@ import {LOCAL_HOST_URL} from '../../config.js';
 
 const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  console.log('user info', userInfo)
   const {firstName, email} = userInfo;
   const [employers, setEmployers] = useState([]);
   const isFocused = useIsFocused();
@@ -27,13 +26,11 @@ const Home = (props: any) => {
 
   const getEmployers = () => {
     axios
-      .get(`${LOCAL_HOST_URL}/employers`, {
-        params: {
-          email,
-        },
+      .post(`${LOCAL_HOST_URL}/getEmployer`, {
+        email,
       })
       .then(res => {
-        setEmployers(res.data);
+        setEmployers(res.data.employerResult);
       })
       .catch(err => {
         console.log('home error', err);
@@ -47,7 +44,7 @@ const Home = (props: any) => {
       </View>
       <View>
         <Text style={styles.title}>My Employers</Text>
-        {employers !== null && employers.length > 0 ? (
+        {employers != null ? (
           <FlatList
             style={styles.subContainer}
             data={employers}
@@ -75,7 +72,9 @@ const Home = (props: any) => {
             )}
           />
         ) : (
-          <Text style={{marginTop: 10}}>Please use the menu to hire or manage service providers</Text>
+          <Text style={{marginTop: 10}}>
+            Please use the menu to hire or manage service providers
+          </Text>
         )}
       </View>
     </SafeAreaView>
