@@ -1,7 +1,7 @@
 const initialState = {
     userInfo: {
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         email: ''
     },
   };

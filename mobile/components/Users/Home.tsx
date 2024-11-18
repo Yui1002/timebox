@@ -14,6 +14,7 @@ import {LOCAL_HOST_URL} from '../../config.js';
 
 const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
+  console.log('user info', userInfo)
   const {firstName, email} = userInfo;
   const [employers, setEmployers] = useState([]);
   const isFocused = useIsFocused();
@@ -74,7 +75,7 @@ const Home = (props: any) => {
             )}
           />
         ) : (
-          <Text style={{marginTop: 10}}>There is no employers</Text>
+          <Text style={{marginTop: 10}}>Please use the menu to hire or manage service providers</Text>
         )}
       </View>
     </SafeAreaView>

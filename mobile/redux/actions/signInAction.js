@@ -1,4 +1,5 @@
 export const signInUser = data => {
+  console.log('action data', data)
   return {
     type: 'SIGN_IN',
     payload: data,

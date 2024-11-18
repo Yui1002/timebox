@@ -67,7 +67,7 @@ const HireServiceProvider = (props: any) => {
       })
       .then(res => {
         if (res.data === 'Email not found') {
-          const msg = `Do you want to request to ${searchInput} as a service provider?`;
+          const msg = `Send Email request to ${searchInput} to be added as a service provider`;
           showAlert(msg, null, function () {
             sendRequest();
           });

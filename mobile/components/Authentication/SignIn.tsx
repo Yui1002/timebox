@@ -32,20 +32,19 @@ const SignIn = ({navigation}: any) => {
 
     setLoading(true);
     axios
-      .post(`${LOCAL_HOST_URL}/signIn`, {
+      .post(`${LOCAL_HOST_URL}/signInUser`, {
         email,
         password,
       })
       .then(res => {
         setLoading(false);
-        dispatchUser(res);
+        dispatchUser(res.data.signInResult);
         clearInput();
         navigation.navigate('DrawerNav');
       })
       .catch(err => {
         setLoading(false);
-        const errMsg = err.response.data.error;
-        const error = {type: 'SIGN_IN_ERROR', msg: errMsg};
+        const error = {type: 'SIGN_IN_ERROR', msg: 'failed to sign in'};
         setinputError(error);
       });
   };
@@ -79,7 +78,7 @@ const SignIn = ({navigation}: any) => {
     return true;
   };
 
-  const SignInError = () => {
+  const SignInError = (): Element => {
     return (
       <View style={styles.signInError}>
         <Text>{inputError.msg}</Text>
@@ -87,7 +86,7 @@ const SignIn = ({navigation}: any) => {
     );
   };
 
-  const clearInput = () => {
+  const clearInput = (): void => {
     setEmail('');
     setPassword('');
     setinputError({
@@ -96,23 +95,19 @@ const SignIn = ({navigation}: any) => {
     });
   };
 
-  const navigateToSignUp = () => {
+  const navigateToSignUp = (): void => {
     navigation.navigate('SignUp');
     clearInput();
-    setinputError({
-      type: '',
-      msg: '',
-    });
   };
 
-  const dispatchUser = (res: any) => {
+  const dispatchUser = (data: any): void => {
     const value = {
-      firstName: res.data.firstName,
-      lastName: res.data.lastName,
-      email: email,
+      firstName: data.first_name,
+      lastName: data.lastName,
+      email: data.email,
     };
     dispatch(signInUser(value));
-  }
+  };
 
   const Separator = () => <View style={styles.separator}></View>;
 

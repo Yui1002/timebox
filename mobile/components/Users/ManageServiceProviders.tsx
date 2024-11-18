@@ -13,18 +13,36 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from '../../styles/manageServiceProvidersStyles.js';
 
+enum Status {
+  true = 1,
+  false = 2,
+  null = 3,
+}
+
+interface Schedule {
+  day: string;
+  start_time: string;
+  end_time: string;
+}
+
 interface ServiceProvider {
   first_name: string;
   last_name: string;
   email_address: string;
-  request_status: string;
+  status: Status;
+  rate: number;
+  rate_type: string;
+  schedule: Schedule[] | [];
+  allow_edit: boolean;
 }
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
   const {email} = useSelector(state => state.userInfo);
-  const [serviceProviders, setServiceProviders] = useState([]);
-  const [isBoxChecked, setIsBoxChecked] = useState(false);
+  const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>(
+    [],
+  );
+  const [isBoxChecked, setIsBoxChecked] = useState(true);
 
   useEffect(() => {
     if (isFocused) {
@@ -54,55 +72,55 @@ const ManageServiceProviders = (props: any) => {
     });
   };
 
-  const formatData = (data: any[]) => {
-    const sorted = data.reduce((a, b) => {
+  const formatData = (data: any[]): ServiceProvider[] => {
+    const formattedData = data.reduce((a, b) => {
       const found = a.find(e => e.email_address == b.email_address);
-      console.log('found', found)
-        return (
-          found ? found : a.push({...b}), a
-        );
+      const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
+      ['day', 'start_time', 'end_time'].forEach(val => delete b[val]);
+      return (
+        found ? found.schedule.push(item) : a.push({...b, schedule: [item]}), a
+      );
     }, []);
-    return sorted;
-  }
+    return formattedData;
+  };
 
-  const sortStatus = (item: []) => {
-    const order = ['Active', 'Rejected', 'Pending'];
-    item.sort(
-      (a: ServiceProvider, b: ServiceProvider) =>
-        order.indexOf(a.request_status) - order.indexOf(b.request_status),
-    );
+  const sortStatus = (item: ServiceProvider[]): ServiceProvider[] => {
+    item.sort((a: ServiceProvider, b: ServiceProvider) => a.status - b.status);
     return item;
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.title}>
-        <Text style={styles.titleText}>Current Service Providers</Text>
+        <Text style={styles.titleText}>Service Providers</Text>
       </View>
       <View style={styles.checkBoxContainer}>
         <CheckBox
           style={styles.checkBox}
           boxType="square"
           animationDuration={0}
+          value={isBoxChecked}
           onChange={() => setIsBoxChecked(!isBoxChecked)}
         />
         <Text style={styles.checkBoxText}>Show not currently employed</Text>
       </View>
       <ScrollView style={styles.subContainer}>
-        {serviceProviders && serviceProviders.length > 0 ? (
-          serviceProviders.map((sp: ServiceProvider, index: number) => {
-            if (isBoxChecked || sp.request_status === 'Active') {
-              const {first_name, last_name, email_address, request_status} = sp;
+        {serviceProviders.length ? (
+          serviceProviders?.map((sp: ServiceProvider, index: number) => {
+            if (isBoxChecked || sp.status) {
+              const {first_name, last_name, email_address, status} = sp;
               return (
                 <TouchableOpacity
                   key={index}
                   style={styles.listContainer}
-                  onPress={
-                    request_status === 'Active'
-                      ? () => navigateToProfile(sp)
-                      : () => null
-                  }>
-                  <Text style={styles.statusText}>{request_status}</Text>
+                  onPress={status ? () => navigateToProfile(sp) : () => null}>
+                  <Text style={styles.statusText}>
+                    {status === 1
+                      ? 'Active'
+                      : status === 2
+                      ? 'Declined'
+                      : 'Pending'}
+                  </Text>
                   <Text style={styles.listText}>
                     {`${
                       first_name
@@ -116,7 +134,7 @@ const ManageServiceProviders = (props: any) => {
             }
           })
         ) : (
-          <Text>You don't have current service providers</Text>
+          <Text>You don't have service providers</Text>
         )}
       </ScrollView>
     </SafeAreaView>
