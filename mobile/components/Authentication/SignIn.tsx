@@ -78,7 +78,7 @@ const SignIn = ({navigation}: any) => {
     return true;
   };
 
-  const SignInError = (): Element => {
+  const SignInError = () => {
     return (
       <View style={styles.signInError}>
         <Text>{inputError.msg}</Text>

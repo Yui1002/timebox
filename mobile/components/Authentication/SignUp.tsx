@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Keyboard,
-  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -26,30 +25,33 @@ const SignUp = ({navigation}: any) => {
     type: '',
     msg: '',
   });
-  const [loading, setLoading] = useState(false);
 
   const isUserRegistered = () => {
     if (!validateName() || !validateEmail() || !validatePassword()) {
       return;
     }
-
-    setLoading(true);
     axios
-      .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
-      .then(() => {
-        setLoading(false);
-        navigation.navigate('VerifyOTP', {
-          firstName,
-          lastName,
-          email,
-          password,
-        });
+      .post(`${LOCAL_HOST_URL}/verifyUser`, {
+        email,
+      })
+      .then(res => {
+        axios.post(`${LOCAL_HOST_URL}/handleOTP`, {
+          email: email,
+          otp: "",
+        })
+        .then(() => {
+          navigation.navigate('VerifyOTP', {
+            firstName,
+            lastName,
+            email,
+            password,
+          });
+        })
       })
       .catch(err => {
-        setLoading(false);
         setinputError({
           type: 'SIGN_UP_ERROR',
-          msg: err.response.data.error,
+          msg: err.response.data.message,
         });
       });
   };
@@ -220,13 +222,9 @@ const SignUp = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 14}} />
-          {loading ? (
-            <ActivityIndicator color="#24a0ed" />
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
-              <Text style={styles.buttonText}>Sign Up</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
         </View>
         <Separator />
         <View style={styles.footer}>
