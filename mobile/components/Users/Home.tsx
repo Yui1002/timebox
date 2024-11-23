@@ -24,17 +24,15 @@ const Home = (props: any) => {
     }
   }, [isFocused]);
 
-  const getEmployers = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/getEmployer`, {
-        email,
-      })
-      .then(res => {
-        setEmployers(res.data.employerResult);
-      })
-      .catch(err => {
-        console.log('home error', err);
+  const getEmployers = async () => {
+    try {
+      const response = await axios.post(`${LOCAL_HOST_URL}/getEmployer`, {
+        email
       });
+      setEmployers(response.data.employerResult?.employers)
+    } catch (e: any) {
+        console.log('home error', e);
+    }
   };
 
   return (
@@ -52,9 +50,9 @@ const Home = (props: any) => {
               <View style={styles.listContainer}>
                 <View>
                   <Text style={{fontSize: 16, fontWeight: '500'}}>
-                    {item.first_name} {item.last_name}
+                    {item.firstName} {item.lastName}
                   </Text>
-                  <Text>{item.email_address}</Text>
+                  <Text>{item.email}</Text>
                 </View>
                 <View>
                   <TouchableOpacity

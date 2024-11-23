@@ -13,6 +13,7 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import validator from 'validator';
 import {PASSWORD_RULES} from '../../config.js';
 import {styles} from '../../styles/signUpStyles.js';
+import { navigate } from '../../helper/navigate';
 
 const SignUp = ({navigation}: any) => {
   const [firstName, setFirstName] = useState('');
@@ -26,35 +27,27 @@ const SignUp = ({navigation}: any) => {
     msg: '',
   });
 
-  const isUserRegistered = () => {
+  const checkExists = async () => {
     if (!validateName() || !validateEmail() || !validatePassword()) {
       return;
     }
-    axios
-      .post(`${LOCAL_HOST_URL}/verifyUser`, {
-        email,
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/verifyUser`, {
+        email
+      });
+      await axios.post(`${LOCAL_HOST_URL}/handleOTP`, {
+        email: email, otp: ""
+      });
+      navigate(navigation, 'VerifyOTP', {
+        firstName, lastName, email, password
       })
-      .then(res => {
-        axios.post(`${LOCAL_HOST_URL}/handleOTP`, {
-          email: email,
-          otp: "",
-        })
-        .then(() => {
-          navigation.navigate('VerifyOTP', {
-            firstName,
-            lastName,
-            email,
-            password,
-          });
-        })
-      })
-      .catch(err => {
+    } catch (e: any) {
         setinputError({
           type: 'SIGN_UP_ERROR',
-          msg: err.response.data.message,
+          msg: e.response.data.message
         });
-      });
-  };
+    }
+  }
 
   const validateName = (): boolean => {
     if (firstName.length === 0) {
@@ -222,7 +215,7 @@ const SignUp = ({navigation}: any) => {
             )}
           </View>
           <View style={{marginVertical: 14}} />
-          <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
+          <TouchableOpacity style={styles.button} onPress={checkExists}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
@@ -232,7 +225,7 @@ const SignUp = ({navigation}: any) => {
             <Text>Already have account?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigation.navigate('SignIn')}>
+              onPress={() => navigate(navigation, 'SignIn', null)}>
               Sign In
             </Text>
           </View>

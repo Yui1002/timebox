@@ -13,6 +13,7 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
+import {navigate} from '../../helper/navigate';
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -44,50 +45,34 @@ const VerifyOTP = ({route, navigation}: any) => {
     return true;
   };
 
-  const verifyOTP = () => {
+  const verifyOTP = async () => {
     if (!validateInput()) return;
-    setLoading(true);
-    axios
-      .post(`${LOCAL_HOST_URL}/otp/verify`, {
-        otp,
-        email,
-      })
-      .then(() => {
-        signUp();
-      })
-      .catch(err => {
-        setLoading(false);
-        setinputError({
-          type: 'INVALID_OTP',
-          msg: err.response.data.error,
-        });
-      });
-  };
 
-  const signUp = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/signUp`, {
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/verifyOTP`, {
+        otp: otp,
+        email: email,
+        createDate: new Date(),
+      });
+      await axios.post(`${LOCAL_HOST_URL}/setUser`, {
         firstName,
         lastName,
         email,
         password,
-      })
-      .then(() => {
-        setLoading(false);
-        dispatch(
-          signInUser({
-            firstName,
-            lastName,
-            email,
-          }),
-        );
-        navigation.navigate('DrawerNav');
       });
+      dispatch(signInUser({firstName, lastName, email}));
+      navigate(navigation, 'DrawerNav', null);
+    } catch (e: any) {
+      setinputError({
+        type: 'INVALID_OTP',
+        msg: e.response.data.message,
+      });
+    }
   };
 
   const resendOtp = () => {
     axios
-      .post(`${LOCAL_HOST_URL}/otp/resend`, {
+      .post(`${LOCAL_HOST_URL}/resendOTP`, {
         email,
       })
       .then(res => {
