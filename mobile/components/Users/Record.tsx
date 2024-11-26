@@ -10,7 +10,7 @@ import {useIsFocused} from '@react-navigation/native';
 
 const Record = ({route}: any) => {
   const isFocused = useIsFocused();
-  const {first_name, last_name, email_address, mode} = route.params.employer;
+  const {firstName, lastName, email, mode} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
   const [dateOpen, setDateOpen] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
@@ -18,51 +18,31 @@ const Record = ({route}: any) => {
   const [date, setDate] = useState<Date>(new Date());
   const [start, setStart] = useState<Date | null>(null);
   const [end, setEnd] = useState<Date | null>(null);
+
   useEffect(() => {
     if (isFocused) {
-      getTodaysRecord();
+      getRecord();
     }
   }, [isFocused]);
 
-  const getTodaysRecord = () => {
-    axios
-      .get(`${LOCAL_HOST_URL}/record/today`, {
-        params: {
-          epEmail: email_address,
-          spEmail: serviceProviderEmail,
-          date: new Date()
-        },
-      })
-      .then((res): any => {
-        console.log('res.data', res.data)
-        if (!res.data.length) {
-          setStart(null);
-          setEnd(null);
-        } else {
-          setStart(res.data[0].start_time);
-          setEnd(res.data[0].end_time);
-        }
-      });
-  };
-
-  const onDateConfirm = (date: Date) => {
+  const getRecord = async (date = new Date()) => {
     setDate(date);
 
-    axios
-      .get(`${LOCAL_HOST_URL}/record/day`, {
-        params: {
-          date,
-          epEmail: email_address,
-          spEmail: serviceProviderEmail,
-        },
-      })
-      .then((res: any) => {
-        res.data.length ? setStart(res.data[0].start_time) : setStart(null);
-        res.data.length ? setEnd(res.data[0].end_time) : setEnd(null);
-      })
-      .catch(error => {
-        console.log(error);
+    try {
+      const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
+        employerEmail: email,
+        serviceProviderEmail: serviceProviderEmail,
+        date: date
       });
+      if (response.data.recordResult == null) {
+        setStart(null), setEnd(null);
+      } else {
+        setStart(response.data.recordResult.records[0].startTime);
+        setEnd(response.data.recordResult.records[0].endTime);
+      }
+    } catch (e: any) {
+      console.log('error', e)
+    }
   };
 
   const onTimeConfirm = (type: string, time: Date) => {
@@ -71,11 +51,27 @@ const Record = ({route}: any) => {
     time.setDate(new Date(date).getDate());
 
     if (!validateInput(type, time)) return;
-    if (type === 'start') {
-      start === null ? alertAdd('start', time) : alertDuplicate('start', time);
-    } else {
-      end === null ? alertAdd('end', time) : alertDuplicate('end', time);
-    }
+    alertConfirm(type, time)
+  };
+
+  const alertConfirm = (type: string, date: Date) => {
+    const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
+
+    Alert.alert(
+      `${type ? `Make changes` : `This date record exists`}`,
+      `Do you want to set ${type} time to ${formatedDate}?`,
+      [
+        {
+          text: 'Yes',
+          onPress: () => recordTime(date, type),
+        },
+        {
+          text: 'No',
+          onPress: () => null,
+          style: 'cancel',
+        },
+      ],
+    );
   };
 
   const validateInput = (type: string, time: Date) => {
@@ -113,59 +109,20 @@ const Record = ({route}: any) => {
     return true;
   };
 
-  const alertAdd = (type: string, date: Date) => {
-    const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
-    Alert.alert(
-      'Make changes',
-      `Do you want to set ${type} time to ${formatedDate}?`,
-      [
-        {
-          text: 'Yes',
-          onPress: () => recordTime(type, date, 'add'),
-        },
-        {
-          text: 'No',
-          onPress: () => null,
-          style: 'cancel',
-        },
-      ],
-    );
-  };
-
-  const alertDuplicate = (type: string, date: Date) => {
-    const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
-    Alert.alert(
-      'This date record is existed',
-      `Do you want to overwrite ${type} time to ${formatedDate}?`,
-      [
-        {
-          text: 'Yes',
-          onPress: () => recordTime(type, date, 'overwrite'),
-        },
-        {
-          text: 'No',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-      ],
-    );
-  };
-
-  const recordTime = (type: string, date: Date, mode: string) => {
-    axios
-      .post(`${LOCAL_HOST_URL}/record`, {
-        type,
-        start: type === 'start' ? date : start,
-        end: type === 'end' ? date : end,
-        epEmail: email_address,
-        spEmail: serviceProviderEmail,
-        mode,
+  const recordTime = async (date: Date, type: string) => {
+    try {
+      const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
+        employerEmail: email,
+        serviceProviderEmail: serviceProviderEmail,
+        recordTime: date,
+        type: type
       })
-      .then(res => {
-        setStart(res.data[0].start_time);
-        setEnd(res.data[0].end_time);
-      })
-      .catch(err => {});
+
+      setStart(response.data.recordResult.records[0].startTime);
+      setEnd(response.data.recordResult.records[0].endTime);
+    } catch (e: any) {
+      console.log('error', e);
+    }
   };
 
   const Separator = () => <View style={styles.separator}></View>;
@@ -183,7 +140,7 @@ const Record = ({route}: any) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          Employer: {first_name} {last_name}
+          Employer: {firstName} {lastName}
         </Text>
       </View>
       <View>
@@ -210,7 +167,7 @@ const Record = ({route}: any) => {
           open={dateOpen}
           mode="date"
           date={date}
-          onConfirm={d => onDateConfirm(d)}
+          onConfirm={d => getRecord(d)}
           onCancel={() => {
             setDateOpen(false);
           }}
