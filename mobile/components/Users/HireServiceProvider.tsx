@@ -15,6 +15,8 @@ import validator from 'validator';
 import InputField from '../InputField';
 import InputError from '../InputError';
 import Popup from '../Popup';
+import { alert } from '../../helper/Alert';
+import { navigate } from '../../helper/navigate';
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
@@ -56,66 +58,62 @@ const HireServiceProvider = (props: any) => {
     return true;
   };
 
-  const searchEmail = () => {
+  const searchEmail = async () => {
     if (!validateEmail('SEARCH')) return;
-    axios
-      .get(`${LOCAL_HOST_URL}/request/search`, {
-        params: {
-          receiver: searchInput,
-          sender: userInfo.email,
-        },
-      })
-      .then(res => {
-        if (res.data === 'Email not found') {
-          const msg = `Send Email request to ${searchInput} to be added as a service provider`;
-          showAlert(msg, null, function () {
-            sendRequest();
-          });
-        } else {
-          const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
-          showAlert(msg, null, function () {
-            navigateToNext(res.data[0]);
-          });
-        }
-      })
-      .catch((error: any) => {
-        setInputError({
-          type: 'DUPLICATE_REQUEST',
-          msg: error.response.data.error,
-        });
+
+    try {
+      const response = await axios.post(`${LOCAL_HOST_URL}/searchEmail`, {
+        senderEmail: userInfo.email,
+        receiverEmail: searchInput
       });
+      
+      if (response.data.requestResult == null) {
+        alert(`Do you want to request to ${searchInput} as a service provider?`, '', function() {
+          sendRequest();
+        }, null);
+      } else {
+        const { firstName, lastName } = response.data.requestResult;
+        alert(`Do you want to request to ${firstName} ${lastName} as a service provider?`, '', function() {
+          navigate(props.navigation, "PersonalInfo", {
+            firstName: firstName,
+            lastName: lastName,
+            email: searchInput,
+          });
+        }, null);
+      }
+    } 
+    catch (e: any) {
+      setInputError({
+        type: 'DUPLICATE_REQUEST',
+        msg: e.response.data.message,
+      })
+    }
   };
 
-  const sendRequest = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/request`, {
-        sender: userInfo,
-        receiver: searchInput,
-      })
-      .then(() => {
-        clearInput();
-        showSuccessAlert();
-      })
-      .catch(err => {
-        setInputError({
-          type: 'DUPLICATE_EMAIL',
-          msg: err.response.data.error,
-        });
+  const sendRequest = async () => {
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/setRequest`, {
+        senderEmail: userInfo.email,
+        receiverEmail: searchInput
       });
-  };
-
-  const showAlert = (msg: string, cancelCb: any, confirmCb: any) => {
-    Alert.alert(msg, '', [
-      {
-        text: 'No',
-        onPress: cancelCb ? cancelCb : () => console.log('cancel pressed'),
-        style: 'cancel',
-      },
-      {
-        text: 'Yes',
-        onPress: confirmCb,
-      },
-    ]);
+    } catch (e: any) {
+      console.log('error', e);
+    }
+    // axios
+    //   .post(`${LOCAL_HOST_URL}/`, {
+    //     sender: userInfo,
+    //     receiver: searchInput,
+    //   })
+    //   .then(() => {
+    //     clearInput();
+    //     showSuccessAlert();
+    //   })
+    //   .catch(err => {
+    //     setInputError({
+    //       type: 'DUPLICATE_EMAIL',
+    //       msg: err.response.data.error,
+    //     });
+    //   });
   };
 
   const showSuccessAlert = () => {
@@ -130,14 +128,6 @@ const HireServiceProvider = (props: any) => {
       ],
       {cancelable: false},
     );
-  };
-
-  const navigateToNext = (data: any) => {
-    props.navigation.navigate('PersonalInfo', {
-      firstName: data.first_name,
-      lastName: data.last_name,
-      email: searchInput,
-    });
   };
 
   const clearInput = () => {

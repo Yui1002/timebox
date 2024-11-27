@@ -37,6 +37,7 @@ const SignIn = ({navigation}: any) => {
         password,
       })
       .then(res => {
+        console.log(res.data)
         setLoading(false);
         dispatchUser(res.data.signInResult);
         clearInput();

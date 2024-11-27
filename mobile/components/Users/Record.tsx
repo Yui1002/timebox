@@ -7,6 +7,7 @@ import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused} from '@react-navigation/native';
+import {alert, alertError} from '../../helper/Alert';
 
 const Record = ({route}: any) => {
   const isFocused = useIsFocused();
@@ -32,7 +33,7 @@ const Record = ({route}: any) => {
       const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
-        date: date
+        date: date,
       });
       if (response.data.recordResult == null) {
         setStart(null), setEnd(null);
@@ -41,7 +42,7 @@ const Record = ({route}: any) => {
         setEnd(response.data.recordResult.records[0].endTime);
       }
     } catch (e: any) {
-      console.log('error', e)
+      console.log('error', e);
     }
   };
 
@@ -51,36 +52,29 @@ const Record = ({route}: any) => {
     time.setDate(new Date(date).getDate());
 
     if (!validateInput(type, time)) return;
-    alertConfirm(type, time)
+    alertConfirm(type, time);
   };
 
   const alertConfirm = (type: string, date: Date) => {
     const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
 
-    Alert.alert(
+    alert(
       `${type ? `Make changes` : `This date record exists`}`,
       `Do you want to set ${type} time to ${formatedDate}?`,
-      [
-        {
-          text: 'Yes',
-          onPress: () => recordTime(date, type),
-        },
-        {
-          text: 'No',
-          onPress: () => null,
-          style: 'cancel',
-        },
-      ],
+      function () {
+        recordTime(date, type);
+      },
+      null,
     );
   };
 
   const validateInput = (type: string, time: Date) => {
     if (date.toDateString() !== time.toDateString()) {
-      alertError('Date has to match the selected date above');
+      alertError('Invalid input', 'Date has to match the selected date above', null);
       return false;
     }
     if (new Date(time) > new Date()) {
-      alertError('No future time allowed');
+      alertError('Invalid input', 'No future time allowed', null);
       return false;
     }
     if (!start && !end) return true;
@@ -90,7 +84,7 @@ const Record = ({route}: any) => {
           (new Date(end).getTime() - new Date(time).getTime()) /
           (1000 * 60 * 60);
         if (diff <= 0) {
-          alertError('Start time has to occur before end time');
+          alertError('invalid input', 'Start time has to occur before end time', null);
           return false;
         }
       }
@@ -101,7 +95,7 @@ const Record = ({route}: any) => {
           (new Date(time).getTime() - new Date(start).getTime()) /
           (1000 * 60 * 60);
         if (diff <= 0) {
-          alertError('End time has to occur after start time');
+          alertError('Invalid input', 'End time has to occur after start time', null);
           return false;
         }
       }
@@ -115,8 +109,8 @@ const Record = ({route}: any) => {
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
         recordTime: date,
-        type: type
-      })
+        type: type,
+      });
 
       setStart(response.data.recordResult.records[0].startTime);
       setEnd(response.data.recordResult.records[0].endTime);
@@ -126,15 +120,6 @@ const Record = ({route}: any) => {
   };
 
   const Separator = () => <View style={styles.separator}></View>;
-
-  const alertError = (msg: string) => {
-    Alert.alert('Invalid input', msg, [
-      {
-        text: 'OK',
-        onPress: () => null,
-      },
-    ]);
-  };
 
   return (
     <SafeAreaView style={styles.container}>

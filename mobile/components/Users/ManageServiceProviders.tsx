@@ -50,28 +50,21 @@ const ManageServiceProviders = (props: any) => {
     }
   }, [isFocused]);
 
-  const getServiceProviders = () => {
-    axios
-      .get(`${LOCAL_HOST_URL}/serviceProviders`, {
-        params: {
-          email,
-        },
-      })
-      .then(res => {
-        const formated = formatData(res.data);
-        setServiceProviders(sortStatus(formated));
-      })
-      .catch(err => {
-        console.log(err);
+  const getServiceProviders = async () => {
+    try {
+      const response = await axios.post(`${LOCAL_HOST_URL}/getServiceProvider`, {
+        employerEmail: email
       });
+      if (response?.data?.serviceProviderResult == null) {
+        setServiceProviders([]);
+      } else {
+        setServiceProviders(formatData(response.data.serviceProviderResult.serviceProviders));
+      }
+    } catch (e: any) {
+      console.log(e);
+    }
   };
-
-  const navigateToProfile = (sp: ServiceProvider) => {
-    props.navigation.navigate('Profile', {
-      sp,
-    });
-  };
-
+  
   const formatData = (data: any[]): ServiceProvider[] => {
     const formattedData = data.reduce((a, b) => {
       const found = a.find(e => e.email_address == b.email_address);
@@ -84,6 +77,12 @@ const ManageServiceProviders = (props: any) => {
     return formattedData;
   };
 
+  const navigateToProfile = (sp: ServiceProvider) => {
+    props.navigation.navigate('Profile', {
+      sp,
+    });
+  };
+  
   const sortStatus = (item: ServiceProvider[]): ServiceProvider[] => {
     item.sort((a: ServiceProvider, b: ServiceProvider) => a.status - b.status);
     return item;
