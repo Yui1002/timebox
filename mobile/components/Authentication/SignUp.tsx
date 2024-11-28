@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import validator from 'validator';
-import {PASSWORD_RULES} from '../../config.js';
 import {styles} from '../../styles/signUpStyles.js';
-import { navigate } from '../../helper/navigate';
+import {navigate} from '../../helper/navigate';
+import Validator from '../../validator/validator';
+import Error from '../Error';
+
+let validator = new Validator();
 
 const SignUp = ({navigation}: any) => {
   const [firstName, setFirstName] = useState('');
@@ -22,109 +24,74 @@ const SignUp = ({navigation}: any) => {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [inputError, setinputError] = useState({
-    type: '',
-    msg: '',
-  });
+  const [errors, setErrors] = useState({});
+  const [isInputValid, setIsInputValid] = useState(false);
 
-  const checkExists = async () => {
-    if (!validateName() || !validateEmail() || !validatePassword()) {
-      return;
-    }
+  useEffect(() => {
+    validateInput();
+  }, [firstName, lastName, email, password, confirmedPassword]);
+
+  const verifyUser = async () => {
+    if (!isInputValid) return;
+
     try {
       await axios.post(`${LOCAL_HOST_URL}/verifyUser`, {
-        email
+        email,
       });
       await axios.post(`${LOCAL_HOST_URL}/handleOTP`, {
-        email: email, otp: ""
+        email: email,
+        otp: '',
       });
       navigate(navigation, 'VerifyOTP', {
-        firstName, lastName, email, password
-      })
+        firstName,
+        lastName,
+        email,
+        password,
+      });
     } catch (e: any) {
-        setinputError({
-          type: 'SIGN_UP_ERROR',
-          msg: e.response.data.message
-        });
+      setErrors({...errors, signInError: e.response.data.message});
     }
-  }
-
-  const validateName = (): boolean => {
-    if (firstName.length === 0) {
-      setinputError({
-        type: 'EMPTY_FIRST_NAME',
-        msg: 'First name is required',
-      });
-      return false;
-    }
-    if (lastName.length === 0) {
-      setinputError({
-        type: 'EMPTY_LAST_NAME',
-        msg: 'Last name is required',
-      });
-      return false;
-    }
-    return true;
   };
 
-  const validateEmail = (): boolean => {
-    if (email.length === 0) {
-      setinputError({
-        type: 'EMPTY_EMAIL',
-        msg: 'Email is required',
-      });
-      return false;
-    }
-    if (!validator.isEmail(email)) {
-      setinputError({
-        type: 'INVALID_EMAIL_FORMAT',
-        msg: 'Email is not valid',
-      });
-      return false;
-    }
-    return true;
-  };
+  const validateInput = () => {
+    let errors: any = {};
 
-  const validatePassword = () => {
-    if (!password.length || !confirmedPassword.length) {
-      setinputError({
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
-      });
-      return false;
+    if (validator.isEmpty(firstName)) {
+      errors.firstName = 'First name is required';
     }
-    if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
-      setinputError({
-        type: 'WEAK_PASSWORD',
-        msg: 'Must contain 8 characters, 1 number, 1 upper, 1 lower',
-      });
-      return false;
-    }
-    if (password !== confirmedPassword) {
-      setinputError({
-        type: 'PASSWORD_MISMATCH',
-        msg: 'Password does not match',
-      });
-      return false;
-    }
-    return true;
-  };
 
-  const Separator = () => <View style={styles.separator}></View>;
+    if (validator.isEmpty(lastName)) {
+      errors.firstName = 'Last name is required';
+    }
 
-  const SignUpError = () => {
-    return (
-      <View style={styles.signUpError}>
-        <Text>{inputError.msg}</Text>
-      </View>
-    );
+    if (validator.isEmpty(email)) {
+      errors.email = 'Email is required';
+    } else if (!validator.isValidEmail(email)) {
+      errors.email = 'Email is invalid';
+    }
+
+    if (validator.isEmpty(password)) {
+      errors.password = 'Password is required';
+    } else if (!validator.isPasswordMatch(password, confirmedPassword)) {
+      errors.password = 'Password mismatch';
+    } else if (!validator.isPasswordStrong(password)) {
+      errors.password =
+        'Password must contain 8 characters, 1 number, 1 upper, 1 lower';
+    }
+
+    setErrors(errors);
+    setIsInputValid(Object.keys(errors).length === 0);
   };
 
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
         <View>
-          {inputError.type === 'SIGN_UP_ERROR' && <SignUpError />}
+          <View style={{marginVertical: 10}}>
+            {Object.values(errors).map((error, index) => (
+              <Error index={index} msg={error} />
+            ))}
+          </View>
           <View>
             <Text>First Name</Text>
             <TextInput
@@ -133,9 +100,6 @@ const SignUp = ({navigation}: any) => {
               onChangeText={val => setFirstName(val)}
               autoFocus={true}
             />
-            {inputError.type === 'EMPTY_FIRST_NAME' && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -145,9 +109,6 @@ const SignUp = ({navigation}: any) => {
               autoCorrect={false}
               onChangeText={val => setLastName(val)}
             />
-            {inputError.type === 'EMPTY_LAST_NAME' && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -159,10 +120,6 @@ const SignUp = ({navigation}: any) => {
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
             />
-            {(inputError.type === 'EMPTY_EMAIL' ||
-              inputError.type === 'INVALID_EMAIL_FORMAT') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -183,11 +140,6 @@ const SignUp = ({navigation}: any) => {
                 {showPassword ? 'Hide' : 'Show'}
               </Text>
             </View>
-            {(inputError.type === 'EMPTY_PASSWORD' ||
-              inputError.type === 'WEAK_PASSWORD' ||
-              inputError.type === 'PASSWORD_MISMATCH') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -208,18 +160,13 @@ const SignUp = ({navigation}: any) => {
                 {showPassword ? 'Hide' : 'Show'}
               </Text>
             </View>
-            {(inputError.type === 'EMPTY_PASSWORD' ||
-              inputError.type === 'WEAK_PASSWORD' ||
-              inputError.type === 'PASSWORD_MISMATCH') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 14}} />
-          <TouchableOpacity style={styles.button} onPress={checkExists}>
+          <TouchableOpacity style={styles.button} onPress={verifyUser}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
-        <Separator />
+        <View style={styles.separator}></View>
         <View style={styles.footer}>
           <View>
             <Text>Already have account?</Text>

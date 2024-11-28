@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
@@ -9,115 +9,83 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
-import validator from 'validator';
+import Error from '../Error';
 import {styles} from '../../styles/signInStyles.js';
 import {signInUser} from '../../redux/actions/signInAction.js';
+import Validator from '../../validator/validator';
+import {navigate} from '../../helper/navigate';
+
+let validator = new Validator();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [inputError, setinputError] = useState({
-    type: '',
-    msg: '',
-  });
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [isInputValid, setIsInputValid] = useState(false);
 
-  const signIn = () => {
-    if (!validateEmail() || !validatePassword()) {
-      return;
+  useEffect(() => {
+    validateInput();
+  }, [email, password]);
+
+  const validateInput = () => {
+    let errors: any = {};
+
+    if (validator.isEmpty(email)) {
+      errors.email = 'Email is required';
+    } else if (!validator.isValidEmail(email)) {
+      errors.email = 'Email is invalid';
+    }
+    if (validator.isEmpty(password)) {
+      errors.password = 'Password is required';
     }
 
-    setLoading(true);
-    axios
-      .post(`${LOCAL_HOST_URL}/signInUser`, {
+    setErrors(errors);
+    setIsInputValid(Object.keys(errors).length === 0);
+  };
+
+  const signIn = async () => {
+    if (!isInputValid) return;
+
+    try {
+      const response = await axios.post(`${LOCAL_HOST_URL}/signInUser`, {
         email,
         password,
-      })
-      .then(res => {
-        console.log(res.data)
-        setLoading(false);
-        dispatchUser(res.data.signInResult);
-        clearInput();
-        navigation.navigate('DrawerNav');
-      })
-      .catch(err => {
-        setLoading(false);
-        const error = {type: 'SIGN_IN_ERROR', msg: 'failed to sign in'};
-        setinputError(error);
       });
-  };
-
-  const validateEmail = (): boolean => {
-    if (email.length === 0) {
-      setinputError({
-        type: 'EMPTY_EMAIL',
-        msg: 'Email is required',
-      });
-      return false;
+      dispatchUser(response.data);
+      clearInput();
+      navigate(navigation, 'DrawerNav', null);
+    } catch (e: any) {
+      setErrors({...errors, signInError: e.response.data.message});
     }
-    if (!validator.isEmail(email)) {
-      setinputError({
-        type: 'INVALID_EMAIL_FORMAT',
-        msg: 'Email is not valid',
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const validatePassword = (): boolean => {
-    if (password.length === 0) {
-      setinputError({
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const SignInError = () => {
-    return (
-      <View style={styles.signInError}>
-        <Text>{inputError.msg}</Text>
-      </View>
-    );
   };
 
   const clearInput = (): void => {
     setEmail('');
     setPassword('');
-    setinputError({
-      type: '',
-      msg: '',
-    });
-  };
-
-  const navigateToSignUp = (): void => {
-    navigation.navigate('SignUp');
-    clearInput();
+    setErrors({});
+    setIsInputValid(false);
   };
 
   const dispatchUser = (data: any): void => {
     const value = {
-      firstName: data.first_name,
+      firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
     };
     dispatch(signInUser(value));
   };
 
-  const Separator = () => <View style={styles.separator}></View>;
-
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
         <View>
           <View style={{marginVertical: 10}}>
-            {inputError.type === 'SIGN_IN_ERROR' && <SignInError />}
+            {Object.values(errors).map((error, index) => (
+              <Error index={index} msg={error} />
+            ))}
           </View>
           <View>
             <Text>Email</Text>
@@ -128,10 +96,6 @@ const SignIn = ({navigation}: any) => {
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
             />
-            {(inputError.type === 'EMPTY_EMAIL' ||
-              inputError.type === 'INVALID_EMAIL_FORMAT') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 10}} />
           <View>
@@ -144,24 +108,19 @@ const SignIn = ({navigation}: any) => {
               secureTextEntry={true}
               onChangeText={val => setPassword(val)}
             />
-            {inputError.type === 'EMPTY_PASSWORD' && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 20}} />
-          {loading ? (
-            <ActivityIndicator color="#24a0ed" />
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={signIn}>
-              <Text style={styles.buttonText}>Sign In</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.button} onPress={signIn}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
         </View>
-        <Separator />
+        <View style={styles.separator}></View>
         <View style={styles.footer}>
           <View>
             <Text>New user?</Text>
-            <Text style={styles.link} onPress={navigateToSignUp}>
+            <Text
+              style={styles.link}
+              onPress={() => navigate(navigation, 'SignUp', null)}>
               Sign Up
             </Text>
           </View>
