@@ -61,7 +61,7 @@ const SignUp = ({navigation}: any) => {
     }
 
     if (validator.isEmpty(lastName)) {
-      errors.firstName = 'Last name is required';
+      errors.lastName = 'Last name is required';
     }
 
     if (validator.isEmpty(email)) {

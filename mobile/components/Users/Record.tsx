@@ -6,120 +6,89 @@ import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useIsFocused} from '@react-navigation/native';
 import {alert, alertError} from '../../helper/Alert';
 
 const Record = ({route}: any) => {
-  const isFocused = useIsFocused();
   const {firstName, lastName, email, mode} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
-  const [dateOpen, setDateOpen] = useState(false);
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
-  const [date, setDate] = useState<Date>(new Date());
-  const [start, setStart] = useState<Date | null>(null);
-  const [end, setEnd] = useState<Date | null>(null);
+  const [start, setStart] = useState<Date | string>('');
+  const [end, setEnd] = useState<Date | string>('');
+  const [record, setRecord] = useState({
+    startTime: null,
+    endTime: null,
+  });
+  const [errors, setErrors] = useState('');
+  const [isInputValid, setIsInputValid] = useState(false);
 
-  useEffect(() => {
-    if (isFocused) {
-      getRecord();
-    }
-  }, [isFocused]);
-
-  const getRecord = async (date = new Date()) => {
-    setDate(date);
-
+  const checkDuplicate = async (date: Date, type: string) => {
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
         date: date,
       });
-      if (response.data.recordResult == null) {
-        setStart(null), setEnd(null);
+
+      if (response.data == null) {
+        saveRecord(date, type);
       } else {
-        setStart(response.data.recordResult.records[0].startTime);
-        setEnd(response.data.recordResult.records[0].endTime);
+        alert('Record exists. Do you want to overwrite?', '', function() {
+          saveRecord(date, type);
+        }, null)
       }
     } catch (e: any) {
-      console.log('error', e);
+      console.log('error', e.response.data.message);
     }
   };
 
-  const onTimeConfirm = (type: string, time: Date) => {
-    time.setFullYear(new Date(date).getFullYear());
-    time.setMonth(new Date(date).getMonth());
-    time.setDate(new Date(date).getDate());
+  const saveRecord = async (date: Date, type: string) => {
+    if (!validateInput(type)) return;
 
-    if (!validateInput(type, time)) return;
-    alertConfirm(type, time);
-  };
-
-  const alertConfirm = (type: string, date: Date) => {
-    const formatedDate = moment(date).format('MM/DD/YYYY h:mm a');
-
-    alert(
-      `${type ? `Make changes` : `This date record exists`}`,
-      `Do you want to set ${type} time to ${formatedDate}?`,
-      function () {
-        recordTime(date, type);
-      },
-      null,
-    );
-  };
-
-  const validateInput = (type: string, time: Date) => {
-    if (date.toDateString() !== time.toDateString()) {
-      alertError('Invalid input', 'Date has to match the selected date above', null);
-      return false;
-    }
-    if (new Date(time) > new Date()) {
-      alertError('Invalid input', 'No future time allowed', null);
-      return false;
-    }
-    if (!start && !end) return true;
-    if (type === 'start') {
-      if (end) {
-        const diff =
-          (new Date(end).getTime() - new Date(time).getTime()) /
-          (1000 * 60 * 60);
-        if (diff <= 0) {
-          alertError('invalid input', 'Start time has to occur before end time', null);
-          return false;
-        }
-      }
-    }
-    if (type === 'end') {
-      if (start) {
-        const diff =
-          (new Date(time).getTime() - new Date(start).getTime()) /
-          (1000 * 60 * 60);
-        if (diff <= 0) {
-          alertError('Invalid input', 'End time has to occur after start time', null);
-          return false;
-        }
-      }
-    }
-    return true;
-  };
-
-  const recordTime = async (date: Date, type: string) => {
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
-        recordTime: date,
+        recordTime: date, 
         type: type,
       });
 
-      setStart(response.data.recordResult.records[0].startTime);
-      setEnd(response.data.recordResult.records[0].endTime);
+      setStart(response.data?.records[0].startTime);
+      setEnd(response.data?.records[0].endTime);
     } catch (e: any) {
       console.log('error', e);
     }
   };
 
-  const Separator = () => <View style={styles.separator}></View>;
+  const validateInput = (type: string) => {
+    let errors = '';
+    let datetime = type === 'start' ? start : end;
+
+    if (!type || typeof datetime === 'string') {
+      errors = 'Date time is not selected'
+    }
+    if (new Date(datetime) > new Date()) {
+      errors = "No future time allowed";
+    } 
+    if (type === 'start') {
+      if (end) {
+        const diff = (new Date(end).getTime() - new Date(datetime).getTime()) / (1000 * 60 * 60)
+        if (diff <= 0) {
+          errors = 'Start time has to occur before end time';
+        }
+      }
+    } else if (type === 'end') {
+      if (start) {
+        const diff = (new Date(datetime).getTime() - new Date(start).getTime()) / (1000 * 60 * 60);
+        if (diff <= 0) {
+          errors = 'End time has to occur after start time';
+        }
+      }
+    }
+    setErrors(errors);
+    setIsInputValid(errors.length == 0);
+    return errors.length == 0;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,116 +97,95 @@ const Record = ({route}: any) => {
           Employer: {firstName} {lastName}
         </Text>
       </View>
-      <View>
-        {mode ? (
-          <View>
-            <TouchableOpacity
-              style={{flexDirection: 'row'}}
-              onPress={() => setDateOpen(!dateOpen)}>
-              <Text style={styles.subHeader}>
-                {`Selected date: ${moment(date).format('MM/DD/YYYY')}`}
-              </Text>
-              <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View>
-            <Text style={styles.subHeader}>
-              {`Today's date: ${moment(new Date()).format('MM/DD/YYYY')}`}
-            </Text>
-          </View>
-        )}
-        <DatePicker
-          modal
-          open={dateOpen}
-          mode="date"
-          date={date}
-          onConfirm={d => getRecord(d)}
-          onCancel={() => {
-            setDateOpen(false);
-          }}
-          minimumDate={new Date('2000-01-01')}
-          maximumDate={new Date()}
-        />
-      </View>
-      <View>
-        <View style={styles.dateContainer}>
+      <View style={styles.dateContainer}>
+        <View style={styles.subDateContainer}>
+          <Text style={{}}>Record start time</Text>
           <TouchableOpacity
             style={styles.dateBox}
             onPress={() => setStartOpen(!startOpen)}>
             <Text style={styles.dateText}>
-              Set start{'\n'}
-              <Text style={styles.subText}>Please select ...</Text>
+              {start ? moment(start).format('MM/DD LT') : `Select`}
             </Text>
             <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
           </TouchableOpacity>
+        </View>
+        <View style={styles.subDateContainer}>
+          <Text>Record end time</Text>
           <TouchableOpacity
             style={styles.dateBox}
             onPress={() => setEndOpen(!endOpen)}>
             <Text style={styles.dateText}>
-              Set end{'\n'}
-              <Text style={styles.subText}>Please select ...</Text>
+              {end ? moment(end).format('MM/DD LT') : `Select`}
             </Text>
             <MaterialIcons name="arrow-drop-down" size={36} color="#000" />
           </TouchableOpacity>
         </View>
-        {mode === true ? (
-          <View>
-            <DatePicker
-              modal
-              open={startOpen}
-              mode="datetime"
-              date={date}
-              onConfirm={t => onTimeConfirm('start', t)}
-              onCancel={() => {
-                setStartOpen(false);
-              }}
-              minimumDate={new Date('2000-01-01')}
-              maximumDate={new Date()}
-              title="Select start time"
-            />
-          </View>
-        ) : (
-          <View>
-            <DatePicker
-              modal
-              open={startOpen}
-              mode="time"
-              date={new Date()}
-              onConfirm={t => onTimeConfirm('start', t)}
-              onCancel={() => {
-                setStartOpen(false);
-              }}
-              // minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              // maximumDate={new Date(new Date().setHours(23, 59, 59, 999))}
-              title="Select start time"
-            />
-            <DatePicker
-              modal
-              open={endOpen}
-              mode="time"
-              date={new Date()}
-              onConfirm={t => onTimeConfirm('end', t)}
-              onCancel={() => {
-                setEndOpen(false);
-              }}
-              // minimumDate={new Date(new Date().setHours(0, 0, 0, 0))}
-              // maximumDate={new Date()}
-              title="Select end time"
-            />
-          </View>
-        )}
       </View>
-      <View style={styles.todayRecordContainer}>
-        <View style={styles.todayRecord}>
-          <Text>Start</Text>
-          <Text>{start ? moment(start).format('LT') : 'Not registered'}</Text>
-        </View>
-        <Separator />
-        <View style={styles.todayRecord}>
-          <Text>End</Text>
-          <Text>{end ? moment(end).format('LT') : 'Not registered'}</Text>
-        </View>
+      <View>
+        <DatePicker
+          modal
+          open={startOpen}
+          mode="datetime"
+          date={new Date()}
+          onConfirm={d => setStart(d)}
+          onCancel={() => setStartOpen(false)}
+          minimumDate={
+            mode
+              ? undefined
+              : new Date(
+                  `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                  }-${new Date().getDate()}T00:00:00`,
+                )
+          }
+          maximumDate={
+            mode
+              ? undefined
+              : new Date(
+                  `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                  }-${new Date().getDate()}T23:59:59`,
+                )
+          }
+        />
+        <DatePicker
+          modal
+          open={endOpen}
+          mode="datetime"
+          date={new Date()}
+          onConfirm={d => setEnd(d)}
+          onCancel={() => setEndOpen(false)}
+          minimumDate={
+            mode
+              ? undefined
+              : new Date(
+                  `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                  }-${new Date().getDate()}T00:00:00`,
+                )
+          }
+          maximumDate={
+            mode
+              ? undefined
+              : new Date(
+                  `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                  }-${new Date().getDate()}T23:59:59`,
+                )
+          }
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => checkDuplicate(start, 'start')}>
+          <Text style={styles.buttonText}>Save Start Time</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.saveButton}
+          onPress={() => checkDuplicate(end, 'end')}>
+          <Text style={styles.buttonText}>Save End Time</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

@@ -13,12 +13,6 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from '../../styles/manageServiceProvidersStyles.js';
 
-enum Status {
-  true = 1,
-  false = 2,
-  null = 3,
-}
-
 interface Schedule {
   day: string;
   start_time: string;
@@ -28,8 +22,8 @@ interface Schedule {
 interface ServiceProvider {
   first_name: string;
   last_name: string;
-  email_address: string;
-  status: Status;
+  email: string;
+  status: string;
   rate: number;
   rate_type: string;
   schedule: Schedule[] | [];
@@ -52,26 +46,28 @@ const ManageServiceProviders = (props: any) => {
 
   const getServiceProviders = async () => {
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/getServiceProvider`, {
-        employerEmail: email
-      });
-      if (response?.data?.serviceProviderResult == null) {
-        setServiceProviders([]);
-      } else {
-        setServiceProviders(formatData(response.data.serviceProviderResult.serviceProviders));
-      }
+      const response = await axios.post(
+        `${LOCAL_HOST_URL}/getServiceProvider`,
+        {
+          employerEmail: email,
+        },
+      );
+      setServiceProviders(formatData(response?.data?.serviceProviders));
     } catch (e: any) {
-      console.log(e);
+      setServiceProviders([]);
     }
   };
-  
+
   const formatData = (data: any[]): ServiceProvider[] => {
     const formattedData = data.reduce((a, b) => {
-      const found = a.find(e => e.email_address == b.email_address);
+      const found = a.find(e => e.email == b.email);
       const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
       ['day', 'start_time', 'end_time'].forEach(val => delete b[val]);
       return (
-        found ? found.schedule.push(item) : a.push({...b, schedule: [item]}), a
+        found && item.day && item.start_time && item.end_time
+          ? found.schedule.push(item)
+          : a.push({...b, schedule: []}),
+        a
       );
     }, []);
     return formattedData;
@@ -82,7 +78,7 @@ const ManageServiceProviders = (props: any) => {
       sp,
     });
   };
-  
+
   const sortStatus = (item: ServiceProvider[]): ServiceProvider[] => {
     item.sort((a: ServiceProvider, b: ServiceProvider) => a.status - b.status);
     return item;
@@ -106,20 +102,19 @@ const ManageServiceProviders = (props: any) => {
       <ScrollView style={styles.subContainer}>
         {serviceProviders.length ? (
           serviceProviders?.map((sp: ServiceProvider, index: number) => {
+            console.log('spppppp', sp);
             if (isBoxChecked || sp.status) {
-              const {first_name, last_name, email_address, status} = sp;
+              const {first_name, last_name, email, status} = sp;
               return (
                 <TouchableOpacity
                   key={index}
                   style={styles.listContainer}
-                  onPress={status ? () => navigateToProfile(sp) : () => null}>
-                  <Text style={styles.statusText}>
-                    {status === 1
-                      ? 'Active'
-                      : status === 2
-                      ? 'Declined'
-                      : 'Pending'}
-                  </Text>
+                  onPress={
+                    status === 'approved'
+                      ? () => navigateToProfile(sp)
+                      : () => null
+                  }>
+                  <Text style={styles.statusText}>{status}</Text>
                   <Text style={styles.listText}>
                     {`${
                       first_name
@@ -127,7 +122,7 @@ const ManageServiceProviders = (props: any) => {
                         : `Name not specified`
                     }`}
                   </Text>
-                  <Text>{email_address}</Text>
+                  <Text>{email}</Text>
                 </TouchableOpacity>
               );
             }

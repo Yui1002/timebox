@@ -29,7 +29,7 @@ const Home = (props: any) => {
       const response = await axios.post(`${LOCAL_HOST_URL}/getEmployer`, {
         email
       });
-      setEmployers(response.data.employerResult?.employers)
+      setEmployers(response.data?.employers)
     } catch (e: any) {
         console.log('home error', e);
     }
