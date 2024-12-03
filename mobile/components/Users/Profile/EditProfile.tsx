@@ -1,26 +1,28 @@
 import React, {useEffect, useState} from 'react';
+import { useDispatch } from 'react-redux';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
 import {SafeAreaView, View, Text, TextInput, Button, ScrollView} from 'react-native';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
 import {useSelector} from 'react-redux';
+import { navigate } from '../../../helper/navigate';
+import { Schedule } from '../../../type';
+import { editServiceProvider } from '../../../redux/actions/editServiceProviderAction.js';
 
-const EditProfile = ({route, navigation}: any) => {
-  const {rate, rate_type, status, shifts} = route.params.workInfo;
-  const email_address = route.params.email_address;
-  const userInfo = useSelector(state => state.userInfo);
-  const [editRate, setEditRate] = useState(rate ? rate : 0);
-  const [editRateType, setEditRateType] = useState(rate_type);
-  const [editStatus, setEditStatus] = useState(status);
-  const [editSchedule, setEditSchedule] = useState(shifts);
+
+const EditProfile = ({navigation}: any) => {
+  const dispatch = useDispatch();
+  const serviceProviderData = useSelector(state => state.serviceProviderData);
+  const { first_name, last_name, email, status, rate, rate_type, schedule} = serviceProviderData;
+  const employerData = useSelector(state => state.userInfo);
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
-  const [rateType, setRateType] = useState([
+  const [rateTypeLabel, setRateTypeLabel] = useState([
     {label: 'Hourly', value: 'hourly'},
     {label: 'Daily', value: 'daily'},
   ]);
-  const [updatedStatus, setUpdatedStatus] = useState([
+  const [statusLabel, setStatusLabel] = useState([
     {label: 'Active', value: 'active'},
     {label: 'Inactive', value: 'inactive'},
   ]);
@@ -30,20 +32,39 @@ const EditProfile = ({route, navigation}: any) => {
   });
 
   const deleteDate = (item: any) => {
-    setEditSchedule(s =>
-      s.filter(i => JSON.stringify(i) !== JSON.stringify(item)),
-    );
+    // setEditSchedule(s =>
+    //   s.filter(i => JSON.stringify(i) !== JSON.stringify(item)),
+    // );
   };
 
+  const updateRate = (updatedRate: string) => {
+    const updatedServiceProviderData = { ...serviceProviderData, rate: updatedRate}
+    dispatch(editServiceProvider(updatedServiceProviderData));
+  } 
+
+  const updateRateType = (updatedRateType: string) => {
+    const updatedServiceProviderData = { ...serviceProviderData, rate_type: updatedRateType};
+    dispatch(editServiceProvider(updatedServiceProviderData));
+  }
+
+  const updateStatus = (updatedStatus: string) => {
+    const updatedServiceProviderData = { ...serviceProviderData, status: updatedStatus};
+    dispatch(editServiceProvider(updatedServiceProviderData));
+  }
+
+  const editDate = (schedule: Schedule) => {
+    navigate(navigation, 'EditWorkShifts', {editSelectedSchedule: schedule})
+  }
+
   const validateInput = () => {
-    if (isNaN(editRate) || editRate < 1) {
+    if (isNaN(rate) || rate < 1) {
       setInputError({
         type: 'INVALID_RATE',
         msg: 'Must be number or more than 0',
       });
       return false;
     }
-    if (!editRateType) {
+    if (!rate_type) {
       setInputError({
         type: 'EMPTY_RATE_TYPE',
         msg: 'This field is required',
@@ -53,46 +74,27 @@ const EditProfile = ({route, navigation}: any) => {
     return true;
   };
 
-  const formatParams = () => {
-    const params: any = {};
-    if (rate !== Number(editRate)) {
-      params['rate'] = editRate;
-    }
-    if (rate_type !== editRateType) {
-      params['rate_type'] = editRateType;
-    }
-    if (status !== editStatus) {
-      params['status'] = editStatus;
-    }
-    if (JSON.stringify(shifts) !== JSON.stringify(editSchedule)) {
-      params['shift'] = editSchedule;
-    }
-    return params;
-  };
+  const saveChanges = async () => {
+    // if (!validateInput()) return;
 
-  const saveChanges = () => {
-    if (!validateInput()) return;
-    axios
-      .post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
-        params: formatParams(),
-        spEmail: email_address,
-        epEmail: userInfo.email,
-      })
-      .then(res => {
-        if (res.data === 'OK') {
-          navigation.navigate('Profile', {sp: route.params.sp});
-        }
-      });
+    console.log('serviceProviderData', serviceProviderData)
+    // try {
+    //   const response = await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`, 
+    //     {
+    //       employerEmail: employerData.email,
+    //       serviceProviderEmail: email,
+    //       rate: editRate,
+    //       rateType: editRateType,
+    //       schedule: editSchedule
+    //     }
+    //   )
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
 
   const navigateToAddSchedule = () => {
-    navigation.navigate('EditWorkShifts', {
-      email_address,
-      workInfo: route.params.workInfo,
-      sp: route.params.sp,
-      editSchedule,
-      setEditSchedule,
-    });
+    navigate(navigation, 'EditWorkShifts', null);
   };
 
   return (
@@ -103,9 +105,9 @@ const EditProfile = ({route, navigation}: any) => {
             <Text style={styles.text}>Rate ($)</Text>
             <TextInput
               maxLength={10}
-              value={`${editRate}`}
+              value={`${rate}`}
               style={styles.input}
-              onChangeText={val => setEditRate(val)}
+              onChangeText={val => updateRate(val)}
             />
             {inputError.type === 'INVALID_RATE' && (
               <Text style={styles.error}>{inputError.msg}</Text>
@@ -115,11 +117,11 @@ const EditProfile = ({route, navigation}: any) => {
             <Text style={styles.rateTypeText}>Rate Type</Text>
             <DropdownPicker
               open={rateTypeOpen}
-              value={editRateType}
-              items={rateType}
+              value={rate_type}
+              items={rateTypeLabel}
               setOpen={setRateTypeOpen}
-              setValue={setEditRateType}
-              setItems={setRateType}
+              setValue={(val) => updateRateType(val.toString())}
+              setItems={setRateTypeLabel}
               listMode='SCROLLVIEW'
             />
             {inputError.type === 'EMPTY_RATE_TYPE' && (
@@ -131,22 +133,25 @@ const EditProfile = ({route, navigation}: any) => {
           <Text style={styles.text}>Status</Text>
           <DropdownPicker
             open={statusOpen}
-            value={editStatus}
-            items={updatedStatus}
+            value={status}
+            items={statusLabel}
             setOpen={setStatusOpen}
-            setValue={setEditStatus}
-            setItems={setUpdatedStatus}
+            setValue={(val) => updateStatus(val.toString())}
+            setItems={setStatusLabel}
             listMode='SCROLLVIEW'
           />
         </View>
         <View style={statusOpen ? {zIndex: -1} : null}>
           <Text style={styles.text}>Schedule</Text>
-          {editSchedule && editSchedule.length ? (
-            editSchedule.map((s: any, index: number) => (
+          {schedule && schedule.length ? (
+            schedule.map((s: Schedule, index: number) => (
               <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
-                <Text style={{width: '30%'}}>{s.day}</Text>
-                <Text style={{width: '50%'}}>
+                <Text style={{width: '24%'}}>{s.day}</Text>
+                <Text style={{width: '40%'}}>
                   {s.start_time} ~ {s.end_time}
+                </Text>
+                <Text style={styles.delete} onPress={() => editDate(s)}>
+                  Edit
                 </Text>
                 <Text style={styles.delete} onPress={() => deleteDate(s)}>
                   Delete

@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
   },
   delete: {
     color: '#24a0ed',
-    width: '20%',
+    width: '14%',
     textDecorationLine: 'underline',
   },
   addButton: {

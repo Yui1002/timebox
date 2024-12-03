@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useDispatch } from 'react-redux';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import axios from 'axios';
 import {
@@ -13,26 +14,20 @@ import {styles} from '../../../styles/profileStyles.js';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
-
-interface Schedule {
-  day: string;
-  start_time: string;
-  end_time: string;
-}
+import { navigate } from '../../../helper/navigate';
+import { Schedule } from '../../../type';
+import { editServiceProvider } from '../../../redux/actions/editServiceProviderAction';
 
 const Profile = ({route, navigation}: any) => {
+  const {first_name, last_name, email, status, rate, rate_type, schedule} = route.params.sp;
   const userInfo = useSelector(state => state.userInfo);
-  const {first_name, last_name, email, status, rate, rate_type, schedule} =
-    route.params.sp;
-  console.log('profile', route.params.sp);
+  const dispatch = useDispatch();
+  dispatch(editServiceProvider({ first_name, last_name, email, status, rate, rate_type, schedule }));
 
   const editProfile = () => {
-    //   navigation.navigate('EditProfile', {
-    //     sp: route.params.sp,
-    //     email,
-    //     workInfo,
-    //     setWorkInfo,
-    //   });
+    navigate(navigation, 'EditProfile', {
+      sp: route.params.sp,
+    })
   };
 
   const viewWorkingHistory = () => {

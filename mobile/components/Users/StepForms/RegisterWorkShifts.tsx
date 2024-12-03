@@ -6,21 +6,12 @@ import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
+import { Days } from '../../../enums'
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
   const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
   const dispatch = useDispatch();
   const workShifts = useSelector(state => state.workShifts);
-
-  const days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
   const [startTime, setStartTime] = useState(new Date());
@@ -93,11 +84,11 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
           <InputError error={inputError} />
         )}
         <View style={styles.dayContainer}>
-          {days.map((day, index) => (
+          {Object.keys(Days).map((day: string, key: number) => (
             <TouchableOpacity
-              key={index}
+              key={key}
               style={selectedDay === day ? styles.day_selected : styles.day}
-              onPress={() => setSelectedDay(day)}>
+              onPress={() => setSelectedDay(day.toLowerCase())}>
               <Text style={styles.day_text}>{day}</Text>
             </TouchableOpacity>
           ))}

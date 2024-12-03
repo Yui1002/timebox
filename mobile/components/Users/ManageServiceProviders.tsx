@@ -12,12 +12,7 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from '../../styles/manageServiceProvidersStyles.js';
-
-interface Schedule {
-  day: string;
-  start_time: string;
-  end_time: string;
-}
+import { Schedule } from '../../type';
 
 interface ServiceProvider {
   first_name: string;
@@ -46,14 +41,14 @@ const ManageServiceProviders = (props: any) => {
 
   const getServiceProviders = async () => {
     try {
-      const response = await axios.post(
-        `${LOCAL_HOST_URL}/getServiceProvider`,
+      const response = await axios.post(`${LOCAL_HOST_URL}/getServiceProvider`,
         {
           employerEmail: email,
         },
       );
       setServiceProviders(formatData(response?.data?.serviceProviders));
-    } catch (e: any) {
+    } 
+    catch (e: any) {
       setServiceProviders([]);
     }
   };
@@ -61,15 +56,16 @@ const ManageServiceProviders = (props: any) => {
   const formatData = (data: any[]): ServiceProvider[] => {
     const formattedData = data.reduce((a, b) => {
       const found = a.find(e => e.email == b.email);
-      const item = {day: b.day, start_time: b.start_time, end_time: b.end_time};
-      ['day', 'start_time', 'end_time'].forEach(val => delete b[val]);
+      const item = {id: b.schedule_id, day: b.day, start_time: b.start_time, end_time: b.end_time};
+      ['schedule_id', 'day', 'start_time', 'end_time'].forEach(val => delete b[val]);
       return (
-        found && item.day && item.start_time && item.end_time
+        found 
           ? found.schedule.push(item)
-          : a.push({...b, schedule: []}),
+          : a.push({...b, schedule: [item]}),
         a
       );
     }, []);
+
     return formattedData;
   };
 
@@ -102,7 +98,6 @@ const ManageServiceProviders = (props: any) => {
       <ScrollView style={styles.subContainer}>
         {serviceProviders.length ? (
           serviceProviders?.map((sp: ServiceProvider, index: number) => {
-            console.log('spppppp', sp);
             if (isBoxChecked || sp.status) {
               const {first_name, last_name, email, status} = sp;
               return (
@@ -110,7 +105,7 @@ const ManageServiceProviders = (props: any) => {
                   key={index}
                   style={styles.listContainer}
                   onPress={
-                    status === 'approved'
+                    status === 'ACTIVE'
                       ? () => navigateToProfile(sp)
                       : () => null
                   }>

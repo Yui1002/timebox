@@ -70,12 +70,11 @@ const SignIn = ({navigation}: any) => {
   };
 
   const dispatchUser = (data: any): void => {
-    const value = {
+    dispatch(signInUser({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
-    };
-    dispatch(signInUser(value));
+    }));
   };
 
   return (
@@ -83,8 +82,8 @@ const SignIn = ({navigation}: any) => {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={{marginVertical: 10}}>
-            {Object.values(errors).map((error, index) => (
-              <Error index={index} msg={error} />
+            {Object.values(errors).map((error, key) => (
+              <Error key={key} msg={error} />
             ))}
           </View>
           <View>
