@@ -1,15 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {styles} from '../../styles/manageServiceProvidersStyles.js';
 import { Schedule } from '../../type';
@@ -71,13 +65,8 @@ const ManageServiceProviders = (props: any) => {
 
   const navigateToProfile = (sp: ServiceProvider) => {
     props.navigation.navigate('Profile', {
-      sp,
+      sp
     });
-  };
-
-  const sortStatus = (item: ServiceProvider[]): ServiceProvider[] => {
-    item.sort((a: ServiceProvider, b: ServiceProvider) => a.status - b.status);
-    return item;
   };
 
   return (

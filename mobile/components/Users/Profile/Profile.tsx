@@ -1,7 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import { useDispatch } from 'react-redux';
-import {LOCAL_HOST_URL} from '../../../config.js';
-import axios from 'axios';
 import {
   SafeAreaView,
   View,
@@ -16,18 +14,16 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
 import { navigate } from '../../../helper/navigate';
 import { Schedule } from '../../../type';
-import { editServiceProvider } from '../../../redux/actions/editServiceProviderAction';
+import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
 
 const Profile = ({route, navigation}: any) => {
   const {first_name, last_name, email, status, rate, rate_type, schedule} = route.params.sp;
   const userInfo = useSelector(state => state.userInfo);
   const dispatch = useDispatch();
-  dispatch(editServiceProvider({ first_name, last_name, email, status, rate, rate_type, schedule }));
+  dispatch(updateServiceProvider({ first_name, last_name, email, status, rate, rate_type, schedule }));
 
   const editProfile = () => {
-    navigate(navigation, 'EditProfile', {
-      sp: route.params.sp,
-    })
+    navigate(navigation, 'EditProfile', null)
   };
 
   const viewWorkingHistory = () => {

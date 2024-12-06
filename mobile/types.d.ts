@@ -1,8 +1,8 @@
 type Schedule = {
     id: number;
-    day: string;
-    start_time: string;
-    end_time: string;
+    day: string | null;
+    start_time: string | null;
+    end_time: string | null;
 }
 
 export {Schedule}

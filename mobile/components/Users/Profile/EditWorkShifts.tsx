@@ -10,7 +10,7 @@ import Error from '../../Error';
 import {Schedule} from '../../../types';
 import {Days} from '../../../enums';
 import { navigate } from '../../../helper/navigate';
-import { editServiceProvider } from '../../../redux/actions/editServiceProviderAction.js';
+import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
 
 let validator = new Validator();
 
@@ -18,8 +18,7 @@ interface IProps {
   editSelectedSchedule: Schedule;
 }
 
-const EditWorkShifts = ({navigation}: any) => {
-  const route: RouteProp<{params: IProps}> = useRoute();
+const EditWorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const serviceProviderData = useSelector(state => state.serviceProviderData);
   const { editSelectedSchedule } = route.params;
@@ -67,9 +66,8 @@ const EditWorkShifts = ({navigation}: any) => {
       return item;
     })
 
-    console.log('serviceProviderData', serviceProviderData)
-    dispatch(editServiceProvider(serviceProviderData))
-    navigate(navigation, 'EditProfile', null);
+    dispatch(updateServiceProvider(serviceProviderData))
+    navigate(navigation, 'EditProfile', {sp: route.params.sp});
   };
 
   return (
@@ -108,6 +106,7 @@ const EditWorkShifts = ({navigation}: any) => {
           <DatePicker
             modal
             open={endOpen}
+            mode='time'
             date={new Date()}
             onConfirm={time => {
               setEndOpen(!endOpen);
