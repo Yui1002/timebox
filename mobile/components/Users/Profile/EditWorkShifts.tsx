@@ -25,10 +25,10 @@ const EditWorkShifts = ({route, navigation}: any) => {
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
   const [startTime, setStartTime] = useState(
-    editSelectedSchedule ? editSelectedSchedule.start_time : moment().format('LT'),
+    editSelectedSchedule ? editSelectedSchedule.startTime : moment().format('LT'),
   );
   const [endTime, setEndTime] = useState(
-    editSelectedSchedule ? editSelectedSchedule.end_time : moment().format('LT'),
+    editSelectedSchedule ? editSelectedSchedule.endTime : moment().format('LT'),
   );
   const [selectedDay, setSelectedDay] = useState<string>(
     editSelectedSchedule ? editSelectedSchedule.day : '',
@@ -60,8 +60,8 @@ const EditWorkShifts = ({route, navigation}: any) => {
 
     serviceProviderData.schedule.map((item: Schedule) => {
       if (item.id === editSelectedSchedule.id) {
-        item.start_time = startTime,
-        item.end_time = endTime;
+        item.startTime = startTime,
+        item.endTime = endTime;
       }
       return item;
     })

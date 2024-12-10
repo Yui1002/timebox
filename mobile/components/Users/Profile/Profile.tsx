@@ -18,6 +18,7 @@ import { updateServiceProvider } from '../../../redux/actions/updateServiceProvi
 
 const Profile = ({route, navigation}: any) => {
   const {first_name, last_name, email, status, rate, rate_type, schedule} = route.params.sp;
+  console.log(route.params.sp)
   const userInfo = useSelector(state => state.userInfo);
   const dispatch = useDispatch();
   dispatch(updateServiceProvider({ first_name, last_name, email, status, rate, rate_type, schedule }));
@@ -75,7 +76,7 @@ const Profile = ({route, navigation}: any) => {
                   s.day
                 }`}</Text>
                 <Text
-                  style={styles.time}>{`${s.start_time} - ${s.end_time}`}</Text>
+                  style={styles.time}>{`${s.startTime} - ${s.endTime}`}</Text>
               </View>
             ))
           ) : (

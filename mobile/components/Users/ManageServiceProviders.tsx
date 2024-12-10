@@ -50,14 +50,15 @@ const ManageServiceProviders = (props: any) => {
   const formatData = (data: any[]): ServiceProvider[] => {
     const formattedData = data.reduce((a, b) => {
       const found = a.find(e => e.email == b.email);
-      const item = {id: b.schedule_id, day: b.day, start_time: b.start_time, end_time: b.end_time};
+
+      const item = {id: b.schedule_id, day: b.day, startTime: b.start_time, endTime: b.end_time};
       ['schedule_id', 'day', 'start_time', 'end_time'].forEach(val => delete b[val]);
-      return (
-        found 
-          ? found.schedule.push(item)
-          : a.push({...b, schedule: [item]}),
-        a
-      );
+
+      if (!item.id) {
+        return (found ? found.schedule.push([]) : a.push({...b, schedule: []}), a)
+      } else {
+        return (found ? found.schedule.push(item) : a.push({...b, schedule: [item]}), a)
+      }
     }, []);
 
     return formattedData;

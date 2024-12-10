@@ -10,7 +10,7 @@ import {Schedule} from '../../../type';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
 import Error from '../../Error';
 
-const EditProfile = ({navigation}: any) => {
+const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const employerData = useSelector(state => state.userInfo);
   const serviceProviderData = useSelector(state => state.serviceProviderData);
@@ -36,8 +36,8 @@ const EditProfile = ({navigation}: any) => {
     const result = serviceProviderData.schedule.map((schedule: Schedule) => {
       if (JSON.stringify(schedule) === JSON.stringify(itemToDelete)) {
         schedule.day = null;
-        schedule.start_time = null;
-        schedule.end_time = null;
+        schedule.startTime = null;
+        schedule.endTime = null;
       }
       return schedule;
     });
@@ -63,22 +63,24 @@ const EditProfile = ({navigation}: any) => {
   const saveChanges = async () => {
     if (!validateInput()) return;
 
-    console.log('serviceProviderData', serviceProviderData)
-
-    // try {
-    //   const response = await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`,
-    //     {
-    //       employerEmail: employerData.email,
-    //       serviceProviderEmail: serviceProviderData.email,
-    //       rate: updatedRate,
-    //       rateType: updatedRateType,
-    //       status: updatedStatus,
-    //       schedule: serviceProviderData.schedule
-    //     }
-    //   )
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`,
+        {
+          employerEmail: employerData.email,
+          serviceProviderEmail: serviceProviderData.email,
+          rate: updatedRate,
+          rateType: updatedRateType,
+          status: updatedStatus,
+          schedule: updatedSchedule
+        }
+      )
+      navigate(navigation, 'Profile', route.params.sp);
+    } 
+    catch (e) {
+      setErrors({
+        error: 'Unable to save changes'
+      });
+    }
   };
 
   const navigateToSchedule = (schedule: Schedule | null) => {
@@ -133,11 +135,11 @@ const EditProfile = ({navigation}: any) => {
           <Text style={styles.text}>Schedule</Text>
           {updatedSchedule && updatedSchedule.length ? (
             updatedSchedule.map((s: Schedule, index: number) => {
-              if (s.day && s.start_time && s.end_time) {
+              if (s.day && s.startTime && s.endTime) {
                 return (
                   <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
                   <Text style={{width: '24%'}}>{s.day}</Text>
-                  <Text style={{width: '40%'}}>{s.start_time} ~ {s.end_time}</Text>
+                  <Text style={{width: '40%'}}>{s.startTime} ~ {s.endTime}</Text>
                   <Text style={styles.delete} onPress={() => navigateToSchedule(s)}>Edit</Text>
                   <Text style={styles.delete} onPress={() => deleteDate(s)}>Delete</Text>
                 </View>
