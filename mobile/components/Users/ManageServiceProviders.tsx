@@ -5,19 +5,8 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import {styles} from '../../styles/manageServiceProvidersStyles.js';
-import { Schedule } from '../../type';
-
-interface ServiceProvider {
-  first_name: string;
-  last_name: string;
-  email: string;
-  status: string;
-  rate: number;
-  rate_type: string;
-  schedule: Schedule[] | [];
-  allow_edit: boolean;
-}
+import { styles } from '../../styles/manageServiceProvidersStyles.js';
+import { ServiceProvider } from '../../type';
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
