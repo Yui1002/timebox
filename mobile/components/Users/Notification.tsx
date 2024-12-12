@@ -7,7 +7,7 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import {NotificationData, Schedule} from '../../types';
-import {alert} from '../../helper/Alert';
+import {alert, alertError} from '../../helper/Alert';
 
 const Notification = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
@@ -74,53 +74,39 @@ const Notification = (props: any) => {
     });
   };
 
-  const updateRequest = (sender: string, n: any, isApproved: boolean) => {
-    axios
-      .post(`${LOCAL_HOST_URL}/request/update`, {
-        sender: sender,
-        receiver: userInfo.email,
-        isApproved: isApproved,
-        request: n,
-      })
-      .then(() => {
-        isApproved
-          ? showSuccessAlert(n, 'accepted')
-          : showSuccessAlert(n, 'declined');
-      })
-      .catch(err => {
-        console.log(err);
+  const updateRequest = async (n: NotificationData, status: string) => {
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/updateRequestStatus`, {
+        senderEmail: n.senderEmail,
+        receiverEmail: n.receiverEmail,
+        status: status,
       });
+      alertSuccess(n, status);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
-  const showAcceptAlert = (sender: string, n: any) => {
-    Alert.alert(`Do you accept ${n.first_name} ${n.last_name}'s request?`, '', [
-      {
-        text: 'Yes',
-        onPress: () => updateRequest(sender, n, true),
-      },
-      {
-        text: 'No',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-    ]);
-  };
-
-  const showDeclineAlert = (n: NotificationData): void => {
+  const alertConfirm = (n: NotificationData, status: string) => {
     alert(
-      `Do you decline ${n.senderFirstName} ${n.senderLastName}'s request?`,
+      `Do you want to ${status} \n ${n.senderFirstName} ${n.senderLastName}'s request?`,
       '',
       function () {
-        updateRequest();
+        updateRequest(n, status);
       },
       null,
     );
   };
 
-  const showSuccessAlert = (n: any, status: string) =>
-    Alert.alert(`You ${status} ${n.first_name} ${n.last_name}'s request!`, '', [
-      {text: 'Back to Home', onPress: () => props.navigation.goBack()},
-    ]);
+  const alertSuccess = (n: NotificationData, status: string) => {
+    alertError(
+      `You successfully ${status}ed ${n.senderFirstName} ${n.senderLastName}'s request!`,
+      '',
+      function () {
+        props.navigation.goBack();
+      },
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,6 +114,7 @@ const Notification = (props: any) => {
         {notifications.length ? (
           <View style={styles.subContainer}>
             {notifications.map((n: NotificationData, index) => {
+              if (n.status == 'accept') return;
               return (
                 <View key={index} style={styles.box}>
                   <Text style={styles.title}>
@@ -144,30 +131,30 @@ const Notification = (props: any) => {
                     }`}
                   </Text>
                   <View>
-                  <Text style={styles.subText}>Schedules:</Text>
-                  {n.schedule.length ? (
-                    n.schedule.map((item, index: number) => (
-                      <View key={index}>
-                        <Text style={styles.subText}>{`${String.fromCharCode(
-                          8226,
-                        )} ${item.day} ${item.startTime} - ${
-                          item.endTime
-                        }`}</Text>
-                      </View>
-                    ))
-                  ) : (
-                    <Text>Not specified</Text>
-                  )}
+                    <Text style={styles.subText}>Schedules:</Text>
+                    {n.schedule.length ? (
+                      n.schedule.map((item, index: number) => (
+                        <View key={index}>
+                          <Text style={styles.subText}>{`${String.fromCharCode(
+                            8226,
+                          )} ${item.day} ${item.startTime} - ${
+                            item.endTime
+                          }`}</Text>
+                        </View>
+                      ))
+                    ) : (
+                      <Text>Not specified</Text>
+                    )}
                   </View>
                   <View style={styles.buttonContainer}>
                     <TouchableOpacity
                       style={[styles.button, styles.button_decline]}
-                      onPress={() => showDeclineAlert(n)}>
+                      onPress={() => alertConfirm(n, 'decline')}>
                       <Text style={styles.buttonText}>Decline</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[styles.button, styles.button_accept]}
-                      onPress={() => showAcceptAlert(n, notifications.get(n))}>
+                      onPress={() => alertConfirm(n, 'accept')}>
                       <Text style={styles.buttonText}>Accept</Text>
                     </TouchableOpacity>
                   </View>
