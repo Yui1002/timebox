@@ -1,5 +1,5 @@
 type Schedule = {
-    id: number;
+    id?: number;
     day: string | null;
     startTime: string | null;
     endTime: string | null;
@@ -34,4 +34,22 @@ type Record = {
     endTime: string | null;
 }
 
-export { Schedule, ServiceProvider, RawEmployer, FormattedEmployer, Record }
+type NotificationData = {
+    id: string;
+    senderFirstName: string;
+    senderLastName: string;
+    senderEmail: string;
+    receiverEmail: string;
+    rate: number | null;
+    rateType: string | null;
+    day: string | null;
+    startTime: string | null;
+    endTime: string | null;
+    status: string;
+    allowEdit: boolean;
+    schedule: Schedule[];
+    requestDate: Date;
+}
+
+
+export { Schedule, ServiceProvider, RawEmployer, FormattedEmployer, Record, NotificationData }
