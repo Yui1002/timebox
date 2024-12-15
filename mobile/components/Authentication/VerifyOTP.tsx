@@ -4,8 +4,6 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  Button,
-  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
@@ -14,35 +12,43 @@ import {styles} from '../../styles/verifyOTP.js';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {navigate} from '../../helper/navigate';
+import Error from '../Error';
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {firstName, lastName, email, password} = route.params;
+  const {firstName, lastName, email, password, isSignUp} = route.params;
   const [otp, setOtp] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
-  const [inputError, setinputError] = useState({
-    type: '',
-    msg: '',
-  });
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const validateInput = () => {
-    if (otp.length !== 6) {
-      setinputError({
-        type: 'INVALID_OTP',
-        msg: 'Verification code has to be 6 digit',
+  useEffect(() => {
+    setOTP();
+  }, []);
+
+  const setOTP = async () => {
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/setOTP`, {
+        email: email,
+        otp: '',
       });
-      return false;
+    } catch (e) {
+      setErrors({...errors, failOTP: 'Failed to set OTP'});
     }
+  };
+
+  const validateInput = (): boolean => {
+    let errors: any = {};
     const regex = /^\d+$/;
-    if (!regex.test(otp)) {
-      setinputError({
-        type: 'INVALID_OTP',
-        msg: 'Verification code has to be a number',
-      });
-      return false;
+
+    if (otp.length !== 6) {
+      errors.lengthError = 'Verification code has to be 6 digit';
     }
-    return true;
+    if (!regex.test(otp)) {
+      errors.typeError = 'Verification code has to be a number';
+    }
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const verifyOTP = async () => {
@@ -52,8 +58,21 @@ const VerifyOTP = ({route, navigation}: any) => {
       await axios.post(`${LOCAL_HOST_URL}/verifyOTP`, {
         otp: otp,
         email: email,
-        createDate: new Date(),
       });
+
+      if (isSignUp) {
+        setUser();
+        navigate(navigation, 'DrawerNav', null);
+      } else {
+        navigate(navigation, 'ResetPassword', {email})
+      }
+    } catch (e: any) {
+      setErrors({...errors, verifyError: 'Failed to verify OTP'});
+    }
+  };
+
+  const setUser = async () => {
+    try {
       await axios.post(`${LOCAL_HOST_URL}/setUser`, {
         firstName,
         lastName,
@@ -61,29 +80,10 @@ const VerifyOTP = ({route, navigation}: any) => {
         password,
       });
       dispatch(signInUser({firstName, lastName, email}));
-      navigate(navigation, 'DrawerNav', null);
-    } catch (e: any) {
-      setinputError({
-        type: 'INVALID_OTP',
-        msg: e.response.data.message,
-      });
+    } catch (e) {
+      console.log(e);
     }
   };
-
-  const resendOtp = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/resendOTP`, {
-        email,
-      })
-      .then(res => {
-        setIsOtpSent(true);
-      })
-      .catch((err): any => {
-        console.log(err);
-      });
-  };
-
-  const Separator = () => <View style={styles.separator}></View>;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -97,6 +97,9 @@ const VerifyOTP = ({route, navigation}: any) => {
           )} Verification code was resent successfully`}</Text>
         </View>
       )}
+      {Object.values(errors).map((error, key) => (
+        <Error key={key} msg={error} />
+      ))}
       <View style={{height: '8%'}}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
@@ -109,23 +112,14 @@ const VerifyOTP = ({route, navigation}: any) => {
           onChangeText={val => setOtp(val)}
         />
       </View>
-      <View>
-        {inputError.type === 'INVALID_OTP' && (
-          <Text style={styles.inputError}>{inputError.msg}</Text>
-        )}
-      </View>
-      {loading ? (
-        <ActivityIndicator color="#24a0ed" />
-      ) : (
-        <TouchableOpacity style={styles.button} onPress={verifyOTP}>
-          <Text style={styles.buttonText}>Verify</Text>
-        </TouchableOpacity>
-      )}
-      <Separator />
+      <TouchableOpacity style={styles.button} onPress={verifyOTP}>
+        <Text style={styles.buttonText}>Verify</Text>
+      </TouchableOpacity>
+      <View style={styles.separator}></View>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <View>
           <Text>Didn't receive a code?</Text>
-          <Text style={styles.link} onPress={resendOtp}>
+          <Text style={styles.link} onPress={setOTP}>
             Resend
           </Text>
         </View>

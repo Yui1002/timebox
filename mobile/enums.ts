@@ -8,4 +8,9 @@ enum Days {
   SUNDAY = 'Sunday',
 }
 
-export { Days }
+enum TimeType {
+  START = 'start',
+  END = 'end'
+}
+
+export { Days, TimeType }

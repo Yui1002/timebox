@@ -55,6 +55,7 @@ function App(): JSX.Element {
             options={{
               title: 'Verify OTP',
               gestureEnabled: false,
+              headerLeft: () => null,
             }}
           />
           <Stack.Screen
@@ -69,7 +70,7 @@ function App(): JSX.Element {
           <Stack.Screen
             name="ResetPassword"
             component={ResetPassword}
-            options={{gestureEnabled: false}}
+            options={{gestureEnabled: false, headerLeft: () => null}}
           />
           <Stack.Screen
             name="DrawerNav"

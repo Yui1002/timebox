@@ -27,27 +27,23 @@ const SignUp = ({navigation}: any) => {
   const [errors, setErrors] = useState({});
   const [isInputValid, setIsInputValid] = useState(false);
 
-  useEffect(() => {
-    validateInput();
-  }, [firstName, lastName, email, password, confirmedPassword]);
-
   const verifyUser = async () => {
-    if (!isInputValid) return;
+    if (!validateInput()) return;
 
     try {
       await axios.post(`${LOCAL_HOST_URL}/verifyUser`, {
         email,
       });
-      await axios.post(`${LOCAL_HOST_URL}/handleOTP`, {
+
+      let params = {
+        firstName: firstName,
+        lastName: lastName,
         email: email,
-        otp: '',
-      });
-      navigate(navigation, 'VerifyOTP', {
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+        password: password,
+        isSignUp: true,
+      };
+
+      navigate(navigation, 'VerifyOTP', params);
     } catch (e: any) {
       setErrors({...errors, signInError: e.response.data.message});
     }
@@ -59,17 +55,14 @@ const SignUp = ({navigation}: any) => {
     if (validator.isEmpty(firstName)) {
       errors.firstName = 'First name is required';
     }
-
     if (validator.isEmpty(lastName)) {
       errors.lastName = 'Last name is required';
     }
-
     if (validator.isEmpty(email)) {
       errors.email = 'Email is required';
     } else if (!validator.isValidEmail(email)) {
       errors.email = 'Email is invalid';
     }
-
     if (validator.isEmpty(password)) {
       errors.password = 'Password is required';
     } else if (!validator.isPasswordMatch(password, confirmedPassword)) {
@@ -80,7 +73,7 @@ const SignUp = ({navigation}: any) => {
     }
 
     setErrors(errors);
-    setIsInputValid(Object.keys(errors).length === 0);
+    return Object.keys(errors).length === 0;
   };
 
   return (
@@ -89,7 +82,7 @@ const SignUp = ({navigation}: any) => {
         <View>
           <View style={{marginVertical: 10}}>
             {Object.values(errors).map((error, index) => (
-              <Error index={index} msg={error} />
+              <Error key={index} msg={error} />
             ))}
           </View>
           <View>

@@ -5,70 +5,56 @@ import validator from 'validator';
 import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import {PASSWORD_RULES} from '../../config.js';
 import {styles} from '../../styles/resetPasswordStyles.js';
+import Error from '../Error';
+import { navigate } from '../../helper/navigate';
 
 const ResetPassword = ({route, navigation}: any) => {
   const email = route.params.email;
   const [password, setPassword] = useState('');
   const [confirmdPassword, setConfirmedPassword] = useState('');
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
-  });
+  const [errors, setErrors] = useState({});
 
   const validatePassword = (): boolean => {
-    if (!password.length || !confirmdPassword.length) {
-      setInputError({
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
-      });
-      return false;
+    let errors: any = {};
+
+    if (validator.isEmpty(password) || validator.isEmpty(confirmdPassword)) {
+      errors.emptyPassword = 'Both password is required';
     }
     if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
-      setInputError({
-        type: 'WEAK_PASSWORD',
-        msg: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
-      });
-      return false;
+      errors.weakPassword =
+        'Password must contain 8 characters, 1 number, 1 upper, 1 lower';
     }
     if (password !== confirmdPassword) {
-      setInputError({
-        type: 'PASSWORD_MISMATCH',
-        msg: 'Password does not match',
-      });
-      return false;
+      errors.mismatchPassword = 'Password does not match';
     }
-    return true;
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const resetPassword = () => {
+  const resetPassword = async () => {
     if (!validatePassword()) return;
-    axios
-      .post(`${LOCAL_HOST_URL}/password/reset`, {
-        email,
-        password,
-      })
-      .then(res => {
-        navigation.navigate('SignIn');
-      })
-      .catch(err => {
-        setInputError({
-          type: 'DUPLICATE_PASSWORD',
-          msg: err.response.data.error,
-        });
-      });
-  };
 
-  const Separator = () => <View style={styles.separator}></View>;
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/resetPassword`, {
+        email: email,
+        newPassword: password
+      });
+      console.log('??')
+      navigate(navigation, 'DrawerNav', null);
+    } catch (e) {
+      console.log('here')
+      setErrors({...errors, invalidPassword: 'You cannot reuse the previous password'})
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.header}>Reset Password</Text>
-        <View style={styles.error}>
-          {inputError.type === 'DUPLICATE_PASSWORD' && (
-            <Text >{inputError.msg}</Text>
-          )}
-        </View>
+        {Object.values(errors).map((error, key) => (
+          <Error key={key} msg={error} />
+        ))}
         <View style={{marginVertical: 10}} />
         <View>
           <Text>Password</Text>
@@ -79,11 +65,6 @@ const ResetPassword = ({route, navigation}: any) => {
             secureTextEntry={true}
             onChangeText={val => setPassword(val)}
           />
-          {(inputError.type === 'EMPTY_PASSWORD' ||
-            inputError.type === 'WEAK_PASSWORD' ||
-            inputError.type === 'PASSWORD_MISMATCH') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
         </View>
         <View style={{marginVertical: 10}} />
         <View>
@@ -95,18 +76,13 @@ const ResetPassword = ({route, navigation}: any) => {
             secureTextEntry={true}
             onChangeText={val => setConfirmedPassword(val)}
           />
-          {(inputError.type === 'EMPTY_PASSWORD' ||
-            inputError.type === 'WEAK_PASSWORD' ||
-            inputError.type === 'PASSWORD_MISMATCH') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
         </View>
         <View style={{marginVertical: 20}} />
         <View style={styles.button}>
           <Button title="Reset Password" color="#fff" onPress={resetPassword} />
         </View>
       </View>
-      <Separator />
+      <View style={styles.separator}></View>
       <View style={styles.footer}>
         <View>
           <Text>Go back to</Text>

@@ -78,4 +78,7 @@ export const styles = StyleSheet.create({
   error: {
     color: 'red',
   },
+  icon: {
+    marginTop: 5
+  }
 });
