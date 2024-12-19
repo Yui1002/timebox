@@ -1,0 +1,108 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Mode": {
+				"enum": [
+					0,
+					1
+				],
+				"type": "number"
+			},
+			"Employer": {
+				"properties": {
+					"firstName": {
+						"type": "string",
+						"default": ""
+					},
+					"lastName": {
+						"type": "string",
+						"default": ""
+					},
+					"email": {
+						"type": "string",
+						"default": ""
+					},
+					"mode": {
+						"$ref": "#/components/schemas/Mode"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetEmployerRs": {
+				"properties": {
+					"employers": {
+						"items": {
+							"$ref": "#/components/schemas/Employer"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetEmployerRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "server",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/employer": {
+			"post": {
+				"operationId": "GetEmployer",
+				"responses": {
+					"200": {
+						"description": "GetEmployerRs Return the employer data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetEmployerRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetEmployerRq"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

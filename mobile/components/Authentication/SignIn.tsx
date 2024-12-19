@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import axios from 'axios';
+import { DefaultApiFactory, GetEmployerRq } from '../../swagger/generated';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {
   Text,
@@ -17,6 +18,7 @@ import Validator from '../../validator/validator';
 import {navigate} from '../../helper/navigate';
 
 let validator = new Validator();
+let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -49,17 +51,29 @@ const SignIn = ({navigation}: any) => {
   const signIn = async () => {
     if (!isInputValid) return;
 
-    try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/signInUser`, {
-        email,
-        password,
-      });
-      dispatchUser(response.data);
-      clearInput();
-      navigate(navigation, 'DrawerNav', null);
-    } catch (e: any) {
-      setErrors({...errors, signInError: e.response.data.message});
+    const params: GetEmployerRq = {
+      email: email
     }
+
+    try {
+      const { data } = await userApi.getEmployer(params);
+      console.log('response', data.employers)
+    } catch (e: any) {
+      console.log(e.request)
+      setErrors({...errors, signInError: "Failed to sign in"});
+    }
+
+    // try {
+    //   const response = await axios.post(`${LOCAL_HOST_URL}/signInUser`, {
+    //     email,
+    //     password,
+    //   });
+    //   dispatchUser(response.data);
+    //   clearInput();
+    //   navigate(navigation, 'DrawerNav', null);
+    // } catch (e: any) {
+    //   setErrors({...errors, signInError: e.response.data.message});
+    // }
   };
 
   const clearInput = (): void => {
