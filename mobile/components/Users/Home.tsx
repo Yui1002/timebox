@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {styles} from '../../styles/homeStyles.js';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
+import { DefaultApiFactory, GetEmployerRq, GetEmployerRs, Employer } from '../../swagger/generated';
+
+let employerApi = DefaultApiFactory();
 
 const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const {firstName, email} = userInfo;
-  const [employers, setEmployers] = useState([]);
+  const [employers, setEmployers] = useState<Employer[]>();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -25,13 +26,15 @@ const Home = (props: any) => {
   }, [isFocused]);
 
   const getEmployers = async () => {
+    const params: GetEmployerRq = {
+      email: email
+    }
+
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/getEmployer`, {
-        email
-      });
-      setEmployers(response.data?.employers)
-    } catch (e: any) {
-        console.log('home error', e);
+      let { data } = await employerApi.getEmployer(params);
+      setEmployers(data.employers)
+    } catch (e) {
+      console.log(e);
     }
   };
 

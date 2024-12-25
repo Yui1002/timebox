@@ -1,8 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
-import axios from 'axios';
-import { DefaultApiFactory, GetEmployerRq } from '../../swagger/generated';
-import {LOCAL_HOST_URL} from '../../config.js';
+import { DefaultApiFactory, GetUserRs, SignInUserRq } from '../../swagger/generated';
 import {
   Text,
   View,
@@ -14,10 +12,10 @@ import {
 import Error from '../Error';
 import {styles} from '../../styles/signInStyles.js';
 import {signInUser} from '../../redux/actions/signInAction.js';
-import Validator from '../../validator/validator';
 import {navigate} from '../../helper/navigate';
+import Validator from '../../validator/validator';
+import { ErrorModel } from '../../types';
 
-let validator = new Validator();
 let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
@@ -25,65 +23,58 @@ const SignIn = ({navigation}: any) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState({});
-  const [isInputValid, setIsInputValid] = useState(false);
-
-  useEffect(() => {
-    validateInput();
-  }, [email, password]);
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: "",
+    statusCode: 200
+  });
 
   const validateInput = () => {
-    let errors: any = {};
-
-    if (validator.isEmpty(email)) {
-      errors.email = 'Email is required';
-    } else if (!validator.isValidEmail(email)) {
-      errors.email = 'Email is invalid';
+    if (!Validator.isValidEmail(email)) {
+      setErrors({
+        message: 'Invalid email',
+        statusCode: 400
+      });
+      return false;
+    } else if (!Validator.isValidPassword(password)) {
+      setErrors({
+        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+        statusCode: 400
+      });
+      return false;
     }
-    if (validator.isEmpty(password)) {
-      errors.password = 'Password is required';
-    }
-
-    setErrors(errors);
-    setIsInputValid(Object.keys(errors).length === 0);
+    return true;
   };
 
   const signIn = async () => {
-    if (!isInputValid) return;
+    if (!validateInput()) return;
 
-    const params: GetEmployerRq = {
-      email: email
+    const params: SignInUserRq = {
+      email, password
     }
 
     try {
-      const { data } = await userApi.getEmployer(params);
-      console.log('response', data.employers)
+      const { data } = await userApi.signInUser(params);
+      dispatchUser(data);
+      clearInput();
+      navigate(navigation, 'DrawerNav', null);
     } catch (e: any) {
-      console.log(e.request)
-      setErrors({...errors, signInError: "Failed to sign in"});
+      setErrors({
+        message: 'Failed to sign in',
+        statusCode: 400
+      });
     }
-
-    // try {
-    //   const response = await axios.post(`${LOCAL_HOST_URL}/signInUser`, {
-    //     email,
-    //     password,
-    //   });
-    //   dispatchUser(response.data);
-    //   clearInput();
-    //   navigate(navigation, 'DrawerNav', null);
-    // } catch (e: any) {
-    //   setErrors({...errors, signInError: e.response.data.message});
-    // }
   };
 
   const clearInput = (): void => {
     setEmail('');
     setPassword('');
-    setErrors({});
-    setIsInputValid(false);
+    setErrors({
+      message: '',
+      statusCode: 200
+    });
   };
 
-  const dispatchUser = (data: any): void => {
+  const dispatchUser = (data: GetUserRs): void => {
     dispatch(signInUser({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -96,9 +87,7 @@ const SignIn = ({navigation}: any) => {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={{marginVertical: 10}}>
-            {Object.values(errors).map((error, key) => (
-              <Error key={key} msg={error} />
-            ))}
+            {errors.message && <Error msg={errors.message} />}
           </View>
           <View>
             <Text>Email</Text>

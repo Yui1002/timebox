@@ -12,7 +12,6 @@ import {Days} from '../../../enums';
 import { navigate } from '../../../helper/navigate';
 import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
 
-let validator = new Validator();
 
 interface IProps {
   editSelectedSchedule: Schedule;
@@ -38,7 +37,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
   const validateInput = () => {
     let errors: any = {};
 
-    if (validator.isEmpty(selectedDay)) {
+    if (Validator.isEmpty(selectedDay)) {
       errors.day = 'Please select a day';
     }
 

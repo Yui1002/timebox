@@ -8,14 +8,14 @@ import {
   ScrollView,
   Keyboard,
 } from 'react-native';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
+import Validator from '../../validator/validator';
 import {styles} from '../../styles/signUpStyles.js';
 import {navigate} from '../../helper/navigate';
-import Validator from '../../validator/validator';
 import Error from '../Error';
+import {DefaultApiFactory} from '../../swagger/generated';
+import { ErrorModel } from '../../types';
 
-let validator = new Validator();
+let userApi = DefaultApiFactory();
 
 const SignUp = ({navigation}: any) => {
   const [firstName, setFirstName] = useState('');
@@ -24,56 +24,58 @@ const SignUp = ({navigation}: any) => {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [isInputValid, setIsInputValid] = useState(false);
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
+  });
 
-  const verifyUser = async () => {
+  const checkUserExists = async () => {
     if (!validateInput()) return;
 
     try {
-      await axios.post(`${LOCAL_HOST_URL}/verifyUser`, {
-        email,
+      await userApi.getUser(email);
+      setErrors({
+        message: 'Email already exists',
+        statusCode: 400
       });
-
-      let params = {
+    } catch (e) {
+      let navigationProps = {
         firstName: firstName,
         lastName: lastName,
         email: email,
         password: password,
         isSignUp: true,
       };
-
-      navigate(navigation, 'VerifyOTP', params);
-    } catch (e: any) {
-      setErrors({...errors, signInError: e.response.data.message});
+      navigate(navigation, 'VerifyOTP', navigationProps);
     }
   };
 
   const validateInput = () => {
-    let errors: any = {};
-
-    if (validator.isEmpty(firstName)) {
-      errors.firstName = 'First name is required';
+    if (!Validator.isNotEmpty(firstName) || !Validator.isNotEmpty(lastName)) {
+      setErrors({
+        message: 'invalid name',
+        statusCode: 400
+      });
     }
-    if (validator.isEmpty(lastName)) {
-      errors.lastName = 'Last name is required';
+    if (!Validator.isValidEmail(email)) {
+      setErrors({
+        message: 'invalid email',
+        statusCode: 400
+      });
     }
-    if (validator.isEmpty(email)) {
-      errors.email = 'Email is required';
-    } else if (!validator.isValidEmail(email)) {
-      errors.email = 'Email is invalid';
+    if (!Validator.isValidPassword(password)) {
+      setErrors({
+        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+        statusCode: 400
+      });
     }
-    if (validator.isEmpty(password)) {
-      errors.password = 'Password is required';
-    } else if (!validator.isPasswordMatch(password, confirmedPassword)) {
-      errors.password = 'Password mismatch';
-    } else if (!validator.isPasswordStrong(password)) {
-      errors.password =
-        'Password must contain 8 characters, 1 number, 1 upper, 1 lower';
+    if (!Validator.isPasswordMatch(password, confirmedPassword)) {
+      setErrors({
+        message: 'Password mismatch',
+        statusCode: 400
+      });
     }
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return errors.statusCode === 200;
   };
 
   return (
@@ -81,9 +83,7 @@ const SignUp = ({navigation}: any) => {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={{marginVertical: 10}}>
-            {Object.values(errors).map((error, index) => (
-              <Error key={index} msg={error} />
-            ))}
+              <Error msg={errors.message} />
           </View>
           <View>
             <Text>First Name</Text>
@@ -155,7 +155,7 @@ const SignUp = ({navigation}: any) => {
             </View>
           </View>
           <View style={{marginVertical: 14}} />
-          <TouchableOpacity style={styles.button} onPress={verifyUser}>
+          <TouchableOpacity style={styles.button} onPress={checkUserExists}>
             <Text style={styles.buttonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>

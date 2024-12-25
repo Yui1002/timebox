@@ -1,76 +1,37 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, Button, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
-import {deleteShift, resetShift} from '../../../redux/actions/workShiftsAction';
-
-interface Shifts {
-  day: string;
-  startTime: string;
-  endTime: string;
-}
+import {deleteShift} from '../../../redux/actions/workShiftsAction';
+import {WorkShiftsProps, Schedule} from '../../../types';
+import {alert} from '../../../helper/Alert';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
+  const params: WorkShiftsProps = route.params;
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
-  const deleteDate = (day: Shifts) => {
+  const deleteDate = (day: Schedule) => {
     dispatch(deleteShift(day));
   };
 
   const review = () => {
     if (workShifts.workShifts.length < 1) {
-      showAlert();
-      return;
+      alert(
+        'No assigned schedules. Do you want to proceed?',
+        '',
+        function () {
+          navigation.navigate('Review', params);
+        },
+        null,
+      );
     }
-    navigation.navigate('Review', {
-      firstName,
-      lastName,
-      email,
-      rate,
-      rateType,
-      isEnabled,
-    });
   };
 
   const navigateToAddSchedule = () => {
-    navigation.navigate('RegisterWorkShifts', {
-      firstName,
-      lastName,
-      email,
-      rate,
-      rateType,
-      isEnabled,
-    });
-  };
-
-  const showAlert = () => {
-    Alert.alert(
-      `Do you want to proceed?`,
-      'No assigned schedules. You can add later',
-      [
-        {
-          text: 'No',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: () =>
-            navigation.navigate('Review', {
-              firstName,
-              lastName,
-              email,
-              rate,
-              rateType,
-              isEnabled,
-            }),
-        },
-      ],
-    );
+    navigation.navigate('RegisterWorkShifts', params);
   };
 
   return (

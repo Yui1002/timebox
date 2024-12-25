@@ -4,85 +4,64 @@ import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import StatusBar from './StatusBar';
 import InputField from '../../InputField';
-import InputError from '../../InputError';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {deleteShift, resetShift} from '../../../redux/actions/workShiftsAction';
+import {ErrorModel} from '../../../types';
+import Validator from '../../../validator/validator';
+import Error from '../../Error';
+import {RateTypeSet, PersonalInfoProps, WorkShiftsProps} from '../../../types';
+import {RateTypeValue} from '../../../enums';
+
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {firstName, lastName, email} = route.params;
+  const {firstName, lastName, email}: PersonalInfoProps = route.params;
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([
-    {label: 'Hourly', value: 'hourly'},
-    {label: 'Daily', value: 'daily'},
+  const [open, setOpen] = useState<boolean>(false);
+  const [items, setItems] = useState<RateTypeSet[]>([
+    {label: RateTypeValue.HOURLY, value: RateTypeValue.HOURLY},
+    {label: RateTypeValue.DAILY, value: RateTypeValue.DAILY},
   ]);
-  const [rate, setRate] = useState<string | null>(null);
-  const [rateType, setRateType] = useState<string | null>(null);
-  const [isEnabled, setIsEnabled] = useState<boolean | null>(null);
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
+  const [rate, setRate] = useState<string>('0');
+  const [rateType, setRateType] = useState<RateTypeValue>(RateTypeValue.HOURLY);
+  const [isEnabled, setIsEnabled] = useState<boolean>(false);
+  const [error, setError] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200,
   });
   const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
-    if (rate === null || rate.length === 0) {
-      setInputError({
-        type: 'INVALID_RATE_FORMAT',
-        msg: 'Rate is required',
+    if (!Validator.isValidRate(rate)) {
+      setError({
+        message: 'Invalid rate',
+        statusCode: 400,
       });
       return false;
     }
-    if (isNaN(Number(rate))) {
-      setInputError({
-        type: 'INVALID_RATE_FORMAT',
-        msg: 'Rate must be a number',
+    if (!Validator.isValidRateType(rateType)) {
+      setError({
+        message: 'Invalid rate type',
+        statusCode: 400,
       });
       return false;
     }
-    if (Number(rate) < 1) {
-      setInputError({
-        type: 'INVALID_RATE_FORMAT',
-        msg: 'The value has to be more than 0',
-      });
-      return false;
-    }
-    if (Number(rate) > 30000) {
-      setInputError({
-        type: 'INVALID_RATE_FORMAT',
-        msg: 'The value has to be lower',
-      });
-      return false;
-    }
-    if (rateType === null || rateType.length === 0) {
-      setInputError({
-        type: 'INVALID_RATE_TYPE_FORMAT',
-        msg: 'Rate type is required',
-      });
-      return false;
-    }
-    if (isEnabled === null) {
-      setInputError({
-        type: 'INVALID_IS_ENABLED',
-        msg: 'This field is requred',
-      });
-      return false;
-    }
-
     return true;
   };
 
   const proceed = () => {
     if (!validateInput()) return;
-    navigation.navigate('WorkShifts', {
+
+    const props: WorkShiftsProps = {
       firstName,
       lastName,
       email,
       rate,
       rateType,
       isEnabled,
-    });
+    }
+
+    navigation.navigate('WorkShifts', props);
   };
 
   const goBack = () => {
@@ -102,6 +81,7 @@ const PersonalInfo = ({route, navigation}: any) => {
         ))}
       </View>
       <ScrollView>
+        {error.message && <Error msg={error.message} />}
         <View style={styles.header}>
           <Text style={styles.headerText}>User Information</Text>
         </View>
@@ -123,16 +103,10 @@ const PersonalInfo = ({route, navigation}: any) => {
           <View style={[styles.align, styles.margin]}>
             <View style={styles.width}>
               <Text>Rate ($)</Text>
-              {inputError.type === 'INVALID_RATE_FORMAT' && (
-                <InputError error={inputError} />
-              )}
               <InputField.Underlined onChangeText={setRate} />
             </View>
             <View style={styles.width}>
               <Text>Rate Type</Text>
-              {inputError.type === 'INVALID_RATE_TYPE_FORMAT' && (
-                <InputError error={inputError} />
-              )}
               <DropDownPicker
                 open={open}
                 value={rateType}
@@ -144,25 +118,11 @@ const PersonalInfo = ({route, navigation}: any) => {
               />
             </View>
           </View>
-          <View
-            style={
-              open
-                ? {zIndex: -1, height: '26%', marginTop: 30}
-                : {zIndex: 1, height: '26%', marginTop: 30}
-            }>
-            <Text style={{height: '20%'}}>
+          <View style={open ? styles.open : styles.close}>
+            <Text style={styles.optionContainer}>
               Allow the service provider to modify record time?
             </Text>
-            {inputError.type === 'INVALID_IS_ENABLED' && (
-              <Text style={{color: 'red', fontSize: 12}}>{inputError.msg}</Text>
-            )}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 10,
-                height: '40%',
-              }}>
+            <View style={styles.optionBox}>
               <TouchableOpacity
                 style={[
                   styles.mode,

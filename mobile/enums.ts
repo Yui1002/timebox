@@ -13,4 +13,14 @@ enum TimeType {
   END = 'end'
 }
 
-export { Days, TimeType }
+enum PromiseType {
+  FULFILLED = 'fulfilled',
+  REJECTED = 'rejected',
+}
+
+enum RateTypeValue {
+  HOURLY = 'hourly',
+  DAILY = 'daily'
+}
+
+export { Days, TimeType, PromiseType, RateTypeValue }

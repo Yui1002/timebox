@@ -85,6 +85,75 @@ export interface GetEmployerRs {
 /**
  * 
  * @export
+ * @interface GetOTPRs
+ */
+export interface GetOTPRs {
+    /**
+     * 
+     * @type {number}
+     * @memberof GetOTPRs
+     */
+    'id': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetOTPRs
+     */
+    'otp': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetOTPRs
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetOTPRs
+     */
+    'createDate': string;
+}
+/**
+ * 
+ * @export
+ * @interface GetRequestRs
+ */
+export interface GetRequestRs {
+    /**
+     * 
+     * @type {Array<Request>}
+     * @memberof GetRequestRs
+     */
+    'requests'?: Array<Request>;
+}
+/**
+ * 
+ * @export
+ * @interface GetUserRs
+ */
+export interface GetUserRs {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetUserRs
+     */
+    'firstName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetUserRs
+     */
+    'lastName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetUserRs
+     */
+    'email': string;
+}
+/**
+ * 
+ * @export
  * @enum {number}
  */
 
@@ -96,6 +165,305 @@ export const Mode = {
 export type Mode = typeof Mode[keyof typeof Mode];
 
 
+/**
+ * 
+ * @export
+ * @enum {number}
+ */
+
+export const RateType = {
+    NUMBER_1: 1,
+    NUMBER_2: 2
+} as const;
+
+export type RateType = typeof RateType[keyof typeof RateType];
+
+
+/**
+ * 
+ * @export
+ * @interface Request
+ */
+export interface Request {
+    /**
+     * 
+     * @type {number}
+     * @memberof Request
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'senderFirstName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'senderLastName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'senderEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'receiverEmail'?: string;
+    /**
+     * 
+     * @type {Status}
+     * @memberof Request
+     */
+    'status'?: Status;
+    /**
+     * 
+     * @type {number}
+     * @memberof Request
+     */
+    'rate'?: number;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof Request
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'endTime'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Request
+     */
+    'allowEdit'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof Request
+     */
+    'requestDate'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface ResetPasswordRq
+ */
+export interface ResetPasswordRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof ResetPasswordRq
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ResetPasswordRq
+     */
+    'newPassword'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface ServiceProviderMiniRs
+ */
+export interface ServiceProviderMiniRs {
+    /**
+     * 
+     * @type {GetUserRs}
+     * @memberof ServiceProviderMiniRs
+     */
+    'serviceProviderUser'?: GetUserRs;
+}
+/**
+ * 
+ * @export
+ * @interface SetOTPRq
+ */
+export interface SetOTPRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetOTPRq
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetOTPRq
+     */
+    'otp'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface SetRequestRq
+ */
+export interface SetRequestRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetRequestRq
+     */
+    'senderEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetRequestRq
+     */
+    'receiverEmail'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SetRequestRq
+     */
+    'rate'?: number;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof SetRequestRq
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetRequestRq
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetRequestRq
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetRequestRq
+     */
+    'endTime'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SetRequestRq
+     */
+    'mode'?: boolean;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface SetUserRq
+ */
+export interface SetUserRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserRq
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserRq
+     */
+    'firstName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserRq
+     */
+    'lastName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserRq
+     */
+    'password'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface SignInUserRq
+ */
+export interface SignInUserRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SignInUserRq
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignInUserRq
+     */
+    'password'?: string;
+}
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const Status = {
+    Approved: 'approved',
+    Rejected: 'rejected',
+    Pending: 'pending'
+} as const;
+
+export type Status = typeof Status[keyof typeof Status];
+
+
+/**
+ * 
+ * @export
+ * @interface UpdateRequestStatusRq
+ */
+export interface UpdateRequestStatusRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRequestStatusRq
+     */
+    'senderEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRequestStatusRq
+     */
+    'receiverEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRequestStatusRq
+     */
+    'status'?: string;
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -138,6 +506,445 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOTP: async (email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('getOTP', 'email', email)
+            const localVarPath = `/otp`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (email !== undefined) {
+                localVarQueryParameter['email'] = email;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} senderEmail 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRequestByEmail: async (senderEmail: string, receiverEmail: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'senderEmail' is not null or undefined
+            assertParamExists('getRequestByEmail', 'senderEmail', senderEmail)
+            // verify required parameter 'receiverEmail' is not null or undefined
+            assertParamExists('getRequestByEmail', 'receiverEmail', receiverEmail)
+            const localVarPath = `/request/email`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (senderEmail !== undefined) {
+                localVarQueryParameter['senderEmail'] = senderEmail;
+            }
+
+            if (receiverEmail !== undefined) {
+                localVarQueryParameter['receiverEmail'] = receiverEmail;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRequests: async (receiverEmail: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'receiverEmail' is not null or undefined
+            assertParamExists('getRequests', 'receiverEmail', receiverEmail)
+            const localVarPath = `/request`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (receiverEmail !== undefined) {
+                localVarQueryParameter['receiverEmail'] = receiverEmail;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUser: async (email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('getUser', 'email', email)
+            const localVarPath = `/user`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (email !== undefined) {
+                localVarQueryParameter['email'] = email;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} senderEmail 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        isRequestValid: async (senderEmail: string, receiverEmail: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'senderEmail' is not null or undefined
+            assertParamExists('isRequestValid', 'senderEmail', senderEmail)
+            // verify required parameter 'receiverEmail' is not null or undefined
+            assertParamExists('isRequestValid', 'receiverEmail', receiverEmail)
+            const localVarPath = `/request/eligible`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (senderEmail !== undefined) {
+                localVarQueryParameter['senderEmail'] = senderEmail;
+            }
+
+            if (receiverEmail !== undefined) {
+                localVarQueryParameter['receiverEmail'] = receiverEmail;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {ResetPasswordRq} resetPasswordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetPassword: async (resetPasswordRq: ResetPasswordRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'resetPasswordRq' is not null or undefined
+            assertParamExists('resetPassword', 'resetPasswordRq', resetPasswordRq)
+            const localVarPath = `/user/resetPassword`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(resetPasswordRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetOTPRq} setOTPRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setOTP: async (setOTPRq: SetOTPRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setOTPRq' is not null or undefined
+            assertParamExists('setOTP', 'setOTPRq', setOTPRq)
+            const localVarPath = `/otp`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setOTPRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetRequestRq} setRequestRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setRequest: async (setRequestRq: SetRequestRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setRequestRq' is not null or undefined
+            assertParamExists('setRequest', 'setRequestRq', setRequestRq)
+            const localVarPath = `/request`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setRequestRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetUserRq} setUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setUser: async (setUserRq: SetUserRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setUserRq' is not null or undefined
+            assertParamExists('setUser', 'setUserRq', setUserRq)
+            const localVarPath = `/user`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setUserRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SignInUserRq} signInUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        signInUser: async (signInUserRq: SignInUserRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'signInUserRq' is not null or undefined
+            assertParamExists('signInUser', 'signInUserRq', signInUserRq)
+            const localVarPath = `/user/signIn`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(signInUserRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateRequestStatus: async (updateRequestStatusRq: UpdateRequestStatusRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateRequestStatusRq' is not null or undefined
+            assertParamExists('updateRequestStatus', 'updateRequestStatusRq', updateRequestStatusRq)
+            const localVarPath = `/request`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateRequestStatusRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetOTPRq} setOTPRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyOTP: async (setOTPRq: SetOTPRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setOTPRq' is not null or undefined
+            assertParamExists('verifyOTP', 'setOTPRq', setOTPRq)
+            const localVarPath = `/otp/verify`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setOTPRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -160,6 +967,152 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.getEmployer']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getOTP(email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetOTPRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getOTP(email, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.getOTP']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} senderEmail 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getRequestByEmail(senderEmail: string, receiverEmail: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRequestRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRequestByEmail(senderEmail, receiverEmail, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.getRequestByEmail']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getRequests(receiverEmail: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRequestRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRequests(receiverEmail, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.getRequests']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getUser(email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUser(email, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.getUser']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} senderEmail 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async isRequestValid(senderEmail: string, receiverEmail: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ServiceProviderMiniRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.isRequestValid(senderEmail, receiverEmail, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.isRequestValid']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {ResetPasswordRq} resetPasswordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async resetPassword(resetPasswordRq: ResetPasswordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.resetPassword(resetPasswordRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.resetPassword']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetOTPRq} setOTPRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setOTP(setOTPRq: SetOTPRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setOTP(setOTPRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.setOTP']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetRequestRq} setRequestRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setRequest(setRequestRq: SetRequestRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setRequest(setRequestRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.setRequest']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetUserRq} setUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setUser(setUserRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.setUser']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SignInUserRq} signInUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.signInUser(signInUserRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.signInUser']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateRequestStatus(updateRequestStatusRq: UpdateRequestStatusRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRequestStatus(updateRequestStatusRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateRequestStatus']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetOTPRq} setOTPRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async verifyOTP(setOTPRq: SetOTPRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyOTP(setOTPRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.verifyOTP']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -178,6 +1131,116 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         getEmployer(getEmployerRq: GetEmployerRq, options?: RawAxiosRequestConfig): AxiosPromise<GetEmployerRs> {
             return localVarFp.getEmployer(getEmployerRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getOTP(email: string, options?: RawAxiosRequestConfig): AxiosPromise<GetOTPRs> {
+            return localVarFp.getOTP(email, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} senderEmail 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRequestByEmail(senderEmail: string, receiverEmail: string, options?: RawAxiosRequestConfig): AxiosPromise<GetRequestRs> {
+            return localVarFp.getRequestByEmail(senderEmail, receiverEmail, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getRequests(receiverEmail: string, options?: RawAxiosRequestConfig): AxiosPromise<GetRequestRs> {
+            return localVarFp.getRequests(receiverEmail, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getUser(email: string, options?: RawAxiosRequestConfig): AxiosPromise<GetUserRs> {
+            return localVarFp.getUser(email, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} senderEmail 
+         * @param {string} receiverEmail 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        isRequestValid(senderEmail: string, receiverEmail: string, options?: RawAxiosRequestConfig): AxiosPromise<ServiceProviderMiniRs> {
+            return localVarFp.isRequestValid(senderEmail, receiverEmail, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {ResetPasswordRq} resetPasswordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        resetPassword(resetPasswordRq: ResetPasswordRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.resetPassword(resetPasswordRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetOTPRq} setOTPRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setOTP(setOTPRq: SetOTPRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setOTP(setOTPRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetRequestRq} setRequestRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setRequest(setRequestRq: SetRequestRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setRequest(setRequestRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetUserRq} setUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setUser(setUserRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SignInUserRq} signInUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): AxiosPromise<GetUserRs> {
+            return localVarFp.signInUser(signInUserRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateRequestStatus(updateRequestStatusRq: UpdateRequestStatusRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateRequestStatus(updateRequestStatusRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetOTPRq} setOTPRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyOTP(setOTPRq: SetOTPRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.verifyOTP(setOTPRq, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -198,6 +1261,140 @@ export class DefaultApi extends BaseAPI {
      */
     public getEmployer(getEmployerRq: GetEmployerRq, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getEmployer(getEmployerRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getOTP(email: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getOTP(email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} senderEmail 
+     * @param {string} receiverEmail 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getRequestByEmail(senderEmail: string, receiverEmail: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getRequestByEmail(senderEmail, receiverEmail, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} receiverEmail 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getRequests(receiverEmail: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getRequests(receiverEmail, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getUser(email: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getUser(email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} senderEmail 
+     * @param {string} receiverEmail 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public isRequestValid(senderEmail: string, receiverEmail: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).isRequestValid(senderEmail, receiverEmail, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {ResetPasswordRq} resetPasswordRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public resetPassword(resetPasswordRq: ResetPasswordRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).resetPassword(resetPasswordRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetOTPRq} setOTPRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public setOTP(setOTPRq: SetOTPRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).setOTP(setOTPRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetRequestRq} setRequestRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public setRequest(setRequestRq: SetRequestRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).setRequest(setRequestRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetUserRq} setUserRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).setUser(setUserRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SignInUserRq} signInUserRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).signInUser(signInUserRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public updateRequestStatus(updateRequestStatusRq: UpdateRequestStatusRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).updateRequestStatus(updateRequestStatusRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetOTPRq} setOTPRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public verifyOTP(setOTPRq: SetOTPRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).verifyOTP(setOTPRq, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

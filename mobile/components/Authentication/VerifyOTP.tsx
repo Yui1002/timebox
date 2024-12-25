@@ -6,13 +6,14 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
+import { DefaultApiFactory, SetOTPRq, SetUserRq } from '../../swagger/generated';
+
+let otpApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -26,11 +27,13 @@ const VerifyOTP = ({route, navigation}: any) => {
   }, []);
 
   const setOTP = async () => {
+    const params: SetOTPRq = {
+      email: email,
+      otp: ''
+    };
+
     try {
-      await axios.post(`${LOCAL_HOST_URL}/setOTP`, {
-        email: email,
-        otp: '',
-      });
+      await otpApi.setOTP(params);
     } catch (e) {
       setErrors({...errors, failOTP: 'Failed to set OTP'});
     }
@@ -54,11 +57,13 @@ const VerifyOTP = ({route, navigation}: any) => {
   const verifyOTP = async () => {
     if (!validateInput()) return;
 
+    const params: SetOTPRq = {
+      email: email,
+      otp: otp
+    };
+
     try {
-      await axios.post(`${LOCAL_HOST_URL}/verifyOTP`, {
-        otp: otp,
-        email: email,
-      });
+      await otpApi.verifyOTP(params);
 
       if (isSignUp) {
         setUser();
@@ -73,12 +78,10 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   const setUser = async () => {
     try {
-      await axios.post(`${LOCAL_HOST_URL}/setUser`, {
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+      const params: SetUserRq = {
+        firstName, lastName, email, password
+      }
+      otpApi.setUser(params);
       dispatch(signInUser({firstName, lastName, email}));
     } catch (e) {
       console.log(e);
