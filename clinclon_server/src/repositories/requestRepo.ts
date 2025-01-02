@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { GetRequestRs, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
+import { GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRs, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
 import { GetUserScheduleRs } from "../models/UserSchedule";
@@ -10,8 +10,8 @@ dotenv.config();
 
 interface IRequestRepo {
     getRequests(receiverEmail: string): Promise<GetRequestRs>;
-    getRequestByEmail(senderEmail: string, receiverEmail: string): Promise<GetRequestRs>;
-    getRequestsByStatus(receiverEmail: string, status: RequestStatus): Promise<GetRequestRs>;
+    getRequestByEmail(requestRq: GetRequestByEmailRq): Promise<GetRequestRs>;
+    getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRs>;
     setRequest(requestRq: SetRequestRq, schedule: GetUserScheduleRs): Promise<void>;
     updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void>;
 }
@@ -39,13 +39,13 @@ class RequestRepo extends Repositories implements IRequestRepo {
             if (data?.rows.length <= 0) {
                 return null;
             }
-            return JSHelperInstance._converter.deserializeObject(data?.rows, GetRequestRs);
+            return JSHelperInstance._converter.deserializeObject(data, GetRequestRs);
         } catch (e: any) {
             throw new ResponseException(e, 500, "unable to get from db");
         }
     }
 
-    async getRequestByEmail(senderEmail: string, receiverEmail: string): Promise<GetRequestRs> {
+    async getRequestByEmail(requestRq: GetRequestByEmailRq): Promise<GetRequestRs> {
         try {
             const sql = 
                     `SELECT
@@ -64,7 +64,7 @@ class RequestRepo extends Repositories implements IRequestRepo {
                         r.request_mode AS allow_edit
                     FROM users u LEFT JOIN requests r on u.email_address = r.sender_email
                     WHERE r.sender_email = $1 AND r.receiver_email = $2;`;
-            const data = await this.queryDB(sql, [senderEmail, receiverEmail]);
+            const data = await this.queryDB(sql, [requestRq.senderEmail, requestRq.receiverEmail]);
             if (data?.rows.length <= 0) {
                 return null;
             }
@@ -74,7 +74,7 @@ class RequestRepo extends Repositories implements IRequestRepo {
         }
     }
 
-    async getRequestsByStatus(receiverEmail: string, status: RequestStatus): Promise<GetRequestRs> {
+    async getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRs> {
         try {
             const sql = 
                     `SELECT
@@ -93,7 +93,7 @@ class RequestRepo extends Repositories implements IRequestRepo {
                         r.request_mode AS allow_edit
                     FROM users u LEFT JOIN requests r on u.email_address = r.sender_email
                     WHERE r.receiver_email = $1 AND r.status = $2;`;
-            const data = await this.queryDB(sql, [receiverEmail, status]);
+            const data = await this.queryDB(sql, [requestRq.receiverEmail, requestRq.status]);
             if (data?.rows.length <= 0) {
                 return null;
             }
