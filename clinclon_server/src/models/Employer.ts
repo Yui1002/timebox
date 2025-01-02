@@ -3,7 +3,7 @@ import {BaseRequest} from './BaseRequest';
 import { Mode } from '../helpers/enum';
 
 @JsonObject("GetEmployerRq")
-class GetEmployerRq extends BaseRequest {
+class GetEmployerRq extends BaseRequest  {
     @JsonProperty("email", String)
     email: string = "";
 }

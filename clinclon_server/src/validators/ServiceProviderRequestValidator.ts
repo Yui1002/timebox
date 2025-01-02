@@ -8,14 +8,15 @@ class GetServiceProviderRequestValidator extends SuperValidator {
         super(new GetServiceProviderRq());
     }
 
-    validateAndConvertRequest(employerEmail: string): string {
-        this.checkRequestEmpty(employerEmail);
+    validateAndConvertRequest(request: any): GetServiceProviderRq | null {
+        this.checkRequestEmpty(request);
+        let instance = JSHelperInstance._converter.deserializeObject(request, GetServiceProviderRq);
 
-        if (!isEmail(employerEmail)) {
+        if (!isEmail(instance.employerEmail)) {
             this.throwError(null, "Employer email is invalid");
         }
 
-        return employerEmail;
+        return instance;
     }
 }
 

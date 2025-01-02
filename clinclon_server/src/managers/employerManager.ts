@@ -5,9 +5,8 @@ import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 interface IEmployerManager {
-    getEmployer(user: GetEmployerRq): Promise<GetEmployerRs>;
+    getEmployer(employerRq: GetEmployerRq): Promise<GetEmployerRs>;
 }
 
 class EmployerManager implements IEmployerManager {
@@ -19,8 +18,8 @@ class EmployerManager implements IEmployerManager {
         this._userRepo = new UserRepo();
     }
     
-    async getEmployer(userRq: GetEmployerRq): Promise<GetEmployerRs> {
-        let user = await this._userRepo.getUser(userRq.email);
+    async getEmployer(employerRq: GetEmployerRq): Promise<GetEmployerRs> {
+        let user = await this._userRepo.getUser(employerRq.email);
         if (!user) {
             throw new ResponseException(null, 400, 'no data found');
         }

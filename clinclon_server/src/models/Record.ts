@@ -6,26 +6,8 @@ enum TimeType {
     END_TIME = 'end',
 }
 
-interface IGetRecordRq {
-    employerEmail: string;
-    serviceProviderEmail: string;
-}
-
-interface IGetRecordByDateRq {
-    employerEmail: string;
-    serviceProviderEmail: string;
-    date: string;
-}
-
-interface IGetRecordByPeriodRq {
-    employerEmail: string;
-    serviceProviderEmail: string;
-    from: string;
-    to: string;
-}
-
 @JsonObject("GetRecordRq")
-class GetRecordRq extends BaseRequest implements IGetRecordRq {
+class GetRecordRq extends BaseRequest {
     @JsonProperty("employerEmail", String)
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
@@ -33,7 +15,7 @@ class GetRecordRq extends BaseRequest implements IGetRecordRq {
 }
 
 @JsonObject("GetRecordByDateRq")
-class GetRecordByDateRq extends BaseRequest implements IGetRecordByDateRq {
+class GetRecordByDateRq extends BaseRequest {
     @JsonProperty("employerEmail", String)
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
@@ -43,7 +25,7 @@ class GetRecordByDateRq extends BaseRequest implements IGetRecordByDateRq {
 }
 
 @JsonObject("GetRecordByPeriodRq")
-class GetRecordByPeriodRq extends BaseRequest implements IGetRecordByPeriodRq {
+class GetRecordByPeriodRq extends BaseRequest {
     @JsonProperty("employerEmail", String)
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
@@ -83,4 +65,4 @@ class GetRecordRs {
     records: Record[] = [];
 }
 
-export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, IGetRecordRq}
+export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType}

@@ -3,28 +3,14 @@ import {BaseRequest} from './BaseRequest';
 import { RateType, RequestStatus, Mode } from '../helpers/enum';
 import { GetUserScheduleRs } from './UserSchedule';
 
-interface IGetRequestRq {
-    receiverEmail: string;
-}
-
-interface IGetRequestByEmailRq {
-    senderEmail: string;
-    receiverEmail: string;
-}
-
-interface IGetRequestByStatusRq {
-    receiverEmail: string;
-    status: RequestStatus;
-}
-
 @JsonObject("GetRequestRq")
-class GetRequestRq extends BaseRequest implements IGetRequestRq { 
+class GetRequestRq extends BaseRequest { 
     @JsonProperty("receiverEmail", String)
     receiverEmail: string = "";
 }
 
 @JsonObject("GetRequestByEmailRq")
-class GetRequestByEmailRq extends BaseRequest implements IGetRequestByEmailRq { 
+class GetRequestByEmailRq extends BaseRequest { 
     @JsonProperty("senderEmail", String)
     senderEmail: string = "";
     @JsonProperty("receiverEmail", String)
@@ -32,7 +18,7 @@ class GetRequestByEmailRq extends BaseRequest implements IGetRequestByEmailRq {
 }
 
 @JsonObject("GetRequestByStatusRq")
-class GetRequestByStatusRq extends BaseRequest implements IGetRequestByStatusRq { 
+class GetRequestByStatusRq extends BaseRequest { 
     @JsonProperty("receiverEmail", String)
     receiverEmail: string = "";
     @JsonProperty("status", RequestStatus)
