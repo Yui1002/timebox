@@ -7,129 +7,87 @@ import {
   TouchableOpacity,
   ScrollView,
   Keyboard,
-  ActivityIndicator,
 } from 'react-native';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
-import validator from 'validator';
-import {PASSWORD_RULES} from '../../config.js';
+import Validator from '../../validator/validator';
 import {styles} from '../../styles/signUpStyles.js';
+import {navigate} from '../../helper/navigate';
+import Error from '../Error';
+import {DefaultApiFactory} from '../../swagger/generated';
+import { ErrorModel, SignUpProps } from '../../types';
+let userApi = DefaultApiFactory();
 
 const SignUp = ({navigation}: any) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState('');
-  const [confirmedPassword, setConfirmedPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [inputError, setinputError] = useState({
-    type: '',
-    msg: '',
+  const [confirmedPassword, setConfirmedPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
   });
-  const [loading, setLoading] = useState(false);
 
-  const isUserRegistered = () => {
-    if (!validateName() || !validateEmail() || !validatePassword()) {
-      return;
-    }
+  const checkUserExists = async (): Promise<void> => {
+    if (!validateInput()) return;
 
-    setLoading(true);
-    axios
-      .get(`${LOCAL_HOST_URL}/user/exists/${email}`)
-      .then(() => {
-        setLoading(false);
-        navigation.navigate('VerifyOTP', {
-          firstName,
-          lastName,
-          email,
-          password,
-        });
-      })
-      .catch(err => {
-        setLoading(false);
-        setinputError({
-          type: 'SIGN_UP_ERROR',
-          msg: err.response.data.error,
-        });
+    try {
+      await userApi.getUser(email);
+      setErrors({
+        message: 'Email already exists',
+        statusCode: 400
       });
+    } catch (e) {
+      let navigationProps: SignUpProps = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password,
+        isSignUp: true,
+      };
+      navigate(navigation, 'VerifyOTP', navigationProps);
+    }
   };
 
-  const validateName = (): boolean => {
-    if (firstName.length === 0) {
-      setinputError({
-        type: 'EMPTY_FIRST_NAME',
-        msg: 'First name is required',
+  const validateInput = (): boolean => {
+    if (!Validator.isNotEmpty(firstName) || !Validator.isNotEmpty(lastName)) {
+      setErrors({
+        message: 'invalid name',
+        statusCode: 400
       });
       return false;
     }
-    if (lastName.length === 0) {
-      setinputError({
-        type: 'EMPTY_LAST_NAME',
-        msg: 'Last name is required',
+    if (!Validator.isValidEmail(email)) {
+      setErrors({
+        message: 'invalid email',
+        statusCode: 400
       });
       return false;
     }
-    return true;
-  };
-
-  const validateEmail = (): boolean => {
-    if (email.length === 0) {
-      setinputError({
-        type: 'EMPTY_EMAIL',
-        msg: 'Email is required',
+    if (!Validator.isValidPassword(password)) {
+      setErrors({
+        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+        statusCode: 400
       });
       return false;
     }
-    if (!validator.isEmail(email)) {
-      setinputError({
-        type: 'INVALID_EMAIL_FORMAT',
-        msg: 'Email is not valid',
+    if (!Validator.isPasswordMatch(password, confirmedPassword)) {
+      setErrors({
+        message: 'Password mismatch',
+        statusCode: 400
       });
       return false;
     }
-    return true;
-  };
-
-  const validatePassword = () => {
-    if (!password.length || !confirmedPassword.length) {
-      setinputError({
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
-      });
-      return false;
-    }
-    if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
-      setinputError({
-        type: 'WEAK_PASSWORD',
-        msg: 'Must contain 8 characters, 1 number, 1 upper, 1 lower',
-      });
-      return false;
-    }
-    if (password !== confirmedPassword) {
-      setinputError({
-        type: 'PASSWORD_MISMATCH',
-        msg: 'Password does not match',
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const Separator = () => <View style={styles.separator}></View>;
-
-  const SignUpError = () => {
-    return (
-      <View style={styles.signUpError}>
-        <Text>{inputError.msg}</Text>
-      </View>
-    );
+    return true
   };
 
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
         <View>
-          {inputError.type === 'SIGN_UP_ERROR' && <SignUpError />}
+          <View style={{marginVertical: 10}}>
+            {errors.message && <Error msg={errors.message} />}
+          </View>
           <View>
             <Text>First Name</Text>
             <TextInput
@@ -138,9 +96,6 @@ const SignUp = ({navigation}: any) => {
               onChangeText={val => setFirstName(val)}
               autoFocus={true}
             />
-            {inputError.type === 'EMPTY_FIRST_NAME' && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -150,9 +105,6 @@ const SignUp = ({navigation}: any) => {
               autoCorrect={false}
               onChangeText={val => setLastName(val)}
             />
-            {inputError.type === 'EMPTY_LAST_NAME' && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -164,10 +116,6 @@ const SignUp = ({navigation}: any) => {
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
             />
-            {(inputError.type === 'EMPTY_EMAIL' ||
-              inputError.type === 'INVALID_EMAIL_FORMAT') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -183,16 +131,11 @@ const SignUp = ({navigation}: any) => {
                 onChangeText={val => setPassword(val)}
               />
               <Text
-                style={{position: 'absolute', top: '32%', right: '8%'}}
+                style={styles.hide}
                 onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? 'Hide' : 'Show'}
               </Text>
             </View>
-            {(inputError.type === 'EMPTY_PASSWORD' ||
-              inputError.type === 'WEAK_PASSWORD' ||
-              inputError.type === 'PASSWORD_MISMATCH') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 6}} />
           <View>
@@ -208,33 +151,24 @@ const SignUp = ({navigation}: any) => {
                 onChangeText={val => setConfirmedPassword(val)}
               />
               <Text
-                style={{position: 'absolute', top: '32%', right: '8%'}}
+                style={styles.hide}
                 onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? 'Hide' : 'Show'}
               </Text>
             </View>
-            {(inputError.type === 'EMPTY_PASSWORD' ||
-              inputError.type === 'WEAK_PASSWORD' ||
-              inputError.type === 'PASSWORD_MISMATCH') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 14}} />
-          {loading ? (
-            <ActivityIndicator color="#24a0ed" />
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={isUserRegistered}>
-              <Text style={styles.buttonText}>Sign Up</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.button} onPress={checkUserExists}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
         </View>
-        <Separator />
+        <View style={styles.separator}></View>
         <View style={styles.footer}>
           <View>
             <Text>Already have account?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigation.navigate('SignIn')}>
+              onPress={() => navigate(navigation, 'SignIn', null)}>
               Sign In
             </Text>
           </View>

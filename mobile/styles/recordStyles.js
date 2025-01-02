@@ -17,58 +17,48 @@ export const styles = StyleSheet.create({
   },
   dateContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
+  },
+  subDateContainer: {
+    width: '50%',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    height: '5%',
+    marginTop: 30,
+  },
+  saveButton: {
+    backgroundColor: '#24a0ed',
+    borderRadius: 10,
+    width: '46%'
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '500',
+    lineHeight: 32
   },
   dateBox: {
     borderWidth: 1,
     borderColor: '#909090',
     borderRadius: 10,
-    width: '46%',
+    width: '90%',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 50
+    justifyContent: 'space-around',
+    height: 50,
   },
   button_disabled: {
     backgroundColor: '#D8D8D8',
     padding: 14,
     borderRadius: 10,
-    width: "45%",
+    width: '45%',
     height: '80%',
-  },
-  checkInButton: {
-    width: "45%",
-    height: '80%',
-    backgroundColor: '#26b226',
-    padding: 14,
-    borderRadius: 10,
-  },
-  checkOutButton: {
-    width: "45%",
-    height: '80%',
-    backgroundColor: '#F28C28',
-    padding: 14,
-    borderRadius: 10,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginTop: 20
-  },
-  subHeader: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginVertical: 10
   },
   dateText: {
-    padding: 6
-  },
-  subText: {
-    color: '#707070'
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: '500',
-    textAlign: 'center',
+    lineHeight: 46,
+    paddingLeft: 10,
   },
   todayRecordContainer: {
     marginHorizontal: 30,
@@ -77,7 +67,7 @@ export const styles = StyleSheet.create({
   },
   todayRecord: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   separator: {
     width: '100%',
@@ -87,5 +77,8 @@ export const styles = StyleSheet.create({
   },
   error: {
     color: 'red',
+  },
+  icon: {
+    marginTop: 5
   }
 });

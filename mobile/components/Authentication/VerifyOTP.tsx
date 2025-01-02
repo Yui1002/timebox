@@ -4,114 +4,109 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  Button,
-  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
 import {styles} from '../../styles/verifyOTP.js';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
+import {navigate} from '../../helper/navigate';
+import Error from '../Error';
+import { ErrorModel } from '../../types';
+import { DefaultApiFactory, SetOTPRq, SetUserRq } from '../../swagger/generated';
+let otpApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {firstName, lastName, email, password} = route.params;
-  const [otp, setOtp] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [inputError, setinputError] = useState({
-    type: '',
-    msg: '',
+  const {firstName, lastName, email, password, isSignUp} = route.params;
+  const [otp, setOtp] = useState<string>('');
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
   });
-  const [loading, setLoading] = useState(false);
 
-  const validateInput = () => {
-    if (otp.length !== 6) {
-      setinputError({
-        type: 'INVALID_OTP',
-        msg: 'Verification code has to be 6 digit',
+  useEffect(() => {
+    setOTP();
+  }, []);
+
+  const setOTP = async () => {
+    const params: SetOTPRq = {
+      email: email,
+      otp: ''
+    };
+
+    try {
+      await otpApi.setOTP(params);
+    } catch (e) {
+      setErrors({
+        message: 'OTP error',
+        statusCode: 400
       });
-      return false;
     }
+  };
+
+  const validateInput = (): boolean => {
     const regex = /^\d+$/;
-    if (!regex.test(otp)) {
-      setinputError({
-        type: 'INVALID_OTP',
-        msg: 'Verification code has to be a number',
+
+    if (otp.length !== 6) {
+      setErrors({
+        message: 'Verification code has to be 6 digit',
+        statusCode: 400
+      });
+      return false;
+    } else if (!regex.test(otp)) {
+      setErrors({
+        message: 'Verification code has to be a number',
+        statusCode: 400
       });
       return false;
     }
+
     return true;
   };
 
-  const verifyOTP = () => {
+  const verifyOTP = async () => {
     if (!validateInput()) return;
-    setLoading(true);
-    axios
-      .post(`${LOCAL_HOST_URL}/otp/verify`, {
-        otp,
-        email,
-      })
-      .then(() => {
-        signUp();
-      })
-      .catch(err => {
-        setLoading(false);
-        setinputError({
-          type: 'INVALID_OTP',
-          msg: err.response.data.error,
-        });
+
+    const params: SetOTPRq = {
+      email: email,
+      otp: otp
+    };
+
+    try {
+      await otpApi.verifyOTP(params);
+
+      if (isSignUp) {
+        setUser();
+        navigate(navigation, 'DrawerNav', null);
+      } else {
+        navigate(navigation, 'ResetPassword', {email})
+      }
+    } catch (e: any) {
+      setErrors({
+        message: 'Verification error',
+        statusCode: 400
       });
+    }
   };
 
-  const signUp = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/signUp`, {
-        firstName,
-        lastName,
-        email,
-        password,
-      })
-      .then(() => {
-        setLoading(false);
-        dispatch(
-          signInUser({
-            firstName,
-            lastName,
-            email,
-          }),
-        );
-        navigation.navigate('DrawerNav');
-      });
+  const setUser = async () => {
+    try {
+      const params: SetUserRq = {
+        firstName, lastName, email, password
+      }
+      otpApi.setUser(params);
+      dispatch(signInUser({firstName, lastName, email}));
+    } catch (e) {
+      console.log(e);
+    }
   };
-
-  const resendOtp = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/otp/resend`, {
-        email,
-      })
-      .then(res => {
-        setIsOtpSent(true);
-      })
-      .catch((err): any => {
-        console.log(err);
-      });
-  };
-
-  const Separator = () => <View style={styles.separator}></View>;
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={{height: '8%'}}>
         <Text style={styles.header}>Verification code</Text>
       </View>
-      {isOtpSent && (
-        <View style={styles.resend}>
-          <Text style={styles.resendText}>{`${String.fromCharCode(
-            10003,
-          )} Verification code was resent successfully`}</Text>
-        </View>
-      )}
+      {errors.message && <Error msg={errors.message} />}
       <View style={{height: '8%'}}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
@@ -124,23 +119,14 @@ const VerifyOTP = ({route, navigation}: any) => {
           onChangeText={val => setOtp(val)}
         />
       </View>
-      <View>
-        {inputError.type === 'INVALID_OTP' && (
-          <Text style={styles.inputError}>{inputError.msg}</Text>
-        )}
-      </View>
-      {loading ? (
-        <ActivityIndicator color="#24a0ed" />
-      ) : (
-        <TouchableOpacity style={styles.button} onPress={verifyOTP}>
-          <Text style={styles.buttonText}>Verify</Text>
-        </TouchableOpacity>
-      )}
-      <Separator />
+      <TouchableOpacity style={styles.button} onPress={verifyOTP}>
+        <Text style={styles.buttonText}>Verify</Text>
+      </TouchableOpacity>
+      <View style={styles.separator}></View>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <View>
           <Text>Didn't receive a code?</Text>
-          <Text style={styles.link} onPress={resendOtp}>
+          <Text style={styles.link} onPress={setOTP}>
             Resend
           </Text>
         </View>

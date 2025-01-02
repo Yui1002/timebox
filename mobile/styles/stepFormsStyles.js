@@ -13,7 +13,6 @@ export const styles = StyleSheet.create({
   },
   subContainer: {
     marginTop: 20,
-
   },
   header: {
     height: '10%'
@@ -153,5 +152,33 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 30,
     fontSize: 16,
+  },
+  open: {
+    zIndex: -1, 
+    height: '26%', 
+    marginTop: 30
+  },
+  close: {
+    zIndex: 1, 
+    height: '26%', 
+    marginTop: 30
+  },
+  optionContainer: {
+    height: '20%'
+  },
+  optionBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    height: '40%',
+  },
+  editContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
+  editText: {
+    color: '#24a0ed', 
+    textDecorationLine: 'underline'
   }
 });

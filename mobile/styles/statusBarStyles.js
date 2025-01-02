@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: '20%',
     backgroundColor: '#ddd',
-    borderRadius: 20
+    // borderRadius: 20
   },
   bar_focused: {
     backgroundColor: '#24a0ed'

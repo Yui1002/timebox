@@ -1,75 +1,76 @@
 import React, {useState} from 'react';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
-import validator from 'validator';
 import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
-import {PASSWORD_RULES} from '../../config.js';
 import {styles} from '../../styles/resetPasswordStyles.js';
+import Error from '../Error';
+import { navigate } from '../../helper/navigate';
+import { ErrorModel } from '../../types';
+import Validator from '../../validator/validator';
+import { DefaultApiFactory, ResetPasswordRq } from '../../swagger/generated';
+let api = DefaultApiFactory();
 
 const ResetPassword = ({route, navigation}: any) => {
   const email = route.params.email;
-  const [password, setPassword] = useState('');
-  const [confirmdPassword, setConfirmedPassword] = useState('');
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
+  const [password, setPassword] = useState<string>('');
+  const [confirmdPassword, setConfirmedPassword] = useState<string>('');
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
   });
 
-  const validatePassword = (): boolean => {
-    if (!password.length || !confirmdPassword.length) {
-      setInputError({
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
+  const validateInput = (): boolean => {
+    if (!Validator.isNotEmpty(password)) {
+      setErrors({
+        message: 'Password is required',
+        statusCode: 400,
       });
       return false;
     }
-    if (!validator.isStrongPassword(password, PASSWORD_RULES)) {
-      setInputError({
-        type: 'WEAK_PASSWORD',
-        msg: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+    if (!Validator.isNotEmpty(confirmdPassword)) {
+      setErrors({
+        message: 'Confirmed password is required',
+        statusCode: 400,
       });
       return false;
     }
-    if (password !== confirmdPassword) {
-      setInputError({
-        type: 'PASSWORD_MISMATCH',
-        msg: 'Password does not match',
+    if (!Validator.isValidPassword(password)) {
+      setErrors({
+        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+        statusCode: 400,
+      });
+      return false;
+    }
+    if (!Validator.isPasswordMatch(password, confirmdPassword)) {
+      setErrors({
+        message: 'Password does not match',
+        statusCode: 400,
       });
       return false;
     }
     return true;
   };
 
-  const resetPassword = () => {
-    if (!validatePassword()) return;
-    axios
-      .post(`${LOCAL_HOST_URL}/password/reset`, {
-        email,
-        password,
-      })
-      .then(res => {
-        navigation.navigate('SignIn');
-      })
-      .catch(err => {
-        setInputError({
-          type: 'DUPLICATE_PASSWORD',
-          msg: err.response.data.error,
-        });
-      });
-  };
+  const resetPassword = async (): Promise<void> => {
+    if (!validateInput()) return;
 
-  const Separator = () => <View style={styles.separator}></View>;
+    const params: ResetPasswordRq = {
+      email: email,
+      newPassword: password
+    }
+
+    try {
+      await api.resetPassword(params);
+      navigate(navigation, 'DrawerNav', null);
+    } catch (e) {
+      setErrors({...errors, message: 'You cannot reuse the previous password'})
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.header}>Reset Password</Text>
-        <View style={styles.error}>
-          {inputError.type === 'DUPLICATE_PASSWORD' && (
-            <Text >{inputError.msg}</Text>
-          )}
-        </View>
         <View style={{marginVertical: 10}} />
+        {errors.message && <Error msg={errors.message} />}
         <View>
           <Text>Password</Text>
           <TextInput
@@ -79,11 +80,6 @@ const ResetPassword = ({route, navigation}: any) => {
             secureTextEntry={true}
             onChangeText={val => setPassword(val)}
           />
-          {(inputError.type === 'EMPTY_PASSWORD' ||
-            inputError.type === 'WEAK_PASSWORD' ||
-            inputError.type === 'PASSWORD_MISMATCH') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
         </View>
         <View style={{marginVertical: 10}} />
         <View>
@@ -95,18 +91,13 @@ const ResetPassword = ({route, navigation}: any) => {
             secureTextEntry={true}
             onChangeText={val => setConfirmedPassword(val)}
           />
-          {(inputError.type === 'EMPTY_PASSWORD' ||
-            inputError.type === 'WEAK_PASSWORD' ||
-            inputError.type === 'PASSWORD_MISMATCH') && (
-            <Text style={styles.inputError}>{inputError.msg}</Text>
-          )}
         </View>
         <View style={{marginVertical: 20}} />
         <View style={styles.button}>
           <Button title="Reset Password" color="#fff" onPress={resetPassword} />
         </View>
       </View>
-      <Separator />
+      <View style={styles.separator}></View>
       <View style={styles.footer}>
         <View>
           <Text>Go back to</Text>

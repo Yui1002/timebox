@@ -1,0 +1,892 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"GetUserRs": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetUserRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					},
+					"firstName": {
+						"type": "string",
+						"default": ""
+					},
+					"lastName": {
+						"type": "string",
+						"default": ""
+					},
+					"password": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignInUserRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					},
+					"password": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResetPasswordRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					},
+					"newPassword": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RequestStatus": {
+				"enum": [
+					"APPROVED",
+					"REJECTED",
+					"PENDING"
+				],
+				"type": "string"
+			},
+			"RateType": {
+				"enum": [
+					"hourly",
+					"daily"
+				],
+				"type": "string"
+			},
+			"GetUserScheduleRs": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"day": {
+						"type": "string",
+						"default": ""
+					},
+					"startTime": {
+						"type": "string",
+						"default": ""
+					},
+					"endTime": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ServiceProvider": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/RequestStatus"
+					},
+					"rate": {
+						"type": "number",
+						"format": "double"
+					},
+					"rateType": {
+						"$ref": "#/components/schemas/RateType"
+					},
+					"scheduleId": {
+						"type": "number",
+						"format": "double"
+					},
+					"day": {
+						"type": "string"
+					},
+					"startTime": {
+						"type": "string"
+					},
+					"endTime": {
+						"type": "string"
+					},
+					"allowEdit": {
+						"type": "boolean"
+					},
+					"schedule": {
+						"items": {
+							"$ref": "#/components/schemas/GetUserScheduleRs"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"required": [
+					"id",
+					"first_name",
+					"last_name",
+					"email",
+					"status",
+					"scheduleId",
+					"day",
+					"startTime",
+					"endTime",
+					"allowEdit"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetServiceProviderRs": {
+				"properties": {
+					"serviceProviders": {
+						"items": {
+							"$ref": "#/components/schemas/ServiceProvider"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateServiceProviderRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"serviceProviderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"rate": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"rateType": {
+						"$ref": "#/components/schemas/RateType"
+					},
+					"schedule": {
+						"items": {
+							"$ref": "#/components/schemas/GetUserScheduleRs"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Request": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"senderFirstName": {
+						"type": "string",
+						"default": ""
+					},
+					"senderLastName": {
+						"type": "string",
+						"default": ""
+					},
+					"senderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"receiverEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"status": {
+						"$ref": "#/components/schemas/RequestStatus"
+					},
+					"rate": {
+						"type": "string",
+						"default": "0"
+					},
+					"rateType": {
+						"$ref": "#/components/schemas/RateType"
+					},
+					"day": {
+						"type": "string",
+						"default": ""
+					},
+					"startTime": {
+						"type": "string",
+						"default": ""
+					},
+					"endTime": {
+						"type": "string",
+						"default": ""
+					},
+					"schedules": {
+						"items": {
+							"$ref": "#/components/schemas/GetUserScheduleRs"
+						},
+						"type": "array",
+						"default": []
+					},
+					"allowEdit": {
+						"type": "boolean",
+						"default": true
+					},
+					"requestDate": {
+						"type": "string",
+						"format": "date-time",
+						"default": "2025-01-02T15:43:01.922Z"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRequestRs": {
+				"properties": {
+					"requests": {
+						"items": {
+							"$ref": "#/components/schemas/Request"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Mode": {
+				"enum": [
+					0,
+					1
+				],
+				"type": "number"
+			},
+			"SetRequestRq": {
+				"properties": {
+					"senderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"receiverEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"rate": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"rateType": {
+						"$ref": "#/components/schemas/RateType"
+					},
+					"schedules": {
+						"items": {
+							"$ref": "#/components/schemas/GetUserScheduleRs"
+						},
+						"type": "array",
+						"default": []
+					},
+					"mode": {
+						"$ref": "#/components/schemas/Mode"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateRequestStatusRq": {
+				"properties": {
+					"senderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"receiverEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"status": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ServiceProviderMiniRs": {
+				"properties": {
+					"serviceProviderUser": {
+						"$ref": "#/components/schemas/GetUserRs"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Employer": {
+				"properties": {
+					"firstName": {
+						"type": "string",
+						"default": ""
+					},
+					"lastName": {
+						"type": "string",
+						"default": ""
+					},
+					"email": {
+						"type": "string",
+						"default": ""
+					},
+					"mode": {
+						"$ref": "#/components/schemas/Mode"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetEmployerRs": {
+				"properties": {
+					"employers": {
+						"items": {
+							"$ref": "#/components/schemas/Employer"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetEmployerRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetOTPRs": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"otp": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"createDate": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"otp",
+					"email",
+					"createDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetOTPRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					},
+					"otp": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "server",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/user": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SetUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetUserRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/signIn": {
+			"post": {
+				"operationId": "SignInUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignInUserRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/resetPassword": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ResetPasswordRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/serviceProvider": {
+			"get": {
+				"operationId": "GetServiceProvider",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetServiceProviderRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "employerEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateServiceProvider",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateServiceProviderRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/request": {
+			"get": {
+				"operationId": "GetRequests",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetRequestRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "receiverEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SetRequest",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetRequestRq"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateRequestStatus",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateRequestStatusRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/request/email": {
+			"get": {
+				"operationId": "GetRequestByEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetRequestRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "senderEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "receiverEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/request/status": {
+			"get": {
+				"operationId": "GetRequestsByStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetRequestRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "receiverEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": true,
+						"schema": {
+							"$ref": "#/components/schemas/RequestStatus"
+						}
+					}
+				]
+			}
+		},
+		"/request/eligible": {
+			"get": {
+				"operationId": "IsRequestValid",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ServiceProviderMiniRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "senderEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "receiverEmail",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/employer": {
+			"post": {
+				"operationId": "GetEmployer",
+				"responses": {
+					"200": {
+						"description": "GetEmployerRs Return the employer data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetEmployerRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GetEmployerRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/otp": {
+			"get": {
+				"operationId": "GetOTP",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetOTPRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SetOTP",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetOTPRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/otp/verify": {
+			"post": {
+				"operationId": "VerifyOTP",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetOTPRq"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

@@ -2,61 +2,55 @@ import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, Button} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
-import InputError from '../../InputError';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
+import { Days } from '../../../enums'
+import { WorkShiftsProps, Schedule } from '../../../types';
+import { ErrorModel } from '../../../types';
+import Error from '../../Error';
+import Validator from '../../../validator/validator';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
-  const {firstName, lastName, email, rate, rateType, isEnabled} = route.params;
   const dispatch = useDispatch();
+  const params: WorkShiftsProps = route.params;
   const workShifts = useSelector(state => state.workShifts);
-
-  const days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
-  const [startOpen, setStartOpen] = useState(false);
-  const [endOpen, setEndOpen] = useState(false);
+  const [startOpen, setStartOpen] = useState<boolean>(false);
+  const [endOpen, setEndOpen] = useState<boolean>(false);
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<string>('');
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
+  const [error, setError] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200,
   });
 
   const validateInput = () => {
-    if (selectedDay.length === 0) {
-      setInputError({
-        type: 'EMPTY_DAY',
-        msg: 'Please select a day',
+    if (!Validator.isNotEmpty(selectedDay)) {
+      setError({
+        message: 'Please select a day',
+        statusCode: 400
       });
       return false;
     }
     if (workShifts.workShifts.some(shift => shift['day'] === selectedDay)) {
-      setInputError({
-        type: 'DUPLICATE_DAY',
-        msg: `${selectedDay} is already registered`,
+      setError({
+        message: `${selectedDay} is already registered`,
+        statusCode: 400
       });
       return false;
     }
     if (startTime > endTime) {
-      setInputError({
-        type: 'INVALID_TIME',
-        msg: 'Time is invalid',
+      setError({
+        message: 'Time is invalid',
+        statusCode: 400
       });
       return false;
     }
     if (endTime.getHours() - startTime.getHours() < 1) {
-      setInputError({
-        type: 'INVALID_TIME',
-        msg: 'Duration has to more than 1 hour',
+      setError({
+        message: 'Duration has to more than 1 hour',
+        statusCode: 400
       });
       return false;
     }
@@ -65,37 +59,28 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
 
   const add = () => {
     if (!validateInput()) return;
-    const value = {
+
+    const value: Schedule = {
       day: selectedDay,
       startTime: moment(startTime).format('LT'),
       endTime: moment(endTime).format('LT'),
     };
-    dispatch(addShift(value));
 
-    navigation.navigate('WorkShifts', {
-      firstName,
-      lastName,
-      email,
-      rate,
-      rateType,
-      isEnabled
-    });
+    dispatch(addShift(value));
+    navigation.navigate('WorkShifts', params);
   };
 
   return (
     <View style={styles.container}>
       <View style={{marginTop: 30}}>
+        {error.message && <Error msg={error.message} />}
         <Text style={{fontSize: 16, fontWeight: '500', marginVertical: 8}}>
           Select day and time
         </Text>
-        {(inputError.type === 'EMPTY_DAY' ||
-          inputError.type === 'DUPLICATE_DAY') && (
-          <InputError error={inputError} />
-        )}
         <View style={styles.dayContainer}>
-          {days.map((day, index) => (
+          {Object.values(Days).map((day: string, key: number) => (
             <TouchableOpacity
-              key={index}
+              key={key}
               style={selectedDay === day ? styles.day_selected : styles.day}
               onPress={() => setSelectedDay(day)}>
               <Text style={styles.day_text}>{day}</Text>
@@ -144,9 +129,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
             </TouchableOpacity>
           </View>
         </View>
-        {inputError.type === 'INVALID_TIME' && (
-          <InputError error={inputError} />
-        )}
       </View>
       <View style={styles.workShiftsBtn}>
         <TouchableOpacity

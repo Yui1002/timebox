@@ -1,158 +1,151 @@
-import React, {useEffect, useState} from 'react';
-import {LOCAL_HOST_URL} from '../../../config.js';
+import React, {useEffect, useState, useRef} from 'react';
+import { SafeAreaView, View, Text, TextInput, Button, ScrollView } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
-import {SafeAreaView, View, Text, TextInput, Button, ScrollView} from 'react-native';
+import {LOCAL_HOST_URL} from '../../../config.js';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
-import {useSelector} from 'react-redux';
+import {navigate} from '../../../helper/navigate';
+import {Schedule} from '../../../type';
+import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
+import Error from '../../Error';
 
 const EditProfile = ({route, navigation}: any) => {
-  const {rate, rate_type, status, shifts} = route.params.workInfo;
-  const email_address = route.params.email_address;
-  const userInfo = useSelector(state => state.userInfo);
-  const [editRate, setEditRate] = useState(rate ? rate : 0);
-  const [editRateType, setEditRateType] = useState(rate_type);
-  const [editStatus, setEditStatus] = useState(status);
-  const [editSchedule, setEditSchedule] = useState(shifts);
+  const dispatch = useDispatch();
+  const employerData = useSelector(state => state.userInfo);
+  const serviceProviderData = useSelector(state => state.serviceProviderData);
+  const {status, rate, rate_type, schedule} = serviceProviderData;
+  
+  const [updatedRate, setUpdatedRate] = useState(rate);
+  const [updatedRateType, setUpdatedRateType] = useState(rate_type);
+  const [updatedStatus, setUpdatedStatus] = useState(status);
+  const [updatedSchedule, setUpdatedSchedule] = useState(schedule);
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
-  const [rateType, setRateType] = useState([
+  const [rateTypeLabel, setRateTypeLabel] = useState([
     {label: 'Hourly', value: 'hourly'},
     {label: 'Daily', value: 'daily'},
   ]);
-  const [updatedStatus, setUpdatedStatus] = useState([
+  const [statusLabel, setStatusLabel] = useState([
     {label: 'Active', value: 'active'},
     {label: 'Inactive', value: 'inactive'},
   ]);
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
-  });
+  const [errors, setErrors] = useState({});
 
-  const deleteDate = (item: any) => {
-    setEditSchedule(s =>
-      s.filter(i => JSON.stringify(i) !== JSON.stringify(item)),
-    );
-  };
+  const deleteDate = (itemToDelete: Schedule) => {
+    const result = serviceProviderData.schedule.map((schedule: Schedule) => {
+      if (JSON.stringify(schedule) === JSON.stringify(itemToDelete)) {
+        schedule.day = null;
+        schedule.startTime = null;
+        schedule.endTime = null;
+      }
+      return schedule;
+    });
+
+    setUpdatedSchedule(result);
+    dispatch(updateServiceProvider(serviceProviderData))
+  }
 
   const validateInput = () => {
-    if (isNaN(editRate) || editRate < 1) {
-      setInputError({
-        type: 'INVALID_RATE',
-        msg: 'Must be number or more than 0',
-      });
-      return false;
+    let errors: any = {};
+
+    if (isNaN(rate) || rate < 1) {
+      errors.rate = 'Rate must be a number or more than 0';
     }
-    if (!editRateType) {
-      setInputError({
-        type: 'EMPTY_RATE_TYPE',
-        msg: 'This field is required',
-      });
-      return false;
+    if (!rate_type) {
+      errors.rate_type = 'This field is required';
     }
-    return true;
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const formatParams = () => {
-    const params: any = {};
-    if (rate !== Number(editRate)) {
-      params['rate'] = editRate;
-    }
-    if (rate_type !== editRateType) {
-      params['rate_type'] = editRateType;
-    }
-    if (status !== editStatus) {
-      params['status'] = editStatus;
-    }
-    if (JSON.stringify(shifts) !== JSON.stringify(editSchedule)) {
-      params['shift'] = editSchedule;
-    }
-    return params;
-  };
-
-  const saveChanges = () => {
+  const saveChanges = async () => {
     if (!validateInput()) return;
-    axios
-      .post(`${LOCAL_HOST_URL}/edit/serviceProvider`, {
-        params: formatParams(),
-        spEmail: email_address,
-        epEmail: userInfo.email,
-      })
-      .then(res => {
-        if (res.data === 'OK') {
-          navigation.navigate('Profile', {sp: route.params.sp});
+
+    try {
+      await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`,
+        {
+          employerEmail: employerData.email,
+          serviceProviderEmail: serviceProviderData.email,
+          rate: updatedRate,
+          rateType: updatedRateType,
+          status: updatedStatus,
+          schedule: updatedSchedule
         }
+      )
+      navigate(navigation, 'Profile', route.params.sp);
+    } 
+    catch (e) {
+      setErrors({
+        error: 'Unable to save changes'
       });
+    }
   };
 
-  const navigateToAddSchedule = () => {
-    navigation.navigate('EditWorkShifts', {
-      email_address,
-      workInfo: route.params.workInfo,
-      sp: route.params.sp,
-      editSchedule,
-      setEditSchedule,
-    });
+  const navigateToSchedule = (schedule: Schedule | null) => {
+    navigate(navigation, 'EditWorkShifts', 
+      schedule ? { editSelectedSchedule: schedule } : null);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
+        <View style={{marginVertical: 10}}>
+          {Object.values(errors).map((error, key) => (
+            <Error key={key} msg={error} />
+          ))}
+        </View>
         <View style={styles.align}>
           <View style={{width: '45%'}}>
             <Text style={styles.text}>Rate ($)</Text>
             <TextInput
               maxLength={10}
-              value={`${editRate}`}
+              value={`${updatedRate}`}
               style={styles.input}
-              onChangeText={val => setEditRate(val)}
+              onChangeText={val => setUpdatedRate(val)}
             />
-            {inputError.type === 'INVALID_RATE' && (
-              <Text style={styles.error}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{width: '45%'}}>
             <Text style={styles.rateTypeText}>Rate Type</Text>
             <DropdownPicker
               open={rateTypeOpen}
-              value={editRateType}
-              items={rateType}
+              value={updatedRateType}
+              items={rateTypeLabel}
               setOpen={setRateTypeOpen}
-              setValue={setEditRateType}
-              setItems={setRateType}
-              listMode='SCROLLVIEW'
+              setValue={setUpdatedRateType}
+              setItems={setRateTypeLabel}
+              listMode="SCROLLVIEW"
             />
-            {inputError.type === 'EMPTY_RATE_TYPE' && (
-              <Text style={styles.error}>{inputError.msg}</Text>
-            )}
           </View>
         </View>
         <View style={{width: '45%'}}>
           <Text style={styles.text}>Status</Text>
           <DropdownPicker
             open={statusOpen}
-            value={editStatus}
-            items={updatedStatus}
+            value={updatedStatus}
+            items={statusLabel}
             setOpen={setStatusOpen}
-            setValue={setEditStatus}
-            setItems={setUpdatedStatus}
-            listMode='SCROLLVIEW'
+            setValue={setUpdatedStatus}
+            setItems={setStatusLabel}
+            listMode="SCROLLVIEW"
           />
         </View>
         <View style={statusOpen ? {zIndex: -1} : null}>
           <Text style={styles.text}>Schedule</Text>
-          {editSchedule && editSchedule.length ? (
-            editSchedule.map((s: any, index: number) => (
-              <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
-                <Text style={{width: '30%'}}>{s.day}</Text>
-                <Text style={{width: '50%'}}>
-                  {s.start_time} ~ {s.end_time}
-                </Text>
-                <Text style={styles.delete} onPress={() => deleteDate(s)}>
-                  Delete
-                </Text>
-              </View>
-            ))
+          {updatedSchedule && updatedSchedule.length ? (
+            updatedSchedule.map((s: Schedule, index: number) => {
+              if (s.day && s.startTime && s.endTime) {
+                return (
+                  <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
+                  <Text style={{width: '24%'}}>{s.day}</Text>
+                  <Text style={{width: '40%'}}>{s.startTime} ~ {s.endTime}</Text>
+                  <Text style={styles.delete} onPress={() => navigateToSchedule(s)}>Edit</Text>
+                  <Text style={styles.delete} onPress={() => deleteDate(s)}>Delete</Text>
+                </View>
+                )
+              }
+            })
           ) : (
             <Text>Not specified</Text>
           )}
@@ -160,7 +153,7 @@ const EditProfile = ({route, navigation}: any) => {
             <Button
               title={`${String.fromCharCode(43)}  Add Schedule`}
               color="#fff"
-              onPress={navigateToAddSchedule}
+              onPress={navigateToSchedule}
             />
           </View>
         </View>

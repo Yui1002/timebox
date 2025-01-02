@@ -50,7 +50,12 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
   signUpError: {
-    width: '100%',
+    height: '8%',
     backgroundColor: '#FFCCCB'
+  },
+  hide: {
+    position: 'absolute', 
+    top: '32%', 
+    right: '8%'
   }
 });

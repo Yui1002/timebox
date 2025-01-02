@@ -21,7 +21,6 @@ class UserControllers {
     const requests = await this.models.getRequests(req.query.email);
     const x = await requests.map(async (r: any) => {
       const sp = await this.models.getUser(r.receiver);
-      // console.log("sp", sp);
       const status = r.is_approved
         ? "Active"
         : r.is_approved === null
@@ -37,10 +36,7 @@ class UserControllers {
       }
       return sp[0]
     });
-    // console.log('data', x)
     Promise.all(x).then((d) => res.send(d))
-    // const serviceProviders = await this.models.getServiceProviders(email);
-    // res.send(serviceProviders);
   }
 
   async getRequests(req: any, res: any) {

@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
+import { DefaultApiFactory, GetUserRs, SignInUserRq } from '../../swagger/generated';
 import {
   Text,
   View,
@@ -9,119 +8,85 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
-import validator from 'validator';
-import {styles} from '../../styles/signInStyles.js';
+import Error from '../Error';
+import {styles } from '../../styles/signInStyles.js';
 import {signInUser} from '../../redux/actions/signInAction.js';
+import {navigate} from '../../helper/navigate';
+import Validator from '../../validator/validator';
+import { ErrorModel } from '../../types';
+let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [inputError, setinputError] = useState({
-    type: '',
-    msg: '',
+
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: "",
+    statusCode: 200
   });
-  const [loading, setLoading] = useState(false);
 
-  const signIn = () => {
-    if (!validateEmail() || !validatePassword()) {
-      return;
-    }
-
-    setLoading(true);
-    axios
-      .post(`${LOCAL_HOST_URL}/signIn`, {
-        email,
-        password,
-      })
-      .then(res => {
-        setLoading(false);
-        dispatchUser(res);
-        clearInput();
-        navigation.navigate('DrawerNav');
-      })
-      .catch(err => {
-        setLoading(false);
-        const errMsg = err.response.data.error;
-        const error = {type: 'SIGN_IN_ERROR', msg: errMsg};
-        setinputError(error);
-      });
-  };
-
-  const validateEmail = (): boolean => {
-    if (email.length === 0) {
-      setinputError({
-        type: 'EMPTY_EMAIL',
-        msg: 'Email is required',
+  const validateInput = (): boolean => {
+    if (!Validator.isValidEmail(email)) {
+      setErrors({
+        message: 'Invalid email',
+        statusCode: 400
       });
       return false;
-    }
-    if (!validator.isEmail(email)) {
-      setinputError({
-        type: 'INVALID_EMAIL_FORMAT',
-        msg: 'Email is not valid',
+    } else if (!Validator.isValidPassword(password)) {
+      setErrors({
+        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
+        statusCode: 400
       });
       return false;
     }
     return true;
   };
 
-  const validatePassword = (): boolean => {
-    if (password.length === 0) {
-      setinputError({
-        type: 'EMPTY_PASSWORD',
-        msg: 'Password is required',
-      });
-      return false;
+  const signIn = async (): Promise<void> => {
+    if (!validateInput()) return;
+
+    const params: SignInUserRq = {
+      email, password
     }
-    return true;
+
+    try {
+      const { data } = await userApi.signInUser(params);
+      dispatchUser(data);
+      clearInput();
+      navigate(navigation, 'DrawerNav', null);
+    } catch (e: any) {
+      setErrors({
+        message: 'Invalid email or password',
+        statusCode: 400
+      });
+    }
   };
 
-  const SignInError = () => {
-    return (
-      <View style={styles.signInError}>
-        <Text>{inputError.msg}</Text>
-      </View>
-    );
-  };
-
-  const clearInput = () => {
+  const clearInput = (): void => {
     setEmail('');
     setPassword('');
-    setinputError({
-      type: '',
-      msg: '',
+    setErrors({
+      message: '',
+      statusCode: 200
     });
   };
 
-  const navigateToSignUp = () => {
-    navigation.navigate('SignUp');
-    clearInput();
-    setinputError({
-      type: '',
-      msg: '',
-    });
+  const dispatchUser = (data: GetUserRs): void => {
+    dispatch(signInUser({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+    }));
   };
-
-  const dispatchUser = (res: any) => {
-    const value = {
-      firstName: res.data.firstName,
-      lastName: res.data.lastName,
-      email: email,
-    };
-    dispatch(signInUser(value));
-  }
-
-  const Separator = () => <View style={styles.separator}></View>;
 
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
         <View>
           <View style={{marginVertical: 10}}>
-            {inputError.type === 'SIGN_IN_ERROR' && <SignInError />}
+            {errors.message && <Error msg={errors.message} />}
           </View>
           <View>
             <Text>Email</Text>
@@ -132,10 +97,6 @@ const SignIn = ({navigation}: any) => {
               autoCapitalize="none"
               onChangeText={val => setEmail(val)}
             />
-            {(inputError.type === 'EMPTY_EMAIL' ||
-              inputError.type === 'INVALID_EMAIL_FORMAT') && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 10}} />
           <View>
@@ -148,24 +109,19 @@ const SignIn = ({navigation}: any) => {
               secureTextEntry={true}
               onChangeText={val => setPassword(val)}
             />
-            {inputError.type === 'EMPTY_PASSWORD' && (
-              <Text style={styles.inputError}>{inputError.msg}</Text>
-            )}
           </View>
           <View style={{marginVertical: 20}} />
-          {loading ? (
-            <ActivityIndicator color="#24a0ed" />
-          ) : (
-            <TouchableOpacity style={styles.button} onPress={signIn}>
-              <Text style={styles.buttonText}>Sign In</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.button} onPress={signIn}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
         </View>
-        <Separator />
+        <View style={styles.separator}></View>
         <View style={styles.footer}>
           <View>
             <Text>New user?</Text>
-            <Text style={styles.link} onPress={navigateToSignUp}>
+            <Text
+              style={styles.link}
+              onPress={() => navigate(navigation, 'SignUp', null)}>
               Sign Up
             </Text>
           </View>
@@ -173,7 +129,7 @@ const SignIn = ({navigation}: any) => {
             <Text>Forgot password?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigation.navigate('ForgotPassword')}>
+              onPress={() => navigate(navigation, 'ForgotPassword', null)}>
               Reset password
             </Text>
           </View>

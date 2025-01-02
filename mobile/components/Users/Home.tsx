@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {styles} from '../../styles/homeStyles.js';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
+import { DefaultApiFactory, GetEmployerRq, GetEmployerRs, Employer } from '../../swagger/generated';
+
+let employerApi = DefaultApiFactory();
 
 const Home = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const {firstName, email} = userInfo;
-  const [employers, setEmployers] = useState([]);
+  const [employers, setEmployers] = useState<Employer[]>();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -24,19 +25,17 @@ const Home = (props: any) => {
     }
   }, [isFocused]);
 
-  const getEmployers = () => {
-    axios
-      .get(`${LOCAL_HOST_URL}/employers`, {
-        params: {
-          email,
-        },
-      })
-      .then(res => {
-        setEmployers(res.data);
-      })
-      .catch(err => {
-        console.log('home error', err);
-      });
+  const getEmployers = async () => {
+    const params: GetEmployerRq = {
+      email: email
+    }
+
+    try {
+      let { data } = await employerApi.getEmployer(params);
+      setEmployers(data.employers)
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -46,7 +45,7 @@ const Home = (props: any) => {
       </View>
       <View>
         <Text style={styles.title}>My Employers</Text>
-        {employers !== null && employers.length > 0 ? (
+        {employers != null ? (
           <FlatList
             style={styles.subContainer}
             data={employers}
@@ -54,9 +53,9 @@ const Home = (props: any) => {
               <View style={styles.listContainer}>
                 <View>
                   <Text style={{fontSize: 16, fontWeight: '500'}}>
-                    {item.first_name} {item.last_name}
+                    {item.firstName} {item.lastName}
                   </Text>
-                  <Text>{item.email_address}</Text>
+                  <Text>{item.email}</Text>
                 </View>
                 <View>
                   <TouchableOpacity
@@ -74,7 +73,9 @@ const Home = (props: any) => {
             )}
           />
         ) : (
-          <Text style={{marginTop: 10}}>There is no employers</Text>
+          <Text style={{marginTop: 10}}>
+            Please use the menu to hire or manage service providers
+          </Text>
         )}
       </View>
     </SafeAreaView>

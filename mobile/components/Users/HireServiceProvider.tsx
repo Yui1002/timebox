@@ -1,150 +1,78 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {LOCAL_HOST_URL} from '../../config.js';
-import axios from 'axios';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  Alert,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/hireServiceProviderStyles.js';
-import validator from 'validator';
 import InputField from '../InputField';
-import InputError from '../InputError';
 import Popup from '../Popup';
+import {alert} from '../../helper/Alert';
+import {navigate} from '../../helper/navigate';
+import Error from '../Error';
+import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
+import Validator from '../../validator/validator';
+import {ErrorModel} from '../../types';
+
+let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [error, setError] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200,
   });
 
   useEffect(() => {
     setModalVisible(true);
-    clearInput();
   }, []);
 
-  const validateEmail = (type: string): boolean => {
-    if (searchInput.length === 0) {
-      setInputError({
-        type: `${type}_EMPTY_EMAIL`,
-        msg: 'Email is required',
-      });
-      return false;
-    }
-    if (!validator.isEmail(searchInput)) {
-      setInputError({
-        type: `${type}_INVALID_FORMAT`,
-        msg: 'Email is not valid',
-      });
-      return false;
-    }
-    if (searchInput === userInfo.email) {
-      setInputError({
-        type: `${type}_INVALID_FORMAT`,
-        msg: 'Email should be not yours',
+  const validateInput = () => {
+    if (!Validator.isValidEmail(searchInput)) {
+      setError({
+        message: 'invalid email',
+        statusCode: 400,
       });
       return false;
     }
     return true;
   };
 
-  const searchEmail = () => {
-    if (!validateEmail('SEARCH')) return;
-    axios
-      .get(`${LOCAL_HOST_URL}/request/search`, {
-        params: {
-          receiver: searchInput,
-          sender: userInfo.email,
-        },
-      })
-      .then(res => {
-        if (res.data === 'Email not found') {
-          const msg = `Do you want to request to ${searchInput} as a service provider?`;
-          showAlert(msg, null, function () {
-            sendRequest();
-          });
-        } else {
-          const msg = `This user exists on the app. Do you want to select ${res.data[0].first_name} ${res.data[0].last_name}?`;
-          showAlert(msg, null, function () {
-            navigateToNext(res.data[0]);
-          });
-        }
-      })
-      .catch((error: any) => {
-        setInputError({
-          type: 'DUPLICATE_REQUEST',
-          msg: error.response.data.error,
-        });
+  const searchEmail = async () => {
+    if (!validateInput()) return;
+
+    try {
+      const {data} = await api.isRequestValid(userInfo.email, searchInput);
+      const serviceProvider = data.serviceProviderUser;
+      showConfirmMsg(serviceProvider);
+    } catch (e) {
+      setError({
+        message: 'Duplicate request',
+        statusCode: 400,
       });
+    }
   };
 
-  const sendRequest = () => {
-    axios
-      .post(`${LOCAL_HOST_URL}/request`, {
-        sender: userInfo,
-        receiver: searchInput,
-      })
-      .then(() => {
+  const showConfirmMsg = (serviceProvider: GetUserRs | undefined) => {
+    alert(
+      `Do you want to hire ${searchInput} as a service provider?`,
+      '',
+      function () {
+        navigate(props.navigation, 'PersonalInfo', {
+          firstName: serviceProvider ? serviceProvider.firstName : '',
+          lastName: serviceProvider ? serviceProvider.lastName : '',
+          email: serviceProvider ? serviceProvider.email : searchInput,
+        });
         clearInput();
-        showSuccessAlert();
-      })
-      .catch(err => {
-        setInputError({
-          type: 'DUPLICATE_EMAIL',
-          msg: err.response.data.error,
-        });
-      });
-  };
-
-  const showAlert = (msg: string, cancelCb: any, confirmCb: any) => {
-    Alert.alert(msg, '', [
-      {
-        text: 'No',
-        onPress: cancelCb ? cancelCb : () => console.log('cancel pressed'),
-        style: 'cancel',
       },
-      {
-        text: 'Yes',
-        onPress: confirmCb,
-      },
-    ]);
-  };
-
-  const showSuccessAlert = () => {
-    Alert.alert(
-      'Request sent!',
-      `An request has been sent to ${searchInput}. You will see the user on your home page once the request is approved. `,
-      [
-        {
-          text: 'OK',
-          onPress: () => props.navigation.goBack(),
-        },
-      ],
-      {cancelable: false},
+      null,
     );
-  };
-
-  const navigateToNext = (data: any) => {
-    props.navigation.navigate('PersonalInfo', {
-      firstName: data.first_name,
-      lastName: data.last_name,
-      email: searchInput,
-    });
   };
 
   const clearInput = () => {
     setSearchInput('');
-    setInputError({
-      type: '',
-      msg: '',
+    setError({
+      message: '',
+      statusCode: 200,
     });
   };
 
@@ -157,6 +85,7 @@ const HireServiceProvider = (props: any) => {
         <Text>
           Enter the email of a service provider you would like to hire
         </Text>
+        {error.message && <Error msg={error.message} />}
       </View>
       <View style={styles.subContainer}>
         <Text>Email</Text>
@@ -165,21 +94,11 @@ const HireServiceProvider = (props: any) => {
           isEditable={true}
           value={searchInput}
         />
-        {(inputError.type === 'SEARCH_EMPTY_EMAIL' ||
-          inputError.type === 'SEARCH_INVALID_FORMAT' ||
-          inputError.type === 'EMAIL_NOT_FOUND' ||
-          inputError.type === 'DUPLICATE_REQUEST') && (
-          <InputError error={inputError} />
-        )}
-        {loading ? (
-          <ActivityIndicator color="#24a0ed" style={styles.indicator} />
-        ) : (
-          <TouchableOpacity
-            style={[styles.button, {marginTop: 20}]}
-            onPress={searchEmail}>
-            <Text style={styles.buttonText}>Continue</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={[styles.button, {marginTop: 20}]}
+          onPress={searchEmail}>
+          <Text style={styles.buttonText}>Continue</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

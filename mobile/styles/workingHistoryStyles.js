@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
   },
   dropdownOpen: {
     zIndex: -1,
-    backgroundColor: 'lightgreen'
   },
   dropdown: {
     backgroundColor: '#fff',

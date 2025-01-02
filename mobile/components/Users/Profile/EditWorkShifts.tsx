@@ -1,121 +1,118 @@
 import React, {useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {styles} from '../../../styles/stepFormsStyles.js';
-import InputError from '../../InputError';
-import DropdownPicker from '../DropdownPicker';
+import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import {addShift} from '../../../redux/actions/workShiftsAction';
+import Validator from '../../../validator/validator';
+import Error from '../../Error';
+import {Schedule} from '../../../types';
+import {Days} from '../../../enums';
+import { navigate } from '../../../helper/navigate';
+import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
+
+
+interface IProps {
+  editSelectedSchedule: Schedule;
+}
 
 const EditWorkShifts = ({route, navigation}: any) => {
-  const {email_address, workInfo, sp, editSchedule, setEditSchedule} = route.params;
-
-  const days = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
+  const dispatch = useDispatch();
+  const serviceProviderData = useSelector(state => state.serviceProviderData);
+  const { editSelectedSchedule } = route.params;
   const [startOpen, setStartOpen] = useState(false);
   const [endOpen, setEndOpen] = useState(false);
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
-  const [selectedDay, setSelectedDay] = useState<string>('');
-  const [inputError, setInputError] = useState({
-    type: '',
-    msg: '',
-  });
+  const [startTime, setStartTime] = useState(
+    editSelectedSchedule ? editSelectedSchedule.startTime : moment().format('LT'),
+  );
+  const [endTime, setEndTime] = useState(
+    editSelectedSchedule ? editSelectedSchedule.endTime : moment().format('LT'),
+  );
+  const [selectedDay, setSelectedDay] = useState<string>(
+    editSelectedSchedule ? editSelectedSchedule.day : '',
+  );
+  const [errors, setErrors] = useState({});
 
   const validateInput = () => {
-    if (selectedDay.length === 0) {
-      setInputError({
-        type: 'EMPTY_DAY',
-        msg: 'Please select a day',
-      });
-      return false;
+    let errors: any = {};
+
+    if (Validator.isEmpty(selectedDay)) {
+      errors.day = 'Please select a day';
     }
-    if (editSchedule && editSchedule.some((s: any) => s['day'] === selectedDay)) {
-      setInputError({
-        type: 'DUPLICATE_DAY',
-        msg: `${selectedDay} is already registered`,
-      });
-      return false;
+
+    if (moment(startTime, 'h:mm A').isAfter(moment(endTime, 'h:mm A'))) {
+      errors.time = 'Time is invalid';
     }
-    if (startTime > endTime) {
-      setInputError({
-        type: 'INVALID_TIME',
-        msg: 'Time is invalid',
-      });
-      return false;
+
+    let diff = moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'), 'hours');
+    if (diff < 1) {
+      errors.time = 'Duration has to more than 1 hour';
     }
-    if (endTime.getHours() - startTime.getHours() < 1) {
-      setInputError({
-        type: 'INVALID_TIME',
-        msg: 'Duration has to more than 1 hour',
-      });
-      return false;
-    }
-    return true;
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const add = () => {
     if (!validateInput()) return;
-    const value = {
-      day: selectedDay,
-      start_time: moment(startTime).format('LT'),
-      end_time: moment(endTime).format('LT'),
-    };
 
-    setEditSchedule(s => [...s, value]);
+    serviceProviderData.schedule.map((item: Schedule) => {
+      if (item.id === editSelectedSchedule.id) {
+        item.startTime = startTime,
+        item.endTime = endTime;
+      }
+      return item;
+    })
 
-    navigation.navigate('EditProfile', {
-      email_address,
-      workInfo,
-      sp,
-      editSchedule,
-      setEditSchedule,
-    });
+    dispatch(updateServiceProvider(serviceProviderData))
+    navigate(navigation, 'EditProfile', {sp: route.params.sp});
   };
 
   return (
     <ScrollView style={styles.container}>
+      <View style={{marginVertical: 10}}>
+        {Object.values(errors).map((error, key) => (
+          <Error key={key} msg={error} />
+        ))}
+      </View>
       <View style={{marginTop: 30}}>
         <Text style={{fontSize: 16, fontWeight: '500', marginVertical: 8}}>
           Select day and time
         </Text>
-        {(inputError.type === 'EMPTY_DAY' ||
-          inputError.type === 'DUPLICATE_DAY') && (
-          <InputError error={inputError} />
-        )}
         <View style={styles.dayContainer}>
-          {days.map((day, index) => (
+          {Object.values(Days).map((day: string, key: number) => (
             <TouchableOpacity
-              key={index}
+              key={key}
               style={selectedDay === day ? styles.day_selected : styles.day}
-              onPress={() => setSelectedDay(day)}>
+              onPress={() => setSelectedDay(day.toLowerCase())}>
               <Text style={styles.day_text}>{day}</Text>
             </TouchableOpacity>
           ))}
         </View>
         <View>
-          {startOpen && (
-            <DropdownPicker.DateDropdownPicker
-              open={startOpen}
-              date={startTime}
-              setOpen={setStartOpen}
-              setDate={setStartTime}
-            />
-          )}
-          {endOpen && (
-            <DropdownPicker.DateDropdownPicker
-              open={endOpen}
-              date={endTime}
-              setOpen={setEndOpen}
-              setDate={setEndTime}
-            />
-          )}
+          <DatePicker
+            modal
+            open={startOpen}
+            mode="time"
+            date={new Date()}
+            onConfirm={time => {
+              setStartOpen(!startOpen);
+              setStartTime(moment(time).format('LT'));
+            }}
+            onCancel={() => setStartOpen(false)}
+          />
+          <DatePicker
+            modal
+            open={endOpen}
+            mode='time'
+            date={new Date()}
+            onConfirm={time => {
+              setEndOpen(!endOpen);
+              setEndTime(moment(time).format('LT'));
+            }}
+            onCancel={() => setEndOpen(false)}
+          />
         </View>
         <View style={styles.timeContainer}>
           <View style={{width: '50%'}}>
@@ -123,9 +120,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
             <TouchableOpacity
               style={styles.startText}
               onPress={() => setStartOpen(true)}>
-              <Text style={{color: '#505050'}}>
-                {moment(startTime).format('LT')}
-              </Text>
+              <Text style={{color: '#505050'}}>{startTime}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
           </View>
@@ -134,16 +129,11 @@ const EditWorkShifts = ({route, navigation}: any) => {
             <TouchableOpacity
               style={styles.startText}
               onPress={() => setEndOpen(true)}>
-              <Text style={{color: '#505050'}}>
-                {moment(endTime).format('LT')}
-              </Text>
+              <Text style={{color: '#505050'}}>{endTime}</Text>
               <View style={styles.arrow} />
             </TouchableOpacity>
           </View>
         </View>
-        {inputError.type === 'INVALID_TIME' && (
-          <InputError error={inputError} />
-        )}
       </View>
       <View style={styles.workShiftsBtn}>
         <TouchableOpacity

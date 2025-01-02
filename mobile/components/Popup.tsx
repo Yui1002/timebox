@@ -1,6 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import {LOCAL_HOST_URL} from '../config.js';
-import axios from 'axios';
+import React from 'react';
 import {Text, View, SafeAreaView, Modal, Pressable} from 'react-native';
 import {styles} from '../styles/popupStyles.js';
 
