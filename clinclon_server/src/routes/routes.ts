@@ -5,7 +5,7 @@ import {OTPController} from "../controllers/OTPController";
 import {ServiceProviderController} from "../controllers/serviceProviderController";
 import { EmployerController } from "../controllers/employerController";
 import {RecordController} from "../controllers/recordController";
-import UserTransactionController from "../controllers/userTransactionController";
+import {UserTransactionController} from "../controllers/userTransactionController";
 import {RequestController} from "../controllers/requestController";
 
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from '../validators/ServiceProviderRequestValidator';

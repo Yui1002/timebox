@@ -1,10 +1,10 @@
-import { Body, Get, Post, Query, Route } from "tsoa";
+import { Body, Get, Post, Route, Queries } from "tsoa";
 import UserManager from '../managers/userManager';
 import SuperController from './SuperController';
 import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq } from '../models/User';
 
 interface IUserController {
-    getUser(email: string): Promise<GetUserRs>;
+    getUser(rq: GetUserRq): Promise<GetUserRs>;
     setUser(request: SetUserRq): Promise<void>;
     signInUser(request: SignInUserRq): Promise<GetUserRs>;
     resetPassword(request: ResetPasswordRq): Promise<void>;
@@ -20,9 +20,9 @@ export class UserController extends SuperController implements IUserController {
     }
 
     @Get()
-    public async getUser(@Query() email: string): Promise<GetUserRs> {
-        this._validator.validateBody<GetUserRq>(email, new GetUserRq());
-        return await this._userManager.getUser(email);
+    public async getUser(@Queries() rq: GetUserRq): Promise<GetUserRs> {
+        const parsedRq = this._validator.validateBody<GetUserRq>(rq, new GetUserRq());
+        return await this._userManager.getUser(parsedRq.email);
     }
 
     @Post()

@@ -24,8 +24,6 @@ class GetUserRs {
     }
 }
 
-
-
 @JsonObject("SetUserRq")
 class SetUserRq extends BaseUserRequest {
     @JsonProperty("firstName", String)

@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   });
 
 interface IOTPManager {
-    getOTP(email: string): Promise<GetOTPRs>;
+    getOTP(rq: GetOTPRq): Promise<GetOTPRs>;
     setOTP(otpRq: SetOTPRq): Promise<void>;
     verifyOTP(otpRq: SetOTPRq): Promise<void>;
     generateOTP(): string;
@@ -28,8 +28,8 @@ class OTPManager implements IOTPManager {
         this._OTPRepo = new OTPRepo();
     }
     
-    async getOTP(email: string): Promise<GetOTPRs> {
-        let otpDB = await this._OTPRepo.getOTP(email);
+    async getOTP(otpRq: GetOTPRq): Promise<GetOTPRs> {
+        let otpDB = await this._OTPRepo.getOTP(otpRq.email);
         if (!otpDB) {
             throw new ResponseException(null, 400, 'no data found');
         }

@@ -4,7 +4,7 @@ import { GetServiceProviderRq, GetServiceProviderRs, UpdateServiceProviderRq } f
 import ResponseException from "../models/ResponseException";
 
 interface IServiceProviderManager {
-    getServiceProvider(employerEmail: string): Promise<GetServiceProviderRs>;
+    getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRs>;
     updateServiceProvider(serviceProvider: UpdateServiceProviderRq): Promise<void>;
 }
 
@@ -17,8 +17,8 @@ class ServiceProviderManager implements IServiceProviderManager {
         this._userRepo = new UserRepo();
     }
 
-    async getServiceProvider(employerEmail: string): Promise<GetServiceProviderRs> {
-        let employerData = await this._userRepo.getUser(employerEmail);
+    async getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRs> {
+        let employerData = await this._userRepo.getUser(serviceProviderRq.employerEmail);
         if (!employerData) {
             throw new ResponseException(null, 400, 'no data found');
         }

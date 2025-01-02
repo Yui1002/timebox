@@ -1,7 +1,7 @@
 import { Body, Get, Post, Queries, Route } from "tsoa";
 import RecordManager from "../managers/recordManager";
 import SuperController from "./SuperController";
-import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, IGetRecordRq } from "../models/Record";
+import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs } from "../models/Record";
 
 interface IRecordController {
     getRecord(rq: GetRecordRq): Promise<GetRecordRs>

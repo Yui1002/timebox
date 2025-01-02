@@ -6,11 +6,12 @@ import {
     Get,
     Post,
     Query,
+    Queries,
     Route,
   } from "tsoa";
 
 interface IOTPController {
-    getOTP(email: string): Promise<GetOTPRs>;
+    getOTP(rq: GetOTPRq): Promise<GetOTPRs>;
     setOTP(request: SetOTPRq): Promise<void>;
     verifyOTP(request: SetOTPRq): Promise<void>;
 }
@@ -25,9 +26,9 @@ export class OTPController extends SuperController implements IOTPController {
     }
 
     @Get()
-    public async getOTP(@Query() email: string): Promise<GetOTPRs> {
-        this._validator.validateBody<GetOTPRq>(email, new GetOTPRq());
-        return await this._OTPManager.getOTP(email);
+    public async getOTP(@Queries() rq: GetOTPRq): Promise<GetOTPRs> {
+        const parsedRq = this._validator.validateBody<GetOTPRq>(rq, new GetOTPRq());
+        return await this._OTPManager.getOTP(parsedRq);
     }
 
     @Post()

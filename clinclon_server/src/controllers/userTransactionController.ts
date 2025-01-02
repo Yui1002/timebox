@@ -1,12 +1,14 @@
 import UserTransactionManager from '../managers/userTransactionManager';
 import SuperController from './SuperController';
-import { GetUserTransactionRq } from '../models/UserTransaction';
+import { GetUserTransactionRq, GetUserTransactionRs } from '../models/UserTransaction';
+import { Get, Queries, Route } from "tsoa";
 
 interface IUserTransactionController {
-    getUserTransaction(request: any, response: any, next: any): Promise<void>;
+    getUserTransaction(rq: GetUserTransactionRq): Promise<GetUserTransactionRs>;
 }
 
-class UserTransactionController extends SuperController implements IUserTransactionController {
+@Route('userTransaction')
+export class UserTransactionController extends SuperController implements IUserTransactionController {
     private _userTransactionManager: UserTransactionManager;
 
     constructor() {
@@ -14,16 +16,9 @@ class UserTransactionController extends SuperController implements IUserTransact
         this._userTransactionManager = new UserTransactionManager();
     }
 
-    public async getUserTransaction(request: any, res: any, next: any): Promise<void> {
-        try {
-            let parsedRq = this._validator.validateBody<GetUserTransactionRq>(request, new GetUserTransactionRq());
-            let response = await this._userTransactionManager.getUserTransaction(parsedRq);
-            return res.status(200).json(response);
-        } 
-        catch (e: any) {
-            next(e);
-        }
+    @Get()
+    public async getUserTransaction(@Queries() rq: GetUserTransactionRq): Promise<GetUserTransactionRs> {
+        const parsedRq = this._validator.validateBody<GetUserTransactionRq>(rq, new GetUserTransactionRq());
+        return await this._userTransactionManager.getUserTransaction(parsedRq);
     }  
 }
-
-export default UserTransactionController;
