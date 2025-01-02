@@ -60,10 +60,10 @@ const Record = ({route}: any) => {
 
   const checkRecordExists = async (type: string) => {
     try {
-      const params: GetRecordRq = {
+      // const params: GetRecordRq = {
         
-      }
-      const { data } = api.getRecord
+      // }
+      // const { data } = api.getRecord
       // const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
       //   employerEmail: email,
       //   serviceProviderEmail: serviceProviderEmail,
@@ -88,19 +88,21 @@ const Record = ({route}: any) => {
   };
 
   const saveRecord = async (type: TimeType) => {
+    console.log('start', start)
     if (!validateInput(type)) return;
     checkRecordExists('start');
 
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
-        employerEmail: email,
-        serviceProviderEmail: serviceProviderEmail,
-        recordTime: date,
-        type: type,
-      });
+      // await api
+      // const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
+      //   employerEmail: email,
+      //   serviceProviderEmail: serviceProviderEmail,
+      //   recordTime: date,
+      //   type: type,
+      // });
 
-      setStart(response.data?.records[0].startTime);
-      setEnd(response.data?.records[0].endTime);
+      // setStart(response.data?.records[0].startTime);
+      // setEnd(response.data?.records[0].endTime);
     } catch (e: any) {
       console.log('error', e);
     }
