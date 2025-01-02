@@ -10,7 +10,7 @@
         "test_prestart": "npm run build",
         "swagger-gen": "tsoa spec",
         "routes-gen": "tsoa routes",
-        "swagger-start": "rm -r ./dist && npm run routes-gen && npm run swagger-gen && npm start",
+        "swagger-start": "npm run routes-gen && npm run swagger-gen && npm start",
         "custom_build": "tsc",
         "test": "jest",
         "test:cov": "jest --coverage"
