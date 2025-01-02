@@ -1,6 +1,6 @@
 import RequestRepo from "../repositories/requestRepo";
 import UserRepo from "../repositories/userRepo";
-import { GetRequestRs, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
+import { GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRq, GetRequestRs, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
@@ -17,9 +17,9 @@ const transporter = nodemailer.createTransport({
   });
 
 interface IRequestManager {
-    getRequests(receiverEmail: string): Promise<GetRequestRs>;
-    getRequestByEmail(senderEmail: string, receiverEmail: string): Promise<GetRequestRs>;
-    getRequestsByStatus(receiverEmail: string, status: RequestStatus): Promise<GetRequestRs>;
+    getRequests(requestRq: GetRequestRq): Promise<GetRequestRs>;
+    getRequestByEmail(requestRq: GetRequestByEmailRq): Promise<GetRequestRs>;
+    getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRs>;
     setRequest(request: SetRequestRq): Promise<void>;
     updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void>;
     sendRequestViaMail(requestRq: SetRequestRq): Promise<void>;
@@ -34,24 +34,24 @@ class RequestManager implements IRequestManager {
         this._userRepo = new UserRepo();
     }
 
-    async getRequests(receiverEmail: string): Promise<GetRequestRs> {
-        let requestDB = await this._requestRepo.getRequests(receiverEmail);
+    async getRequests(requestRq: GetRequestRq): Promise<GetRequestRs> {
+        let requestDB = await this._requestRepo.getRequests(requestRq.receiverEmail);
         if (!requestDB) {
             throw new ResponseException(null, 400, 'no data found');
         }
         return requestDB;
     }
     
-    async getRequestByEmail(senderEmail: string, receiverEmail: string): Promise<GetRequestRs> {
-        let requestDB = await this._requestRepo.getRequestByEmail(senderEmail, receiverEmail);
+    async getRequestByEmail(requestRq: GetRequestByEmailRq): Promise<GetRequestRs> {
+        let requestDB = await this._requestRepo.getRequestByEmail(requestRq);
         if (!requestDB) {
             throw new ResponseException(null, 400, 'no data found');
         }
         return requestDB;
     }
 
-    async getRequestsByStatus(receiverEmail: string, status: RequestStatus): Promise<GetRequestRs> {
-        let requestDB = await this._requestRepo.getRequestsByStatus(receiverEmail, status);
+    async getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRs> {
+        let requestDB = await this._requestRepo.getRequestsByStatus(requestRq);
         if (!requestDB) {
             throw new ResponseException(null, 400, 'no data found');
         }
@@ -93,7 +93,7 @@ class RequestManager implements IRequestManager {
         await this._requestRepo.updateRequestStatus(requestRq);
     }
 
-    async isRequestValid(senderEmail: string ,receiverEmail: string): Promise<ServiceProviderMiniRs> {
+    async isRequestValid(requestRq: GetRequestByEmailRq): Promise<ServiceProviderMiniRs> {
     /**
      * Decides whether the owner can send a request to service provider
      * 1) If there is a record in request table -> reject
@@ -101,8 +101,8 @@ class RequestManager implements IRequestManager {
      * 3) There is no record in request table and service provider is a user -> set rate type -> send request
      * @returns 
      */
-        let recordData = await this._requestRepo.getRequestByEmail(senderEmail, receiverEmail);
-        let serviceProvider = await this._userRepo.getUser(receiverEmail);
+        let recordData = await this._requestRepo.getRequestByEmail(requestRq);
+        let serviceProvider = await this._userRepo.getUser(requestRq.receiverEmail);
 
         if (recordData) {
             throw new ResponseException(null, 400, 'Duplicate request');

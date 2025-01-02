@@ -4,7 +4,7 @@ import SuperController from "./SuperController";
 import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, IGetRecordRq } from "../models/Record";
 
 interface IRecordController {
-    getRecord(rq: IGetRecordRq): Promise<GetRecordRs>
+    getRecord(rq: GetRecordRq): Promise<GetRecordRs>
     getRecordByDate(rq: GetRecordByDateRq): Promise<GetRecordRs>;
     getRecordByPeriod(rq: GetRecordByPeriodRq): Promise<GetRecordRs>;
     setRecord(rq: SetRecordRq): Promise<void>;

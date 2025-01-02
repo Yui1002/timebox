@@ -9,14 +9,15 @@ class GetRequestsValidator extends SuperValidator {
         super(new GetRequestRq());
     }
 
-    validateAndConvertRequest(receiverEmail: string): string | null {
-        this.checkRequestEmpty(receiverEmail);
+    validateAndConvertRequest(request: any): GetRequestRq | null {
+        this.checkRequestEmpty(request);
 
-        if (!isEmail(receiverEmail)) {
-            this.throwError(null, "Receiver email is invalid");
+        let instance = JSHelperInstance._converter.deserializeObject(request, GetRequestRq);
+        if (!isEmail(instance.receiverEmail)) {
+            this.throwError(null, 'Email is invalid')
         }
 
-        return receiverEmail
+        return instance;
     }
 }
 
