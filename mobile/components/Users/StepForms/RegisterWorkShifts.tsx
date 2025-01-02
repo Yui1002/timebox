@@ -59,7 +59,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
 
   const add = () => {
     if (!validateInput()) return;
-    
+
     const value: Schedule = {
       day: selectedDay,
       startTime: moment(startTime).format('LT'),
@@ -78,11 +78,11 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
           Select day and time
         </Text>
         <View style={styles.dayContainer}>
-          {Object.keys(Days).map((day: string, key: number) => (
+          {Object.values(Days).map((day: string, key: number) => (
             <TouchableOpacity
               key={key}
               style={selectedDay === day ? styles.day_selected : styles.day}
-              onPress={() => setSelectedDay(day.toLowerCase())}>
+              onPress={() => setSelectedDay(day)}>
               <Text style={styles.day_text}>{day}</Text>
             </TouchableOpacity>
           ))}

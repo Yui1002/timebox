@@ -35,6 +35,7 @@ export const COLLECTION_FORMATS = {
 /**
  *
  * @export
+ * @interface RequestArgs
  */
 export interface RequestArgs {
     url: string;

@@ -1,17 +1,18 @@
-import validator, {isByteLength} from 'validator';
+import {isEmail, isFloat, isEmpty, isStrongPassword} from 'validator';
+import moment from 'moment';
 import {PASSWORD_RULES} from '../config.js';
 
 class Validator {
   static isNotEmpty(name: string): boolean {
-    return !validator.isEmpty(name);
+    return !isEmpty(name);
   }
 
   static isValidEmail(email: string): boolean {
-    return validator.isEmail(email);
+    return isEmail(email);
   }
 
   static isValidPassword(password: string): boolean {
-    return validator.isStrongPassword(password, PASSWORD_RULES);
+    return isStrongPassword(password, PASSWORD_RULES);
   }
 
   static isPasswordMatch(password: string, confirmedPassword: string): boolean {
@@ -19,14 +20,22 @@ class Validator {
   }
 
   static isValidRate(rate: string): boolean {
-    return validator.isFloat(rate, {
-      min: 1.00,
-      max: 3000.00
+    return isFloat(rate, {
+      min: 1.0,
+      max: 3000.0,
     });
   }
 
   static isValidRateType(rateType: string) {
-    return !validator.isEmpty(rateType);
+    return !isEmpty(rateType);
+  }
+
+  static isValidStartTime(start: string, end: string) {
+    return moment(start).isBefore(moment(end))
+  }
+
+  static isValidEndTime(start: string, end: string) {
+    return moment(end).isAfter(moment(start))
   }
 }
 

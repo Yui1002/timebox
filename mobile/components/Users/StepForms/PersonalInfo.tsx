@@ -15,6 +15,7 @@ import {RateTypeValue} from '../../../enums';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
+  console.log('params', route.params)
   const {firstName, lastName, email}: PersonalInfoProps = route.params;
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [open, setOpen] = useState<boolean>(false);
@@ -89,11 +90,11 @@ const PersonalInfo = ({route, navigation}: any) => {
           <View style={styles.align}>
             <View style={styles.width}>
               <Text style={styles.font_1}>First Name</Text>
-              <Text style={styles.font_2}>{firstName}</Text>
+              <Text style={styles.font_2}>{firstName ? firstName : 'Not specified'}</Text>
             </View>
             <View style={styles.width}>
               <Text style={styles.font_1}>Last Name</Text>
-              <Text style={styles.font_2}>{lastName}</Text>
+              <Text style={styles.font_2}>{lastName ? lastName : 'Not specified'}</Text>
             </View>
           </View>
           <View style={styles.margin}>

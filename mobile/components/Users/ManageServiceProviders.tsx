@@ -1,19 +1,27 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState } from 'react';
 import {useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
-import {LOCAL_HOST_URL} from '../../config.js';
-import axios from 'axios';
-import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { styles } from '../../styles/manageServiceProvidersStyles.js';
-import { ServiceProvider } from '../../type';
+import {styles} from '../../styles/manageServiceProvidersStyles.js';
+import {
+  DefaultApiFactory,
+  ServiceProvider,
+  RequestStatus,
+} from '../../swagger/generated';
+
+let api = DefaultApiFactory();
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
   const {email} = useSelector(state => state.userInfo);
-  const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>(
-    [],
-  );
+  const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>();
   const [isBoxChecked, setIsBoxChecked] = useState(true);
 
   useEffect(() => {
@@ -24,38 +32,35 @@ const ManageServiceProviders = (props: any) => {
 
   const getServiceProviders = async () => {
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/getServiceProvider`,
-        {
-          employerEmail: email,
-        },
-      );
-      setServiceProviders(formatData(response?.data?.serviceProviders));
-    } 
-    catch (e: any) {
+      const {data} = await api.getServiceProvider(email);
+      console.log('service providers', data.serviceProviders);
+      // setServiceProviders(formatData(data.serviceProviders))
+      setServiceProviders(data.serviceProviders);
+    } catch (e: any) {
       setServiceProviders([]);
     }
   };
 
-  const formatData = (data: any[]): ServiceProvider[] => {
-    const formattedData = data.reduce((a, b) => {
-      const found = a.find(e => e.email == b.email);
+  // const formatData = (data: ServiceProvider[]): ServiceProvider[] => {
+  //   const formattedData = data.reduce((a, b) => {
+  //     const found = a.find((e: ServiceProvider) => e.email == b.email);
 
-      const item = {id: b.schedule_id, day: b.day, startTime: b.start_time, endTime: b.end_time};
-      ['schedule_id', 'day', 'start_time', 'end_time'].forEach(val => delete b[val]);
+  //     const item = {id: b.schedule_id, day: b.day, startTime: b.start_time, endTime: b.end_time};
+  //     ['schedule_id', 'day', 'start_time', 'end_time'].forEach(val => delete b[val]);
 
-      if (!item.id) {
-        return (found ? found.schedule.push([]) : a.push({...b, schedule: []}), a)
-      } else {
-        return (found ? found.schedule.push(item) : a.push({...b, schedule: [item]}), a)
-      }
-    }, []);
+  //     if (!item.id) {
+  //       return (found ? found.schedule.push([]) : a.push({...b, schedule: []}), a)
+  //     } else {
+  //       return (found ? found.schedule.push(item) : a.push({...b, schedule: [item]}), a)
+  //     }
+  //   }, []);
 
-    return formattedData;
-  };
+  //   return formattedData;
+  // };
 
   const navigateToProfile = (sp: ServiceProvider) => {
     props.navigation.navigate('Profile', {
-      sp
+      sp,
     });
   };
 
@@ -75,7 +80,7 @@ const ManageServiceProviders = (props: any) => {
         <Text style={styles.checkBoxText}>Show not currently employed</Text>
       </View>
       <ScrollView style={styles.subContainer}>
-        {serviceProviders.length ? (
+        {serviceProviders?.length ? (
           serviceProviders?.map((sp: ServiceProvider, index: number) => {
             if (isBoxChecked || sp.status) {
               const {first_name, last_name, email, status} = sp;
@@ -84,7 +89,7 @@ const ManageServiceProviders = (props: any) => {
                   key={index}
                   style={styles.listContainer}
                   onPress={
-                    status === 'ACTIVE'
+                    status === RequestStatus.Approved
                       ? () => navigateToProfile(sp)
                       : () => null
                   }>

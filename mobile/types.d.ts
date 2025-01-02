@@ -2,9 +2,9 @@ import {RateTypeValue} from './enums';
 
 type Schedule = {
   id?: number;
-  day: string | null;
-  startTime: string | null;
-  endTime: string | null;
+  day: string | undefined;
+  startTime: string | undefined;
+  endTime: string | undefined;
 };
 
 type ServiceProvider = {
@@ -67,6 +67,14 @@ type RateTypeSet = {
   value: RateTypeValue.HOURLY | RateTypeValue.DAILY;
 };
 
+type SignUpProps = {
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  isSignUp: boolean,
+}
+
 type PersonalInfoProps = {
   firstName: string;
   lastName: string;
@@ -82,6 +90,11 @@ type WorkShiftsProps = {
     isEnabled: boolean;
 }
 
+type ForgotPasswordProps = {
+  email: string,
+  isSignUp: boolean
+}
+
 export {
   PersonalInfoProps,
   RateTypeSet,
@@ -93,5 +106,7 @@ export {
   FormattedEmployer,
   Record,
   NotificationData,
-  WorkShiftsProps
+  WorkShiftsProps,
+  SignUpProps,
+  ForgotPasswordProps
 };

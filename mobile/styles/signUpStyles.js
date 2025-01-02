@@ -52,5 +52,10 @@ export const styles = StyleSheet.create({
   signUpError: {
     height: '8%',
     backgroundColor: '#FFCCCB'
+  },
+  hide: {
+    position: 'absolute', 
+    top: '32%', 
+    right: '8%'
   }
 });

@@ -1,20 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
+import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/hireServiceProviderStyles.js';
 import InputField from '../InputField';
 import Popup from '../Popup';
-import { alert } from '../../helper/Alert';
-import { navigate } from '../../helper/navigate';
+import {alert} from '../../helper/Alert';
+import {navigate} from '../../helper/navigate';
 import Error from '../Error';
-import { DefaultApiFactory } from '../../swagger/generated';
+import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
 import Validator from '../../validator/validator';
-import { ErrorModel } from '../../types';
+import {ErrorModel} from '../../types';
 
 let api = DefaultApiFactory();
 
@@ -24,50 +19,60 @@ const HireServiceProvider = (props: any) => {
   const [searchInput, setSearchInput] = useState<string>('');
   const [error, setError] = useState<ErrorModel>({
     message: '',
-    statusCode: 200
-  })
+    statusCode: 200,
+  });
 
   useEffect(() => {
     setModalVisible(true);
-    clearInput();
   }, []);
 
-  const searchEmail = async () => {
+  const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
       setError({
         message: 'invalid email',
-        statusCode: 400
+        statusCode: 400,
       });
       return false;
     }
+    return true;
+  };
+
+  const searchEmail = async () => {
+    if (!validateInput()) return;
 
     try {
-      const { data } = await api.isRequestValid(userInfo.email, searchInput);
+      const {data} = await api.isRequestValid(userInfo.email, searchInput);
       const serviceProvider = data.serviceProviderUser;
-
-      alert(`Do you want to hire ${searchInput} as a service provider?`, 
-            '', 
-            function() {
-              navigate(props.navigation, 'PersonalInfo', {
-                firstName: serviceProvider ? serviceProvider.firstName : '',
-                lastName: serviceProvider ? serviceProvider.lastName : '',
-                email: serviceProvider ? serviceProvider.email : searchInput
-            })}, 
-            null
-          )
+      showConfirmMsg(serviceProvider);
     } catch (e) {
       setError({
         message: 'Duplicate request',
-        statusCode: 400
+        statusCode: 400,
       });
     }
+  };
+
+  const showConfirmMsg = (serviceProvider: GetUserRs | undefined) => {
+    alert(
+      `Do you want to hire ${searchInput} as a service provider?`,
+      '',
+      function () {
+        navigate(props.navigation, 'PersonalInfo', {
+          firstName: serviceProvider ? serviceProvider.firstName : '',
+          lastName: serviceProvider ? serviceProvider.lastName : '',
+          email: serviceProvider ? serviceProvider.email : searchInput,
+        });
+        clearInput();
+      },
+      null,
+    );
   };
 
   const clearInput = () => {
     setSearchInput('');
     setError({
       message: '',
-      statusCode: 200
+      statusCode: 200,
     });
   };
 
@@ -92,7 +97,7 @@ const HireServiceProvider = (props: any) => {
         <TouchableOpacity
           style={[styles.button, {marginTop: 20}]}
           onPress={searchEmail}>
-          <Text style={styles.buttonText}>'Continue'</Text>
+          <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

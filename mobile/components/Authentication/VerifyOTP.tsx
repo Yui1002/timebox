@@ -11,16 +11,18 @@ import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
+import { ErrorModel } from '../../types';
 import { DefaultApiFactory, SetOTPRq, SetUserRq } from '../../swagger/generated';
-
 let otpApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password, isSignUp} = route.params;
-  const [otp, setOtp] = useState('');
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [otp, setOtp] = useState<string>('');
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
+  });
 
   useEffect(() => {
     setOTP();
@@ -35,23 +37,31 @@ const VerifyOTP = ({route, navigation}: any) => {
     try {
       await otpApi.setOTP(params);
     } catch (e) {
-      setErrors({...errors, failOTP: 'Failed to set OTP'});
+      setErrors({
+        message: 'OTP error',
+        statusCode: 400
+      });
     }
   };
 
   const validateInput = (): boolean => {
-    let errors: any = {};
     const regex = /^\d+$/;
 
     if (otp.length !== 6) {
-      errors.lengthError = 'Verification code has to be 6 digit';
-    }
-    if (!regex.test(otp)) {
-      errors.typeError = 'Verification code has to be a number';
+      setErrors({
+        message: 'Verification code has to be 6 digit',
+        statusCode: 400
+      });
+      return false;
+    } else if (!regex.test(otp)) {
+      setErrors({
+        message: 'Verification code has to be a number',
+        statusCode: 400
+      });
+      return false;
     }
 
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return true;
   };
 
   const verifyOTP = async () => {
@@ -72,7 +82,10 @@ const VerifyOTP = ({route, navigation}: any) => {
         navigate(navigation, 'ResetPassword', {email})
       }
     } catch (e: any) {
-      setErrors({...errors, verifyError: 'Failed to verify OTP'});
+      setErrors({
+        message: 'Verification error',
+        statusCode: 400
+      });
     }
   };
 
@@ -93,16 +106,7 @@ const VerifyOTP = ({route, navigation}: any) => {
       <View style={{height: '8%'}}>
         <Text style={styles.header}>Verification code</Text>
       </View>
-      {isOtpSent && (
-        <View style={styles.resend}>
-          <Text style={styles.resendText}>{`${String.fromCharCode(
-            10003,
-          )} Verification code was resent successfully`}</Text>
-        </View>
-      )}
-      {Object.values(errors).map((error, key) => (
-        <Error key={key} msg={error} />
-      ))}
+      {errors.message && <Error msg={errors.message} />}
       <View style={{height: '8%'}}>
         <Text>We have sent the verification code to your email address</Text>
       </View>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -13,23 +13,22 @@ import {styles} from '../../styles/signUpStyles.js';
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
 import {DefaultApiFactory} from '../../swagger/generated';
-import { ErrorModel } from '../../types';
-
+import { ErrorModel, SignUpProps } from '../../types';
 let userApi = DefaultApiFactory();
 
 const SignUp = ({navigation}: any) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState('');
-  const [confirmedPassword, setConfirmedPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [confirmedPassword, setConfirmedPassword] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState<ErrorModel>({
     message: '',
     statusCode: 200
   });
 
-  const checkUserExists = async () => {
+  const checkUserExists = async (): Promise<void> => {
     if (!validateInput()) return;
 
     try {
@@ -39,7 +38,7 @@ const SignUp = ({navigation}: any) => {
         statusCode: 400
       });
     } catch (e) {
-      let navigationProps = {
+      let navigationProps: SignUpProps = {
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -50,32 +49,36 @@ const SignUp = ({navigation}: any) => {
     }
   };
 
-  const validateInput = () => {
+  const validateInput = (): boolean => {
     if (!Validator.isNotEmpty(firstName) || !Validator.isNotEmpty(lastName)) {
       setErrors({
         message: 'invalid name',
         statusCode: 400
       });
+      return false;
     }
     if (!Validator.isValidEmail(email)) {
       setErrors({
         message: 'invalid email',
         statusCode: 400
       });
+      return false;
     }
     if (!Validator.isValidPassword(password)) {
       setErrors({
         message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
         statusCode: 400
       });
+      return false;
     }
     if (!Validator.isPasswordMatch(password, confirmedPassword)) {
       setErrors({
         message: 'Password mismatch',
         statusCode: 400
       });
+      return false;
     }
-    return errors.statusCode === 200;
+    return true
   };
 
   return (
@@ -83,7 +86,7 @@ const SignUp = ({navigation}: any) => {
       <SafeAreaView style={styles.container}>
         <View>
           <View style={{marginVertical: 10}}>
-              <Error msg={errors.message} />
+            {errors.message && <Error msg={errors.message} />}
           </View>
           <View>
             <Text>First Name</Text>
@@ -128,7 +131,7 @@ const SignUp = ({navigation}: any) => {
                 onChangeText={val => setPassword(val)}
               />
               <Text
-                style={{position: 'absolute', top: '32%', right: '8%'}}
+                style={styles.hide}
                 onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? 'Hide' : 'Show'}
               </Text>
@@ -148,7 +151,7 @@ const SignUp = ({navigation}: any) => {
                 onChangeText={val => setConfirmedPassword(val)}
               />
               <Text
-                style={{position: 'absolute', top: '32%', right: '8%'}}
+                style={styles.hide}
                 onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? 'Hide' : 'Show'}
               </Text>

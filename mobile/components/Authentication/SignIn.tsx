@@ -10,25 +10,24 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Error from '../Error';
-import {styles} from '../../styles/signInStyles.js';
+import {styles } from '../../styles/signInStyles.js';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import {navigate} from '../../helper/navigate';
 import Validator from '../../validator/validator';
 import { ErrorModel } from '../../types';
-
 let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [errors, setErrors] = useState<ErrorModel>({
     message: "",
     statusCode: 200
   });
 
-  const validateInput = () => {
+  const validateInput = (): boolean => {
     if (!Validator.isValidEmail(email)) {
       setErrors({
         message: 'Invalid email',
@@ -45,7 +44,7 @@ const SignIn = ({navigation}: any) => {
     return true;
   };
 
-  const signIn = async () => {
+  const signIn = async (): Promise<void> => {
     if (!validateInput()) return;
 
     const params: SignInUserRq = {
@@ -59,7 +58,7 @@ const SignIn = ({navigation}: any) => {
       navigate(navigation, 'DrawerNav', null);
     } catch (e: any) {
       setErrors({
-        message: 'Failed to sign in',
+        message: 'Invalid email or password',
         statusCode: 400
       });
     }
@@ -130,7 +129,7 @@ const SignIn = ({navigation}: any) => {
             <Text>Forgot password?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigation.navigate('ForgotPassword')}>
+              onPress={() => navigate(navigation, 'ForgotPassword', null)}>
               Reset password
             </Text>
           </View>

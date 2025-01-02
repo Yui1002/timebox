@@ -27,6 +27,8 @@ const WorkShifts = ({route, navigation}: any) => {
         },
         null,
       );
+    } else {
+      navigation.navigate('Review', params)
     }
   };
 

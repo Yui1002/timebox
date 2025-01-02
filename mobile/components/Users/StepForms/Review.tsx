@@ -7,7 +7,7 @@ import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import {Schedule, WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import { DefaultApiFactory, SetRequestRq } from '../../../swagger/generated';
+import { DefaultApiFactory, SetRequestRq, Mode } from '../../../swagger/generated';
 import { ErrorModel } from '../../../types';
 import Error from '../../Error';
 
@@ -35,17 +35,17 @@ const Review = ({route, navigation}: any) => {
 
   const confirmServiceProvider = async () => {
     const params: SetRequestRq = {
-      senderEmail: userInfo,
+      senderEmail: userInfo.email,
       receiverEmail: email,
       rate: Number(rate),
       rateType: rateType,
-      schedules: workShifts.workShifts
-      mode: isEnabled
+      schedules: workShifts.workShifts,
+      mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0
     }
 
     try {
       await api.setRequest(params);
-      dispatch(resetShift(workShifts.workShifts));
+      clearInput();
       showSuccess();
     } catch (e: any) {
       setError({
@@ -64,6 +64,14 @@ const Review = ({route, navigation}: any) => {
         navigation.navigate('Home');
       },
     );
+  };
+
+  const clearInput = (): void => {
+    dispatch(resetShift(workShifts.workShifts));
+    setError({
+      message: '',
+      statusCode: 200
+    });
   };
 
   return (
@@ -85,11 +93,11 @@ const Review = ({route, navigation}: any) => {
         <View style={styles.align}>
           <View style={styles.width}>
             <Text style={styles.font_1}>First Name</Text>
-            <Text style={styles.font_2}>{firstName}</Text>
+            <Text style={styles.font_2}>{firstName ? firstName : 'Not specified'}</Text>
           </View>
           <View style={styles.width}>
             <Text style={styles.font_1}>Last Name</Text>
-            <Text style={styles.font_2}>{lastName}</Text>
+            <Text style={styles.font_2}>{lastName ? lastName : 'Not specified'}</Text>
           </View>
         </View>
         <View style={styles.margin}>

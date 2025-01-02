@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
 import {Text, View, SafeAreaView, TouchableOpacity, Alert} from 'react-native';
@@ -6,52 +6,70 @@ import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {alert, alertError} from '../../helper/Alert';
 import Error from '../Error';
 import { TimeType } from '../../enums';
+import { ErrorModel } from '../../types';
+import Validator from '../../validator/validator';
+import { DefaultApiFactory } from '../../swagger/generated';
+const api = DefaultApiFactory();
 
 const Record = ({route}: any) => {
   const {firstName, lastName, email, mode} = route.params.employer;
   const serviceProviderEmail = route.params.serviceProviderEmail;
-  const [startOpen, setStartOpen] = useState(false);
-  const [endOpen, setEndOpen] = useState(false);
+  const [startOpen, setStartOpen] = useState<boolean>(false);
+  const [endOpen, setEndOpen] = useState<boolean>(false);
   const [start, setStart] = useState<Date | string>('');
   const [end, setEnd] = useState<Date | string>('');
-  const [record, setRecord] = useState({
-    startTime: null,
-    endTime: null,
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
   });
-  const [errors, setErrors] = useState('');
 
-  const validateInput = (type: string): boolean => {
-    let errors: any = {};
-
+  const validateInput = (type: TimeType): boolean => {
     if (type === TimeType.START) {
       if (!start) {
-        errors.emptyTime = 'Start time is not selected';
-      } else if (end && moment(start).isAfter(moment(end))) {
-        errors.invalidTime = 'Start time has to occur before end time';
+        setErrors({
+          message: 'Start time is not selected',
+          statusCode: 400
+        })
+        return false;
+      } else if (end && !Validator.isValidStartTime(start, end)) {
+        setErrors({
+          message: 'Start time has to occur before end time',
+          statusCode: 400
+        });
+        return false;
       }
-    } else if (type === 'end') {
+    } else if (type === TimeType.END) {
       if (!end) {
-        errors.emptyTime = 'End time is not selected';
-      } else if (start && moment(end).isBefore(moment(start))) {
-        errors.invalidTime = 'End time has to occur after start time'
+        setErrors({
+          message: 'End time is not selected',
+          statusCode: 400
+        })
+        return false;
+      } else if (start && !Validator.isValidEndTime(start, end)) {
+        setErrors({
+          message: 'End time has to occur after start time',
+          statusCode: 400
+        })
+        return false;
       }
     }
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return true;
   };
 
   const checkRecordExists = async (type: string) => {
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
-        employerEmail: email,
-        serviceProviderEmail: serviceProviderEmail,
-        date: type === 'start' ? start : end,
-      });
-      console.log(response.data)
+      const params: GetRecordRq = {
+        
+      }
+      const { data } = api.getRecord
+      // const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
+      //   employerEmail: email,
+      //   serviceProviderEmail: serviceProviderEmail,
+      //   date: type === 'start' ? start : end,
+      // });
+      // console.log(response.data)
       // if (response.data == null) {
       //   saveRecord(date, type);
       // } else {
@@ -69,7 +87,7 @@ const Record = ({route}: any) => {
     }
   };
 
-  const saveRecord = async (type: string) => {
+  const saveRecord = async (type: TimeType) => {
     if (!validateInput(type)) return;
     checkRecordExists('start');
 
@@ -167,12 +185,12 @@ const Record = ({route}: any) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.saveButton}
-          onPress={() => saveRecord('start')}>
+          onPress={() => saveRecord(TimeType.START)}>
           <Text style={styles.buttonText}>Save Start Time</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.saveButton}
-          onPress={() => saveRecord('end')}>
+          onPress={() => saveRecord(TimeType.END)}>
           <Text style={styles.buttonText}>Save End Time</Text>
         </TouchableOpacity>
       </View>

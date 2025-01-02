@@ -1,43 +1,50 @@
 import React, {useState} from 'react';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
 import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
-import validator from 'validator';
 import {styles} from '../../styles/forgotPasswordStyles.js';
 import Error from '../Error';
+import { ErrorModel, ForgotPasswordProps } from '../../types';
+import Validator from '../../validator/validator';
+import { DefaultApiFactory } from '../../swagger/generated';
+let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
-  const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState({});
+  const [email, setEmail] = useState<string>('');
+  const [errors, setErrors] = useState<ErrorModel>({
+    message: '',
+    statusCode: 200
+  });
 
   const validateEmail = (): boolean => {
-    let errors: any = {};
-
-    if (validator.isEmpty(email)) {
-      errors.emptyEmail = 'Email is required';
-    } else if (!validator.isEmail(email)) {
-      errors.invalidEmail = 'Email is invalid';
+    if (!Validator.isValidEmail(email)) {
+      setErrors({
+        message: 'Email is invalid',
+        statusCode: 400
+      });
+      return false;
     }
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return true;
   };
+
+  const navigateScreen = () => {
+    const params: ForgotPasswordProps = {
+      email: email,
+      isSignUp: false
+    };
+
+    navigation.navigate('VerifyOTP', params);
+  }
 
   const checkEmailRegistered = async (): Promise<void> => {
     if (!validateEmail()) return;
 
     try {
-      await axios.post(`${LOCAL_HOST_URL}/getUser`, {
-        email: email,
-      });
-
-      let params = {
-        email: email,
-        isSignUp: false
-      };
-      navigation.navigate('VerifyOTP', params);
+      await api.getUser(email);
+      navigateScreen();
     } catch (e) {
-      setErrors({...errors, invalidEmail: 'Email is not registered'});
+      setErrors({
+        message: 'Email is not registered',
+        statusCode: 400
+      });
     }
   };
 
@@ -45,9 +52,7 @@ const ForgotPassword = ({navigation}: any) => {
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.header}>Verify Email</Text>
-        {Object.values(errors).map((error, key) => (
-          <Error key={key} msg={error} />
-        ))}
+        {errors.message && <Error msg={errors.message} />}
         <View style={{marginVertical: 10}} />
         <View>
           <Text>Email</Text>
