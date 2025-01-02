@@ -1,0 +1,136 @@
+import dotenv from "dotenv";
+import { GetRequestRs, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
+import JSHelperInstance from "../helpers/JsonConverterHelper";
+import ResponseException from "../models/ResponseException";
+import { GetUserScheduleRs } from "../models/UserSchedule";
+import Repositories from "./repositories";
+import { RequestStatus } from "../helpers/enum";
+dotenv.config();
+
+
+interface IRequestRepo {
+    getRequests(receiverEmail: string): Promise<GetRequestRs>;
+    getRequestByEmail(senderEmail: string, receiverEmail: string): Promise<GetRequestRs>;
+    getRequestsByStatus(receiverEmail: string, status: RequestStatus): Promise<GetRequestRs>;
+    setRequest(requestRq: SetRequestRq, schedule: GetUserScheduleRs): Promise<void>;
+    updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void>;
+}
+
+class RequestRepo extends Repositories implements IRequestRepo {
+    async getRequests(receiverEmail: string): Promise<GetRequestRs> {
+        try {
+            const sql = `SELECT
+	                        u.first_name AS sender_first_name,
+                            u.last_name AS sender_last_name,
+                            r.request_id AS id,
+                            r.sender_email,
+                            r.receiver_email,
+                            r.status,
+                            r.request_date,
+                            r.request_rate AS rate,
+                            r.request_rate_type AS rate_type,
+                            r.request_schedule_day AS day,
+                            r.request_schedule_start_time AS start_time,
+                            r.request_schedule_end_time AS end_time,
+                            r.request_mode AS allow_edit
+                        FROM users u INNER JOIN requests r on u.email_address = r.sender_email
+                        WHERE r.receiver_email = $1`;
+            const data = await this.queryDB(sql, [receiverEmail]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            return JSHelperInstance._converter.deserializeObject(data?.rows, GetRequestRs);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, "unable to get from db");
+        }
+    }
+
+    async getRequestByEmail(senderEmail: string, receiverEmail: string): Promise<GetRequestRs> {
+        try {
+            const sql = 
+                    `SELECT
+                        u.first_name AS sender_first_name,
+                        u.last_name AS sender_last_name,
+                        r.request_id AS id,
+                        r.sender_email,
+                        r.receiver_email,
+                        r.status,
+                        r.request_date,
+                        r.request_rate AS rate,
+                        r.request_rate_type AS rate_type,
+                        r.request_schedule_day AS day,
+                        r.request_schedule_start_time AS start_time,
+                        r.request_schedule_end_time AS end_time,
+                        r.request_mode AS allow_edit
+                    FROM users u LEFT JOIN requests r on u.email_address = r.sender_email
+                    WHERE r.sender_email = $1 AND r.receiver_email = $2;`;
+            const data = await this.queryDB(sql, [senderEmail, receiverEmail]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            return JSHelperInstance._converter.deserializeObject(data, GetRequestRs);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, "unable to get from db");
+        }
+    }
+
+    async getRequestsByStatus(receiverEmail: string, status: RequestStatus): Promise<GetRequestRs> {
+        try {
+            const sql = 
+                    `SELECT
+                        u.first_name AS sender_first_name,
+                        u.last_name AS sender_last_name,
+                        r.request_id AS id,
+                        r.sender_email,
+                        r.receiver_email,
+                        r.status,
+                        r.request_date,
+                        r.request_rate AS rate,
+                        r.request_rate_type AS rate_type,
+                        r.request_schedule_day AS day,
+                        r.request_schedule_start_time AS start_time,
+                        r.request_schedule_end_time AS end_time,
+                        r.request_mode AS allow_edit
+                    FROM users u LEFT JOIN requests r on u.email_address = r.sender_email
+                    WHERE r.receiver_email = $1 AND r.status = $2;`;
+            const data = await this.queryDB(sql, [receiverEmail, status]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            return JSHelperInstance._converter.deserializeObject(data, GetRequestRs);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, 'unable to get from db')
+        }
+    }
+
+    async setRequest(requestRq: SetRequestRq, schedule: GetUserScheduleRs): Promise<void> {
+        try {
+            const sql = `INSERT INTO requests (
+                            request_id, 
+                            sender_email, 
+                            receiver_email, 
+                            status, 
+                            request_date, 
+                            request_rate, 
+                            request_rate_type, 
+                            request_schedule_day, 
+                            request_schedule_start_time, 
+                            request_schedule_end_time, request_mode) 
+                        VALUES (DEFAULT, $1, $2, 'ACTIVE', CURRENT_TIMESTAMP, $3, $4, $5, $6, $7, $8);`;
+            await this.queryDB(sql, [requestRq.senderEmail, requestRq.receiverEmail, requestRq.rate, requestRq.rateType, schedule.day, schedule.startTime, schedule.endTime, requestRq.mode]);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, 'unable to insert into db');
+        }
+    }
+
+    async updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void> {
+        try {
+            const sql = "UPDATE requests SET status = $1, request_date = CURRENT_TIMESTAMP WHERE sender_email = $2 AND receiver_email = $3;";
+            await this.queryDB(sql, [requestRq.status, requestRq.senderEmail, requestRq.receiverEmail]);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, 'unable to update db');
+        }
+    }
+} 
+
+export default RequestRepo;
