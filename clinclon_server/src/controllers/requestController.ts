@@ -11,7 +11,7 @@ import RequestManager from '../managers/requestManager';
 import SuperController from './SuperController';
 import { GetRequestRq, GetRequestByEmailRq, GetRequestByStatusRq, SetRequestRq, UpdateRequestStatusRq, GetRequestRs } from '../models/Request';
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";
-import { RequestStatus } from "../helpers/enum";
+import Validate from "../validators/CustomValidator";
 
 interface IRequestController {
     getRequests(rq: GetRequestRq): Promise<GetRequestRs>;
@@ -32,38 +32,38 @@ export class RequestController extends SuperController implements IRequestContro
     }
    
     @Get()
+    @Validate
     public async getRequests(@Queries() rq: GetRequestRq): Promise<GetRequestRs> {
-        const parsedRq = this._validator.validateBody<GetRequestRq>(rq, new GetRequestRq());
-        return await this._requestManager.getRequests(parsedRq);
+        return await this._requestManager.getRequests(rq);
     }
 
     @Get('/email')
+    @Validate
     public async getRequestByEmail(@Queries() rq: GetRequestByEmailRq): Promise<GetRequestRs> {
-        const parsedRq = this._validator.validateBody<GetRequestByEmailRq>(rq, new GetRequestByEmailRq());
-        return await this._requestManager.getRequestByEmail(parsedRq);
+        return await this._requestManager.getRequestByEmail(rq);
     }
 
     @Get('/status')
+    @Validate
     public async getRequestsByStatus(@Queries() rq: GetRequestByStatusRq): Promise<GetRequestRs> {
-        const parsedRq = this._validator.validateBody<GetRequestByStatusRq>(rq, new GetRequestByStatusRq());
-        return await this._requestManager.getRequestsByStatus(parsedRq);
+        return await this._requestManager.getRequestsByStatus(rq);
     }
 
     @Post()
+    @Validate
     public async setRequest(@Body() rq: SetRequestRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<SetRequestRq>(rq, new SetRequestRq());
-        await this._requestManager.setRequest(parsedRq);
+        await this._requestManager.setRequest(rq);
     }
 
     @Put()
+    @Validate
     async updateRequestStatus(@Body() rq: UpdateRequestStatusRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<UpdateRequestStatusRq>(rq, new UpdateRequestStatusRq());
-        await this._requestManager.updateRequestStatus(parsedRq);
+        await this._requestManager.updateRequestStatus(rq);
     }
 
     @Get('/eligible')
+    @Validate
     async isRequestValid(@Queries() rq: GetRequestByEmailRq): Promise<ServiceProviderMiniRs> {
-        const parsedRq = this._validator.validateBody<GetRequestByEmailRq>(rq, new GetRequestByEmailRq());
-        return await this._requestManager.isRequestValid(parsedRq);
+        return await this._requestManager.isRequestValid(rq);
     }
 }

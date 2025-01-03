@@ -37,6 +37,7 @@
         "nodemon": "^2.0.22",
         "npm": "^10.9.0",
         "pg": "^8.11.0",
+        "reflect-metadata": "^0.2.2",
         "swagger-ui-express": "^5.0.1",
         "ts-jest": "^29.2.5",
         "tslint": "^6.1.3",

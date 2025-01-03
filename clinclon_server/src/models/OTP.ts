@@ -1,6 +1,18 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
 
+@JsonObject("OTPRawDB")
+class OTPRawDB extends BaseRequest {
+    @JsonProperty("id", Number)
+    id: number = 0;
+    @JsonProperty("otp", String)
+    otp: string = "";
+    @JsonProperty("email_address", String)
+    email: string = "";
+    @JsonProperty("create_date", Date)
+    createDate: Date = new Date();
+}
+
 @JsonObject("GetOTPRq")
 class GetOTPRq extends BaseRequest {
     @JsonProperty("email", String)
@@ -32,18 +44,6 @@ class SetOTPRq extends BaseRequest {
     email: string = "";
     @JsonProperty("otp", String)
     otp: string = "";
-}
-
-@JsonObject("OTPRawDB")
-class OTPRawDB extends BaseRequest {
-    @JsonProperty("id", Number)
-    id: number = 0;
-    @JsonProperty("otp", String)
-    otp: string = "";
-    @JsonProperty("email_address", String)
-    email: string = "";
-    @JsonProperty("create_date", Date)
-    createDate: Date = new Date();
 }
 
 
