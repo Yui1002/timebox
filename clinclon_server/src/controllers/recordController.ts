@@ -2,6 +2,7 @@ import { Body, Get, Post, Queries, Route } from "tsoa";
 import RecordManager from "../managers/recordManager";
 import SuperController from "./SuperController";
 import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs } from "../models/Record";
+import Validate from "../validators/CustomValidator";
 
 interface IRecordController {
     getRecord(rq: GetRecordRq): Promise<GetRecordRs>
@@ -20,26 +21,26 @@ export class RecordController extends SuperController implements IRecordControll
     }
 
     @Get()
+    @Validate
     public async getRecord(@Queries() rq: GetRecordRq): Promise<GetRecordRs> {
-        const parsedRq = this._validator.validateBody<GetRecordRq>(rq, new GetRecordRq());
-        return await this._recordManager.getRecord(parsedRq);
+        return await this._recordManager.getRecord(rq);
     }
 
     @Get('/date')
+    @Validate
     public async getRecordByDate(@Queries() rq: GetRecordByDateRq): Promise<GetRecordRs> {
-        const parsedRq = this._validator.validateBody<GetRecordByDateRq>(rq, new GetRecordByDateRq());
-        return await this._recordManager.getRecordByDate(parsedRq);
+        return await this._recordManager.getRecordByDate(rq);
     }
 
     @Get('/period')
+    @Validate
     public async getRecordByPeriod(@Queries() rq: GetRecordByPeriodRq): Promise<GetRecordRs> {
-        const parsedRq = this._validator.validateBody<GetRecordByPeriodRq>(rq, new GetRecordByPeriodRq());
-        return await this._recordManager.getRecordByPeriod(parsedRq);
+        return await this._recordManager.getRecordByPeriod(rq);
     }
 
     @Post()
+    @Validate
     public async setRecord(@Body() request: SetRecordRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<SetRecordRq>(request, new SetRecordRq());
-        await this._recordManager.setRecord(parsedRq);
+        await this._recordManager.setRecord(request);
     }
 }

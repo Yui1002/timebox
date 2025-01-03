@@ -2,6 +2,7 @@ import { Body, Get, Post, Route, Queries } from "tsoa";
 import UserManager from '../managers/userManager';
 import SuperController from './SuperController';
 import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq } from '../models/User';
+import Validate from "../validators/CustomValidator";
 
 interface IUserController {
     getUser(rq: GetUserRq): Promise<GetUserRs>;
@@ -20,26 +21,26 @@ export class UserController extends SuperController implements IUserController {
     }
 
     @Get()
+    @Validate
     public async getUser(@Queries() rq: GetUserRq): Promise<GetUserRs> {
-        const parsedRq = this._validator.validateBody<GetUserRq>(rq, new GetUserRq());
-        return await this._userManager.getUser(parsedRq.email);
+        return await this._userManager.getUser(rq);
     }
 
     @Post()
-    public async setUser(@Body() request: SetUserRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<SetUserRq>(request, new SetUserRq());
-        await this._userManager.setUser(parsedRq);
+    @Validate
+    public async setUser(@Body() rq: SetUserRq): Promise<void> {
+        await this._userManager.setUser(rq);
     }
 
     @Post('/signIn')
-    public async signInUser(@Body() request: SignInUserRq): Promise<GetUserRs> {
-        let parsedRq = this._validator.validateBody<SignInUserRq>(request, new SignInUserRq());
-        return await this._userManager.signInUser(parsedRq);
+    @Validate
+    public async signInUser(@Body() rq: SignInUserRq): Promise<GetUserRs> {
+        return await this._userManager.signInUser(rq);
     }  
     
     @Post('/resetPassword')
-    public async resetPassword(@Body() request: ResetPasswordRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<ResetPasswordRq>(request, new ResetPasswordRq());
-        await this._userManager.resetPassword(parsedRq);
+    @Validate
+    public async resetPassword(@Body() rq: ResetPasswordRq): Promise<void> {
+        await this._userManager.resetPassword(rq);
     } 
 }

@@ -1,3 +1,4 @@
+import Validate from '../validators/CustomValidator';
 import EmployerManager from '../managers/employerManager';
 import { GetEmployerRq, GetEmployerRs } from '../models/Employer';
 import SuperController from './SuperController';
@@ -17,9 +18,9 @@ export class EmployerController extends SuperController implements IEmployerCont
     }
 
     @Get()
+    @Validate
     public async getEmployer(@Queries() rq: GetEmployerRq): Promise<GetEmployerRs> {
-        const parsedRq = this._validator.validateBody<GetEmployerRq>(rq, new GetEmployerRq());
-        return await this._employerManager.getEmployer(parsedRq);
+        return await this._employerManager.getEmployer(rq);
     }
     
 }
