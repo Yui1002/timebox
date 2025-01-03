@@ -37,10 +37,20 @@ class Validator {
         return validator.validateAndConvertRequest(request)
     }
 
+    validateBody2(request: any, instanceName: string): any {
+        let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === instanceName);
+        if (selectedValidators.length != 1) {
+            throw new ResponseException(null, 500, "Unable to parse validators");
+        }
+        let validator = selectedValidators[0];
+        return validator.validateAndConvertRequest(request)
+    }
+
 
     public static get Instance() {
         return this._instance || (this._instance = new this());
     }
 }
+
 
 export default Validator;

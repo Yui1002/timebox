@@ -5,10 +5,10 @@ import {
     Body,
     Get,
     Post,
-    Query,
     Queries,
     Route,
   } from "tsoa";
+import validate from '../validators/CustomValidator';
 
 interface IOTPController {
     getOTP(rq: GetOTPRq): Promise<GetOTPRs>;
@@ -26,20 +26,20 @@ export class OTPController extends SuperController implements IOTPController {
     }
 
     @Get()
+    @validate
     public async getOTP(@Queries() rq: GetOTPRq): Promise<GetOTPRs> {
-        const parsedRq = this._validator.validateBody<GetOTPRq>(rq, new GetOTPRq());
-        return await this._OTPManager.getOTP(parsedRq);
+        return await this._OTPManager.getOTP(rq);
     }
 
     @Post()
+    @validate
     public async setOTP(@Body() request: SetOTPRq): Promise<void> {
-        let parsedRq = this._validator.validateBody(request, new SetOTPRq());
-        await this._OTPManager.setOTP(parsedRq);
+        await this._OTPManager.setOTP(request);
     }
     
     @Post('/verify')
+    @validate
     public async verifyOTP(@Body() request: SetOTPRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<SetOTPRq>(request, new SetOTPRq());
-        await this._OTPManager.verifyOTP(parsedRq);
+        await this._OTPManager.verifyOTP(request);
     }
 }
