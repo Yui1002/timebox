@@ -7,7 +7,8 @@ import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Error from '../Error';
-import { TimeType } from '../../enums';
+import { TimeType, ErrMsg, Parameters } from '../../enums';
+import { COLORS } from '../../styles/theme';
 import { ErrorModel } from '../../types';
 import Validator from '../../validator/validator';
 import { DefaultApiFactory, GetRecordRq } from '../../swagger/generated';
@@ -20,38 +21,23 @@ const Record = ({route}: any) => {
   const [endOpen, setEndOpen] = useState<boolean>(false);
   const [start, setStart] = useState<Date | null>(null);
   const [end, setEnd] = useState<Date | null>(null);
-  const [errors, setErrors] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200
-  });
+  const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const validateInput = (type: TimeType): boolean => {
     if (type === TimeType.START) {
       if (!start) {
-        setErrors({
-          message: 'Start time is not selected',
-          statusCode: 400
-        })
+        setErrors({message: ErrMsg.START_TIME_NOT_SELECTED})
         return false;
       } else if (end && !Validator.isValidStartTime(start, end)) {
-        setErrors({
-          message: 'Start time has to occur before end time',
-          statusCode: 400
-        });
+        setErrors({message: ErrMsg.INVALID_START_TIME});
         return false;
       }
     } else if (type === TimeType.END) {
       if (!end) {
-        setErrors({
-          message: 'End time is not selected',
-          statusCode: 400
-        })
+        setErrors({message: ErrMsg.END_TIME_NOT_SELECTED})
         return false;
       } else if (start && !Validator.isValidEndTime(start, end)) {
-        setErrors({
-          message: 'End time has to occur after start time',
-          statusCode: 400
-        })
+        setErrors({message: ErrMsg.INVALID_END_TIME})
         return false;
       }
     }
@@ -59,7 +45,6 @@ const Record = ({route}: any) => {
   };
 
   const checkRecordExists = async (type: string) => {
-
     try {
       const params: GetRecordRq = {
         employerEmail: email,
@@ -94,8 +79,6 @@ const Record = ({route}: any) => {
     if (!validateInput(type)) return;
     checkRecordExists('start');
 
-
-
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
         employerEmail: email,
@@ -110,43 +93,41 @@ const Record = ({route}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {errors.message && <Error msg={errors.message} />}
       <View style={styles.header}>
         <Text style={styles.headerText}>
           Employer: {firstName} {lastName}
         </Text>
       </View>
-      <View style={{marginVertical: 10}}>
-        {errors.message && <Error msg={errors.message} />}
-      </View>
-      <View style={styles.dateContainer}>
-        <View style={styles.subDateContainer}>
-          <Text style={{}}>Record start time</Text>
+      <View style={styles.selectContainer}>
+        <View style={styles.selectSubContainer}>
+          <Text>Record start time</Text>
           <TouchableOpacity
-            style={styles.dateBox}
+            style={styles.selectBox}
             onPress={() => setStartOpen(!startOpen)}>
-            <Text style={styles.dateText}>
+            <Text style={styles.text}>
               {start ? moment(start).format('MM/DD LT') : `Select`}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
               size={36}
-              color="#000"
+              color={COLORS.text2}
               style={styles.icon}
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.subDateContainer}>
+        <View style={styles.selectSubContainer}>
           <Text>Record end time</Text>
           <TouchableOpacity
-            style={styles.dateBox}
+            style={styles.selectBox}
             onPress={() => setEndOpen(!endOpen)}>
-            <Text style={styles.dateText}>
+            <Text style={styles.text}>
               {end ? moment(end).format('MM/DD LT') : `Select`}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
               size={36}
-              color="#000"
+              color={COLORS.text2}
               style={styles.icon}
             />
           </TouchableOpacity>
@@ -162,7 +143,7 @@ const Record = ({route}: any) => {
           onCancel={() => setStartOpen(false)}
           minimumDate={
             mode === 1
-              ? new Date('1950-01-01T00:00:00')
+              ? new Date(Parameters.DEFAULT_DATE)
               : moment().startOf('day').toDate()
           }
           maximumDate={moment().endOf('day').toDate()}
@@ -176,23 +157,27 @@ const Record = ({route}: any) => {
           onCancel={() => setEndOpen(false)}
           minimumDate={
             mode === 1
-              ? new Date('1950-01-01T00:00:00')
+              ? new Date(Parameters.DEFAULT_DATE)
               : moment().startOf('day').toDate()
           }
           maximumDate={moment().endOf('day').toDate()}
         />
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={() => saveRecord(TimeType.START)}>
-          <Text style={styles.buttonText}>Save Start Time</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={() => saveRecord(TimeType.END)}>
-          <Text style={styles.buttonText}>Save End Time</Text>
-        </TouchableOpacity>
+        <View style={styles.subButtonContainer}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => saveRecord(TimeType.START)}>
+            <Text style={styles.buttonText}>Save Start Time</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.subButtonContainer}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() => saveRecord(TimeType.END)}>
+            <Text style={styles.buttonText}>Save End Time</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );

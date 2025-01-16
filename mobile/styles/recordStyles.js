@@ -1,84 +1,62 @@
 import {StyleSheet} from 'react-native';
+import { COLORS, FONT_WEIGHT } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
-    height: '94%',
+    flex: 1,
+    alignItems: 'center',
     margin: '5%',
   },
   header: {
-    height: '14%',
+    marginVertical: 14
   },
   headerText: {
-    fontSize: 20,
-    fontWeight: '500',
-  },
-  headerSubText: {
-    fontSize: 16,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  subDateContainer: {
-    width: '50%',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    height: '5%',
-    marginTop: 30,
-  },
-  saveButton: {
-    backgroundColor: '#24a0ed',
-    borderRadius: 10,
-    width: '46%'
-  },
-  buttonText: {
-    textAlign: 'center',
-    color: '#fff',
     fontSize: 18,
-    fontWeight: '500',
-    lineHeight: 32
+    fontWeight: FONT_WEIGHT.primary,
   },
-  dateBox: {
+  selectContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  selectSubContainer: {
+    width: '50%',
+    alignItems: 'center'
+  },
+  selectBox: {
     borderWidth: 1,
-    borderColor: '#909090',
-    borderRadius: 10,
+    borderColor: COLORS.separator,
+    borderRadius: 8,
     width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     height: 50,
   },
-  button_disabled: {
-    backgroundColor: '#D8D8D8',
-    padding: 14,
-    borderRadius: 10,
-    width: '45%',
-    height: '80%',
-  },
-  dateText: {
-    lineHeight: 46,
+  text: {
+    lineHeight: 50,
     paddingLeft: 10,
   },
-  todayRecordContainer: {
-    marginHorizontal: 30,
-    marginVertical: 30,
-    paddingRight: 30,
+  icon: {
+    lineHeight: 50
   },
-  todayRecord: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginVertical: 20,
   },
-  separator: {
-    width: '100%',
-    marginVertical: 10,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  subButtonContainer: {
+    width: '50%',
+    alignItems: 'center',
   },
-  error: {
-    color: 'red',
+  saveButton: {
+    width: '90%',
+    backgroundColor: COLORS.button1,
+    borderRadius: 8,
   },
-  icon: {
-    marginTop: 5
-  }
+  buttonText: {
+    textAlign: 'center',
+    color: COLORS.text1,
+    fontSize: 18,
+    fontWeight: FONT_WEIGHT.primary,
+    lineHeight: 32
+  },
 });

@@ -1,27 +1,34 @@
 import {StyleSheet} from 'react-native';
+import { COLORS } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    alignItems: 'center',
     margin: '5%',
   },
-  subContainer: {
-    marginVertical: 24
-  },
   inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    marginVertical: 20
+  },
+  input: {
+    width: 300,
+    height: 34,
+    borderWidth: 0.5,
+    borderRadius: 10,
+    padding: 10,
+    margin: 6,
   },
   button: {
-    backgroundColor: '#24a0ed',
+    backgroundColor: COLORS.button1,
     borderRadius: 10,
+    height: 34,
+    marginVertical: 10,
+    width: 300
   },
   buttonText: {
     textAlign: 'center',
-    color: '#fff',
+    color: COLORS.text1,
     fontSize: 18,
-    lineHeight: 32
+    lineHeight: 34
   },
-  indicator: {
-    marginTop: 20,
-  }
 });

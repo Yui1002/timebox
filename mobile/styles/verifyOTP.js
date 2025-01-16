@@ -1,25 +1,17 @@
 import {StyleSheet} from 'react-native';
+import { COLORS } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    flex: 1,
+    alignItems: 'center',
     margin: '5%',
   },
-  header: {
-    fontSize: 22,
-    fontWeight: '500',
-  },
-  separator: {
-    width: '100%',
-    marginTop: 40,
-    marginBottom: 16,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+  text: {
+    marginVertical: 4
   },
   otpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: '10%',
+    marginVertical: 8
   },
   otpBox: {
     width: 200,
@@ -32,40 +24,32 @@ export const styles = StyleSheet.create({
     letterSpacing: 10,
     textAlign: 'center'
   },
-  inputError: {
-    width: 200,
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    color: '#ff0000',
-    fontSize: 12,
-  },
-  link: {
-    textDecorationLine: 'underline',
-    textDecorationColor: '#000',
-  },
   button: {
-    width: 300,
-    backgroundColor: '#24a0ed', 
-    borderRadius: 10, 
-    marginRight: 'auto',
-    marginLeft: 'auto',
-    marginTop: 30
+    backgroundColor: COLORS.button1,
+    borderRadius: 10,
+    height: 34,
+    marginVertical: 20,
+    width: 300
   },
   buttonText: {
     textAlign: 'center',
-    color: '#fff',
+    color: COLORS.text1,
     fontSize: 18,
-    lineHeight: 32
+    lineHeight: 34
   },
-  resend: {
-    height: '5%',
-    borderWidth: 1,
-    backgroundColor: 'rgb(221, 255, 221)',
-    borderColor: 'rgb(204, 204, 204)',
-    marginBottom: 10
+  separator: {
+    width: '100%',
+    marginVertical: 8,
+    borderBottomColor: COLORS.separator,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  resendText: {
-    lineHeight: 30,
-    textAlign: 'center',
-  }
+  footer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  link: {
+    textDecorationLine: 'underline',
+    textDecorationColor: COLORS.text2,
+  },
 });

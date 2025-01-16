@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
+import {Text, View, SafeAreaView, TouchableOpacity, TextInput} from 'react-native';
 import {styles} from '../../styles/hireServiceProviderStyles.js';
 import InputField from '../InputField';
 import Popup from '../Popup';
@@ -67,6 +67,7 @@ const HireServiceProvider = (props: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {error.message && <Error msg={error.message} />}
       {modalVisible && (
         <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
       )}
@@ -74,21 +75,22 @@ const HireServiceProvider = (props: any) => {
         <Text>
           Enter the email of a service provider you would like to hire
         </Text>
-        {error.message && <Error msg={error.message} />}
       </View>
-      <View style={styles.subContainer}>
+      <View style={styles.inputContainer}>
         <Text>Email</Text>
-        <InputField.Outlined
-          onChangeText={(val: any) => setSearchInput(val)}
-          isEditable={true}
+        <TextInput
           value={searchInput}
+          style={styles.input}
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={val => setSearchInput(val)}
         />
-        <TouchableOpacity
-          style={[styles.button, {marginTop: 20}]}
-          onPress={searchEmail}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={searchEmail}>
+        <Text style={styles.buttonText}>Continue</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

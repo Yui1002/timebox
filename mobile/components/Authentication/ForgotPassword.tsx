@@ -1,11 +1,19 @@
 import React, {useState} from 'react';
-import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import {styles} from '../../styles/forgotPasswordStyles.js';
 import Error from '../Error';
 import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger/generated';
 import {Screen, ErrMsg} from '../../enums';
+import {COLORS} from '../../styles/theme';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
@@ -42,24 +50,19 @@ const ForgotPassword = ({navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.header}>Verify Email</Text>
-        {errors.message && <Error msg={errors.message} />}
-        <View style={{marginVertical: 10}} />
-        <View>
-          <Text>Email</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={val => setEmail(val)}
-          />
-        </View>
-        <View style={{marginVertical: 20}} />
-        <View style={styles.button}>
-          <Button title="Submit" color="#fff" onPress={checkEmailRegistered} />
-        </View>
+      {errors.message && <Error msg={errors.message} />}
+      <View style={styles.inputContainer}>
+        <Text>Email</Text>
+        <TextInput
+          style={styles.input}
+          autoCorrect={false}
+          autoCapitalize="none"
+          onChangeText={val => setEmail(val)}
+        />
       </View>
+      <TouchableOpacity style={styles.button} onPress={checkEmailRegistered}>
+        <Text style={styles.buttonText}>Verify Email</Text>
+      </TouchableOpacity>
       <View style={styles.separator}></View>
       <View style={styles.footer}>
         <View>

@@ -67,84 +67,75 @@ const SignUp = ({navigation}: any) => {
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
-        <View>
-          <View style={{marginVertical: 10}}>
-            {errors.message && <Error msg={errors.message} />}
-          </View>
+        {errors.message && <Error msg={errors.message} />}
+        <View style={styles.inputContainer}>
+          <Text>First Name</Text>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            onChangeText={val => setFirstName(val)}
+            autoFocus={true}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text>Last Name</Text>
+          <TextInput
+            style={styles.input}
+            autoCorrect={false}
+            onChangeText={val => setLastName(val)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text>Email</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="email-address"
+            autoCorrect={false}
+            autoCapitalize="none"
+            onChangeText={val => setEmail(val)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text>Password</Text>
           <View>
-            <Text>First Name</Text>
             <TextInput
               style={styles.input}
-              autoCorrect={false}
-              onChangeText={val => setFirstName(val)}
-              autoFocus={true}
-            />
-          </View>
-          <View style={{marginVertical: 6}} />
-          <View>
-            <Text>Last Name</Text>
-            <TextInput
-              style={styles.input}
-              autoCorrect={false}
-              onChangeText={val => setLastName(val)}
-            />
-          </View>
-          <View style={{marginVertical: 6}} />
-          <View>
-            <Text>Email</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="email-address"
               autoCorrect={false}
               autoCapitalize="none"
-              onChangeText={val => setEmail(val)}
+              secureTextEntry={!showPassword}
+              blurOnSubmit={false}
+              onSubmitEditing={() => Keyboard.dismiss()}
+              onChangeText={val => setPassword(val)}
             />
+            <Text
+              style={styles.hide}
+              onPress={() => setShowPassword(!showPassword)}>
+              {showPassword ? Display.HIDE : Display.SHOW}
+            </Text>
           </View>
-          <View style={{marginVertical: 6}} />
-          <View>
-            <Text>Password</Text>
-            <View>
-              <TextInput
-                style={styles.input}
-                autoCorrect={false}
-                autoCapitalize="none"
-                secureTextEntry={!showPassword}
-                blurOnSubmit={false}
-                onSubmitEditing={() => Keyboard.dismiss()}
-                onChangeText={val => setPassword(val)}
-              />
-              <Text
-                style={styles.hide}
-                onPress={() => setShowPassword(!showPassword)}>
-                {showPassword ? Display.HIDE : Display.SHOW}
-              </Text>
-            </View>
-          </View>
-          <View style={{marginVertical: 6}} />
-          <View>
-            <Text>Confirm Password</Text>
-            <View>
-              <TextInput
-                style={styles.input}
-                autoCorrect={false}
-                autoCapitalize="none"
-                blurOnSubmit={false}
-                onSubmitEditing={() => Keyboard.dismiss()}
-                secureTextEntry={!showPassword}
-                onChangeText={val => setConfirmedPassword(val)}
-              />
-              <Text
-                style={styles.hide}
-                onPress={() => setShowPassword(!showPassword)}>
-                {showPassword ? Display.HIDE : Display.SHOW}
-              </Text>
-            </View>
-          </View>
-          <View style={{marginVertical: 14}} />
-          <TouchableOpacity style={styles.button} onPress={checkUserExists}>
-            <Text style={styles.buttonText}>Sign Up</Text>
-          </TouchableOpacity>
         </View>
+        <View style={styles.inputContainer}>
+          <Text>Confirm Password</Text>
+          <View>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              autoCapitalize="none"
+              blurOnSubmit={false}
+              onSubmitEditing={() => Keyboard.dismiss()}
+              secureTextEntry={!showPassword}
+              onChangeText={val => setConfirmedPassword(val)}
+            />
+            <Text
+              style={styles.hide}
+              onPress={() => setShowPassword(!showPassword)}>
+              {showPassword ? Display.HIDE : Display.SHOW}
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={checkUserExists}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </TouchableOpacity>
         <View style={styles.separator}></View>
         <View style={styles.footer}>
           <View>

@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import { COLORS } from './theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -6,10 +7,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     margin: '5%',
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  inputContainer: {
+    marginVertical: 8
   },
   input: {
     width: 300,
@@ -20,21 +19,22 @@ export const styles = StyleSheet.create({
     margin: 6,
   },
   button: {
-    backgroundColor: '#24a0ed',
+    backgroundColor: COLORS.button1,
     borderRadius: 10,
-    height: 34
+    height: 34,
+    marginVertical: 20,
+    width: 300
   },
   buttonText: {
     textAlign: 'center',
-    color: '#fff',
+    color: COLORS.text1,
     fontSize: 18,
-    lineHeight: 32
+    lineHeight: 34
   },
   separator: {
     width: '100%',
-    marginTop: 40,
-    marginBottom: 16,
-    borderBottomColor: '#737373',
+    marginVertical: 8,
+    borderBottomColor: COLORS.separator,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   footer: {
@@ -44,14 +44,6 @@ export const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: 'underline',
-    textDecorationColor: '#000',
+    textDecorationColor: COLORS.text2,
   },
-  inputError: {
-    color: '#ff0000',
-    fontSize: 12,
-  },
-  signInError: {
-    width: '100%',
-    backgroundColor: '#FFCCCB'
-  }
 });

@@ -1,3 +1,7 @@
+enum Parameters {
+  DEFAULT_DATE = '1950-01-01T00:00:00'
+}
+
 enum Days {
   MONDAY = 'Monday',
   TUESDAY = 'Tuesday',
@@ -58,6 +62,10 @@ enum ErrMsg {
   INVALID_RATE = 'Invalid rate',
   INVALID_RATE_TYPE = 'Invalid rate type',
   REQUEST_SEND_ERR = 'Failed to send a request',
+  START_TIME_NOT_SELECTED = 'Start time is not selected',
+  END_TIME_NOT_SELECTED = 'End time is not selected',
+  INVALID_START_TIME = 'Start time has to occur before end time',
+  INVALID_END_TIME = 'End time has to occur after start time'
 }
 
 enum ProgressBar {
@@ -66,4 +74,4 @@ enum ProgressBar {
   REVIEW = 'Review'
 }
 
-export { Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar }
+export { Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters }

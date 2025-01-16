@@ -78,37 +78,31 @@ const SignIn = ({navigation}: any) => {
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
-        <View>
-          <View style={{marginVertical: 10}}>
-            {errors.message && <Error msg={errors.message} />}
-          </View>
-          <View>
-            <Text>Email</Text>
-            <TextInput
-              value={email}
-              style={styles.input}
-              autoCorrect={false}
-              autoCapitalize="none"
-              onChangeText={val => setEmail(val)}
-            />
-          </View>
-          <View style={{marginVertical: 10}} />
-          <View>
-            <Text>Password</Text>
-            <TextInput
-              value={password}
-              style={styles.input}
-              autoCorrect={false}
-              autoCapitalize="none"
-              secureTextEntry={true}
-              onChangeText={val => setPassword(val)}
-            />
-          </View>
-          <View style={{marginVertical: 20}} />
-          <TouchableOpacity style={styles.button} onPress={signIn}>
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
+        {errors.message && <Error msg={errors.message} />}
+        <View style={styles.inputContainer}>
+          <Text>Email</Text>
+          <TextInput
+            value={email}
+            style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            onChangeText={val => setEmail(val)}
+          />
         </View>
+        <View style={styles.inputContainer}>
+          <Text>Password</Text>
+          <TextInput
+            value={password}
+            style={styles.input}
+            autoCorrect={false}
+            autoCapitalize="none"
+            secureTextEntry={true}
+            onChangeText={val => setPassword(val)}
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={signIn}>
+          <Text style={styles.buttonText}>Sign In</Text>
+        </TouchableOpacity>
         <View style={styles.separator}></View>
         <View style={styles.footer}>
           <View>

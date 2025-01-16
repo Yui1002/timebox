@@ -46,7 +46,6 @@ const VerifyOTP = ({route, navigation}: any) => {
       setErrors({message: 'Verification code has to be 6 digit'});
       return false;
     }
-
     return true;
   };
 
@@ -60,7 +59,6 @@ const VerifyOTP = ({route, navigation}: any) => {
 
     try {
       await otpApi.verifyOTP(params);
-
       if (isSignUp) {
         setUser();
         navigate(navigation, Screen.DRAWER_NAV, null);
@@ -89,11 +87,8 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{height: '8%'}}>
-        <Text style={styles.header}>Verification code</Text>
-      </View>
       {errors.message && <Error msg={errors.message} />}
-      <View style={{height: '8%'}}>
+      <View style={styles.text}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
       <View style={styles.otpContainer}>
@@ -109,7 +104,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         <Text style={styles.buttonText}>Verify</Text>
       </TouchableOpacity>
       <View style={styles.separator}></View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      <View style={styles.footer}>
         <View>
           <Text>Didn't receive a code?</Text>
           <Text style={styles.link} onPress={setOTP}>

@@ -1,60 +1,44 @@
 import {StyleSheet} from 'react-native';
-import { horizontalScale, verticalScale, moderateScale } from './metric';
-
+import { COLORS, FONT_WEIGHT } from './theme';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: verticalScale(30),
+    alignItems: 'center',
+    margin: '5%',
   },
   header: {
-    fontSize: moderateScale(18),
+    fontSize: 22,
     textAlign: 'center',
-    fontWeight: 'bold',
-    marginBottom: verticalScale(30),
+    fontWeight: FONT_WEIGHT.secondary,
+    marginVertical: 8
   },
   title: {
-    fontSize: moderateScale(14), 
-    fontWeight: '500'
+    fontSize: 16, 
+    fontWeight: FONT_WEIGHT.primary,
+    marginVertical: 8
   },
   nameTitle: {
     fontSize: 16, 
-    fontWeight: '500'
+    fontWeight: FONT_WEIGHT.primary
   },
   listContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#ddd',
-    marginVertical: verticalScale(8),
-    padding: horizontalScale(10),
+    backgroundColor: COLORS.background1,
+    marginVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 4,
   },
   button: {
-    backgroundColor: '#24a0ed',
+    backgroundColor: COLORS.button1,
     borderRadius: 10,
     width: 70
   },
   buttonText: {
     textAlign: 'center',
-    color: '#fff',
+    color: COLORS.text1,
     fontSize: 18,
     lineHeight: 32
   },
-  notification: {
-    backgroundColor: '#D0F0C0',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderRadius: 10,
-    height: '10%',
-    padding: 8,
-    marginBottom: 20,
-    position: 'relative'
-  },
-  notificationIcon: {
-    width: '24%', 
-    paddingLeft: 20,
-  },
-  notificationText: {
-    width: '75%', 
-    color: '#014421'
-  }
 });

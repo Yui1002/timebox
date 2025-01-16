@@ -6,15 +6,13 @@ import {
   SafeAreaView,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {styles} from '../../styles/homeStyles.js';
-import {
-  DefaultApiFactory,
-  Employer,
-} from '../../swagger/generated';
+import {DefaultApiFactory, Employer} from '../../swagger/generated';
 import {UserInfo} from '../../types';
-import { Screen } from '../../enums';
+import {Screen} from '../../enums';
 
 let employerApi = DefaultApiFactory();
 
@@ -46,23 +44,24 @@ const Home = (props: any) => {
       </View>
       <View>
         <Text style={styles.title}>My Employers</Text>
-        {employers != null ? (
-          <FlatList
-            data={employers}
-            renderItem={({item}: any) => (
+        {employers == null ? (
+          <Text>Please use the menu to hire or manage service providers</Text>
+        ) : (
+          <ScrollView>
+            {employers.map(employer => (
               <View style={styles.listContainer}>
                 <View>
                   <Text style={styles.nameTitle}>
-                    {item.firstName} {item.lastName}
+                    {employer.firstName} {employer.lastName}
                   </Text>
-                  <Text>{item.email}</Text>
+                  <Text>{employer.email}</Text>
                 </View>
                 <View>
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() =>
                       props.navigation.navigate(Screen.RECORD, {
-                        employer: item,
+                        employer: employer,
                         serviceProviderEmail: email,
                       })
                     }>
@@ -70,12 +69,8 @@ const Home = (props: any) => {
                   </TouchableOpacity>
                 </View>
               </View>
-            )}
-          />
-        ) : (
-          <Text style={{marginTop: 10}}>
-            Please use the menu to hire or manage service providers
-          </Text>
+            ))}
+          </ScrollView>
         )}
       </View>
     </SafeAreaView>

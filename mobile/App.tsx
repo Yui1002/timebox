@@ -53,7 +53,7 @@ function App(): JSX.Element {
             name="VerifyOTP"
             component={VerifyOTP}
             options={{
-              title: 'Verify OTP',
+              title: 'Enter Verification code',
               gestureEnabled: false,
               headerLeft: () => null,
             }}
@@ -62,7 +62,7 @@ function App(): JSX.Element {
             name="ForgotPassword"
             component={ForgotPassword}
             options={{
-              title: 'Forgot Password',
+              title: 'Verify Email',
               gestureEnabled: false,
               headerLeft: () => null,
             }}
