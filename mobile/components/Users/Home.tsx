@@ -9,15 +9,20 @@ import {
 } from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {styles} from '../../styles/homeStyles.js';
-import { DefaultApiFactory, GetEmployerRq, GetEmployerRs, Employer } from '../../swagger/generated';
+import {
+  DefaultApiFactory,
+  Employer,
+} from '../../swagger/generated';
+import {UserInfo} from '../../types';
+import { Screen } from '../../enums';
 
 let employerApi = DefaultApiFactory();
 
 const Home = (props: any) => {
-  const userInfo = useSelector(state => state.userInfo);
-  const {firstName, email} = userInfo;
+  const user: UserInfo = useSelector(state => state.userInfo);
+  const {firstName, email} = user;
   const [employers, setEmployers] = useState<Employer[]>();
-  const isFocused = useIsFocused();
+  const isFocused: boolean = useIsFocused();
 
   useEffect(() => {
     if (isFocused) {
@@ -25,14 +30,10 @@ const Home = (props: any) => {
     }
   }, [isFocused]);
 
-  const getEmployers = async () => {
-    const params: GetEmployerRq = {
-      email: email
-    }
-
+  const getEmployers = async (): Promise<void> => {
     try {
-      let { data } = await employerApi.getEmployer(params);
-      setEmployers(data.employers)
+      let {data} = await employerApi.getEmployer(email);
+      setEmployers(data.employers);
     } catch (e) {
       console.log(e);
     }
@@ -47,12 +48,11 @@ const Home = (props: any) => {
         <Text style={styles.title}>My Employers</Text>
         {employers != null ? (
           <FlatList
-            style={styles.subContainer}
             data={employers}
             renderItem={({item}: any) => (
               <View style={styles.listContainer}>
                 <View>
-                  <Text style={{fontSize: 16, fontWeight: '500'}}>
+                  <Text style={styles.nameTitle}>
                     {item.firstName} {item.lastName}
                   </Text>
                   <Text>{item.email}</Text>
@@ -61,7 +61,7 @@ const Home = (props: any) => {
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() =>
-                      props.navigation.navigate('Record', {
+                      props.navigation.navigate(Screen.RECORD, {
                         employer: item,
                         serviceProviderEmail: email,
                       })

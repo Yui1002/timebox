@@ -1,15 +1,20 @@
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  subContainer: {
+    width: '33%',
+  },
   title: {
-    fontSize: 12,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontWeight: '500'
   },
   bar: {
-    width: '100%',
-    height: '20%',
+    height: '12%',
     backgroundColor: '#ddd',
-    // borderRadius: 20
   },
   bar_focused: {
     backgroundColor: '#24a0ed'

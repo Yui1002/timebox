@@ -2,48 +2,26 @@ import React, {useState} from 'react';
 import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import {styles} from '../../styles/resetPasswordStyles.js';
 import Error from '../Error';
-import { navigate } from '../../helper/navigate';
-import { ErrorModel } from '../../types';
+import {navigate} from '../../helper/navigate';
+import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
-import { DefaultApiFactory, ResetPasswordRq } from '../../swagger/generated';
+import {DefaultApiFactory, ResetPasswordRq} from '../../swagger/generated';
+import {Screen, ErrMsg} from '../../enums';
 let api = DefaultApiFactory();
 
 const ResetPassword = ({route, navigation}: any) => {
   const email = route.params.email;
   const [password, setPassword] = useState<string>('');
   const [confirmdPassword, setConfirmedPassword] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200
-  });
+  const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const validateInput = (): boolean => {
-    if (!Validator.isNotEmpty(password)) {
-      setErrors({
-        message: 'Password is required',
-        statusCode: 400,
-      });
-      return false;
-    }
-    if (!Validator.isNotEmpty(confirmdPassword)) {
-      setErrors({
-        message: 'Confirmed password is required',
-        statusCode: 400,
-      });
-      return false;
-    }
     if (!Validator.isValidPassword(password)) {
-      setErrors({
-        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
-        statusCode: 400,
-      });
+      setErrors({message: ErrMsg.INVALID_PASSWORD});
       return false;
     }
     if (!Validator.isPasswordMatch(password, confirmdPassword)) {
-      setErrors({
-        message: 'Password does not match',
-        statusCode: 400,
-      });
+      setErrors({message: ErrMsg.MISMATCH_PASSWORD});
       return false;
     }
     return true;
@@ -54,14 +32,14 @@ const ResetPassword = ({route, navigation}: any) => {
 
     const params: ResetPasswordRq = {
       email: email,
-      newPassword: password
-    }
+      newPassword: password,
+    };
 
     try {
       await api.resetPassword(params);
-      navigate(navigation, 'DrawerNav', null);
+      navigate(navigation, Screen.DRAWER_NAV, null);
     } catch (e) {
-      setErrors({...errors, message: 'You cannot reuse the previous password'})
+      setErrors({message: ErrMsg.PASSWORD_REUSE});
     }
   };
 
@@ -103,7 +81,7 @@ const ResetPassword = ({route, navigation}: any) => {
           <Text>Go back to</Text>
           <Text
             style={styles.link}
-            onPress={() => navigation.navigate('SignIn')}>
+            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
             Sign In
           </Text>
         </View>

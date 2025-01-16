@@ -2,10 +2,11 @@ import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
-import StatusBar from './StatusBar';
+import ProgressBar from './ProgressBar';
 import {deleteShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {alert} from '../../../helper/Alert';
+import {Screen, ErrMsg, ProgressBar as Bar} from '../../../enums';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -23,30 +24,22 @@ const WorkShifts = ({route, navigation}: any) => {
         'No assigned schedules. Do you want to proceed?',
         '',
         function () {
-          navigation.navigate('Review', params);
+          navigation.navigate(Screen.REVIEW, params);
         },
         null,
       );
     } else {
-      navigation.navigate('Review', params)
+      navigation.navigate(Screen.REVIEW, params);
     }
   };
 
   const navigateToAddSchedule = () => {
-    navigation.navigate('RegisterWorkShifts', params);
+    navigation.navigate(Screen.REGISTER_WORK_SHIFTS, params);
   };
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.statusBarContainer}>
-        {statusTitles.map((val, index) => (
-          <StatusBar
-            key={index}
-            title={val}
-            isFocused={statusTitles[index] === 'Work Shifts'}
-          />
-        ))}
-      </View>
+      <ProgressBar title={Bar.WORK_SHIFTS} isFocused={true} />
       <View style={styles.header}>
         <Text style={styles.headerText}>Work Schedules</Text>
       </View>
@@ -55,7 +48,7 @@ const WorkShifts = ({route, navigation}: any) => {
           workShifts.workShifts.map((w, index) => (
             <View style={styles.dateContainer} key={index}>
               <Text style={{width: '30%'}}>{w.day}</Text>
-              <Text style={{width: '50%'}}>
+              <Text style={styles.width}>
                 {w.startTime} ~ {w.endTime}
               </Text>
               <Text style={styles.delete} onPress={() => deleteDate(w)}>
@@ -64,9 +57,7 @@ const WorkShifts = ({route, navigation}: any) => {
             </View>
           ))
         ) : (
-          <Text style={{textAlign: 'center', marginTop: 40}}>
-            No date and time selected
-          </Text>
+          <Text style={styles.noSelect}>No date and time selected</Text>
         )}
         <TouchableOpacity
           style={styles.addButton}

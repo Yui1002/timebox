@@ -180,5 +180,9 @@ export const styles = StyleSheet.create({
   editText: {
     color: '#24a0ed', 
     textDecorationLine: 'underline'
+  },
+  noSelect: {
+    textAlign: 'center', 
+    marginTop: 40
   }
 });

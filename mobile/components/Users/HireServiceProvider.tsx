@@ -10,6 +10,7 @@ import Error from '../Error';
 import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
 import Validator from '../../validator/validator';
 import {ErrorModel} from '../../types';
+import { Screen, ErrMsg } from '../../enums';
 
 let api = DefaultApiFactory();
 
@@ -17,10 +18,7 @@ const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
-  const [error, setError] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200,
-  });
+  const [error, setError] = useState<ErrorModel>({message: ''});
 
   useEffect(() => {
     setModalVisible(true);
@@ -28,10 +26,7 @@ const HireServiceProvider = (props: any) => {
 
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
-      setError({
-        message: 'invalid email',
-        statusCode: 400,
-      });
+      setError({message: ErrMsg.INVALID_EMAIL});
       return false;
     }
     return true;
@@ -45,10 +40,7 @@ const HireServiceProvider = (props: any) => {
       const serviceProvider = data.serviceProviderUser;
       showConfirmMsg(serviceProvider);
     } catch (e) {
-      setError({
-        message: 'Duplicate request',
-        statusCode: 400,
-      });
+      setError({message: ErrMsg.DUPLICATE_REQUEST});
     }
   };
 
@@ -57,7 +49,7 @@ const HireServiceProvider = (props: any) => {
       `Do you want to hire ${searchInput} as a service provider?`,
       '',
       function () {
-        navigate(props.navigation, 'PersonalInfo', {
+        navigate(props.navigation, Screen.PERSONAL_INFO, {
           firstName: serviceProvider ? serviceProvider.firstName : '',
           lastName: serviceProvider ? serviceProvider.lastName : '',
           email: serviceProvider ? serviceProvider.email : searchInput,
@@ -70,10 +62,7 @@ const HireServiceProvider = (props: any) => {
 
   const clearInput = () => {
     setSearchInput('');
-    setError({
-      message: '',
-      statusCode: 200,
-    });
+    setError({message: ''});
   };
 
   return (

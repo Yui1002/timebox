@@ -11,18 +11,16 @@ import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
-import { ErrorModel } from '../../types';
-import { DefaultApiFactory, SetOTPRq, SetUserRq } from '../../swagger/generated';
+import {ErrorModel} from '../../types';
+import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger/generated';
+import {ErrMsg, Screen} from '../../enums';
 let otpApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password, isSignUp} = route.params;
   const [otp, setOtp] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200
-  });
+  const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   useEffect(() => {
     setOTP();
@@ -31,33 +29,21 @@ const VerifyOTP = ({route, navigation}: any) => {
   const setOTP = async () => {
     const params: SetOTPRq = {
       email: email,
-      otp: ''
+      otp: '',
     };
 
     try {
       await otpApi.setOTP(params);
     } catch (e) {
-      setErrors({
-        message: 'OTP error',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.OTP_SEND_ERR});
     }
   };
 
   const validateInput = (): boolean => {
-    const regex = /^\d+$/;
+    const regex = /^[0-9]{6,6}$/;
 
-    if (otp.length !== 6) {
-      setErrors({
-        message: 'Verification code has to be 6 digit',
-        statusCode: 400
-      });
-      return false;
-    } else if (!regex.test(otp)) {
-      setErrors({
-        message: 'Verification code has to be a number',
-        statusCode: 400
-      });
+    if (!regex.test(otp)) {
+      setErrors({message: 'Verification code has to be 6 digit'});
       return false;
     }
 
@@ -69,7 +55,7 @@ const VerifyOTP = ({route, navigation}: any) => {
 
     const params: SetOTPRq = {
       email: email,
-      otp: otp
+      otp: otp,
     };
 
     try {
@@ -77,23 +63,23 @@ const VerifyOTP = ({route, navigation}: any) => {
 
       if (isSignUp) {
         setUser();
-        navigate(navigation, 'DrawerNav', null);
+        navigate(navigation, Screen.DRAWER_NAV, null);
       } else {
-        navigate(navigation, 'ResetPassword', {email})
+        navigate(navigation, Screen.RESET_PASSWORD, {email});
       }
     } catch (e: any) {
-      setErrors({
-        message: 'Verification error',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.OTP_VERIFICATION_ERR});
     }
   };
 
   const setUser = async () => {
     try {
       const params: SetUserRq = {
-        firstName, lastName, email, password
-      }
+        firstName,
+        lastName,
+        email,
+        password,
+      };
       otpApi.setUser(params);
       dispatch(signInUser({firstName, lastName, email}));
     } catch (e) {
@@ -134,7 +120,7 @@ const VerifyOTP = ({route, navigation}: any) => {
           <Text>Go back to</Text>
           <Text
             style={styles.link}
-            onPress={() => navigation.navigate('SignIn')}>
+            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
             Sign In
           </Text>
         </View>

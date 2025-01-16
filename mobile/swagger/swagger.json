@@ -7,6 +7,59 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"UserStatus": {
+				"enum": [
+					"ACTIVE",
+					"INACTIVE"
+				],
+				"type": "string"
+			},
+			"Mode": {
+				"enum": [
+					0,
+					1
+				],
+				"type": "number"
+			},
+			"GetUserTransactionRs": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"rate": {
+						"type": "string",
+						"default": ""
+					},
+					"rateType": {
+						"type": "string",
+						"default": "hourly"
+					},
+					"status": {
+						"$ref": "#/components/schemas/UserStatus"
+					},
+					"mode": {
+						"$ref": "#/components/schemas/Mode"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetUserTransactionRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"serviceProviderEmail": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GetUserRs": {
 				"properties": {
 					"firstName": {
@@ -24,6 +77,16 @@
 					"lastName",
 					"email"
 				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetUserRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					}
+				},
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -192,6 +255,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GetServiceProviderRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"UpdateServiceProviderRq": {
 				"properties": {
 					"employerEmail": {
@@ -280,7 +353,7 @@
 					"requestDate": {
 						"type": "string",
 						"format": "date-time",
-						"default": "2025-01-02T15:43:01.922Z"
+						"default": "2025-01-04T21:44:04.532Z"
 					}
 				},
 				"type": "object",
@@ -299,12 +372,42 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Mode": {
-				"enum": [
-					0,
-					1
-				],
-				"type": "number"
+			"GetRequestRq": {
+				"properties": {
+					"receiverEmail": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRequestByEmailRq": {
+				"properties": {
+					"senderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"receiverEmail": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRequestByStatusRq": {
+				"properties": {
+					"receiverEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"status": {
+						"$ref": "#/components/schemas/RequestStatus"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			},
 			"SetRequestRq": {
 				"properties": {
@@ -349,8 +452,7 @@
 						"default": ""
 					},
 					"status": {
-						"type": "string",
-						"default": ""
+						"$ref": "#/components/schemas/RequestStatus"
 					}
 				},
 				"type": "object",
@@ -360,6 +462,122 @@
 				"properties": {
 					"serviceProviderUser": {
 						"$ref": "#/components/schemas/GetUserRs"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Record": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double",
+						"default": 0
+					},
+					"startTime": {
+						"type": "string",
+						"format": "date-time",
+						"default": "2025-01-04T21:44:04.536Z"
+					},
+					"endTime": {
+						"type": "string",
+						"format": "date-time",
+						"default": "2025-01-04T21:44:04.536Z"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRecordRs": {
+				"properties": {
+					"records": {
+						"items": {
+							"$ref": "#/components/schemas/Record"
+						},
+						"type": "array",
+						"default": []
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRecordRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"serviceProviderEmail": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRecordByDateRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"serviceProviderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"date": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"GetRecordByPeriodRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"serviceProviderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"from": {
+						"type": "string",
+						"default": ""
+					},
+					"to": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"TimeType": {
+				"enum": [
+					"start",
+					"end"
+				],
+				"type": "string"
+			},
+			"SetRecordRq": {
+				"properties": {
+					"employerEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"serviceProviderEmail": {
+						"type": "string",
+						"default": ""
+					},
+					"recordTime": {
+						"type": "string",
+						"default": ""
+					},
+					"type": {
+						"$ref": "#/components/schemas/TimeType"
 					}
 				},
 				"type": "object",
@@ -435,6 +653,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GetOTPRq": {
+				"properties": {
+					"email": {
+						"type": "string",
+						"default": ""
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"SetOTPRq": {
 				"properties": {
 					"email": {
@@ -461,6 +689,44 @@
 		"contact": {}
 	},
 	"paths": {
+		"/userTransaction": {
+			"get": {
+				"operationId": "GetUserTransaction",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetUserTransactionRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "employerEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "serviceProviderEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/user": {
 			"get": {
 				"operationId": "GetUser",
@@ -481,8 +747,9 @@
 					{
 						"in": "query",
 						"name": "email",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					}
@@ -580,8 +847,9 @@
 					{
 						"in": "query",
 						"name": "employerEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					}
@@ -628,8 +896,9 @@
 					{
 						"in": "query",
 						"name": "receiverEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					}
@@ -696,16 +965,18 @@
 					{
 						"in": "query",
 						"name": "senderEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					},
 					{
 						"in": "query",
 						"name": "receiverEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					}
@@ -732,15 +1003,16 @@
 					{
 						"in": "query",
 						"name": "receiverEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					},
 					{
 						"in": "query",
 						"name": "status",
-						"required": true,
+						"required": false,
 						"schema": {
 							"$ref": "#/components/schemas/RequestStatus"
 						}
@@ -768,16 +1040,179 @@
 					{
 						"in": "query",
 						"name": "senderEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					},
 					{
 						"in": "query",
 						"name": "receiverEmail",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/record": {
+			"get": {
+				"operationId": "GetRecord",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetRecordRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "employerEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "serviceProviderEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "SetRecord",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetRecordRq"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/record/date": {
+			"get": {
+				"operationId": "GetRecordByDate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetRecordRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "employerEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "serviceProviderEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "date",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/record/period": {
+			"get": {
+				"operationId": "GetRecordByPeriod",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/GetRecordRs"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "employerEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "serviceProviderEmail",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "from",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "to",
+						"required": false,
+						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					}
@@ -785,11 +1220,11 @@
 			}
 		},
 		"/employer": {
-			"post": {
+			"get": {
 				"operationId": "GetEmployer",
 				"responses": {
 					"200": {
-						"description": "GetEmployerRs Return the employer data",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -800,17 +1235,17 @@
 					}
 				},
 				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/GetEmployerRq"
-							}
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": false,
+						"schema": {
+							"default": "",
+							"type": "string"
 						}
 					}
-				}
+				]
 			}
 		},
 		"/otp": {
@@ -833,8 +1268,9 @@
 					{
 						"in": "query",
 						"name": "email",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": "",
 							"type": "string"
 						}
 					}
