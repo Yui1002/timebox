@@ -16,6 +16,10 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(14), 
     fontWeight: '500'
   },
+  nameTitle: {
+    fontSize: 16, 
+    fontWeight: '500'
+  },
   listContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

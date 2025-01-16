@@ -1,6 +1,10 @@
 import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
-import { DefaultApiFactory, GetUserRs, SignInUserRq } from '../../swagger/generated';
+import {
+  DefaultApiFactory,
+  GetUserRs,
+  SignInUserRq,
+} from '../../swagger/generated';
 import {
   Text,
   View,
@@ -10,11 +14,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Error from '../Error';
-import {styles } from '../../styles/signInStyles.js';
+import {styles} from '../../styles/signInStyles.js';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import {navigate} from '../../helper/navigate';
 import Validator from '../../validator/validator';
-import { ErrorModel } from '../../types';
+import {ErrorModel} from '../../types';
+import {Screen, ErrMsg} from '../../enums';
 let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
@@ -22,23 +27,14 @@ const SignIn = ({navigation}: any) => {
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({
-    message: "",
-    statusCode: 200
-  });
+  const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const validateInput = (): boolean => {
     if (!Validator.isValidEmail(email)) {
-      setErrors({
-        message: 'Invalid email',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.INVALID_EMAIL});
       return false;
     } else if (!Validator.isValidPassword(password)) {
-      setErrors({
-        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.INVALID_PASSWORD});
       return false;
     }
     return true;
@@ -47,38 +43,36 @@ const SignIn = ({navigation}: any) => {
   const signIn = async (): Promise<void> => {
     if (!validateInput()) return;
 
-    const params: SignInUserRq = {
-      email, password
-    }
+    const params: SignInUserRq = {email, password};
 
     try {
-      const { data } = await userApi.signInUser(params);
+      const {data} = await userApi.signInUser(params);
       dispatchUser(data);
-      clearInput();
-      navigate(navigation, 'DrawerNav', null);
+      navigateScreen(Screen.DRAWER_NAV);
     } catch (e: any) {
-      setErrors({
-        message: 'Invalid email or password',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.SIGNIN_ERROR});
     }
   };
 
   const clearInput = (): void => {
     setEmail('');
     setPassword('');
-    setErrors({
-      message: '',
-      statusCode: 200
-    });
+    setErrors({message: ''});
   };
 
   const dispatchUser = (data: GetUserRs): void => {
-    dispatch(signInUser({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-    }));
+    dispatch(
+      signInUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+      }),
+    );
+  };
+
+  const navigateScreen = (screenName: string) => {
+    clearInput();
+    navigate(navigation, screenName, null);
   };
 
   return (
@@ -121,7 +115,7 @@ const SignIn = ({navigation}: any) => {
             <Text>New user?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigate(navigation, 'SignUp', null)}>
+              onPress={() => navigateScreen(Screen.SIGN_UP)}>
               Sign Up
             </Text>
           </View>
@@ -129,7 +123,7 @@ const SignIn = ({navigation}: any) => {
             <Text>Forgot password?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigate(navigation, 'ForgotPassword', null)}>
+              onPress={() => navigateScreen(Screen.FORGOT_PASSWORD)}>
               Reset password
             </Text>
           </View>

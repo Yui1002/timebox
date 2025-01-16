@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {Text, View, SafeAreaView, TouchableOpacity, Alert} from 'react-native';
+import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import {styles} from '../../styles/recordStyles.js';
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
@@ -10,7 +10,7 @@ import Error from '../Error';
 import { TimeType } from '../../enums';
 import { ErrorModel } from '../../types';
 import Validator from '../../validator/validator';
-import { DefaultApiFactory } from '../../swagger/generated';
+import { DefaultApiFactory, GetRecordRq } from '../../swagger/generated';
 const api = DefaultApiFactory();
 
 const Record = ({route}: any) => {
@@ -18,8 +18,8 @@ const Record = ({route}: any) => {
   const serviceProviderEmail = route.params.serviceProviderEmail;
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [start, setStart] = useState<Date | string>('');
-  const [end, setEnd] = useState<Date | string>('');
+  const [start, setStart] = useState<Date | null>(null);
+  const [end, setEnd] = useState<Date | null>(null);
   const [errors, setErrors] = useState<ErrorModel>({
     message: '',
     statusCode: 200
@@ -59,11 +59,14 @@ const Record = ({route}: any) => {
   };
 
   const checkRecordExists = async (type: string) => {
+
     try {
       const params: GetRecordRq = {
-        
+        employerEmail: email,
+        serviceProviderEmail: serviceProviderEmail
       }
-      const { data } = api.getRecord
+
+      const { data } = await api.getRecord(params);
       // const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByDate`, {
       //   employerEmail: email,
       //   serviceProviderEmail: serviceProviderEmail,
@@ -91,6 +94,8 @@ const Record = ({route}: any) => {
     if (!validateInput(type)) return;
     checkRecordExists('start');
 
+
+
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
         employerEmail: email,
@@ -98,9 +103,6 @@ const Record = ({route}: any) => {
         recordTime: date,
         type: type,
       });
-
-      setStart(response.data?.records[0].startTime);
-      setEnd(response.data?.records[0].endTime);
     } catch (e: any) {
       console.log('error', e);
     }
@@ -114,9 +116,7 @@ const Record = ({route}: any) => {
         </Text>
       </View>
       <View style={{marginVertical: 10}}>
-        {Object.values(errors).map((error, key) => (
-          <Error key={key} msg={error} />
-        ))}
+        {errors.message && <Error msg={errors.message} />}
       </View>
       <View style={styles.dateContainer}>
         <View style={styles.subDateContainer}>
@@ -158,7 +158,7 @@ const Record = ({route}: any) => {
           open={startOpen}
           mode="datetime"
           date={new Date()}
-          onConfirm={d => setStart(d)}
+          onConfirm={(d: Date) => setStart(d)}
           onCancel={() => setStartOpen(false)}
           minimumDate={
             mode === 1
@@ -172,7 +172,7 @@ const Record = ({route}: any) => {
           open={endOpen}
           mode="datetime"
           date={new Date()}
-          onConfirm={d => setEnd(d)}
+          onConfirm={(d: Date) => setEnd(d)}
           onCancel={() => setEndOpen(false)}
           minimumDate={
             mode === 1

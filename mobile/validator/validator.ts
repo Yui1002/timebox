@@ -30,11 +30,11 @@ class Validator {
     return !isEmpty(rateType);
   }
 
-  static isValidStartTime(start: string, end: string) {
+  static isValidStartTime(start: Date, end: Date) {
     return moment(start).isBefore(moment(end))
   }
 
-  static isValidEndTime(start: string, end: string) {
+  static isValidEndTime(start: Date, end: Date) {
     return moment(end).isAfter(moment(start))
   }
 }

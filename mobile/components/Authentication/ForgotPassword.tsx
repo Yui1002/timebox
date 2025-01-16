@@ -2,24 +2,19 @@ import React, {useState} from 'react';
 import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
 import {styles} from '../../styles/forgotPasswordStyles.js';
 import Error from '../Error';
-import { ErrorModel, ForgotPasswordProps } from '../../types';
+import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
-import { DefaultApiFactory } from '../../swagger/generated';
+import {DefaultApiFactory} from '../../swagger/generated';
+import {Screen, ErrMsg} from '../../enums';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
   const [email, setEmail] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200
-  });
+  const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const validateEmail = (): boolean => {
     if (!Validator.isValidEmail(email)) {
-      setErrors({
-        message: 'Email is invalid',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.INVALID_EMAIL});
       return false;
     }
     return true;
@@ -28,11 +23,11 @@ const ForgotPassword = ({navigation}: any) => {
   const navigateScreen = () => {
     const params: ForgotPasswordProps = {
       email: email,
-      isSignUp: false
+      isSignUp: false,
     };
 
-    navigation.navigate('VerifyOTP', params);
-  }
+    navigation.navigate(Screen.VERIFY_OTP, params);
+  };
 
   const checkEmailRegistered = async (): Promise<void> => {
     if (!validateEmail()) return;
@@ -41,10 +36,7 @@ const ForgotPassword = ({navigation}: any) => {
       await api.getUser(email);
       navigateScreen();
     } catch (e) {
-      setErrors({
-        message: 'Email is not registered',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.EMAIL_NOT_FOUND});
     }
   };
 
@@ -74,7 +66,7 @@ const ForgotPassword = ({navigation}: any) => {
           <Text>Go back to</Text>
           <Text
             style={styles.link}
-            onPress={() => navigation.navigate('SignIn')}>
+            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
             Sign In
           </Text>
         </View>

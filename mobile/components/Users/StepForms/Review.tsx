@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/stepFormsStyles.js';
-import StatusBar from './StatusBar';
+import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
@@ -10,6 +10,7 @@ import {alertError} from '../../../helper/Alert';
 import { DefaultApiFactory, SetRequestRq, Mode } from '../../../swagger/generated';
 import { ErrorModel } from '../../../types';
 import Error from '../../Error';
+import { ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
 
 let api = DefaultApiFactory();
 
@@ -20,17 +21,14 @@ const Review = ({route, navigation}: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
-  const [error, setError] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200
-  })
+  const [error, setError] = useState<ErrorModel>({message: ''})
 
   const editDay = () => {
-    navigation.navigate('WorkShifts', params);
+    navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
   const editRate = () => {
-    navigation.navigate('PersonalInfo', params);
+    navigation.navigate(Screen.PERSONAL_INFO, params);
   };
 
   const confirmServiceProvider = async () => {
@@ -48,10 +46,7 @@ const Review = ({route, navigation}: any) => {
       clearInput();
       showSuccess();
     } catch (e: any) {
-      setError({
-        message: 'Failed to set a request',
-        statusCode: 400
-      })
+      setError({message: ErrMsg.REQUEST_SEND_ERR})
     }
     await api.setRequest(params)
   };
@@ -61,30 +56,19 @@ const Review = ({route, navigation}: any) => {
       'Success',
       `We have sent an email to ${firstName} ${lastName}. Once this request is approved, you will see this person on your service provider list.`,
       function () {
-        navigation.navigate('Home');
+        navigation.navigate(Screen.HOME);
       },
     );
   };
 
   const clearInput = (): void => {
     dispatch(resetShift(workShifts.workShifts));
-    setError({
-      message: '',
-      statusCode: 200
-    });
+    setError({message: ''});
   };
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.statusBarContainer}>
-        {statusTitles.map((val, index) => (
-          <StatusBar
-            key={index}
-            title={val}
-            isFocused={statusTitles[index] === 'Review'}
-          />
-        ))}
-      </View>
+      <ProgressBar title={Bar.REVIEW} isFocused={true} />
       <View>
         {error.message && <Error msg={error.message} />}
         <View>

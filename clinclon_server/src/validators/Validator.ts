@@ -25,15 +25,24 @@ class Validator {
      * @param objectType instance of type T
      * @returns object of type T (specified by caller)
      */
-    validateBody<T extends BaseRequest>(request: any, objectType: T): T {
-        console.log('request is', request)
-        let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === objectType.getInstanceName());
+    // validateBody<T extends BaseRequest>(request: any, objectType: T): T {
+    //     console.log('request is', request)
+    //     let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === objectType.getInstanceName());
+    //     if (selectedValidators.length != 1) {
+    //         throw new ResponseException(null, 500, "Unable to parse validators");
+    //     }
+    //     let validator = selectedValidators[0];
+    //     if (!request)
+    //         return validator.validateAndConvertRequest(objectType);
+    //     return validator.validateAndConvertRequest(request)
+    // }
+
+    validateBody(request: any, instanceName: string): any {
+        let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === instanceName);
         if (selectedValidators.length != 1) {
             throw new ResponseException(null, 500, "Unable to parse validators");
         }
         let validator = selectedValidators[0];
-        if (!request)
-            return validator.validateAndConvertRequest(objectType);
         return validator.validateAndConvertRequest(request)
     }
 
@@ -42,5 +51,6 @@ class Validator {
         return this._instance || (this._instance = new this());
     }
 }
+
 
 export default Validator;

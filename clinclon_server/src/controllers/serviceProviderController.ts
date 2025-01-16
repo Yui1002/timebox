@@ -2,6 +2,7 @@ import ServiceProviderManager from '../managers/serviceProviderManager';
 import SuperController from './SuperController';
 import { GetServiceProviderRq, UpdateServiceProviderRq, GetServiceProviderRs } from '../models/ServiceProvider';
 import { Body, Get, Put, Queries, Route } from "tsoa";
+import Validate from '../validators/CustomValidator';
 
 interface IServiceProviderController {
     getServiceProvider(rq: GetServiceProviderRq): Promise<GetServiceProviderRs>;
@@ -18,14 +19,14 @@ export class ServiceProviderController extends SuperController implements IServi
     }
 
     @Get()
+    @Validate
     public async getServiceProvider(@Queries() rq: GetServiceProviderRq): Promise<GetServiceProviderRs> {
-        const parsedRq = this._validator.validateBody<GetServiceProviderRq>(rq, new GetServiceProviderRq());
-        return await this._serviceProviderManager.getServiceProvider(parsedRq);
+        return await this._serviceProviderManager.getServiceProvider(rq);
     }
     
     @Put()
-    public async updateServiceProvider(@Body() request: UpdateServiceProviderRq): Promise<void> {
-        let parsedRq = this._validator.validateBody<UpdateServiceProviderRq>(request, new UpdateServiceProviderRq());
-        await this._serviceProviderManager.updateServiceProvider(parsedRq);
+    @Validate
+    public async updateServiceProvider(@Body() rq: UpdateServiceProviderRq): Promise<void> {
+        await this._serviceProviderManager.updateServiceProvider(rq);
     }
 }

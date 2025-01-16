@@ -13,7 +13,8 @@ import {styles} from '../../styles/signUpStyles.js';
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
 import {DefaultApiFactory} from '../../swagger/generated';
-import { ErrorModel, SignUpProps } from '../../types';
+import {ErrorModel, SignUpProps} from '../../types';
+import {Screen, ErrMsg, Display} from '../../enums';
 let userApi = DefaultApiFactory();
 
 const SignUp = ({navigation}: any) => {
@@ -23,62 +24,44 @@ const SignUp = ({navigation}: any) => {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [errors, setErrors] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200
-  });
+  const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const checkUserExists = async (): Promise<void> => {
     if (!validateInput()) return;
 
     try {
       await userApi.getUser(email);
-      setErrors({
-        message: 'Email already exists',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.DUPLICATE_EMAIL});
     } catch (e) {
       let navigationProps: SignUpProps = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
+        firstName,
+        lastName,
+        email,
+        password,
         isSignUp: true,
       };
-      navigate(navigation, 'VerifyOTP', navigationProps);
+      navigate(navigation, Screen.VERIFY_OTP, navigationProps);
     }
   };
 
   const validateInput = (): boolean => {
     if (!Validator.isNotEmpty(firstName) || !Validator.isNotEmpty(lastName)) {
-      setErrors({
-        message: 'invalid name',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.INVALID_NAME});
       return false;
     }
     if (!Validator.isValidEmail(email)) {
-      setErrors({
-        message: 'invalid email',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.INVALID_EMAIL});
       return false;
     }
     if (!Validator.isValidPassword(password)) {
-      setErrors({
-        message: 'Password must contain 8 characters, 1 number, 1 upper, 1 lower',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.INVALID_PASSWORD});
       return false;
     }
     if (!Validator.isPasswordMatch(password, confirmedPassword)) {
-      setErrors({
-        message: 'Password mismatch',
-        statusCode: 400
-      });
+      setErrors({message: ErrMsg.MISMATCH_PASSWORD});
       return false;
     }
-    return true
+    return true;
   };
 
   return (
@@ -133,7 +116,7 @@ const SignUp = ({navigation}: any) => {
               <Text
                 style={styles.hide}
                 onPress={() => setShowPassword(!showPassword)}>
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? Display.HIDE : Display.SHOW}
               </Text>
             </View>
           </View>
@@ -153,7 +136,7 @@ const SignUp = ({navigation}: any) => {
               <Text
                 style={styles.hide}
                 onPress={() => setShowPassword(!showPassword)}>
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? Display.HIDE : Display.SHOW}
               </Text>
             </View>
           </View>
@@ -168,7 +151,7 @@ const SignUp = ({navigation}: any) => {
             <Text>Already have account?</Text>
             <Text
               style={styles.link}
-              onPress={() => navigate(navigation, 'SignIn', null)}>
+              onPress={() => navigate(navigation, Screen.SIGN_IN, null)}>
               Sign In
             </Text>
           </View>

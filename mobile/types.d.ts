@@ -1,5 +1,11 @@
 import {RateTypeValue} from './enums';
 
+type UserInfo = {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 type Schedule = {
   id?: number;
   day: string | undefined;
@@ -38,7 +44,6 @@ type Record = {
 
 type ErrorModel = {
   message: string;
-  statusCode: number;
 };
 
 type NotificationData = {
@@ -96,6 +101,7 @@ type ForgotPasswordProps = {
 }
 
 export {
+  UserInfo,
   PersonalInfoProps,
   RateTypeSet,
   RateType,

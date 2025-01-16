@@ -2,6 +2,7 @@ import UserTransactionManager from '../managers/userTransactionManager';
 import SuperController from './SuperController';
 import { GetUserTransactionRq, GetUserTransactionRs } from '../models/UserTransaction';
 import { Get, Queries, Route } from "tsoa";
+import Validate from '../validators/CustomValidator';
 
 interface IUserTransactionController {
     getUserTransaction(rq: GetUserTransactionRq): Promise<GetUserTransactionRs>;
@@ -17,8 +18,8 @@ export class UserTransactionController extends SuperController implements IUserT
     }
 
     @Get()
+    @Validate
     public async getUserTransaction(@Queries() rq: GetUserTransactionRq): Promise<GetUserTransactionRs> {
-        const parsedRq = this._validator.validateBody<GetUserTransactionRq>(rq, new GetUserTransactionRq());
-        return await this._userTransactionManager.getUserTransaction(parsedRq);
+        return await this._userTransactionManager.getUserTransaction(rq);
     }  
 }

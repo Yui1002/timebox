@@ -2,6 +2,26 @@ import {JsonObject, JsonProperty} from 'json2typescript';
 import { BaseRequest, BaseUserRequest} from './BaseRequest';
 import { UserStatus } from '../helpers/enum';
 
+@JsonObject("UserRawDB")
+class UserRawDB extends BaseRequest {
+    @JsonProperty("id", Number)
+    id: number = 0;
+
+    @JsonProperty("first_name", String)
+    first_name: string = "";
+
+    @JsonProperty("last_name", String)
+    last_name: string = "";
+
+    @JsonProperty("email_address", String)
+    email: string = "";
+    @JsonProperty("password", String)
+    password: string = "";
+
+    @JsonProperty("status")
+    status: UserStatus = UserStatus.ACTIVE;
+}
+
 @JsonObject("GetUserRq")
 class GetUserRq extends BaseRequest {
     @JsonProperty("email", String)
@@ -44,26 +64,6 @@ class SignInUserRq extends BaseUserRequest {
 class ResetPasswordRq extends BaseUserRequest {
     @JsonProperty("newPassword", String)
     newPassword: string = '';
-}
-
-@JsonObject("UserRawDB")
-class UserRawDB extends BaseRequest {
-    @JsonProperty("id", Number)
-    id: number = 0;
-
-    @JsonProperty("first_name", String)
-    first_name: string = "";
-
-    @JsonProperty("last_name", String)
-    last_name: string = "";
-
-    @JsonProperty("email_address", String)
-    email: string = "";
-    @JsonProperty("password", String)
-    password: string = "";
-
-    @JsonProperty("status")
-    status: UserStatus = UserStatus.ACTIVE;
 }
 
 export { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq, UserRawDB }
