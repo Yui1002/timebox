@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/personalInfoStyles.js';
+import StyleSheetFactory, {common} from '../../../styles/commonStyles.js';
 import ProgressBar from './ProgressBar';
 import InputField from '../../InputField';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -16,11 +17,11 @@ import {
   ErrMsg,
   ProgressBar as Bar,
 } from '../../../enums';
+import {COLORS} from '../../../styles/theme';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email}: PersonalInfoProps = route.params;
-  const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [open, setOpen] = useState<boolean>(false);
   const [items, setItems] = useState<RateTypeSet[]>([
     {label: RateTypeValue.HOURLY, value: RateTypeValue.HOURLY},
@@ -64,39 +65,46 @@ const PersonalInfo = ({route, navigation}: any) => {
     navigation.goBack();
   };
 
+  let continueBtn = StyleSheetFactory.setButton('45%', 32, COLORS.button1).button;
+  let backBtn = StyleSheetFactory.setButton('45%', 32, COLORS.button3).button;
+  let modeBtn = StyleSheetFactory.setButton('45%', 32, COLORS.button3, 1, COLORS.text2).button;
+  let header = StyleSheetFactory.setFontSize(22);
+  let title = StyleSheetFactory.setFontSize(14);
+  let input = StyleSheetFactory.setFontSize(18);
+  let inputContainer = StyleSheetFactory.setWidth('50%');
+  let margin1 = StyleSheetFactory.setMargin(8);
+  let align = StyleSheetFactory.setAlign();
+
+
   return (
-    <View style={styles.container}>
+    <View style={common.container}>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
       <ScrollView>
         {error.message && <Error msg={error.message} />}
         <View style={styles.header}>
-          <Text style={styles.headerText}>User Information</Text>
+          <Text style={header}>User Information</Text>
         </View>
-        <View style={[styles.subContainer, styles.align]}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputText}>First Name</Text>
-            <Text style={styles.subInputText}>
-              {firstName ? firstName : 'Not specified'}
-            </Text>
+        <View style={[margin1, align]}>
+          <View style={inputContainer}>
+            <Text style={title}>First Name</Text>
+            <Text style={input}>{firstName ? firstName : 'Not specified'}</Text>
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputText}>Last Name</Text>
-            <Text style={styles.subInputText}>
-              {lastName ? lastName : 'Not specified'}
-            </Text>
+          <View style={inputContainer}>
+            <Text style={title}>Last Name</Text>
+            <Text style={input}>{lastName ? lastName : 'Not specified'}</Text>
           </View>
         </View>
-        <View style={styles.subContainer}>
-          <Text style={styles.inputText}>Email Address</Text>
-          <Text style={styles.subInputText}>{email}</Text>
+        <View style={margin1}>
+          <Text style={title}>Email Address</Text>
+          <Text style={input}>{email}</Text>
         </View>
-        <View style={[styles.subContainer, styles.align]}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputText}>Rate ($)</Text>
+        <View style={[margin1, align]}>
+          <View style={inputContainer}>
+            <Text style={title}>Rate ($)</Text>
             <InputField.Underlined onChangeText={setRate} />
           </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputText}>Rate Type</Text>
+          <View style={inputContainer}>
+            <Text style={title}>Rate Type</Text>
             <DropDownPicker
               open={open}
               value={rateType}
@@ -108,14 +116,14 @@ const PersonalInfo = ({route, navigation}: any) => {
             />
           </View>
         </View>
-        <View style={open ? styles.open : styles.close}>
-          <Text style={styles.inputText}>
+        <View style={[margin1, open ? {zIndex: -1} : {zIndex: 1}]}>
+          <Text style={title}>
             Allow the service provider to modify record time?
           </Text>
-          <View style={[styles.subContainer, styles.align]}>
+          <View style={[margin1, align]}>
             <TouchableOpacity
               style={[
-                styles.mode,
+                modeBtn,
                 isEnabled ? styles.selected : styles.notSelected,
               ]}
               onPress={() => setIsEnabled(true)}>
@@ -123,7 +131,7 @@ const PersonalInfo = ({route, navigation}: any) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={[
-                styles.mode,
+                modeBtn,
                 !isEnabled ? styles.selected : styles.notSelected,
               ]}
               onPress={() => setIsEnabled(false)}>
@@ -131,15 +139,11 @@ const PersonalInfo = ({route, navigation}: any) => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={[styles.btnContainer, styles.align]}>
-          <TouchableOpacity
-            style={[styles.btn, styles.backBtn]}
-            onPress={goBack}>
+        <View style={[styles.btnContainer, align]}>
+          <TouchableOpacity style={backBtn} onPress={goBack}>
             <Text style={styles.buttonText}>Back</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.btn, styles.continueBtn]}
-            onPress={proceed}>
+          <TouchableOpacity style={continueBtn} onPress={proceed}>
             <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(
               9654,
             )}`}</Text>
