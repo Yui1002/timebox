@@ -9,7 +9,11 @@ import {
   Keyboard,
 } from 'react-native';
 import Validator from '../../validator/validator';
-import {styles} from '../../styles/signUpStyles.js';
+import ContainerStyle from '../../styles/Container';
+import ButtonStyle from '../../styles/Button';
+import InputStyle from '../../styles/Input';
+import TextStyle from '../../styles/Text';
+import SeparatorStyle from '../../styles/Separator';
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
 import {DefaultApiFactory} from '../../swagger/generated';
@@ -64,42 +68,52 @@ const SignUp = ({navigation}: any) => {
     return true;
   };
 
+  let container = ContainerStyle.createTopContainerStyle().topContainer;
+  let inputContainer = ContainerStyle.createBasicContainerStyle().container;
+  let input = InputStyle.createBasicInputStyle().input;
+  let button = ButtonStyle.createBasicButtonStyle().button;
+  let buttonText = TextStyle.createBasicTextStyle().text;
+  let linkText = TextStyle.createLinkTextStyle().link;
+  let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
+  let footer = ContainerStyle.createFooterStyle();
+  let toggle = TextStyle.createToggleTextStyle().toggle;
+
   return (
     <ScrollView>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={container}>
         {errors.message && <Error msg={errors.message} />}
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>First Name</Text>
           <TextInput
-            style={styles.input}
+            style={input}
             autoCorrect={false}
             onChangeText={val => setFirstName(val)}
             autoFocus={true}
           />
         </View>
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>Last Name</Text>
           <TextInput
-            style={styles.input}
+            style={input}
             autoCorrect={false}
             onChangeText={val => setLastName(val)}
           />
         </View>
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>Email</Text>
           <TextInput
-            style={styles.input}
+            style={input}
             keyboardType="email-address"
             autoCorrect={false}
             autoCapitalize="none"
             onChangeText={val => setEmail(val)}
           />
         </View>
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>Password</Text>
           <View>
             <TextInput
-              style={styles.input}
+              style={input}
               autoCorrect={false}
               autoCapitalize="none"
               secureTextEntry={!showPassword}
@@ -107,18 +121,16 @@ const SignUp = ({navigation}: any) => {
               onSubmitEditing={() => Keyboard.dismiss()}
               onChangeText={val => setPassword(val)}
             />
-            <Text
-              style={styles.hide}
-              onPress={() => setShowPassword(!showPassword)}>
+            <Text style={toggle} onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? Display.HIDE : Display.SHOW}
             </Text>
           </View>
         </View>
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>Confirm Password</Text>
           <View>
             <TextInput
-              style={styles.input}
+              style={input}
               autoCorrect={false}
               autoCapitalize="none"
               blurOnSubmit={false}
@@ -126,22 +138,20 @@ const SignUp = ({navigation}: any) => {
               secureTextEntry={!showPassword}
               onChangeText={val => setConfirmedPassword(val)}
             />
-            <Text
-              style={styles.hide}
-              onPress={() => setShowPassword(!showPassword)}>
+            <Text style={toggle} onPress={() => setShowPassword(!showPassword)}>
               {showPassword ? Display.HIDE : Display.SHOW}
             </Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.button} onPress={checkUserExists}>
-          <Text style={styles.buttonText}>Sign Up</Text>
+        <TouchableOpacity style={button} onPress={checkUserExists}>
+          <Text style={buttonText}>Sign Up</Text>
         </TouchableOpacity>
-        <View style={styles.separator}></View>
-        <View style={styles.footer}>
+        <View style={separator}></View>
+        <View style={footer}>
           <View>
             <Text>Already have account?</Text>
             <Text
-              style={styles.link}
+              style={linkText}
               onPress={() => navigate(navigation, Screen.SIGN_IN, null)}>
               Sign In
             </Text>

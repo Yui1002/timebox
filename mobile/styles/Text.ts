@@ -21,4 +21,14 @@ export default class TextStyle {
       },
     });
   }
+
+  static createToggleTextStyle() {
+    return StyleSheet.create({
+      toggle: {
+        position: 'absolute',
+        top: '32%',
+        right: '8%',
+      },
+    });
+  }
 }
