@@ -6,7 +6,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import {styles} from '../../styles/verifyOTP.js';
+import ContainerStyle from '../../styles/Container';
+import ButtonStyle from '../../styles/Button';
+import InputStyle from '../../styles/Input';
+import TextStyle from '../../styles/Text';
+import SeparatorStyle from '../../styles/Separator';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {navigate} from '../../helper/navigate';
@@ -85,36 +89,45 @@ const VerifyOTP = ({route, navigation}: any) => {
     }
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle().topContainer;
+  let container = ContainerStyle.createBasicContainerStyle().container;
+  let otpInput = InputStyle.createOTPInputStyle();
+  let button = ButtonStyle.createBasicButtonStyle().button;
+  let buttonText = TextStyle.createBasicTextStyle().text;
+  let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
+  let footer = ContainerStyle.createFooterStyle();
+  let linkText = TextStyle.createLinkTextStyle().link;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={topContainer}>
       {errors.message && <Error msg={errors.message} />}
-      <View style={styles.text}>
+      <View style={container}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
-      <View style={styles.otpContainer}>
+      <View style={container}>
         <TextInput
-          style={styles.otpBox}
+          style={otpInput}
           maxLength={6}
           keyboardType="numeric"
           autoFocus
           onChangeText={val => setOtp(val)}
         />
       </View>
-      <TouchableOpacity style={styles.button} onPress={verifyOTP}>
-        <Text style={styles.buttonText}>Verify</Text>
+      <TouchableOpacity style={button} onPress={verifyOTP}>
+        <Text style={buttonText}>Verify</Text>
       </TouchableOpacity>
-      <View style={styles.separator}></View>
-      <View style={styles.footer}>
+      <View style={separator}></View>
+      <View style={footer}>
         <View>
           <Text>Didn't receive a code?</Text>
-          <Text style={styles.link} onPress={setOTP}>
+          <Text style={linkText} onPress={setOTP}>
             Resend
           </Text>
         </View>
         <View>
           <Text>Go back to</Text>
           <Text
-            style={styles.link}
+            style={linkText}
             onPress={() => navigation.navigate(Screen.SIGN_IN)}>
             Sign In
           </Text>

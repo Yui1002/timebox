@@ -7,13 +7,16 @@ import {
   Button,
   TouchableOpacity,
 } from 'react-native';
-import {styles} from '../../styles/forgotPasswordStyles.js';
+import ContainerStyle from '../../styles/Container';
+import ButtonStyle from '../../styles/Button';
+import InputStyle from '../../styles/Input';
+import TextStyle from '../../styles/Text';
+import SeparatorStyle from '../../styles/Separator';
 import Error from '../Error';
 import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger/generated';
 import {Screen, ErrMsg} from '../../enums';
-import {COLORS} from '../../styles/theme';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
@@ -48,27 +51,36 @@ const ForgotPassword = ({navigation}: any) => {
     }
   };
 
+  let container = ContainerStyle.createTopContainerStyle().topContainer;
+  let inputContainer = ContainerStyle.createBasicContainerStyle().container;
+  let input = InputStyle.createBasicInputStyle().input;
+  let button = ButtonStyle.createBasicButtonStyle().button;
+  let buttonText = TextStyle.createBasicTextStyle().text;
+  let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
+  let footer = ContainerStyle.createFooterStyle();
+  let linkText = TextStyle.createLinkTextStyle().link;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={container}>
       {errors.message && <Error msg={errors.message} />}
-      <View style={styles.inputContainer}>
+      <View style={inputContainer}>
         <Text>Email</Text>
         <TextInput
-          style={styles.input}
+          style={input}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={val => setEmail(val)}
         />
       </View>
-      <TouchableOpacity style={styles.button} onPress={checkEmailRegistered}>
-        <Text style={styles.buttonText}>Verify Email</Text>
+      <TouchableOpacity style={button} onPress={checkEmailRegistered}>
+        <Text style={buttonText}>Verify Email</Text>
       </TouchableOpacity>
-      <View style={styles.separator}></View>
-      <View style={styles.footer}>
+      <View style={separator}></View>
+      <View style={footer}>
         <View>
           <Text>Go back to</Text>
           <Text
-            style={styles.link}
+            style={linkText}
             onPress={() => navigation.navigate(Screen.SIGN_IN)}>
             Sign In
           </Text>

@@ -14,4 +14,17 @@ export default class InputStyle {
       },
     });
   }
+
+  static createOTPInputStyle() {
+    let x = this.createBasicInputStyle().input;
+    let y = StyleSheet.create({
+      otpInput: {
+        width: 200,
+        fontSize: 16,
+        letterSpacing: 10,
+        textAlign: 'center',
+      },
+    }).otpInput;
+    return StyleSheet.compose(x, y);
+  }
 }
