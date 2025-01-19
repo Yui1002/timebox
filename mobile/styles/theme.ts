@@ -1,14 +1,11 @@
 export const COLORS = {
-    button1: '#24a0ed',
-    button2: '#ddd',
-    button3: '#909090',
-    error1: '#FFCCCB',
-    error2: '#ef5350',
-    text1: '#fff',
-    text2: '#000',
-    separator: '#737373',
-    background1: '#ddd',
-
+    BLUE: '#24a0ed',
+    LIGHT_GREY: '#ddd',
+    DARK_GRAY: '#909090',
+    PINK: '#FFCCCB',
+    RED: '#ef5350',
+    WHITE: '#fff',
+    BLACK: '#000',
 }
 
 export const FONT_WEIGHT = {

@@ -14,7 +14,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Error from '../Error';
-import {styles} from '../../styles/signInStyles.js';
+import ContainerStyle from '../../styles/Container';
+import ButtonStyle from '../../styles/Button';
+import InputStyle from '../../styles/Input';
+import TextStyle from '../../styles/Text';
+import SeparatorStyle from '../../styles/Separator';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import {navigate} from '../../helper/navigate';
 import Validator from '../../validator/validator';
@@ -75,40 +79,49 @@ const SignIn = ({navigation}: any) => {
     navigate(navigation, screenName, null);
   };
 
+  let container = ContainerStyle.createTopContainerStyle().topContainer;
+  let inputContainer = ContainerStyle.createBasicContainerStyle().container;
+  let input = InputStyle.createBasicInputStyle().input;
+  let button = ButtonStyle.createBasicButtonStyle().button;
+  let buttonText = TextStyle.createBasicTextStyle().text;
+  let linkText = TextStyle.createLinkTextStyle().link;
+  let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
+  let footer = ContainerStyle.createFooterStyle();
+
   return (
     <ScrollView>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={container}>
         {errors.message && <Error msg={errors.message} />}
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>Email</Text>
           <TextInput
             value={email}
-            style={styles.input}
+            style={input}
             autoCorrect={false}
             autoCapitalize="none"
             onChangeText={val => setEmail(val)}
           />
         </View>
-        <View style={styles.inputContainer}>
+        <View style={inputContainer}>
           <Text>Password</Text>
           <TextInput
             value={password}
-            style={styles.input}
+            style={input}
             autoCorrect={false}
             autoCapitalize="none"
             secureTextEntry={true}
             onChangeText={val => setPassword(val)}
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={signIn}>
-          <Text style={styles.buttonText}>Sign In</Text>
+        <TouchableOpacity style={button} onPress={signIn}>
+          <Text style={buttonText}>Sign In</Text>
         </TouchableOpacity>
-        <View style={styles.separator}></View>
-        <View style={styles.footer}>
+        <View style={separator}></View>
+        <View style={footer}>
           <View>
             <Text>New user?</Text>
             <Text
-              style={styles.link}
+              style={linkText}
               onPress={() => navigateScreen(Screen.SIGN_UP)}>
               Sign Up
             </Text>
@@ -116,7 +129,7 @@ const SignIn = ({navigation}: any) => {
           <View>
             <Text>Forgot password?</Text>
             <Text
-              style={styles.link}
+              style={linkText}
               onPress={() => navigateScreen(Screen.FORGOT_PASSWORD)}>
               Reset password
             </Text>

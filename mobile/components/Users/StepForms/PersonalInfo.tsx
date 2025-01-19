@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {styles} from '../../../styles/personalInfoStyles.js';
-import StyleSheetFactory, {common} from '../../../styles/commonStyles.js';
+import StyleSheetFactory from '../../../styles/commonStyles.js';
 import ProgressBar from './ProgressBar';
 import InputField from '../../InputField';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -65,23 +65,28 @@ const PersonalInfo = ({route, navigation}: any) => {
     navigation.goBack();
   };
 
-  let continueBtn = StyleSheetFactory.setButton('45%', 32, COLORS.button1).button;
-  let backBtn = StyleSheetFactory.setButton('45%', 32, COLORS.button3).button;
-  let modeBtn = StyleSheetFactory.setButton('45%', 32, COLORS.button3, 1, COLORS.text2).button;
+  let container = StyleSheetFactory.setContainer().container;
+  let continueBtn = StyleSheetFactory.setButton('45%', 32, COLORS.BLUE).button;
+  let backBtn = StyleSheetFactory.setButton('45%', 32, COLORS.DARK_GRAY).button;
+  let modeBtn = StyleSheetFactory.setButton('45%', 32, COLORS.LIGHT_GREY, 1, COLORS.DARK_GRAY).button;
   let header = StyleSheetFactory.setFontSize(22);
   let title = StyleSheetFactory.setFontSize(14);
   let input = StyleSheetFactory.setFontSize(18);
   let inputContainer = StyleSheetFactory.setWidth('50%');
+  let btnContainer = StyleSheetFactory.setWidth('100%');
   let margin1 = StyleSheetFactory.setMargin(8);
   let align = StyleSheetFactory.setAlign();
-
+  let text = StyleSheetFactory.setText(29).text;
+  let btnText = StyleSheetFactory.setText(32).text;
+  let selected = StyleSheetFactory.setColor(COLORS.BLUE, COLORS.WHITE).color;
+  let notSelected = StyleSheetFactory.setColor(COLORS.WHITE, COLORS.BLUE).color;
 
   return (
-    <View style={common.container}>
+    <View style={container}>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
       <ScrollView>
         {error.message && <Error msg={error.message} />}
-        <View style={styles.header}>
+        <View style={margin1}>
           <Text style={header}>User Information</Text>
         </View>
         <View style={[margin1, align]}>
@@ -124,27 +129,27 @@ const PersonalInfo = ({route, navigation}: any) => {
             <TouchableOpacity
               style={[
                 modeBtn,
-                isEnabled ? styles.selected : styles.notSelected,
+                isEnabled ? selected : notSelected,
               ]}
               onPress={() => setIsEnabled(true)}>
-              <Text style={styles.modeText}>Yes</Text>
+              <Text style={[text, input]}>Yes</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 modeBtn,
-                !isEnabled ? styles.selected : styles.notSelected,
+                !isEnabled ? selected : notSelected,
               ]}
               onPress={() => setIsEnabled(false)}>
-              <Text style={styles.modeText}>No</Text>
+              <Text style={[text, input]}>No</Text>
             </TouchableOpacity>
           </View>
         </View>
-        <View style={[styles.btnContainer, align]}>
+        <View style={[margin1, align, btnContainer]}>
           <TouchableOpacity style={backBtn} onPress={goBack}>
-            <Text style={styles.buttonText}>Back</Text>
+            <Text style={btnText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity style={continueBtn} onPress={proceed}>
-            <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(
+            <Text style={btnText}>{`Continue  ${String.fromCharCode(
               9654,
             )}`}</Text>
           </TouchableOpacity>
