@@ -6,11 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import ContainerStyle from '../../styles/Container';
-import ButtonStyle from '../../styles/Button';
-import InputStyle from '../../styles/Input';
-import TextStyle from '../../styles/Text';
-import SeparatorStyle from '../../styles/Separator';
+import {ContainerStyle, ButtonStyle, InputStyle, TextStyle, SeparatorStyle} from '../../styles';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {navigate} from '../../helper/navigate';
@@ -26,9 +22,9 @@ const VerifyOTP = ({route, navigation}: any) => {
   const [otp, setOtp] = useState<string>('');
   const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
-  useEffect(() => {
-    setOTP();
-  }, []);
+  // useEffect(() => {
+  //   setOTP();
+  // }, []);
 
   const setOTP = async () => {
     const params: SetOTPRq = {
@@ -89,14 +85,15 @@ const VerifyOTP = ({route, navigation}: any) => {
     }
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle().topContainer;
-  let container = ContainerStyle.createBasicContainerStyle().container;
-  let otpInput = InputStyle.createOTPInputStyle();
-  let button = ButtonStyle.createBasicButtonStyle().button;
-  let buttonText = TextStyle.createBasicTextStyle().text;
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let btnContainer = ContainerStyle.createButtonContainerStyle();
+  let footer = ContainerStyle.createAlignTopContainer();
+  let inputText = InputStyle.createOTPInputStyle();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let linkText = TextStyle.createLinkTextStyle();
   let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
-  let footer = ContainerStyle.createFooterStyle();
-  let linkText = TextStyle.createLinkTextStyle().link;
 
   return (
     <SafeAreaView style={topContainer}>
@@ -106,16 +103,18 @@ const VerifyOTP = ({route, navigation}: any) => {
       </View>
       <View style={container}>
         <TextInput
-          style={otpInput}
+          style={inputText}
           maxLength={6}
           keyboardType="numeric"
           autoFocus
           onChangeText={val => setOtp(val)}
         />
       </View>
-      <TouchableOpacity style={button} onPress={verifyOTP}>
-        <Text style={buttonText}>Verify</Text>
-      </TouchableOpacity>
+      <View style={btnContainer}>
+        <TouchableOpacity style={button} onPress={verifyOTP}>
+          <Text style={buttonText}>Verify</Text>
+        </TouchableOpacity>
+      </View>
       <View style={separator}></View>
       <View style={footer}>
         <View>

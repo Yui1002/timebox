@@ -9,11 +9,7 @@ import {
   Keyboard,
 } from 'react-native';
 import Validator from '../../validator/validator';
-import ContainerStyle from '../../styles/Container';
-import ButtonStyle from '../../styles/Button';
-import InputStyle from '../../styles/Input';
-import TextStyle from '../../styles/Text';
-import SeparatorStyle from '../../styles/Separator';
+import { ContainerStyle, ButtonStyle, InputStyle, TextStyle, SeparatorStyle } from "../../styles"
 import {navigate} from '../../helper/navigate';
 import Error from '../Error';
 import {DefaultApiFactory} from '../../swagger/generated';
@@ -68,52 +64,53 @@ const SignUp = ({navigation}: any) => {
     return true;
   };
 
-  let container = ContainerStyle.createTopContainerStyle().topContainer;
-  let inputContainer = ContainerStyle.createBasicContainerStyle().container;
-  let input = InputStyle.createBasicInputStyle().input;
-  let button = ButtonStyle.createBasicButtonStyle().button;
-  let buttonText = TextStyle.createBasicTextStyle().text;
-  let linkText = TextStyle.createLinkTextStyle().link;
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let btnContainer = ContainerStyle.createButtonContainerStyle();
+  let footer = ContainerStyle.createAlignTopContainer();
+  let inputText = InputStyle.createBasicInputStyle();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let linkText = TextStyle.createLinkTextStyle();
   let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
-  let footer = ContainerStyle.createFooterStyle();
-  let toggle = TextStyle.createToggleTextStyle().toggle;
+  let toggle = TextStyle.createToggleTextStyle();
 
   return (
     <ScrollView>
-      <SafeAreaView style={container}>
+      <SafeAreaView style={topContainer}>
         {errors.message && <Error msg={errors.message} />}
-        <View style={inputContainer}>
+        <View style={container}>
           <Text>First Name</Text>
           <TextInput
-            style={input}
+            style={inputText}
             autoCorrect={false}
             onChangeText={val => setFirstName(val)}
             autoFocus={true}
           />
         </View>
-        <View style={inputContainer}>
+        <View style={container}>
           <Text>Last Name</Text>
           <TextInput
-            style={input}
+            style={inputText}
             autoCorrect={false}
             onChangeText={val => setLastName(val)}
           />
         </View>
-        <View style={inputContainer}>
+        <View style={container}>
           <Text>Email</Text>
           <TextInput
-            style={input}
+            style={inputText}
             keyboardType="email-address"
             autoCorrect={false}
             autoCapitalize="none"
             onChangeText={val => setEmail(val)}
           />
         </View>
-        <View style={inputContainer}>
+        <View style={container}>
           <Text>Password</Text>
           <View>
             <TextInput
-              style={input}
+              style={inputText}
               autoCorrect={false}
               autoCapitalize="none"
               secureTextEntry={!showPassword}
@@ -126,11 +123,11 @@ const SignUp = ({navigation}: any) => {
             </Text>
           </View>
         </View>
-        <View style={inputContainer}>
+        <View style={container}>
           <Text>Confirm Password</Text>
           <View>
             <TextInput
-              style={input}
+              style={inputText}
               autoCorrect={false}
               autoCapitalize="none"
               blurOnSubmit={false}
@@ -143,9 +140,11 @@ const SignUp = ({navigation}: any) => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity style={button} onPress={checkUserExists}>
-          <Text style={buttonText}>Sign Up</Text>
-        </TouchableOpacity>
+        <View style={btnContainer}>
+          <TouchableOpacity style={button} onPress={checkUserExists}>
+            <Text style={buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
         <View style={separator}></View>
         <View style={footer}>
           <View>

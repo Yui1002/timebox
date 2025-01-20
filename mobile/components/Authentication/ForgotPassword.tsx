@@ -4,14 +4,9 @@ import {
   View,
   SafeAreaView,
   TextInput,
-  Button,
   TouchableOpacity,
 } from 'react-native';
-import ContainerStyle from '../../styles/Container';
-import ButtonStyle from '../../styles/Button';
-import InputStyle from '../../styles/Input';
-import TextStyle from '../../styles/Text';
-import SeparatorStyle from '../../styles/Separator';
+import { ContainerStyle, ButtonStyle, InputStyle, TextStyle, SeparatorStyle } from "../../styles"
 import Error from '../Error';
 import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
@@ -51,30 +46,33 @@ const ForgotPassword = ({navigation}: any) => {
     }
   };
 
-  let container = ContainerStyle.createTopContainerStyle().topContainer;
-  let inputContainer = ContainerStyle.createBasicContainerStyle().container;
-  let input = InputStyle.createBasicInputStyle().input;
-  let button = ButtonStyle.createBasicButtonStyle().button;
-  let buttonText = TextStyle.createBasicTextStyle().text;
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let btnContainer = ContainerStyle.createButtonContainerStyle();
+  let footer = ContainerStyle.createAlignTopContainer();
+  let inputText = InputStyle.createBasicInputStyle();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let linkText = TextStyle.createLinkTextStyle();
   let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
-  let footer = ContainerStyle.createFooterStyle();
-  let linkText = TextStyle.createLinkTextStyle().link;
 
   return (
-    <SafeAreaView style={container}>
+    <SafeAreaView style={topContainer}>
       {errors.message && <Error msg={errors.message} />}
-      <View style={inputContainer}>
+      <View style={container}>
         <Text>Email</Text>
         <TextInput
-          style={input}
+          style={inputText}
           autoCorrect={false}
           autoCapitalize="none"
           onChangeText={val => setEmail(val)}
         />
       </View>
-      <TouchableOpacity style={button} onPress={checkEmailRegistered}>
-        <Text style={buttonText}>Verify Email</Text>
-      </TouchableOpacity>
+      <View style={btnContainer}>
+        <TouchableOpacity style={button} onPress={checkEmailRegistered}>
+          <Text style={buttonText}>Verify Email</Text>
+        </TouchableOpacity>
+      </View>
       <View style={separator}></View>
       <View style={footer}>
         <View>

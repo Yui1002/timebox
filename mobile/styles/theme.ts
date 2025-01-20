@@ -7,8 +7,3 @@ export const COLORS = {
     WHITE: '#fff',
     BLACK: '#000',
 }
-
-export const FONT_WEIGHT = {
-    primary: '500',
-    secondary: '600'
-}

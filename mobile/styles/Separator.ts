@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {COLORS, FONT_WEIGHT} from './theme';
+import {COLORS} from './theme';
 
 export default class SeparatorStyle {
   static createBasicSeparatorStyle() {

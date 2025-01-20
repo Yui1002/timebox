@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {styles} from '../../../styles/personalInfoStyles.js';
-import StyleSheetFactory from '../../../styles/commonStyles.js';
+import { ContainerStyle, ButtonStyle, InputStyle, TextStyle, SeparatorStyle } from '../../../styles'
 import ProgressBar from './ProgressBar';
 import InputField from '../../InputField';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -65,51 +64,50 @@ const PersonalInfo = ({route, navigation}: any) => {
     navigation.goBack();
   };
 
-  let container = StyleSheetFactory.setContainer().container;
-  let continueBtn = StyleSheetFactory.setButton('45%', 32, COLORS.BLUE).button;
-  let backBtn = StyleSheetFactory.setButton('45%', 32, COLORS.DARK_GRAY).button;
-  let modeBtn = StyleSheetFactory.setButton('45%', 32, COLORS.LIGHT_GREY, 1, COLORS.DARK_GRAY).button;
-  let header = StyleSheetFactory.setFontSize(22);
-  let title = StyleSheetFactory.setFontSize(14);
-  let input = StyleSheetFactory.setFontSize(18);
-  let inputContainer = StyleSheetFactory.setWidth('50%');
-  let btnContainer = StyleSheetFactory.setWidth('100%');
-  let margin1 = StyleSheetFactory.setMargin(8);
-  let align = StyleSheetFactory.setAlign();
-  let text = StyleSheetFactory.setText(29).text;
-  let btnText = StyleSheetFactory.setText(32).text;
-  let selected = StyleSheetFactory.setColor(COLORS.BLUE, COLORS.WHITE).color;
-  let notSelected = StyleSheetFactory.setColor(COLORS.WHITE, COLORS.BLUE).color;
+    let topContainer = ContainerStyle.createTopContainerStyle();
+    let container = ContainerStyle.createBasicContainerStyle();
+    let btnContainer = ContainerStyle.createButtonContainerStyle();
+    let alignTopContainer = ContainerStyle.createAlignTopContainer();
+    let alignContainer = ContainerStyle.createAlignContainer();
+    let headerText = TextStyle.createHeaderTextStyle();
+    let titleText = TextStyle.createTitleTextStyle();
+    // let text = TextStyle.
+    let inputText = InputStyle.createBasicInputStyle();
+    let button = ButtonStyle.createBasicButtonStyle();
+    let buttonText = TextStyle.createButtonTextStyle();
+    let linkText = TextStyle.createLinkTextStyle();
+    let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
+  
 
   return (
-    <View style={container}>
+    <View style={topContainer}>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
       <ScrollView>
         {error.message && <Error msg={error.message} />}
-        <View style={margin1}>
-          <Text style={header}>User Information</Text>
+        <View style={container}>
+          <Text style={headerText}>User Information</Text>
         </View>
-        <View style={[margin1, align]}>
-          <View style={inputContainer}>
-            <Text style={title}>First Name</Text>
+        <View style={alignTopContainer}>
+          <View style={alignContainer}>
+            <Text style={titleText}>First Name</Text>
             <Text style={input}>{firstName ? firstName : 'Not specified'}</Text>
           </View>
-          <View style={inputContainer}>
-            <Text style={title}>Last Name</Text>
+          <View style={alignContainer}>
+            <Text style={titleText}>Last Name</Text>
             <Text style={input}>{lastName ? lastName : 'Not specified'}</Text>
           </View>
         </View>
-        <View style={margin1}>
-          <Text style={title}>Email Address</Text>
+        <View style={container}>
+          <Text style={titleText}>Email Address</Text>
           <Text style={input}>{email}</Text>
         </View>
-        <View style={[margin1, align]}>
-          <View style={inputContainer}>
-            <Text style={title}>Rate ($)</Text>
+        <View style={alignTopContainer}>
+          <View style={alignContainer}>
+            <Text style={titleText}>Rate ($)</Text>
             <InputField.Underlined onChangeText={setRate} />
           </View>
-          <View style={inputContainer}>
-            <Text style={title}>Rate Type</Text>
+          <View style={alignContainer}>
+            <Text style={titleText}>Rate Type</Text>
             <DropDownPicker
               open={open}
               value={rateType}
@@ -121,11 +119,11 @@ const PersonalInfo = ({route, navigation}: any) => {
             />
           </View>
         </View>
-        <View style={[margin1, open ? {zIndex: -1} : {zIndex: 1}]}>
-          <Text style={title}>
+        <View style={[container, open ? {zIndex: -1} : {zIndex: 1}]}>
+          <Text style={titleText}>
             Allow the service provider to modify record time?
           </Text>
-          <View style={[margin1, align]}>
+          <View style={[container, align]}>
             <TouchableOpacity
               style={[
                 modeBtn,
@@ -144,7 +142,7 @@ const PersonalInfo = ({route, navigation}: any) => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={[margin1, align, btnContainer]}>
+        <View style={[container, align, btnContainer]}>
           <TouchableOpacity style={backBtn} onPress={goBack}>
             <Text style={btnText}>Back</Text>
           </TouchableOpacity>

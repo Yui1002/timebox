@@ -4,12 +4,11 @@ import {
   Text,
   View,
   SafeAreaView,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import {ContainerStyle, ButtonStyle, InputStyle, TextStyle} from '../../styles';
 import {useIsFocused} from '@react-navigation/native';
-import {styles} from '../../styles/homeStyles.js';
 import {DefaultApiFactory, Employer} from '../../swagger/generated';
 import {UserInfo} from '../../types';
 import {Screen} from '../../enums';
@@ -37,37 +36,38 @@ const Home = (props: any) => {
     }
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let headerContainer = ContainerStyle.createBasicContainerStyle();
+  let listContainer = ContainerStyle.createListContainerStyle();
+  let headerText = TextStyle.createHeaderTextStyle();
+  let titleText = TextStyle.createTitleTextStyle();
+  let recordBtn = ButtonStyle.createRecordButtonStyle();
+  let btnText = TextStyle.createButtonTextStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.header}>Hi {firstName}!</Text>
+    <SafeAreaView style={topContainer}>
+      <View style={headerContainer}>
+        <Text style={headerText}>Hi {firstName}!</Text>
       </View>
       <View>
-        <Text style={styles.title}>My Employers</Text>
+        <Text style={titleText}>My Employers</Text>
         {employers == null ? (
           <Text>Please use the menu to hire or manage service providers</Text>
         ) : (
           <ScrollView>
-            {employers.map(employer => (
-              <View style={styles.listContainer}>
-                <View>
-                  <Text style={styles.nameTitle}>
+            {employers.map((employer, index) => (
+              <View key={index} style={{flexDirection: 'row', marginVertical: 8}}>
+                <View style={{width: '75%', height: 60, backgroundColor: 'grey', padding: 10, borderRadius: 4}}>
+                  <Text style={titleText}>
                     {employer.firstName} {employer.lastName}
                   </Text>
                   <Text>{employer.email}</Text>
-                </View>
-                <View>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      props.navigation.navigate(Screen.RECORD, {
-                        employer: employer,
-                        serviceProviderEmail: email,
-                      })
-                    }>
-                    <Text style={styles.buttonText}>Record</Text>
+                </View> 
+                <View style={{width: '25%'}}>
+                  <TouchableOpacity style={{backgroundColor: 'blue', height: 60}}>
+                    <Text>Record</Text>
                   </TouchableOpacity>
-                </View>
+                </View> 
               </View>
             ))}
           </ScrollView>

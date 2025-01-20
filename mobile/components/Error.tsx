@@ -1,14 +1,17 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {styles} from '../styles/errorStyles.js';
+import { ContainerStyle, TextStyle } from '../styles';
 import { COLORS } from '../styles/theme';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Error = (props: any) => {
+  let container = ContainerStyle.createErrorContainerStyle();
+  let errText = TextStyle.createErrorTextStyle();
+
   return (
-    <View style={styles.error}>
-      <MaterialIcons name="error-outline" size={30} color={COLORS.error2} />
-      <Text style={styles.text}>{props.msg}</Text>
+    <View style={container}>
+      <MaterialIcons name="error-outline" size={30} color={COLORS.RED} />
+      <Text style={errText}>{props.msg}</Text>
     </View>
   );
 };
