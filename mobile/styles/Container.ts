@@ -32,6 +32,19 @@ export default class ContainerStyle {
     );
   }
 
+  static createAlignedButtonContainerStyle() {
+    let buttonContainer = StyleSheet.create({
+      buttonContainer: {
+        width: '50%',
+        marginVertical: 20,
+      },
+    }).buttonContainer;
+    return StyleSheet.compose(
+      this.createBasicContainerStyle(),
+      buttonContainer,
+    );
+  }
+
   static createAlignTopContainer() {
     let alignContainer = StyleSheet.create({
       alignContainer: {
@@ -83,5 +96,14 @@ export default class ContainerStyle {
         borderRadius: 4
       }
     }).listSub
+  }
+
+  static createProgressBarContainer() {
+    let progressBar = StyleSheet.create({
+      progressBar: {
+        width: '33%'
+      },
+    }).progressBar;
+    return StyleSheet.compose(this.createBasicContainerStyle(), progressBar);
   }
 }

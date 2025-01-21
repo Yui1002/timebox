@@ -85,7 +85,6 @@ const Record = ({route}: any) => {
   let subContainer = ContainerStyle.createAlignContainer();
   let headerText = TextStyle.createHeaderTextStyle();
   let button = ButtonStyle.createRecordButtonStyle();
-  let saveButton = ButtonStyle.createSaveRecordButtonStyle();
   let buttonText = TextStyle.createButtonTextStyle();
   let dropdown = InputStyle.createDropdownStyle();
   let dropdownText = TextStyle.createDropdownTextStyle();

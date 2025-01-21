@@ -56,7 +56,6 @@ export default class TextStyle {
       header: {
         fontSize: 22,
         fontWeight: '500',
-        color: COLORS.BLACK,
       },
     }).header;
     return StyleSheet.compose(this.createBasicTextStyle(), header);
@@ -65,9 +64,7 @@ export default class TextStyle {
   static createTitleTextStyle() {
     let title = StyleSheet.create({
       title: {
-        fontSize: 16,
         fontWeight: '500',
-        color: COLORS.BLACK,
       },
     }).title;
     return StyleSheet.compose(this.createBasicTextStyle(), title);
@@ -92,5 +89,15 @@ export default class TextStyle {
       }
     }).dropdownText;
     return StyleSheet.compose(this.createBasicTextStyle(), dropdownText);
+  }
+
+  static createBarTextStyle() {
+    let barText = StyleSheet.create({
+      barText: {
+        fontWeight: '500',
+        textAlign: 'center'
+      }
+    }).barText;
+    return StyleSheet.compose(this.createBasicTextStyle(), barText);
   }
 }

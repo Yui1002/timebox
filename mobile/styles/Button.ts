@@ -24,12 +24,32 @@ export default class ButtonStyle {
     return StyleSheet.compose(this.createBasicButtonStyle(), record);
   }
 
-  static createSaveRecordButtonStyle() {
-    let record = StyleSheet.create({
-      record: {
-        width: '50%'
+  static createContinueButtonStyle() {
+    let button = StyleSheet.create({
+      button: {
+        width: '50%',
       }
-    }).record;
-    return StyleSheet.compose(this.createBasicButtonStyle(), record);
+    }).button;
+    return StyleSheet.compose(this.createBasicButtonStyle(), button);
+  }
+
+  static createBackButtonStyle() {
+    let button = StyleSheet.create({
+      button: {
+        width: '50%',
+        backgroundColor: COLORS.LIGHT_GREY
+      }
+    }).button;
+    return StyleSheet.compose(this.createBasicButtonStyle(), button);
+  }
+
+  static createMediumButtonStyle2() {
+    let button = StyleSheet.create({
+      button: {
+        width: '50%',
+        backgroundColor: COLORS.LIGHT_GREY
+      }
+    }).button;
+    return StyleSheet.compose(this.createBasicButtonStyle(), button);
   }
 }

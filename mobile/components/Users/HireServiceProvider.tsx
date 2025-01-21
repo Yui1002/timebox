@@ -13,7 +13,6 @@ import {
   InputStyle,
   TextStyle,
 } from '../../styles';
-import InputField from '../InputField';
 import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';

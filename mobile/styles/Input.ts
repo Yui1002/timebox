@@ -40,4 +40,5 @@ export default class InputStyle {
     }).dropdown;
     return StyleSheet.compose(this.createBasicInputStyle(), dropdown);
   }
+
 }

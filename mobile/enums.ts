@@ -32,6 +32,11 @@ enum RateTypeValue {
   DAILY = 'daily'
 }
 
+enum Mode {
+  YES = 'Yes',
+  NO = 'No'
+}
+
 enum Screen {
   SIGN_IN = 'SignIn',
   SIGN_UP = 'SignUp',
@@ -74,4 +79,4 @@ enum ProgressBar {
   REVIEW = 'Review'
 }
 
-export { Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters }
+export { Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, Mode }

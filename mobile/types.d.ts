@@ -1,4 +1,4 @@
-import {RateTypeValue} from './enums';
+import {RateTypeValue, Mode} from './enums';
 
 type UserInfo = {
   firstName: string;
@@ -72,6 +72,11 @@ type RateTypeSet = {
   value: RateTypeValue.HOURLY | RateTypeValue.DAILY;
 };
 
+type ModeSet = {
+  label: Mode.YES | Mode.NO;
+  value: Mode.YES | Mode.NO;
+};
+
 type SignUpProps = {
   firstName: string,
   lastName: string,
@@ -114,5 +119,6 @@ export {
   NotificationData,
   WorkShiftsProps,
   SignUpProps,
-  ForgotPasswordProps
+  ForgotPasswordProps,
+  ModeSet
 };

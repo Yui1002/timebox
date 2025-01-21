@@ -10,4 +10,22 @@ export default class IconStyle {
       },
     }).icon;
   }
+
+  static createProgressBar() {
+    return StyleSheet.create({
+        progressBar: {
+            backgroundColor: COLORS.LIGHT_GREY,
+            height: 10,
+        }
+    }).progressBar
+  }
+
+  static createProgressBarFocused() {
+    return StyleSheet.create({
+        progressBar: {
+            backgroundColor: COLORS.BLUE,
+            height: 10
+        }
+    }).progressBar
+  }
 }

@@ -1,21 +1,25 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {styles} from '../../../styles/progressBarStyles.js';
+import {
+  ContainerStyle,
+  TextStyle,
+  IconStyle,
+} from '../../../styles';
 import {ProgressBar as Bar} from '../../../enums';
+
+let container = ContainerStyle.createAlignTopContainer();
+let subContainer = ContainerStyle.createProgressBarContainer();
+let barText = TextStyle.createBarTextStyle();
+let bar = IconStyle.createProgressBar();
+let focusedBar = IconStyle.createProgressBarFocused();
 
 const ProgressBar = ({title, isFocused}: any) => {
   return (
-    <View style={styles.container}>
+    <View style={container}>
       {Object.values(Bar).map((progress: Bar) => (
-        <View style={styles.sub_container}>
-          <Text style={styles.title}>{progress}</Text>
-          <View
-            style={
-              isFocused && progress == title
-                ? [styles.bar, styles.bar_focused]
-                : styles.bar
-            }
-          />
+        <View style={subContainer}>
+          <Text style={barText}>{progress}</Text>
+          <View style={isFocused && progress == title ? focusedBar : bar} />
         </View>
       ))}
     </View>
