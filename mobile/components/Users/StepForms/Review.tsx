@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {styles} from '../../../styles/stepFormsStyles.js';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  TextStyle,
+  InputStyle,
+} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import {Schedule, WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import { DefaultApiFactory, SetRequestRq, Mode } from '../../../swagger/generated';
-import { ErrorModel } from '../../../types';
+import {
+  DefaultApiFactory,
+  SetRequestRq,
+  Mode,
+} from '../../../swagger/generated';
+import {ErrorModel} from '../../../types';
 import Error from '../../Error';
-import { ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
+import {ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
 
 let api = DefaultApiFactory();
 
@@ -21,7 +30,7 @@ const Review = ({route, navigation}: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
   const statusTitles = ['Information', 'Work Shifts', 'Review'];
-  const [error, setError] = useState<ErrorModel>({message: ''})
+  const [error, setError] = useState<ErrorModel>({message: ''});
 
   const editDay = () => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
@@ -38,17 +47,17 @@ const Review = ({route, navigation}: any) => {
       rate: Number(rate),
       rateType: rateType,
       schedules: workShifts.workShifts,
-      mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0
-    }
+      mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
+    };
 
     try {
       await api.setRequest(params);
       clearInput();
       showSuccess();
     } catch (e: any) {
-      setError({message: ErrMsg.REQUEST_SEND_ERR})
+      setError({message: ErrMsg.REQUEST_SEND_ERR});
     }
-    await api.setRequest(params)
+    await api.setRequest(params);
   };
 
   const showSuccess = () => {
@@ -66,90 +75,109 @@ const Review = ({route, navigation}: any) => {
     setError({message: ''});
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let listContainer = ContainerStyle.createListContainerStyle();
+  let btnContainer = ContainerStyle.createButtonContainerStyle();
+  let headerText = TextStyle.createHeaderTextStyle();
+  let alignTopContainer = ContainerStyle.createAlignTopContainer();
+  let alignContainer = ContainerStyle.createAlignContainer();
+  let inputText = InputStyle.createBasicInputStyle();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let linkText = TextStyle.createLinkTextStyle();
+  let dayText = TextStyle.createCustomWidthTextStyle('30%');
+  let timeText = TextStyle.createCustomWidthTextStyle('50%');
+  let deleteText = TextStyle.createDeleteLinkTextStyle();
+  let centerText = TextStyle.createCenterTextStyle();
+  let backBtn = ButtonStyle.createBackButtonStyle();
+  let continueBtn = ButtonStyle.createContinueButtonStyle();
+  let titleText = TextStyle.createTitleTextStyle();
+  let text = TextStyle.createBasicTextStyle();
+  let editLinkText = TextStyle.createDeleteLinkTextStyle();
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={topContainer}>
       <ProgressBar title={Bar.REVIEW} isFocused={true} />
-      <View>
+      <ScrollView>
         {error.message && <Error msg={error.message} />}
-        <View>
-          <Text style={styles.headerText}>Review</Text>
+        <View style={container}>
+          <Text style={headerText}>Review</Text>
         </View>
-        <View style={styles.align}>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>First Name</Text>
-            <Text style={styles.font_2}>{firstName ? firstName : 'Not specified'}</Text>
+        <View style={alignTopContainer}>
+          <View style={alignContainer}>
+            <Text style={titleText}>First Name</Text>
+            <Text style={text}>{firstName ? firstName : 'Not specified'}</Text>
           </View>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>Last Name</Text>
-            <Text style={styles.font_2}>{lastName ? lastName : 'Not specified'}</Text>
+          <View style={alignContainer}>
+            <Text style={titleText}>Last Name</Text>
+            <Text style={text}>{lastName ? lastName : 'Not specified'}</Text>
           </View>
         </View>
-        <View style={styles.margin}>
-          <Text style={styles.font_1}>Email Address</Text>
-          <Text style={styles.font_2}>{email}</Text>
+        <View style={container}>
+          <Text style={titleText}>Email Address</Text>
+          <Text style={text}>{email}</Text>
         </View>
-        <View style={styles.editContainer}>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>
+        <View style={alignTopContainer}>
+          <View style={alignContainer}>
+            <Text style={titleText}>
               Rate{' '}
-              <Text style={styles.editText} onPress={editRate}>
+              <Text style={editLinkText} onPress={editRate}>
                 Edit
               </Text>
             </Text>
-            <Text style={styles.font_1}>${rate}</Text>
+            <Text style={text}>${rate}</Text>
           </View>
-          <View style={styles.width}>
-            <Text style={styles.font_2}>
+          <View style={alignContainer}>
+            <Text style={titleText}>
               Rate Type{' '}
-              <Text style={styles.editText} onPress={editRate}>
+              <Text style={editLinkText} onPress={editRate}>
                 Edit
               </Text>
             </Text>
-            <Text style={styles.font_1}>{rateType}</Text>
+            <Text style={text}>{rateType}</Text>
           </View>
         </View>
-        <View style={styles.margin}>
-          <Text style={styles.font_2}>
+        <View style={container}>
+          <Text style={titleText}>
             Work Shifts{' '}
-            <Text style={styles.editText} onPress={editDay}>
+            <Text style={editLinkText} onPress={editDay}>
               Edit
             </Text>
           </Text>
           {workShifts.workShifts.length > 0 ? (
             workShifts.workShifts.map((shift: Schedule, index: number) => (
-              <View key={index} style={styles.dateContainer}>
-                <Text style={styles.font_1}>
+              <View key={index} style={alignTopContainer}>
+                <Text style={text}>
                   {String.fromCharCode(8226)} {shift.day}
                 </Text>
-                <Text style={styles.font_1}>
+                <Text style={text}>
                   {shift.startTime} ~ {shift.endTime}
                 </Text>
               </View>
             ))
           ) : (
-            <Text style={{fontSize: 18}}>No days selected</Text>
+            <Text style={text}>No days selected</Text>
           )}
         </View>
-        <View style={{marginTop: 20}}>
-          <Text style={{fontSize: 14}}>
+        <View style={container}>
+          <Text style={titleText}>
             Allow service provider to edit record time
           </Text>
-          <Text style={{fontSize: 18}}>{isEnabled ? 'Yes' : 'No'}</Text>
+          <Text style={text}>{isEnabled ? 'Yes' : 'No'}</Text>
         </View>
-        <View style={styles.workShiftsBtn}>
-          <TouchableOpacity
-            style={styles.workShiftsBtn_back}
-            onPress={() => navigation.goBack()}>
-            <Text style={styles.buttonText}>Back</Text>
+        <View style={alignTopContainer}>
+          <TouchableOpacity style={backBtn} onPress={() => navigation.goBack()}>
+            <Text style={buttonText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.workShiftsBtn_add}
+            style={continueBtn}
             onPress={confirmServiceProvider}>
-            <Text style={styles.buttonText}>Confirm</Text>
+            <Text style={buttonText}>Confirm</Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

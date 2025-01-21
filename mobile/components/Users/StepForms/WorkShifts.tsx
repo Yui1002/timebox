@@ -7,7 +7,6 @@ import {
   TextStyle,
   InputStyle,
 } from '../../../styles';
-import {styles} from '../../../styles/stepFormsStyles.js';
 import ProgressBar from './ProgressBar';
 import {deleteShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
@@ -18,7 +17,6 @@ const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
   const workShifts = useSelector(state => state.workShifts);
-  const statusTitles = ['Information', 'Work Shifts', 'Review'];
 
   const deleteDate = (day: Schedule) => {
     dispatch(deleteShift(day));
@@ -35,6 +33,7 @@ const WorkShifts = ({route, navigation}: any) => {
         null,
       );
     } else {
+      
       navigation.navigate(Screen.REVIEW, params);
     }
   };
@@ -94,10 +93,10 @@ const WorkShifts = ({route, navigation}: any) => {
           <TouchableOpacity
             style={backBtn}
             onPress={() => navigation.goBack()}>
-            <Text style={styles.buttonText}>Back</Text>
+            <Text style={buttonText}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity style={continueBtn} onPress={review}>
-            <Text style={styles.buttonText}>{`Review  ${String.fromCharCode(
+            <Text style={buttonText}>{`Review  ${String.fromCharCode(
               9654,
             )}`}</Text>
           </TouchableOpacity>
