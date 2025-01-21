@@ -23,6 +23,15 @@ export default class TextStyle {
     return StyleSheet.compose(this.createBasicTextStyle(), buttonText);
   }
 
+  static createRecordButtonTextStyle() {
+    let buttonText = StyleSheet.create({
+      buttonText: {
+        lineHeight: 60,
+      },
+    }).buttonText;
+    return StyleSheet.compose(this.createButtonTextStyle(), buttonText);
+  }
+
   static createLinkTextStyle() {
     return StyleSheet.create({
       link: {
@@ -77,10 +86,9 @@ export default class TextStyle {
   static createDropdownTextStyle() {
     let dropdownText = StyleSheet.create({
       dropdownText: {
-        color: COLORS.BLACK,
-        lineHeight: 35,
         paddingLeft: 10,
-        fontSize: 16,
+        width: '70%',
+        lineHeight: 24
       }
     }).dropdownText;
     return StyleSheet.compose(this.createBasicTextStyle(), dropdownText);

@@ -31,10 +31,9 @@ export default class InputStyle {
   static createDropdownStyle() {
     let dropdown = StyleSheet.create({
       dropdown: {
-        width: '90%',
-        height: 50,
-        marginLeft: 'auto',
-        marginRight: 'auto',
+        height: 60,
+        borderWidth: 0,
+        borderColor: undefined,
         flexDirection: 'row',
         justifyContent: 'space-around',
       },

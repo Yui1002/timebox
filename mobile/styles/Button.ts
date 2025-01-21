@@ -16,7 +16,9 @@ export default class ButtonStyle {
   static createRecordButtonStyle() {
     let record = StyleSheet.create({
       record: {
-        width: '100%'
+        width: '25%',
+        height: 60,
+        borderRadius: 4,
       }
     }).record;
     return StyleSheet.compose(this.createBasicButtonStyle(), record);

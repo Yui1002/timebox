@@ -68,13 +68,20 @@ export default class ContainerStyle {
     let list = StyleSheet.create({
       list: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: COLORS.LIGHT_GREY,
-        paddingVertical: 10,
-        paddingLeft: 16,
-        borderRadius: 4,
       },
     }).list;
     return StyleSheet.compose(this.createBasicContainerStyle(), list);
+  }
+
+  static createListSubContainerStyle() {
+    return StyleSheet.create({
+      listSub: {
+        width: '75%',
+        height: 60,
+        backgroundColor: COLORS.LIGHT_GREY,
+        padding: 10,
+        borderRadius: 4
+      }
+    }).listSub
   }
 }

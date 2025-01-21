@@ -39,10 +39,11 @@ const Home = (props: any) => {
   let topContainer = ContainerStyle.createTopContainerStyle();
   let headerContainer = ContainerStyle.createBasicContainerStyle();
   let listContainer = ContainerStyle.createListContainerStyle();
+  let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let headerText = TextStyle.createHeaderTextStyle();
   let titleText = TextStyle.createTitleTextStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createButtonTextStyle();
+  let btnText = TextStyle.createRecordButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -56,18 +57,24 @@ const Home = (props: any) => {
         ) : (
           <ScrollView>
             {employers.map((employer, index) => (
-              <View key={index} style={{flexDirection: 'row', marginVertical: 8}}>
-                <View style={{width: '75%', height: 60, backgroundColor: 'grey', padding: 10, borderRadius: 4}}>
+              <View key={index} style={listContainer}>
+                <View style={listSubContainer}>
                   <Text style={titleText}>
                     {employer.firstName} {employer.lastName}
                   </Text>
                   <Text>{employer.email}</Text>
-                </View> 
-                <View style={{width: '25%'}}>
-                  <TouchableOpacity style={{backgroundColor: 'blue', height: 60}}>
-                    <Text>Record</Text>
+                </View>
+                <View style={recordBtn}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      props.navigation.navigate(Screen.RECORD, {
+                        employer: employer,
+                        serviceProviderEmail: email,
+                      })
+                    }>
+                    <Text style={btnText}>Record</Text>
                   </TouchableOpacity>
-                </View> 
+                </View>
               </View>
             ))}
           </ScrollView>

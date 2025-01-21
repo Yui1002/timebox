@@ -90,6 +90,10 @@ const Record = ({route}: any) => {
   let dropdown = InputStyle.createDropdownStyle();
   let dropdownText = TextStyle.createDropdownTextStyle();
   let icon = IconStyle.createBasicIconStyle();
+  let listContainer = ContainerStyle.createListContainerStyle();
+  let listSubContainer = ContainerStyle.createListSubContainerStyle();
+  let recordBtn = ButtonStyle.createRecordButtonStyle();
+  let btnText = TextStyle.createRecordButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -99,14 +103,13 @@ const Record = ({route}: any) => {
           Employer: {firstName} {lastName}
         </Text>
       </View>
-      <View style={alignTopContainer}>
-        <View style={subContainer}>
-          <Text>Record start time</Text>
+      <View style={listContainer}>
+        <View style={listSubContainer}>
           <TouchableOpacity
             style={dropdown}
             onPress={() => setStartOpen(!startOpen)}>
             <Text style={dropdownText}>
-              {start ? moment(start).format('MM/DD LT') : `Select`}
+              {start ? moment(start).format('MM/DD LT') : `Select start time`}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
@@ -116,13 +119,19 @@ const Record = ({route}: any) => {
             />
           </TouchableOpacity>
         </View>
-        <View style={subContainer}>
-          <Text>Record end time</Text>
+        <View style={recordBtn}>
+          <TouchableOpacity onPress={() => setStartOpen(!startOpen)}>
+            <Text style={btnText}>Save</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={listContainer}>
+        <View style={listSubContainer}>
           <TouchableOpacity
             style={dropdown}
-            onPress={() => setEndOpen(!endOpen)}>
+            onPress={() => setStartOpen(!endOpen)}>
             <Text style={dropdownText}>
-              {end ? moment(end).format('MM/DD LT') : `Select`}
+              {end ? moment(end).format('MM/DD LT') : `Select end time`}
             </Text>
             <MaterialIcons
               name="arrow-drop-down"
@@ -130,6 +139,11 @@ const Record = ({route}: any) => {
               color={COLORS.BLACK}
               style={icon}
             />
+          </TouchableOpacity>
+        </View>
+        <View style={recordBtn}>
+          <TouchableOpacity onPress={() => setStartOpen(!startOpen)}>
+            <Text style={btnText}>Save</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -162,18 +176,6 @@ const Record = ({route}: any) => {
           }
           maximumDate={moment().endOf('day').toDate()}
         />
-      </View>
-      <View style={alignTopContainer}>
-        <TouchableOpacity
-          style={saveButton}
-          onPress={() => saveRecord(TimeType.START)}>
-          <Text style={buttonText}>Save Start Time</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={saveButton}
-          onPress={() => saveRecord(TimeType.END)}>
-          <Text style={buttonText}>Save End Time</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
