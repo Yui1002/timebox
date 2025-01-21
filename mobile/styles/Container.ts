@@ -23,6 +23,7 @@ export default class ContainerStyle {
   static createButtonContainerStyle() {
     let buttonContainer = StyleSheet.create({
       buttonContainer: {
+        alignItems: 'center',
         marginVertical: 20,
       },
     }).buttonContainer;

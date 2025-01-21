@@ -27,7 +27,7 @@ export default class ButtonStyle {
   static createContinueButtonStyle() {
     let button = StyleSheet.create({
       button: {
-        width: '50%',
+        width: '45%',
       }
     }).button;
     return StyleSheet.compose(this.createBasicButtonStyle(), button);
@@ -36,7 +36,7 @@ export default class ButtonStyle {
   static createBackButtonStyle() {
     let button = StyleSheet.create({
       button: {
-        width: '50%',
+        width: '45%',
         backgroundColor: COLORS.LIGHT_GREY
       }
     }).button;

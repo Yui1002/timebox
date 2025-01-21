@@ -41,6 +41,17 @@ export default class TextStyle {
     }).link;
   }
 
+  static createDeleteLinkTextStyle() {
+    let link = StyleSheet.create({
+      link: {
+        color: COLORS.BLUE,
+        textDecorationLine: 'underline',
+        textDecorationColor: COLORS.BLUE,
+      },
+    }).link;
+    return StyleSheet.compose(this.createLinkTextStyle(), link);
+  }
+
   static createToggleTextStyle() {
     return StyleSheet.create({
       toggle: {
@@ -99,5 +110,23 @@ export default class TextStyle {
       }
     }).barText;
     return StyleSheet.compose(this.createBasicTextStyle(), barText);
+  }
+
+  static createCustomWidthTextStyle(width: any) {
+    let text = StyleSheet.create({
+      text: {
+        width: width
+      }
+    }).text;
+    return StyleSheet.compose(this.createBasicTextStyle(), text);
+  }
+
+  static createCenterTextStyle() {
+    let text = StyleSheet.create({
+      text: {
+        textAlign: 'center'
+      }
+    }).text;
+    return StyleSheet.compose(this.createBasicTextStyle(), text);
   }
 }
