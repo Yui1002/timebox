@@ -14,7 +14,6 @@ export default class ContainerStyle {
     return StyleSheet.create({
       topContainer: {
         flex: 1,
-        alignItems: 'center',
         margin: '5%',
       },
     }).topContainer;
@@ -45,7 +44,7 @@ export default class ContainerStyle {
       buttonContainer,
     );
   }
-
+   
   static createAlignTopContainer() {
     let alignContainer = StyleSheet.create({
       alignContainer: {
@@ -60,7 +59,7 @@ export default class ContainerStyle {
   static createAlignContainer() {
     let alignContainer = StyleSheet.create({
       alignContainer: {
-        width: '50%',
+        width: '46%',
       },
     }).alignContainer;
     return StyleSheet.compose(this.createBasicContainerStyle(), alignContainer);
@@ -81,6 +80,7 @@ export default class ContainerStyle {
   static createListContainerStyle() {
     let list = StyleSheet.create({
       list: {
+        width: '100%',
         flexDirection: 'row',
       },
     }).list;
@@ -91,10 +91,24 @@ export default class ContainerStyle {
     return StyleSheet.create({
       listSub: {
         width: '75%',
-        height: 60,
+        height: 'auto',
         backgroundColor: COLORS.LIGHT_GREY,
         padding: 10,
-        borderRadius: 4
+        borderRadius: 4,
+        justifyContent: 'center'
+      }
+    }).listSub
+  }
+
+  static createListSubContainerStyle2() {
+    return StyleSheet.create({
+      listSub: {
+        width: '50%',
+        height: 'auto',
+        backgroundColor: COLORS.LIGHT_GREY,
+        padding: 10,
+        borderRadius: 4,
+        justifyContent: 'center'
       }
     }).listSub
   }
@@ -106,5 +120,48 @@ export default class ContainerStyle {
       },
     }).progressBar;
     return StyleSheet.compose(this.createBasicContainerStyle(), progressBar);
+  }
+
+  static createCheckboxContainer() {
+    let checkbox = StyleSheet.create({
+      checkbox: {
+        marginLeft: 'auto'
+      }
+    }).checkbox;
+    return StyleSheet.compose(this.createListContainerStyle(), checkbox)
+  }
+
+  static createWrapContainer() {
+    let container = StyleSheet.create({
+      container: {
+        width: '100%',
+        height: 130,
+        display: 'flex',
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }
+    }).container;
+    return StyleSheet.compose(this.createBasicContainerStyle(), container);
+  }
+
+  static createDropdownContainer() {
+    let container = StyleSheet.create({
+      container: {
+        flexDirection: 'row', 
+        width: '100%', 
+        height: 70
+      }
+    }).container;
+    return StyleSheet.compose(this.createBasicContainerStyle(), container);
+  }
+
+  static createCheckBoxContainer() {
+    let container = StyleSheet.create({
+      container: {
+        justifyContent: 'flex-end'
+      }
+    }).container;
+    return StyleSheet.compose(this.createAlignTopContainer(), container);
   }
 }

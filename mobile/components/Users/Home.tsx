@@ -36,18 +36,26 @@ const Home = (props: any) => {
     }
   };
 
+  const navigateScreen = (employer: Employer): void => {
+    props.navigation.navigate(Screen.RECORD, {
+      employer: employer,
+      serviceProviderEmail: email,
+    });
+  };
+
   let topContainer = ContainerStyle.createTopContainerStyle();
-  let headerContainer = ContainerStyle.createBasicContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
   let listContainer = ContainerStyle.createListContainerStyle();
   let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let headerText = TextStyle.createHeaderTextStyle();
   let titleText = TextStyle.createTitleTextStyle();
+  let text = TextStyle.createBasicTextStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createRecordButtonTextStyle();
+  let btnText = TextStyle.createButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
-      <View style={headerContainer}>
+      <View style={container}>
         <Text style={headerText}>Hi {firstName}!</Text>
       </View>
       <View>
@@ -59,22 +67,16 @@ const Home = (props: any) => {
             {employers.map((employer, index) => (
               <View key={index} style={listContainer}>
                 <View style={listSubContainer}>
-                  <Text style={titleText}>
+                  <Text style={text}>
                     {employer.firstName} {employer.lastName}
                   </Text>
                   <Text>{employer.email}</Text>
                 </View>
-                <View style={recordBtn}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      props.navigation.navigate(Screen.RECORD, {
-                        employer: employer,
-                        serviceProviderEmail: email,
-                      })
-                    }>
-                    <Text style={btnText}>Record</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  style={recordBtn}
+                  onPress={() => navigateScreen(employer)}>
+                  <Text style={btnText}>Record</Text>
+                </TouchableOpacity>
               </View>
             ))}
           </ScrollView>

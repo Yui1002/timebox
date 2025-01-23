@@ -9,14 +9,23 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {styles} from '../../styles/workingHistoryStyles.js';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  TextStyle,
+  IconStyle,
+  InputStyle,
+  SeparatorStyle,
+} from '../../styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
-import { RawEmployer, FormattedEmployer, Record } from '../../types';
+import {RawEmployer, FormattedEmployer, Record} from '../../types';
 import validator from 'validator';
 import Error from '../Error';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {COLORS} from '../../styles/theme';
 
 const WorkingHistory = (props: any) => {
   const {email} = useSelector(state => state.userInfo);
@@ -40,11 +49,10 @@ const WorkingHistory = (props: any) => {
   const getEmployers = async () => {
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/getEmployer`, {
-        email
+        email,
       });
       setEmployers(formatData(response.data.employers));
-    } 
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
   };
@@ -70,9 +78,9 @@ const WorkingHistory = (props: any) => {
     }
 
     if (moment(from).isAfter(moment(to))) {
-      errors.invalidTime = "Invalid time";
+      errors.invalidTime = 'Invalid time';
     }
-    
+
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -85,12 +93,11 @@ const WorkingHistory = (props: any) => {
         employerEmail: selectedEmployer,
         serviceProviderEmail: email,
         from: from ? from : '1950-01-01',
-        to: to ? to : moment().format('YYYY-MM-DD')
+        to: to ? to : moment().format('YYYY-MM-DD'),
       });
 
       setRecords(sortRecords(response.data.records));
-    } 
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
   };
@@ -99,7 +106,7 @@ const WorkingHistory = (props: any) => {
     if (!recordData.length) return recordData;
 
     return recordData.sort((a, b) => {
-      return moment(a.startTime).diff(moment(b.startTime))
+      return moment(a.startTime).diff(moment(b.startTime));
     });
   };
 
@@ -108,12 +115,22 @@ const WorkingHistory = (props: any) => {
     type === 'from' ? setFrom(selected) : setTo(selected);
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let titleText = TextStyle.createTitleTextStyle();
+  let icon = IconStyle.createBasicIconStyle();
+  let dropdown = InputStyle.createDropdown2Style();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let topAlignContainer = ContainerStyle.createAlignTopContainer();
+  let separator = SeparatorStyle.createBasicSeparatorStyle();
+  let centerText = TextStyle.createCenterTextStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={topContainer}>
       {employers.length ? (
         <ScrollView>
           <View>
-            <Text style={styles.subHeader}>Select employer's name</Text>
+            <Text style={titleText}>Select employer's name</Text>
             {Object.values(errors).map((error, key) => (
               <Error key={key} msg={error} />
             ))}
@@ -128,19 +145,29 @@ const WorkingHistory = (props: any) => {
               listMode="SCROLLVIEW"
             />
           </View>
-          <View style={employerDropdownOpen ? styles.dropdownOpen : null}>
-            <Text style={styles.subHeader}>Select period</Text>
+          <View style={employerDropdownOpen ? {zIndex: -1} : null}>
+            <Text style={titleText}>Select period</Text>
             <TouchableOpacity
               onPress={() => setFromDropDown(!fromDropdown)}
-              style={styles.dropdown}>
-              <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
-              <View style={styles.arrow} />
+              style={dropdown}>
+              <Text>{from ? from : 'From'}</Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={36}
+                color={COLORS.BLACK}
+                style={icon}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setToDropDown(!toDropdown)}
-              style={styles.dropdown}>
-              <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
-              <View style={styles.arrow} />
+              style={dropdown}>
+              <Text>{to ? to : 'To'}</Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={36}
+                color={COLORS.BLACK}
+                style={icon}
+              />
             </TouchableOpacity>
           </View>
           <View>
@@ -169,23 +196,23 @@ const WorkingHistory = (props: any) => {
               maximumDate={new Date()}
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={searchRecord}>
-            <Text style={styles.buttonText}>Search</Text>
+          <TouchableOpacity style={button} onPress={searchRecord}>
+            <Text style={buttonText}>Search</Text>
           </TouchableOpacity>
-          <View style={styles.listHeader}>
+          <View style={topAlignContainer}>
             <Text>Date</Text>
             <Text>Check In</Text>
             <Text>Check Out</Text>
             <Text>Total</Text>
           </View>
-          <View style={styles.separator}></View>
+          <View style={separator}></View>
           {records && records.length > 0 ? (
             records.map((h: Record, index: number) => {
               const a = h.startTime ? moment(h.startTime) : null;
               const b = h.endTime ? moment(h.endTime) : null;
               const total = a && b ? `${b.diff(a, 'hours')}h` : '0h';
               return (
-                <View style={styles.list} key={index}>
+                <View style={topAlignContainer} key={index}>
                   <Text>
                     {a ? `${moment(a || b).format('YYYY/MM/DD')}` : 'No record'}
                   </Text>
@@ -196,7 +223,7 @@ const WorkingHistory = (props: any) => {
               );
             })
           ) : (
-            <Text style={styles.noMatch}>No records matched</Text>
+            <Text style={centerText}>No records matched</Text>
           )}
         </ScrollView>
       ) : (

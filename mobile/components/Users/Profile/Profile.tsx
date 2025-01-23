@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import { useDispatch } from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {
   SafeAreaView,
   View,
@@ -8,23 +8,35 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {styles} from '../../../styles/profileStyles.js';
+import {ContainerStyle, ButtonStyle, TextStyle, IconStyle} from '../../../styles';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
-import { navigate } from '../../../helper/navigate';
-import { Schedule } from '../../../type';
-import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
+import {navigate} from '../../../helper/navigate';
+import {Schedule} from '../../../type';
+import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
+import {COLORS} from '../../../styles/theme';
 
 const Profile = ({route, navigation}: any) => {
-  const {first_name, last_name, email, status, rate, rate_type, schedule} = route.params.sp;
-  console.log(route.params.sp)
+  const {first_name, last_name, email, status, rate, rate_type, schedule} =
+    route.params.sp;
+  console.log(route.params.sp);
   const userInfo = useSelector(state => state.userInfo);
   const dispatch = useDispatch();
-  dispatch(updateServiceProvider({ first_name, last_name, email, status, rate, rate_type, schedule }));
+  dispatch(
+    updateServiceProvider({
+      first_name,
+      last_name,
+      email,
+      status,
+      rate,
+      rate_type,
+      schedule,
+    }),
+  );
 
   const editProfile = () => {
-    navigate(navigation, 'EditProfile', null)
+    navigate(navigation, 'EditProfile', null);
   };
 
   const viewWorkingHistory = () => {
@@ -33,59 +45,84 @@ const Profile = ({route, navigation}: any) => {
     });
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let alignTopContainer = ContainerStyle.createAlignTopContainer();
+  let alignContainer = ContainerStyle.createAlignContainer();
+  let buttonContainer = ContainerStyle.createButtonContainerStyle();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let headerText = TextStyle.createHeaderTextStyle();
+  let titleText = TextStyle.createTitleTextStyle();
+  let text = TextStyle.createBasicTextStyle();
+  let dayText = TextStyle.createCustomWidthTextStyle('40%');
+  let timeText = TextStyle.createCustomWidthTextStyle('60%');
+  let buttonText = TextStyle.createButtonTextStyle();
+  let profileText = TextStyle.createProfileTextStyle();
+  let centerText = TextStyle.createCenterTextStyle();
+  let icon = IconStyle.createProfileIconStyle();
+  let icon2 = IconStyle.createAlignProfileIconStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={topContainer}>
       <ScrollView>
-        <View style={styles.logoContainer}>
-          <MaterialCommunityIcons name="account" size={46} color="#000" />
-          <Text style={{fontSize: 20}}>
+        <View>
+          <MaterialCommunityIcons
+            name="account"
+            size={46}
+            color={COLORS.BLACK}
+            style={icon}
+          />
+          <Text style={profileText}>
             {first_name} {last_name}
           </Text>
-          <Text style={{fontSize: 14}}>{email}</Text>
+          <Text style={centerText}>{email}</Text>
         </View>
-        <View style={styles.iconContainer}>
+        <View style={alignTopContainer}>
           <MaterialIcons
             name="edit"
             size={30}
-            color="#000"
+            color={COLORS.BLACK}
             onPress={editProfile}
+            style={icon2}
           />
           <MaterialCommunityIcons
             name="message-processing-outline"
             size={30}
-            color="#000"
+            color={COLORS.BLACK}
+            style={icon2}
             onPress={() => Linking.openURL(`mailto:${userInfo.email}`)}
           />
         </View>
-        <View style={styles.title}>
-          <Text style={styles.text}>Status</Text>
+        <View style={container}>
+          <Text style={titleText}>Status</Text>
           <Text>{status}</Text>
         </View>
-        <View style={styles.title}>
-          <Text style={styles.text}>Rate</Text>
+        <View style={container}>
+          <Text style={titleText}>Rate</Text>
           <Text>
             {!rate && !rate_type ? `Not specified` : `$${rate} / ${rate_type}`}
           </Text>
         </View>
         <View>
-          <Text style={styles.text}>Working schedules</Text>
-          {schedule.length ? (
+          <Text style={titleText}>Working schedules</Text>
+          {schedule?.length ? (
             schedule.map((s: Schedule, index: number) => (
-              <View key={index} style={styles.shiftText}>
-                <Text style={styles.day}>{`${String.fromCharCode(8226)} ${
+              <View key={index} style={alignContainer}>
+                <Text style={dayText}>{`${String.fromCharCode(8226)} ${
                   s.day
                 }`}</Text>
-                <Text
-                  style={styles.time}>{`${s.startTime} - ${s.endTime}`}</Text>
+                <Text style={timeText}>{`${s.startTime} - ${s.endTime}`}</Text>
               </View>
             ))
           ) : (
             <Text>Not specified</Text>
           )}
         </View>
-        <TouchableOpacity style={styles.button} onPress={viewWorkingHistory}>
-          <Text style={styles.buttonText}>View working history</Text>
-        </TouchableOpacity>
+        <View style={buttonContainer}>
+          <TouchableOpacity style={button} onPress={viewWorkingHistory}>
+            <Text style={buttonText}>View working history</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

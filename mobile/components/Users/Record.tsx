@@ -1,7 +1,13 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  Touchable,
+} from 'react-native';
 import {
   ContainerStyle,
   ButtonStyle,
@@ -18,6 +24,7 @@ import {COLORS} from '../../styles/theme';
 import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, GetRecordRq} from '../../swagger/generated';
+import {TextInput} from 'react-native-gesture-handler';
 const api = DefaultApiFactory();
 
 const Record = ({route}: any) => {
@@ -80,19 +87,14 @@ const Record = ({route}: any) => {
   };
 
   let topContainer = ContainerStyle.createTopContainerStyle();
+  let dropdownContainer = ContainerStyle.createDropdownContainer();
   let container = ContainerStyle.createBasicContainerStyle();
-  let alignTopContainer = ContainerStyle.createAlignTopContainer();
-  let subContainer = ContainerStyle.createAlignContainer();
   let headerText = TextStyle.createHeaderTextStyle();
-  let button = ButtonStyle.createRecordButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
   let dropdown = InputStyle.createDropdownStyle();
   let dropdownText = TextStyle.createDropdownTextStyle();
   let icon = IconStyle.createBasicIconStyle();
-  let listContainer = ContainerStyle.createListContainerStyle();
-  let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createRecordButtonTextStyle();
+  let btnText = TextStyle.createButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -102,49 +104,43 @@ const Record = ({route}: any) => {
           Employer: {firstName} {lastName}
         </Text>
       </View>
-      <View style={listContainer}>
-        <View style={listSubContainer}>
-          <TouchableOpacity
-            style={dropdown}
-            onPress={() => setStartOpen(!startOpen)}>
-            <Text style={dropdownText}>
-              {start ? moment(start).format('MM/DD LT') : `Select start time`}
-            </Text>
-            <MaterialIcons
-              name="arrow-drop-down"
-              size={36}
-              color={COLORS.BLACK}
-              style={icon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={recordBtn}>
-          <TouchableOpacity onPress={() => setStartOpen(!startOpen)}>
-            <Text style={btnText}>Save</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={dropdownContainer}>
+        <TouchableOpacity
+          onPress={() => setStartOpen(!startOpen)}
+          style={dropdown}>
+          <Text style={dropdownText}>
+            {start ? moment(start).format('MM/DD LT') : `Select start time`}
+          </Text>
+          <MaterialIcons
+            name="arrow-drop-down"
+            size={36}
+            color={COLORS.BLACK}
+            style={icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={recordBtn}>
+          <Text style={btnText} onPress={() => saveRecord(TimeType.START)}>
+            Record
+          </Text>
+        </TouchableOpacity>
       </View>
-      <View style={listContainer}>
-        <View style={listSubContainer}>
-          <TouchableOpacity
-            style={dropdown}
-            onPress={() => setStartOpen(!endOpen)}>
-            <Text style={dropdownText}>
-              {end ? moment(end).format('MM/DD LT') : `Select end time`}
-            </Text>
-            <MaterialIcons
-              name="arrow-drop-down"
-              size={36}
-              color={COLORS.BLACK}
-              style={icon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={recordBtn}>
-          <TouchableOpacity onPress={() => setStartOpen(!startOpen)}>
-            <Text style={btnText}>Save</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={dropdownContainer}>
+        <TouchableOpacity onPress={() => setEndOpen(!endOpen)} style={dropdown}>
+          <Text style={dropdownText}>
+            {end ? moment(end).format('MM/DD LT') : `Select end time`}
+          </Text>
+          <MaterialIcons
+            name="arrow-drop-down"
+            size={36}
+            color={COLORS.BLACK}
+            style={icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={recordBtn}>
+          <Text style={btnText} onPress={() => saveRecord(TimeType.END)}>
+            Record
+          </Text>
+        </TouchableOpacity>
       </View>
       <View>
         <DatePicker

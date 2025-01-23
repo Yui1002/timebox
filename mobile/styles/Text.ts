@@ -11,25 +11,33 @@ export default class TextStyle {
     }).text;
   }
 
+  static createHeaderTextStyle() {
+    let header = StyleSheet.create({
+      header: {
+        fontSize: 22,
+        fontWeight: '500',
+      },
+    }).header;
+    return StyleSheet.compose(this.createBasicTextStyle(), header);
+  }
+
+  static createTitleTextStyle() {
+    let title = StyleSheet.create({
+      title: {
+        fontSize: 18,
+        fontWeight: '500',
+      },
+    }).title;
+    return StyleSheet.compose(this.createBasicTextStyle(), title);
+  }
+
   static createButtonTextStyle() {
     let buttonText = StyleSheet.create({
       buttonText: {
         color: COLORS.WHITE,
-        fontSize: 18,
-        textAlign: 'center',
-        lineHeight: 34,
       },
     }).buttonText;
     return StyleSheet.compose(this.createBasicTextStyle(), buttonText);
-  }
-
-  static createRecordButtonTextStyle() {
-    let buttonText = StyleSheet.create({
-      buttonText: {
-        lineHeight: 60,
-      },
-    }).buttonText;
-    return StyleSheet.compose(this.createButtonTextStyle(), buttonText);
   }
 
   static createLinkTextStyle() {
@@ -62,25 +70,6 @@ export default class TextStyle {
     }).toggle;
   }
 
-  static createHeaderTextStyle() {
-    let header = StyleSheet.create({
-      header: {
-        fontSize: 22,
-        fontWeight: '500',
-      },
-    }).header;
-    return StyleSheet.compose(this.createBasicTextStyle(), header);
-  }
-
-  static createTitleTextStyle() {
-    let title = StyleSheet.create({
-      title: {
-        fontWeight: '500',
-      },
-    }).title;
-    return StyleSheet.compose(this.createBasicTextStyle(), title);
-  }
-
   static createErrorTextStyle() {
     return StyleSheet.create({
       error: {
@@ -94,9 +83,8 @@ export default class TextStyle {
   static createDropdownTextStyle() {
     let dropdownText = StyleSheet.create({
       dropdownText: {
-        paddingLeft: 10,
         width: '70%',
-        lineHeight: 24
+        textAlign: 'center'
       }
     }).dropdownText;
     return StyleSheet.compose(this.createBasicTextStyle(), dropdownText);
@@ -128,5 +116,26 @@ export default class TextStyle {
       }
     }).text;
     return StyleSheet.compose(this.createBasicTextStyle(), text);
+  }
+
+  static createRightTopTextStyle() {
+    return StyleSheet.create({
+      text: {
+        fontSize: 12,
+        color: COLORS.DARK_GRAY,
+        marginLeft: 'auto',
+        marginRight: 0
+      }
+    }).text;
+  }
+
+  static createProfileTextStyle() {
+    return StyleSheet.create({
+      text: {
+        fontWeight: '500',
+        fontSize: 22,
+        textAlign: 'center'
+      }
+    }).text
   }
 }

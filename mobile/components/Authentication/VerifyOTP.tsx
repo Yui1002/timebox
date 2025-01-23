@@ -93,7 +93,7 @@ const VerifyOTP = ({route, navigation}: any) => {
   let button = ButtonStyle.createBasicButtonStyle();
   let buttonText = TextStyle.createButtonTextStyle();
   let linkText = TextStyle.createLinkTextStyle();
-  let separator = SeparatorStyle.createBasicSeparatorStyle().separator;
+  let separator = SeparatorStyle.createBasicSeparatorStyle();
 
   return (
     <SafeAreaView style={topContainer}>

@@ -49,7 +49,9 @@ enum Screen {
   PERSONAL_INFO = 'PersonalInfo',
   WORK_SHIFTS = 'WorkShifts',
   REVIEW = 'Review',
-  REGISTER_WORK_SHIFTS = 'RegisterWorkShifts'
+  REGISTER_WORK_SHIFTS = 'RegisterWorkShifts',
+  PROFILE = 'Profile',
+  EDIT_WORK_SHIFTS = 'EditWorkShifts'
 }
 
 enum ErrMsg {
@@ -70,7 +72,12 @@ enum ErrMsg {
   START_TIME_NOT_SELECTED = 'Start time is not selected',
   END_TIME_NOT_SELECTED = 'End time is not selected',
   INVALID_START_TIME = 'Start time has to occur before end time',
-  INVALID_END_TIME = 'End time has to occur after start time'
+  INVALID_END_TIME = 'End time has to occur after start time',
+  DAY_EMPTY = 'Select a day',
+  DUPLICATE_DAY = 'This day is already registered',
+  INVALID_DURATION = 'Duration has to more than 1 hour',
+  INVALID_TIME = 'Time is invalid',
+  SAVE_FAIL = 'Failed to save changes',
 }
 
 enum ProgressBar {

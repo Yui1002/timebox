@@ -1,15 +1,23 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, TouchableOpacity, Button} from 'react-native';
-import {styles} from '../../../styles/stepFormsStyles.js';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
-import { Days } from '../../../enums'
-import { WorkShiftsProps, Schedule } from '../../../types';
-import { ErrorModel } from '../../../types';
+import {WorkShiftsProps, Schedule} from '../../../types';
+import {ErrorModel} from '../../../types';
 import Error from '../../Error';
 import Validator from '../../../validator/validator';
+import {ErrMsg, Screen, Days} from '../../../enums';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  InputStyle,
+  TextStyle,
+  IconStyle,
+} from '../../../styles';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {COLORS} from '../../../styles/theme';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -20,38 +28,23 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<string>('');
-  const [error, setError] = useState<ErrorModel>({
-    message: '',
-    statusCode: 200,
-  });
+  const [error, setError] = useState<ErrorModel>({message: ''});
 
   const validateInput = () => {
     if (!Validator.isNotEmpty(selectedDay)) {
-      setError({
-        message: 'Please select a day',
-        statusCode: 400
-      });
+      setError({message: ErrMsg.DAY_EMPTY});
       return false;
     }
     if (workShifts.workShifts.some(shift => shift['day'] === selectedDay)) {
-      setError({
-        message: `${selectedDay} is already registered`,
-        statusCode: 400
-      });
+      setError({message: ErrMsg.DUPLICATE_DAY});
       return false;
     }
     if (startTime > endTime) {
-      setError({
-        message: 'Time is invalid',
-        statusCode: 400
-      });
+      setError({message: ErrMsg.INVALID_TIME});
       return false;
     }
     if (endTime.getHours() - startTime.getHours() < 1) {
-      setError({
-        message: 'Duration has to more than 1 hour',
-        statusCode: 400
-      });
+      setError({message: ErrMsg.INVALID_DURATION});
       return false;
     }
     return true;
@@ -67,23 +60,35 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     };
 
     dispatch(addShift(value));
-    navigation.navigate('WorkShifts', params);
+    navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let alignTopContainer = ContainerStyle.createAlignTopContainer();
+  let wrapContainer = ContainerStyle.createWrapContainer();
+  let alignContainer = ContainerStyle.createAlignContainer();
+  let titleText = TextStyle.createTitleTextStyle();
+  let selectedButton = ButtonStyle.createSelectedDayButtonStyle();
+  let button = ButtonStyle.createDayButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let continuBtn = ButtonStyle.createContinueButtonStyle();
+  let backBtn = ButtonStyle.createBackButtonStyle();
+  let dropdown = InputStyle.createDropdown3Style();
+  let dropdownText = TextStyle.createDropdownTextStyle();
+  let icon = IconStyle.createBasicIconStyle();
+
   return (
-    <View style={styles.container}>
+    <View style={topContainer}>
       <View style={{marginTop: 30}}>
         {error.message && <Error msg={error.message} />}
-        <Text style={{fontSize: 16, fontWeight: '500', marginVertical: 8}}>
-          Select day and time
-        </Text>
-        <View style={styles.dayContainer}>
+        <Text style={titleText}>Select day and time</Text>
+        <View style={wrapContainer}>
           {Object.values(Days).map((day: string, key: number) => (
             <TouchableOpacity
               key={key}
-              style={selectedDay === day ? styles.day_selected : styles.day}
+              style={selectedDay === day ? selectedButton : button}
               onPress={() => setSelectedDay(day)}>
-              <Text style={styles.day_text}>{day}</Text>
+              <Text style={buttonText}>{day}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -105,39 +110,41 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
             />
           )}
         </View>
-        <View style={styles.timeContainer}>
-          <View style={{width: '50%'}}>
-            <Text style={styles.titleHeader}>Start</Text>
+        <View style={alignTopContainer}>
+          <View style={alignContainer}>
+            <Text style={titleText}>Start time</Text>
             <TouchableOpacity
-              style={styles.startText}
-              onPress={() => setStartOpen(true)}>
-              <Text style={{color: '#505050'}}>
-                {moment(startTime).format('LT')}
-              </Text>
-              <View style={styles.arrow} />
+              onPress={() => setStartOpen(true)}
+              style={dropdown}>
+              <Text style={dropdownText}>{moment(startTime).format('LT')}</Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={36}
+                color={COLORS.BLACK}
+                style={icon}
+              />
             </TouchableOpacity>
           </View>
-          <View style={{width: '50%'}}>
-            <Text style={styles.titleHeader}>End</Text>
-            <TouchableOpacity
-              style={styles.startText}
-              onPress={() => setEndOpen(true)}>
-              <Text style={{color: '#505050'}}>
-                {moment(endTime).format('LT')}
-              </Text>
-              <View style={styles.arrow} />
+          <View style={alignContainer}>
+            <Text style={titleText}>End time</Text>
+            <TouchableOpacity style={dropdown} onPress={() => setEndOpen(true)}>
+              <Text style={dropdownText}>{moment(endTime).format('LT')}</Text>
+              <MaterialIcons
+                name="arrow-drop-down"
+                size={36}
+                color={COLORS.BLACK}
+                style={icon}
+              />
             </TouchableOpacity>
           </View>
         </View>
       </View>
-      <View style={styles.workShiftsBtn}>
-        <TouchableOpacity
-          style={styles.workShiftsBtn_back}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Cancel</Text>
+      <View style={alignTopContainer}>
+        <TouchableOpacity style={backBtn} onPress={() => navigation.goBack()}>
+          <Text style={buttonText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.workShiftsBtn_add} onPress={add}>
-          <Text style={styles.buttonText}>Add</Text>
+        <TouchableOpacity style={continuBtn} onPress={add}>
+          <Text style={buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
     </View>

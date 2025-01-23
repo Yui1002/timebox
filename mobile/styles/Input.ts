@@ -29,16 +29,44 @@ export default class InputStyle {
   }
 
   static createDropdownStyle() {
+    return StyleSheet.create({
+      dropdown: {
+        width: '75%',
+        height: '100%',
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 6,
+        backgroundColor: '#ddd',
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+    }).dropdown;
+  }
+
+  
+  static createDropdown2Style() {
     let dropdown = StyleSheet.create({
       dropdown: {
-        height: 60,
-        borderWidth: 0,
-        borderColor: undefined,
+        backgroundColor: '#fff',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-      },
+        justifyContent: 'space-between',
+      }
     }).dropdown;
     return StyleSheet.compose(this.createBasicInputStyle(), dropdown);
   }
+  static createDropdown3Style() {
+    return StyleSheet.create({
+      dropdown: {
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 4,
+      }
+    }).dropdown;
+  }
+
 
 }

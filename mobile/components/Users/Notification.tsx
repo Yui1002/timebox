@@ -1,7 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
-import {styles} from '../../styles/notificationStyles.js';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  TextStyle,
+} from '../../styles';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import {alert, alertError} from '../../helper/Alert';
@@ -11,7 +15,7 @@ import {
   RequestStatus,
   Request,
   GetUserScheduleRs,
-  UpdateRequestStatusRq
+  UpdateRequestStatusRq,
 } from '../../swagger/generated';
 const api = DefaultApiFactory();
 
@@ -25,14 +29,14 @@ const Notification = (props: any) => {
       getRequests();
     }
   }, [isFocused]);
- 
+
   const getRequests = async () => {
     try {
       const {data} = await api.getRequestsByStatus(
         userInfo.email,
         RequestStatus.Pending,
       );
-      console.log('data', data.requests)
+      console.log('data', data.requests);
       setRequests(formatData(data.requests!));
     } catch (e) {
       setRequests([]);
@@ -47,7 +51,9 @@ const Notification = (props: any) => {
         startTime: r2.startTime,
         endTime: r2.endTime,
       };
-      Object.keys(item).forEach(key => delete r2[key as keyof GetUserScheduleRs]);
+      Object.keys(item).forEach(
+        key => delete r2[key as keyof GetUserScheduleRs],
+      );
 
       return (
         found
@@ -64,10 +70,12 @@ const Notification = (props: any) => {
   const sortDays = (request: Request): Request => {
     const weekdayOrder: string[] = Object.values(Days);
 
-    request.schedules?.sort((s1: GetUserScheduleRs, s2: GetUserScheduleRs): number => {
-      if (!s1.day || !s2.day) return 0;
-      return weekdayOrder.indexOf(s1.day) - weekdayOrder.indexOf(s2.day);
-    });
+    request.schedules?.sort(
+      (s1: GetUserScheduleRs, s2: GetUserScheduleRs): number => {
+        if (!s1.day || !s2.day) return 0;
+        return weekdayOrder.indexOf(s1.day) - weekdayOrder.indexOf(s2.day);
+      },
+    );
 
     return request;
   };
@@ -77,8 +85,8 @@ const Notification = (props: any) => {
       const params: UpdateRequestStatusRq = {
         senderEmail: r.senderEmail,
         receiverEmail: r.receiverEmail,
-        status: status
-      }
+        status: status,
+      };
       await api.updateRequestStatus(params);
       alertSuccess(r, status);
     } catch (e) {
@@ -88,7 +96,9 @@ const Notification = (props: any) => {
 
   const alertConfirm = (r: Request, status: RequestStatus) => {
     alert(
-      `Do you want to ${status.toLowerCase()} \n ${r.senderFirstName} ${r.senderLastName}'s request?`,
+      `Do you want to ${status.toLowerCase()} \n ${r.senderFirstName} ${
+        r.senderLastName
+      }'s request?`,
       '',
       function () {
         updateRequest(r, status);
@@ -99,7 +109,9 @@ const Notification = (props: any) => {
 
   const alertSuccess = (r: Request, status: RequestStatus) => {
     alertError(
-      `You successfully ${status.toLowerCase()}ed ${r.senderFirstName} ${r.senderLastName}'s request!`,
+      `You successfully ${status.toLowerCase()}ed ${r.senderFirstName} ${
+        r.senderLastName
+      }'s request!`,
       '',
       function () {
         props.navigation.goBack();
@@ -107,11 +119,21 @@ const Notification = (props: any) => {
     );
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let alignContainer = ContainerStyle.createAlignTopContainer();
+  let titleText = TextStyle.createTitleTextStyle();
+  let timeText = TextStyle.createRightTopTextStyle();
+  let btnText = TextStyle.createButtonTextStyle();
+  let text = TextStyle.createBasicTextStyle();
+  let acceptBtn = ButtonStyle.createAcceptButtonStyle();
+  let declineBtn = ButtonStyle.createDeclineButtonStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={topContainer}>
       <View>
         {requests.length ? (
-          <View style={styles.subContainer}>
+          <View>
             {requests.map((r: Request, index: number) => {
               const {
                 senderFirstName,
@@ -120,19 +142,18 @@ const Notification = (props: any) => {
                 rate,
                 rateType,
                 requestDate,
-                schedules
+                schedules,
               } = r;
-              console.log('status', status)
               if (status == RequestStatus.Approved) return;
               return (
-                <View key={index} style={styles.box}>
-                  <Text style={styles.title}>
+                <View key={index} style={container}>
+                  <Text style={titleText}>
                     {`Request from ${senderFirstName} ${senderLastName}`}
                   </Text>
-                  <Text style={styles.timeText}>{`${moment(requestDate).format(
+                  <Text style={timeText}>{`${moment(requestDate).format(
                     'YYYY/MM/DD h:mm',
                   )}`}</Text>
-                  <Text style={styles.subText}>
+                  <Text style={text}>
                     {`Pay: ${
                       rate && rateType
                         ? `$${rate} / ${rateType}`
@@ -140,29 +161,29 @@ const Notification = (props: any) => {
                     }`}
                   </Text>
                   <View>
-                    <Text style={styles.subText}>Schedules:</Text>
+                    <Text style={text}>Schedules:</Text>
                     {schedules?.length ? (
                       schedules.map((s: GetUserScheduleRs, index: number) => (
                         <View key={index}>
-                          <Text style={styles.subText}>{`${String.fromCharCode(
-                            8226,
-                          )} ${s.day} ${s.startTime} - ${s.endTime}`}</Text>
+                          <Text style={text}>{`${String.fromCharCode(8226)} ${
+                            s.day
+                          } ${s.startTime} - ${s.endTime}`}</Text>
                         </View>
                       ))
                     ) : (
                       <Text>Not specified</Text>
                     )}
                   </View>
-                  <View style={styles.buttonContainer}>
+                  <View style={alignContainer}>
                     <TouchableOpacity
-                      style={[styles.button, styles.button_decline]}
+                      style={declineBtn}
                       onPress={() => alertConfirm(r, RequestStatus.Rejected)}>
-                      <Text style={styles.buttonText}>Decline</Text>
+                      <Text style={btnText}>Decline</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.button, styles.button_accept]}
+                      style={acceptBtn}
                       onPress={() => alertConfirm(r, RequestStatus.Approved)}>
-                      <Text style={styles.buttonText}>Accept</Text>
+                      <Text style={btnText}>Accept</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

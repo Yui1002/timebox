@@ -1,21 +1,38 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { SafeAreaView, View, Text, TextInput, Button, ScrollView } from 'react-native';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  Button,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../../config.js';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
 import {navigate} from '../../../helper/navigate';
-import {Schedule} from '../../../type';
+import {Schedule, ErrorModel} from '../../../types';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
 import Error from '../../Error';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  TextStyle,
+  IconStyle,
+} from '../../../styles';
+import {Screen, ErrMsg} from '../../../enums';
+import Validator from '../../../validator/validator';
+import InputField from '../../InputField';
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const employerData = useSelector(state => state.userInfo);
   const serviceProviderData = useSelector(state => state.serviceProviderData);
   const {status, rate, rate_type, schedule} = serviceProviderData;
-  
+
   const [updatedRate, setUpdatedRate] = useState(rate);
   const [updatedRateType, setUpdatedRateType] = useState(rate_type);
   const [updatedStatus, setUpdatedStatus] = useState(status);
@@ -30,7 +47,7 @@ const EditProfile = ({route, navigation}: any) => {
     {label: 'Active', value: 'active'},
     {label: 'Inactive', value: 'inactive'},
   ]);
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState<ErrorModel>({message: ''});
 
   const deleteDate = (itemToDelete: Schedule) => {
     const result = serviceProviderData.schedule.map((schedule: Schedule) => {
@@ -43,71 +60,67 @@ const EditProfile = ({route, navigation}: any) => {
     });
 
     setUpdatedSchedule(result);
-    dispatch(updateServiceProvider(serviceProviderData))
-  }
+    dispatch(updateServiceProvider(serviceProviderData));
+  };
 
-  const validateInput = () => {
-    let errors: any = {};
-
-    if (isNaN(rate) || rate < 1) {
-      errors.rate = 'Rate must be a number or more than 0';
+  const validateInput = (): boolean => {
+    if (!Validator.isValidRate(rate)) {
+      setError({message: ErrMsg.INVALID_RATE});
+      return false;
     }
-    if (!rate_type) {
-      errors.rate_type = 'This field is required';
+    if (!Validator.isValidRateType(rate_type)) {
+      setError({message: ErrMsg.INVALID_RATE_TYPE});
+      return false;
     }
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return true;
   };
 
   const saveChanges = async () => {
     if (!validateInput()) return;
 
     try {
-      await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`,
-        {
-          employerEmail: employerData.email,
-          serviceProviderEmail: serviceProviderData.email,
-          rate: updatedRate,
-          rateType: updatedRateType,
-          status: updatedStatus,
-          schedule: updatedSchedule
-        }
-      )
-      navigate(navigation, 'Profile', route.params.sp);
-    } 
-    catch (e) {
-      setErrors({
-        error: 'Unable to save changes'
+      await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`, {
+        employerEmail: employerData.email,
+        serviceProviderEmail: serviceProviderData.email,
+        rate: updatedRate,
+        rateType: updatedRateType,
+        status: updatedStatus,
+        schedule: updatedSchedule,
       });
+      navigate(navigation, Screen.PROFILE, route.params.sp);
+    } catch (e) {
+      setError({message: ErrMsg.SAVE_FAIL});
     }
   };
 
   const navigateToSchedule = (schedule: Schedule | null) => {
-    navigate(navigation, 'EditWorkShifts', 
-      schedule ? { editSelectedSchedule: schedule } : null);
+    navigate(
+      navigation,
+      Screen.EDIT_WORK_SHIFTS,
+      schedule ? {editSelectedSchedule: schedule} : null,
+    );
   };
+
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let alignTopContainer = ContainerStyle.createAlignTopContainer();
+  let alignContainer = ContainerStyle.createAlignContainer();
+  let titleText = TextStyle.createTitleTextStyle();
+  let btnContainer = ContainerStyle.createButtonContainerStyle();
+  let button = ButtonStyle.createBasicButtonStyle();
+  let buttonText = TextStyle.createButtonTextStyle();
+  let saveButton = ButtonStyle.createSaveButtonStyle();
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={{marginVertical: 10}}>
-          {Object.values(errors).map((error, key) => (
-            <Error key={key} msg={error} />
-          ))}
-        </View>
-        <View style={styles.align}>
-          <View style={{width: '45%'}}>
-            <Text style={styles.text}>Rate ($)</Text>
-            <TextInput
-              maxLength={10}
-              value={`${updatedRate}`}
-              style={styles.input}
-              onChangeText={val => setUpdatedRate(val)}
-            />
+        {error.message && <Error msg={error.message} />}
+        <View style={alignTopContainer}>
+          <View style={alignContainer}>
+            <Text style={titleText}>Rate ($)</Text>
+            <InputField.Underlined onChangeText={val => setUpdatedRate(val)} />
           </View>
-          <View style={{width: '45%'}}>
-            <Text style={styles.rateTypeText}>Rate Type</Text>
+          <View style={alignContainer}>
+            <Text style={titleText}>Rate Type</Text>
             <DropdownPicker
               open={rateTypeOpen}
               value={updatedRateType}
@@ -119,8 +132,8 @@ const EditProfile = ({route, navigation}: any) => {
             />
           </View>
         </View>
-        <View style={{width: '45%'}}>
-          <Text style={styles.text}>Status</Text>
+        <View style={alignContainer}>
+          <Text style={titleText}>Status</Text>
           <DropdownPicker
             open={statusOpen}
             value={updatedStatus}
@@ -132,33 +145,45 @@ const EditProfile = ({route, navigation}: any) => {
           />
         </View>
         <View style={statusOpen ? {zIndex: -1} : null}>
-          <Text style={styles.text}>Schedule</Text>
-          {updatedSchedule && updatedSchedule.length ? (
+          <Text style={titleText}>Schedule</Text>
+          {updatedSchedule?.length ? (
             updatedSchedule.map((s: Schedule, index: number) => {
               if (s.day && s.startTime && s.endTime) {
                 return (
-                  <View key={index} style={[styles.align_2, {marginVertical: 4}]}>
-                  <Text style={{width: '24%'}}>{s.day}</Text>
-                  <Text style={{width: '40%'}}>{s.startTime} ~ {s.endTime}</Text>
-                  <Text style={styles.delete} onPress={() => navigateToSchedule(s)}>Edit</Text>
-                  <Text style={styles.delete} onPress={() => deleteDate(s)}>Delete</Text>
-                </View>
-                )
+                  <View key={index} style={alignTopContainer}>
+                    <Text style={{width: '24%'}}>{s.day}</Text>
+                    <Text style={{width: '40%'}}>
+                      {s.startTime} ~ {s.endTime}
+                    </Text>
+                    <Text
+                      style={styles.delete}
+                      onPress={() => navigateToSchedule(s)}>
+                      Edit
+                    </Text>
+                    <Text style={styles.delete} onPress={() => deleteDate(s)}>
+                      Delete
+                    </Text>
+                  </View>
+                );
               }
             })
           ) : (
             <Text>Not specified</Text>
           )}
-          <View style={styles.addButton}>
-            <Button
-              title={`${String.fromCharCode(43)}  Add Schedule`}
-              color="#fff"
-              onPress={navigateToSchedule}
-            />
+          <View style={btnContainer}>
+            <TouchableOpacity
+              style={button}
+              onPress={() => navigateToSchedule(schedule)}>
+              <Text style={buttonText}>{`${String.fromCharCode(
+                43,
+              )}  Add Schedule`}</Text>
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.saveButton}>
-          <Button title="Save" color="#fff" onPress={saveChanges} />
+        <View style={btnContainer}>
+          <TouchableOpacity style={saveButton} onPress={saveChanges}>
+            <Text style={buttonText}>Save</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import {
@@ -8,13 +8,19 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  TextStyle,
+  CheckboxStyle,
+} from '../../styles';
 import CheckBox from '@react-native-community/checkbox';
-import {styles} from '../../styles/manageServiceProvidersStyles.js';
 import {
   DefaultApiFactory,
   ServiceProvider,
   RequestStatus,
 } from '../../swagger/generated';
+import {Screen} from '../../enums';
 
 let api = DefaultApiFactory();
 
@@ -59,57 +65,59 @@ const ManageServiceProviders = (props: any) => {
   // };
 
   const navigateToProfile = (sp: ServiceProvider) => {
-    props.navigation.navigate('Profile', {
+    props.navigation.navigate(Screen.PROFILE, {
       sp,
     });
   };
 
+  let topContainer = ContainerStyle.createTopContainerStyle();
+  let container = ContainerStyle.createBasicContainerStyle();
+  let listContainer = ContainerStyle.createListContainerStyle();
+  let listSubContainer = ContainerStyle.createListSubContainerStyle();
+  let checkboxContainer = ContainerStyle.createCheckBoxContainer();
+  let checkBox = CheckboxStyle.createBasicCheckboxStyle();
+  let headerText = TextStyle.createHeaderTextStyle();
+  let titleText = TextStyle.createTitleTextStyle();
+  let text = TextStyle.createBasicTextStyle();
+  let recordBtn = ButtonStyle.createRecordButtonStyle();
+  let btnText = TextStyle.createButtonTextStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.title}>
-        <Text style={styles.titleText}>Service Providers</Text>
+    <SafeAreaView style={topContainer}>
+      <View style={container}>
+        <Text style={headerText}>Service Providers</Text>
       </View>
-      <View style={styles.checkBoxContainer}>
+      <View style={checkboxContainer}>
         <CheckBox
-          style={styles.checkBox}
+          style={checkBox}
           boxType="square"
           animationDuration={0}
           value={isBoxChecked}
           onChange={() => setIsBoxChecked(!isBoxChecked)}
         />
-        <Text style={styles.checkBoxText}>Show not currently employed</Text>
+        <Text style={text}>Show not currently employed</Text>
       </View>
-      <ScrollView style={styles.subContainer}>
-        {serviceProviders?.length ? (
-          serviceProviders?.map((sp: ServiceProvider, index: number) => {
-            if (isBoxChecked || sp.status) {
-              const {first_name, last_name, email, status} = sp;
-              return (
+      {serviceProviders == null ? (
+        <Text>You don't have service providers</Text>
+      ) : (
+        <ScrollView>
+          {serviceProviders.map((serviceProvider, index) => (
+            <View key={index} style={listContainer}>
+              <View style={listSubContainer}>
+                <Text style={text}>{serviceProvider.status}</Text>
+                <Text style={titleText}>
+                  {serviceProvider.first_name} {serviceProvider.last_name}
+                </Text>
+                <Text>{serviceProvider.email}</Text>
+              </View>
                 <TouchableOpacity
-                  key={index}
-                  style={styles.listContainer}
-                  onPress={
-                    status === RequestStatus.Approved
-                      ? () => navigateToProfile(sp)
-                      : () => null
-                  }>
-                  <Text style={styles.statusText}>{status}</Text>
-                  <Text style={styles.listText}>
-                    {`${
-                      first_name
-                        ? `${first_name} ${last_name}`
-                        : `Name not specified`
-                    }`}
-                  </Text>
-                  <Text>{email}</Text>
+                  onPress={() => navigateToProfile(serviceProvider)} style={recordBtn}>
+                  <Text style={btnText}>View</Text>
                 </TouchableOpacity>
-              );
-            }
-          })
-        ) : (
-          <Text>You don't have service providers</Text>
-        )}
-      </ScrollView>
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

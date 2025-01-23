@@ -16,8 +16,8 @@ let focusedBar = IconStyle.createProgressBarFocused();
 const ProgressBar = ({title, isFocused}: any) => {
   return (
     <View style={container}>
-      {Object.values(Bar).map((progress: Bar) => (
-        <View style={subContainer}>
+      {Object.values(Bar).map((progress: Bar, index: number) => (
+        <View key={index} style={subContainer}>
           <Text style={barText}>{progress}</Text>
           <View style={isFocused && progress == title ? focusedBar : bar} />
         </View>

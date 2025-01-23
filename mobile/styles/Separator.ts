@@ -10,6 +10,6 @@ export default class SeparatorStyle {
         borderBottomColor: COLORS.BLACK,
         borderBottomWidth: StyleSheet.hairlineWidth,
       },
-    });
+    }).separator;
   }
 }
