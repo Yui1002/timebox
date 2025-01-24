@@ -1,19 +1,13 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import {ContainerStyle, ButtonStyle, InputStyle, TextStyle, SeparatorStyle} from '../../styles';
+import React, {useState, useEffect} from 'react';
+import {Text, View, SafeAreaView} from 'react-native';
+import {ContainerStyle} from '../../styles';
+import {Footer, Button, Error, Separator, OTPInput} from '../index';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
-import {navigate} from '../../helper/navigate';
-import Error from '../Error';
 import {ErrorModel} from '../../types';
 import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger/generated';
 import {ErrMsg, Screen} from '../../enums';
+import Validator from '../../validator/validator';
 let otpApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
@@ -40,13 +34,11 @@ const VerifyOTP = ({route, navigation}: any) => {
   };
 
   const validateInput = (): boolean => {
-    const regex = /^[0-9]{6,6}$/;
-
-    if (!regex.test(otp)) {
-      setErrors({message: 'Verification code has to be 6 digit'});
-      return false;
+    const validationErr = Validator.validateOTP(otp);
+    if (validationErr) {
+      setErrors({message: validationErr});
     }
-    return true;
+    return validationErr == null;
   };
 
   const verifyOTP = async () => {
@@ -61,9 +53,9 @@ const VerifyOTP = ({route, navigation}: any) => {
       await otpApi.verifyOTP(params);
       if (isSignUp) {
         setUser();
-        navigate(navigation, Screen.DRAWER_NAV, null);
+        navigation.navigate(Screen.DRAWER_NAV, null)
       } else {
-        navigate(navigation, Screen.RESET_PASSWORD, {email});
+        navigation.navigate(Screen.RESET_PASSWORD, {email})
       }
     } catch (e: any) {
       setErrors({message: ErrMsg.OTP_VERIFICATION_ERR});
@@ -87,13 +79,6 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   let topContainer = ContainerStyle.createTopContainerStyle();
   let container = ContainerStyle.createBasicContainerStyle();
-  let btnContainer = ContainerStyle.createButtonContainerStyle();
-  let footer = ContainerStyle.createAlignTopContainer();
-  let inputText = InputStyle.createOTPInputStyle();
-  let button = ButtonStyle.createBasicButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
-  let linkText = TextStyle.createLinkTextStyle();
-  let separator = SeparatorStyle.createBasicSeparatorStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -101,37 +86,15 @@ const VerifyOTP = ({route, navigation}: any) => {
       <View style={container}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
-      <View style={container}>
-        <TextInput
-          style={inputText}
-          maxLength={6}
-          keyboardType="numeric"
-          autoFocus
-          onChangeText={val => setOtp(val)}
-        />
-      </View>
-      <View style={btnContainer}>
-        <TouchableOpacity style={button} onPress={verifyOTP}>
-          <Text style={buttonText}>Verify</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={separator}></View>
-      <View style={footer}>
-        <View>
-          <Text>Didn't receive a code?</Text>
-          <Text style={linkText} onPress={setOTP}>
-            Resend
-          </Text>
-        </View>
-        <View>
-          <Text>Go back to</Text>
-          <Text
-            style={linkText}
-            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
-            Sign In
-          </Text>
-        </View>
-      </View>
+      <OTPInput onChangeText={val => setOtp(val)}/>
+      <Button title="Verify" func={verifyOTP} />
+      <Separator />
+      <Footer
+        leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}
+        rightText={{text1: 'Go back to', text2: 'Sign In'}}
+        leftFunc={setOTP}
+        rightFunc={() => navigation.navigate(Screen.SIGN_IN)}
+      />
     </SafeAreaView>
   );
 };

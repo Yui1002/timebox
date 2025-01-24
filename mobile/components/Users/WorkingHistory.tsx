@@ -23,7 +23,7 @@ import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import {RawEmployer, FormattedEmployer, Record} from '../../types';
 import validator from 'validator';
-import Error from '../Error';
+import { Footer, Button, Error } from '../index'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {COLORS} from '../../styles/theme';
 
@@ -92,7 +92,7 @@ const WorkingHistory = (props: any) => {
       const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByPeriod`, {
         employerEmail: selectedEmployer,
         serviceProviderEmail: email,
-        from: from ? from : '1950-01-01',
+        from: from ? from : '2020-01-01',
         to: to ? to : moment().format('YYYY-MM-DD'),
       });
 
@@ -180,7 +180,7 @@ const WorkingHistory = (props: any) => {
               onCancel={() => {
                 setFromDropDown(false);
               }}
-              minimumDate={new Date('1950-01-01')}
+              minimumDate={new Date('2020-01-01')}
               maximumDate={new Date()}
             />
             <DatePicker
@@ -192,7 +192,7 @@ const WorkingHistory = (props: any) => {
               onCancel={() => {
                 setToDropDown(false);
               }}
-              minimumDate={new Date('1950-01-01')}
+              minimumDate={new Date('2020-01-01')}
               maximumDate={new Date()}
             />
           </View>

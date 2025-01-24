@@ -64,8 +64,8 @@ export default class TextStyle {
     return StyleSheet.create({
       toggle: {
         position: 'absolute',
-        top: '32%',
-        right: '8%',
+        top: '50%',
+        right: '12%',
       },
     }).toggle;
   }

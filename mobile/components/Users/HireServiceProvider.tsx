@@ -16,7 +16,7 @@ import {
 import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
-import Error from '../Error';
+import { Footer, Button, Error } from '../index'
 import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
 import Validator from '../../validator/validator';
 import {ErrorModel} from '../../types';

@@ -63,10 +63,6 @@ type NotificationData = {
   requestDate: Date;
 };
 
-type RateType = {
-    rateType: RateTypeValue.HOURLY | RateTypeValue.DAILY;
-}
-
 type RateTypeSet = {
   label: RateTypeValue.HOURLY | RateTypeValue.DAILY;
   value: RateTypeValue.HOURLY | RateTypeValue.DAILY;
@@ -82,7 +78,13 @@ type SignUpProps = {
   lastName: string,
   email: string,
   password: string,
+  confirmedPassword: string,
   isSignUp: boolean,
+}
+
+type SignInProps = {
+  email: string,
+  password: string
 }
 
 type PersonalInfoProps = {
@@ -109,7 +111,6 @@ export {
   UserInfo,
   PersonalInfoProps,
   RateTypeSet,
-  RateType,
   ErrorModel,
   Schedule,
   ServiceProvider,
@@ -119,6 +120,7 @@ export {
   NotificationData,
   WorkShiftsProps,
   SignUpProps,
+  SignInProps,
   ForgotPasswordProps,
   ModeSet
 };

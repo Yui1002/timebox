@@ -1,17 +1,11 @@
 import React, {useState} from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import { ContainerStyle, ButtonStyle, InputStyle, TextStyle, SeparatorStyle } from "../../styles"
-import Error from '../Error';
+import {SafeAreaView} from 'react-native';
+import {ContainerStyle} from '../../styles';
 import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger/generated';
 import {Screen, ErrMsg} from '../../enums';
+import {Footer, Button, Error, Separator, Input} from '../index';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
@@ -19,11 +13,11 @@ const ForgotPassword = ({navigation}: any) => {
   const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const validateEmail = (): boolean => {
-    if (!Validator.isValidEmail(email)) {
-      setErrors({message: ErrMsg.INVALID_EMAIL});
-      return false;
+    const validateErr = Validator.validateEmail(email);
+    if (validateErr) {
+      setErrors({message: validateErr});
     }
-    return true;
+    return validateErr == null;
   };
 
   const navigateScreen = () => {
@@ -47,43 +41,23 @@ const ForgotPassword = ({navigation}: any) => {
   };
 
   let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let btnContainer = ContainerStyle.createButtonContainerStyle();
-  let footer = ContainerStyle.createAlignTopContainer();
-  let inputText = InputStyle.createBasicInputStyle();
-  let button = ButtonStyle.createBasicButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
-  let linkText = TextStyle.createLinkTextStyle();
-  let separator = SeparatorStyle.createBasicSeparatorStyle();
 
   return (
     <SafeAreaView style={topContainer}>
       {errors.message && <Error msg={errors.message} />}
-      <View style={container}>
-        <Text>Email</Text>
-        <TextInput
-          style={inputText}
-          autoCorrect={false}
-          autoCapitalize="none"
-          onChangeText={val => setEmail(val)}
-        />
-      </View>
-      <View style={btnContainer}>
-        <TouchableOpacity style={button} onPress={checkEmailRegistered}>
-          <Text style={buttonText}>Verify Email</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={separator}></View>
-      <View style={footer}>
-        <View>
-          <Text>Go back to</Text>
-          <Text
-            style={linkText}
-            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
-            Sign In
-          </Text>
-        </View>
-      </View>
+      <Input
+        title="Email"
+        secureTextEntry={false}
+        onChangeText={val => setEmail(val)}
+      />
+      <Button title="Verify Email" func={checkEmailRegistered} />
+      <Separator />
+      <Footer
+        leftText={{text1: 'Go back to', text2: 'Sign In'}}
+        leftFunc={() => navigation.navigate(Screen.SIGN_IN)}
+        rightText={undefined}
+        rightFunc={undefined}
+      />
     </SafeAreaView>
   );
 };

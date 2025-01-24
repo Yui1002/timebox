@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import { ContainerStyle, TextStyle } from '../styles';
-import { COLORS } from '../styles/theme';
+import { ContainerStyle, TextStyle } from '../../styles';
+import { COLORS } from '../../styles/theme';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Error = (props: any) => {

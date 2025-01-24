@@ -1,17 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import {ContainerStyle, ButtonStyle, InputStyle, TextStyle} from '../../styles';
+import {Text, View, SafeAreaView, ScrollView} from 'react-native';
+import EmployerList from '../Employers/EmployerList';
+import {ContainerStyle, TextStyle} from '../../styles';
 import {useIsFocused} from '@react-navigation/native';
 import {DefaultApiFactory, Employer} from '../../swagger/generated';
 import {UserInfo} from '../../types';
-import {Screen} from '../../enums';
 
 let employerApi = DefaultApiFactory();
 
@@ -36,22 +30,10 @@ const Home = (props: any) => {
     }
   };
 
-  const navigateScreen = (employer: Employer): void => {
-    props.navigation.navigate(Screen.RECORD, {
-      employer: employer,
-      serviceProviderEmail: email,
-    });
-  };
-
   let topContainer = ContainerStyle.createTopContainerStyle();
   let container = ContainerStyle.createBasicContainerStyle();
-  let listContainer = ContainerStyle.createListContainerStyle();
-  let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let headerText = TextStyle.createHeaderTextStyle();
   let titleText = TextStyle.createTitleTextStyle();
-  let text = TextStyle.createBasicTextStyle();
-  let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -65,19 +47,7 @@ const Home = (props: any) => {
         ) : (
           <ScrollView>
             {employers.map((employer, index) => (
-              <View key={index} style={listContainer}>
-                <View style={listSubContainer}>
-                  <Text style={text}>
-                    {employer.firstName} {employer.lastName}
-                  </Text>
-                  <Text>{employer.email}</Text>
-                </View>
-                <TouchableOpacity
-                  style={recordBtn}
-                  onPress={() => navigateScreen(employer)}>
-                  <Text style={btnText}>Record</Text>
-                </TouchableOpacity>
-              </View>
+              <EmployerList key={index} employer={employer} email={email} />
             ))}
           </ScrollView>
         )}

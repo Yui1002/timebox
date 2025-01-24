@@ -18,7 +18,7 @@ import {
   Mode,
 } from '../../../swagger/generated';
 import {ErrorModel} from '../../../types';
-import Error from '../../Error';
+import { Footer, Button, Error } from '../../index'
 import {ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
 
 let api = DefaultApiFactory();
@@ -29,7 +29,6 @@ const Review = ({route, navigation}: any) => {
   const {firstName, lastName, email, rate, rateType, isEnabled} = params;
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
-  const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [error, setError] = useState<ErrorModel>({message: ''});
 
   const editDay = () => {
@@ -57,7 +56,6 @@ const Review = ({route, navigation}: any) => {
     } catch (e: any) {
       setError({message: ErrMsg.REQUEST_SEND_ERR});
     }
-    await api.setRequest(params);
   };
 
   const showSuccess = () => {

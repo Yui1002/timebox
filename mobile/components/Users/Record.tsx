@@ -18,13 +18,12 @@ import {
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Error from '../Error';
+import { Footer, Button, Error } from '../index'
 import {TimeType, ErrMsg, Parameters} from '../../enums';
 import {COLORS} from '../../styles/theme';
 import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, GetRecordRq} from '../../swagger/generated';
-import {TextInput} from 'react-native-gesture-handler';
 const api = DefaultApiFactory();
 
 const Record = ({route}: any) => {
@@ -32,29 +31,16 @@ const Record = ({route}: any) => {
   const serviceProviderEmail = route.params.serviceProviderEmail;
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [start, setStart] = useState<Date | null>(null);
-  const [end, setEnd] = useState<Date | null>(null);
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
+  const [error, setError] = useState<ErrorModel>({message: ''});
 
   const validateInput = (type: TimeType): boolean => {
-    if (type === TimeType.START) {
-      if (!start) {
-        setErrors({message: ErrMsg.START_TIME_NOT_SELECTED});
-        return false;
-      } else if (end && !Validator.isValidStartTime(start, end)) {
-        setErrors({message: ErrMsg.INVALID_START_TIME});
-        return false;
-      }
-    } else if (type === TimeType.END) {
-      if (!end) {
-        setErrors({message: ErrMsg.END_TIME_NOT_SELECTED});
-        return false;
-      } else if (start && !Validator.isValidEndTime(start, end)) {
-        setErrors({message: ErrMsg.INVALID_END_TIME});
-        return false;
-      }
+    const validateErr = Validator.validateRecordTime(type, startTime, endTime);
+    if (validateErr) {
+      setError({message: validateErr});
     }
-    return true;
+    return validateErr == null;
   };
 
   const checkRecordExists = async (type: string) => {
@@ -78,7 +64,7 @@ const Record = ({route}: any) => {
       const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
-        recordTime: date,
+        // recordTime: date,
         type: type,
       });
     } catch (e: any) {
@@ -98,7 +84,7 @@ const Record = ({route}: any) => {
 
   return (
     <SafeAreaView style={topContainer}>
-      {errors.message && <Error msg={errors.message} />}
+      {error.message && <Error msg={error.message} />}
       <View style={container}>
         <Text style={headerText}>
           Employer: {firstName} {lastName}
@@ -109,7 +95,9 @@ const Record = ({route}: any) => {
           onPress={() => setStartOpen(!startOpen)}
           style={dropdown}>
           <Text style={dropdownText}>
-            {start ? moment(start).format('MM/DD LT') : `Select start time`}
+            {startTime
+              ? moment(startTime).format('MM/DD LT')
+              : `Select start time`}
           </Text>
           <MaterialIcons
             name="arrow-drop-down"
@@ -118,16 +106,16 @@ const Record = ({route}: any) => {
             style={icon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={recordBtn}>
-          <Text style={btnText} onPress={() => saveRecord(TimeType.START)}>
-            Record
-          </Text>
+        <TouchableOpacity
+          style={recordBtn}
+          onPress={() => saveRecord(TimeType.START)}>
+          <Text style={btnText}>Record</Text>
         </TouchableOpacity>
       </View>
       <View style={dropdownContainer}>
         <TouchableOpacity onPress={() => setEndOpen(!endOpen)} style={dropdown}>
           <Text style={dropdownText}>
-            {end ? moment(end).format('MM/DD LT') : `Select end time`}
+            {endTime ? moment(endTime).format('MM/DD LT') : `Select end time`}
           </Text>
           <MaterialIcons
             name="arrow-drop-down"
@@ -136,10 +124,10 @@ const Record = ({route}: any) => {
             style={icon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={recordBtn}>
-          <Text style={btnText} onPress={() => saveRecord(TimeType.END)}>
-            Record
-          </Text>
+        <TouchableOpacity
+          style={recordBtn}
+          onPress={() => saveRecord(TimeType.END)}>
+          <Text style={btnText}>Record</Text>
         </TouchableOpacity>
       </View>
       <View>
@@ -148,7 +136,7 @@ const Record = ({route}: any) => {
           open={startOpen}
           mode="datetime"
           date={new Date()}
-          onConfirm={(d: Date) => setStart(d)}
+          onConfirm={(d: Date) => setStartTime(d.toString())}
           onCancel={() => setStartOpen(false)}
           minimumDate={
             mode === 1
@@ -162,7 +150,7 @@ const Record = ({route}: any) => {
           open={endOpen}
           mode="datetime"
           date={new Date()}
-          onConfirm={(d: Date) => setEnd(d)}
+          onConfirm={(d: Date) => setEndTime(d.toString())}
           onCancel={() => setEndOpen(false)}
           minimumDate={
             mode === 1

@@ -10,6 +10,15 @@ export default class ContainerStyle {
     }).container;
   }
 
+  static createInputContainerStyle() {
+    let container = StyleSheet.create({
+      container: {
+        margin: 'auto'
+      }
+    }).container
+    return StyleSheet.compose(this.createBasicContainerStyle(), container);
+  }
+
   static createTopContainerStyle() {
     return StyleSheet.create({
       topContainer: {

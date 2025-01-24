@@ -11,7 +11,7 @@ import InputField from '../../InputField';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
-import Error from '../../Error';
+import { Footer, Button, Error } from '../../index'
 import {
   RateTypeSet,
   PersonalInfoProps,
@@ -22,7 +22,6 @@ import {
 import {
   RateTypeValue,
   Screen,
-  ErrMsg,
   ProgressBar as Bar,
   Mode,
 } from '../../../enums';
@@ -48,15 +47,11 @@ const PersonalInfo = ({route, navigation}: any) => {
   const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
-    if (!Validator.isValidRate(rate)) {
-      setError({message: ErrMsg.INVALID_RATE});
-      return false;
+    const validateErr = Validator.validateRate(rate, rateType);
+    if (validateErr) {
+      setError({message: validateErr});
     }
-    if (!Validator.isValidRateType(rateType)) {
-      setError({message: ErrMsg.INVALID_RATE_TYPE});
-      return false;
-    }
-    return true;
+    return null;
   };
 
   const proceed = () => {

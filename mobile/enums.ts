@@ -1,5 +1,5 @@
 enum Parameters {
-  DEFAULT_DATE = '1950-01-01T00:00:00'
+  DEFAULT_DATE = '2020-01-01T00:00:00'
 }
 
 enum Days {
@@ -64,6 +64,7 @@ enum ErrMsg {
   DUPLICATE_EMAIL = 'Email already exists',
   EMAIL_NOT_FOUND = 'Email does not exist',
   OTP_SEND_ERR = 'Failed to send otp',
+  INVALID_OTP = 'Verification code has to be 6 digit',
   OTP_VERIFICATION_ERR = 'OTP does not correct',
   DUPLICATE_REQUEST = 'Duplicate request',
   INVALID_RATE = 'Invalid rate',
@@ -71,8 +72,8 @@ enum ErrMsg {
   REQUEST_SEND_ERR = 'Failed to send a request',
   START_TIME_NOT_SELECTED = 'Start time is not selected',
   END_TIME_NOT_SELECTED = 'End time is not selected',
-  INVALID_START_TIME = 'Start time has to occur before end time',
-  INVALID_END_TIME = 'End time has to occur after start time',
+  INVALID_START_TIME = 'Start time is invalid',
+  INVALID_END_TIME = 'End time is invalid',
   DAY_EMPTY = 'Select a day',
   DUPLICATE_DAY = 'This day is already registered',
   INVALID_DURATION = 'Duration has to more than 1 hour',

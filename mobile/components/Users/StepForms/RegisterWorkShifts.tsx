@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, TouchableOpacity, Button} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import DropdownPicker from '../DropdownPicker';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {ErrorModel} from '../../../types';
-import Error from '../../Error';
+import { Footer, Button, Error } from '../../index'
 import Validator from '../../../validator/validator';
-import {ErrMsg, Screen, Days} from '../../../enums';
+import {Screen, Days} from '../../../enums';
 import {
   ContainerStyle,
   ButtonStyle,
@@ -25,29 +25,17 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const workShifts = useSelector(state => state.workShifts);
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [error, setError] = useState<ErrorModel>({message: ''});
 
   const validateInput = () => {
-    if (!Validator.isNotEmpty(selectedDay)) {
-      setError({message: ErrMsg.DAY_EMPTY});
-      return false;
+    const validateErr = Validator.validateWorkShifts(workShifts.workShifts, selectedDay, startTime, endTime);
+    if (validateErr) {
+      setError({message: validateErr});
     }
-    if (workShifts.workShifts.some(shift => shift['day'] === selectedDay)) {
-      setError({message: ErrMsg.DUPLICATE_DAY});
-      return false;
-    }
-    if (startTime > endTime) {
-      setError({message: ErrMsg.INVALID_TIME});
-      return false;
-    }
-    if (endTime.getHours() - startTime.getHours() < 1) {
-      setError({message: ErrMsg.INVALID_DURATION});
-      return false;
-    }
-    return true;
+    return null;
   };
 
   const add = () => {

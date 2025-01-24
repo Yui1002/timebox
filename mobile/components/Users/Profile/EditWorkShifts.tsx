@@ -1,17 +1,21 @@
 import React, {useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {
+  ContainerStyle,
+  ButtonStyle,
+  TextStyle,
+  InputStyle,
+} from '../../../styles';
 import {styles} from '../../../styles/stepFormsStyles.js';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import Validator from '../../../validator/validator';
-import Error from '../../Error';
-import {Schedule} from '../../../types';
-import {Days} from '../../../enums';
+import { Footer, Button, Error } from '../../index'
+import {ErrorModel, Schedule} from '../../../types';
+import {Days, ErrMsg} from '../../../enums';
 import { navigate } from '../../../helper/navigate';
 import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
-
 
 interface IProps {
   editSelectedSchedule: Schedule;
@@ -32,27 +36,15 @@ const EditWorkShifts = ({route, navigation}: any) => {
   const [selectedDay, setSelectedDay] = useState<string>(
     editSelectedSchedule ? editSelectedSchedule.day : '',
   );
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState<ErrorModel>({message: ''});
 
   const validateInput = () => {
-    let errors: any = {};
-
-    if (Validator.isEmpty(selectedDay)) {
-      errors.day = 'Please select a day';
+    const validateErr = Validator.validateWorkShifts(null, selectedDay, startTime, endTime);
+    if (validateErr) {
+      setError({message: validateErr});
     }
-
-    if (moment(startTime, 'h:mm A').isAfter(moment(endTime, 'h:mm A'))) {
-      errors.time = 'Time is invalid';
-    }
-
-    let diff = moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'), 'hours');
-    if (diff < 1) {
-      errors.time = 'Duration has to more than 1 hour';
-    }
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+    return validateErr === null;
+   };
 
   const add = () => {
     if (!validateInput()) return;
@@ -71,11 +63,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={{marginVertical: 10}}>
-        {Object.values(errors).map((error, key) => (
-          <Error key={key} msg={error} />
-        ))}
-      </View>
+      {error.message && <Error msg={error.message} />}
       <View style={{marginTop: 30}}>
         <Text style={{fontSize: 16, fontWeight: '500', marginVertical: 8}}>
           Select day and time

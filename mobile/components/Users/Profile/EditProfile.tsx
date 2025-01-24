@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
@@ -16,16 +15,17 @@ import DropdownPicker from 'react-native-dropdown-picker';
 import {navigate} from '../../../helper/navigate';
 import {Schedule, ErrorModel} from '../../../types';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
-import Error from '../../Error';
+import { Footer, Button, Error } from '../../index'
 import {
   ContainerStyle,
   ButtonStyle,
   TextStyle,
   IconStyle,
 } from '../../../styles';
-import {Screen, ErrMsg} from '../../../enums';
+import {Screen, ErrMsg, RateTypeValue} from '../../../enums';
 import Validator from '../../../validator/validator';
 import InputField from '../../InputField';
+import { UserStatus } from '../../../swagger/generated';
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -33,8 +33,8 @@ const EditProfile = ({route, navigation}: any) => {
   const serviceProviderData = useSelector(state => state.serviceProviderData);
   const {status, rate, rate_type, schedule} = serviceProviderData;
 
-  const [updatedRate, setUpdatedRate] = useState(rate);
-  const [updatedRateType, setUpdatedRateType] = useState(rate_type);
+  const [updatedRate, setUpdatedRate] = useState<string>(rate);
+  const [updatedRateType, setUpdatedRateType] = useState<RateTypeValue>(rate_type);
   const [updatedStatus, setUpdatedStatus] = useState(status);
   const [updatedSchedule, setUpdatedSchedule] = useState(schedule);
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
@@ -43,10 +43,18 @@ const EditProfile = ({route, navigation}: any) => {
     {label: 'Hourly', value: 'hourly'},
     {label: 'Daily', value: 'daily'},
   ]);
+  //AMIT NOTE: You should not use string here in place of enum
+  //EXAMPLE:
   const [statusLabel, setStatusLabel] = useState([
-    {label: 'Active', value: 'active'},
+    {label: UserStatus.Active, value: 'active'},
     {label: 'Inactive', value: 'inactive'},
   ]);
+
+
+  // const [statusLabel, setStatusLabel] = useState([
+  //   {label: 'Active', value: 'active'},
+  //   {label: 'Inactive', value: 'inactive'},
+  // ]);
   const [error, setError] = useState<ErrorModel>({message: ''});
 
   const deleteDate = (itemToDelete: Schedule) => {
@@ -64,19 +72,15 @@ const EditProfile = ({route, navigation}: any) => {
   };
 
   const validateInput = (): boolean => {
-    if (!Validator.isValidRate(rate)) {
-      setError({message: ErrMsg.INVALID_RATE});
-      return false;
+    const validateErr = Validator.validateRate(updatedRate, updatedRateType);
+    if (validateErr) {
+      setError({message: validateErr});
     }
-    if (!Validator.isValidRateType(rate_type)) {
-      setError({message: ErrMsg.INVALID_RATE_TYPE});
-      return false;
-    }
-    return true;
+    return validateErr === null;
   };
 
   const saveChanges = async () => {
-    if (!validateInput()) return;
+    if (validateInput()) return;
 
     try {
       await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`, {

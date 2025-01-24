@@ -11,7 +11,7 @@ import ProgressBar from './ProgressBar';
 import {deleteShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {alert} from '../../../helper/Alert';
-import {Screen, ErrMsg, ProgressBar as Bar} from '../../../enums';
+import {Screen, ProgressBar as Bar} from '../../../enums';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
