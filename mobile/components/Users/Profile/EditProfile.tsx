@@ -1,12 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {SafeAreaView, View, Text, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../../config.js';
@@ -15,17 +8,12 @@ import DropdownPicker from 'react-native-dropdown-picker';
 import {navigate} from '../../../helper/navigate';
 import {Schedule, ErrorModel} from '../../../types';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
-import { Footer, Button, Error } from '../../index'
-import {
-  ContainerStyle,
-  ButtonStyle,
-  TextStyle,
-  IconStyle,
-} from '../../../styles';
+import {Footer, Button, Error} from '../../index';
+import {ContainerStyle} from '../../../styles';
 import {Screen, ErrMsg, RateTypeValue} from '../../../enums';
 import Validator from '../../../validator/validator';
 import InputField from '../../InputField';
-import { UserStatus } from '../../../swagger/generated';
+import {UserStatus} from '../../../swagger/generated';
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -34,7 +22,8 @@ const EditProfile = ({route, navigation}: any) => {
   const {status, rate, rate_type, schedule} = serviceProviderData;
 
   const [updatedRate, setUpdatedRate] = useState<string>(rate);
-  const [updatedRateType, setUpdatedRateType] = useState<RateTypeValue>(rate_type);
+  const [updatedRateType, setUpdatedRateType] =
+    useState<RateTypeValue>(rate_type);
   const [updatedStatus, setUpdatedStatus] = useState(status);
   const [updatedSchedule, setUpdatedSchedule] = useState(schedule);
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
@@ -49,7 +38,6 @@ const EditProfile = ({route, navigation}: any) => {
     {label: UserStatus.Active, value: 'active'},
     {label: 'Inactive', value: 'inactive'},
   ]);
-
 
   // const [statusLabel, setStatusLabel] = useState([
   //   {label: 'Active', value: 'active'},
@@ -109,10 +97,6 @@ const EditProfile = ({route, navigation}: any) => {
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
   let titleText = TextStyle.createTitleTextStyle();
-  let btnContainer = ContainerStyle.createButtonContainerStyle();
-  let button = ButtonStyle.createBasicButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
-  let saveButton = ButtonStyle.createSaveButtonStyle();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -174,21 +158,12 @@ const EditProfile = ({route, navigation}: any) => {
           ) : (
             <Text>Not specified</Text>
           )}
-          <View style={btnContainer}>
-            <TouchableOpacity
-              style={button}
-              onPress={() => navigateToSchedule(schedule)}>
-              <Text style={buttonText}>{`${String.fromCharCode(
-                43,
-              )}  Add Schedule`}</Text>
-            </TouchableOpacity>
-          </View>
+          <Button
+            title="Add Schedule"
+            onPress={() => navigateToSchedule(schedule)}
+          />
         </View>
-        <View style={btnContainer}>
-          <TouchableOpacity style={saveButton} onPress={saveChanges}>
-            <Text style={buttonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
+        <Button title="Save" onPress={saveChanges} />
       </ScrollView>
     </SafeAreaView>
   );

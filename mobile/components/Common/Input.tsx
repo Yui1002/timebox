@@ -1,11 +1,10 @@
 import React from 'react';
-import {View, Text, TextInput} from 'react-native';
+import {View, Text, TextInput, StyleProp} from 'react-native';
 import {ContainerStyle, InputStyle} from '../../styles';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 let container = ContainerStyle.createInputContainerStyle();
 let input = InputStyle.createBasicInputStyle();
-let otpInput = InputStyle.createOTPInputStyle();
 
 interface InputProps {
   title: string;
@@ -18,7 +17,9 @@ interface PasswordInputProps extends InputProps {
   onPress: () => void;
 }
 
-interface OTPProps {
+interface NumberInputProps {
+  maxLength: number;
+  style: StyleProp<any>;
   onChangeText: (val: string) => void;
 }
 
@@ -62,18 +63,16 @@ const PasswordInput = ({
   return <Input {...props} />;
 };
 
-const OTPInput = ({onChangeText}: OTPProps) => {
+const NumberInput = ({maxLength, style, onChangeText}: NumberInputProps) => {
   return (
-    <View style={container}>
-      <TextInput
-        style={otpInput}
-        maxLength={6}
-        keyboardType="numeric"
-        autoFocus
-        onChangeText={onChangeText}
-      />
-    </View>
+    <TextInput
+      style={style}
+      maxLength={maxLength}
+      keyboardType="numeric"
+      autoFocus
+      onChangeText={onChangeText}
+    />
   );
 };
 
-export {Input, PasswordInput, OTPInput};
+export {Input, PasswordInput, NumberInput};

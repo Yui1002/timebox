@@ -5,13 +5,13 @@ import {
   ContainerStyle,
   ButtonStyle,
   TextStyle,
+  InputStyle,
 } from '../../../styles';
 import ProgressBar from './ProgressBar';
-import InputField from '../../InputField';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
-import { Footer, Button, Error } from '../../index'
+import {Button, Error, Section, NumberInput, RateTypePicker} from '../../index';
 import {
   RateTypeSet,
   PersonalInfoProps,
@@ -19,12 +19,7 @@ import {
   ErrorModel,
   ModeSet,
 } from '../../../types';
-import {
-  RateTypeValue,
-  Screen,
-  ProgressBar as Bar,
-  Mode,
-} from '../../../enums';
+import {RateTypeValue, Screen, ProgressBar as Bar, Mode} from '../../../enums';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -51,7 +46,7 @@ const PersonalInfo = ({route, navigation}: any) => {
     if (validateErr) {
       setError({message: validateErr});
     }
-    return null;
+    return validateErr == null;
   };
 
   const proceed = () => {
@@ -82,8 +77,7 @@ const PersonalInfo = ({route, navigation}: any) => {
   let continuBtn = ButtonStyle.createContinueButtonStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
   let titleText = TextStyle.createTitleTextStyle();
-  let text = TextStyle.createBasicTextStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
+  let underlineInput = InputStyle.createUnderlineInputStyle();
 
   return (
     <View style={topContainer}>
@@ -94,27 +88,38 @@ const PersonalInfo = ({route, navigation}: any) => {
           <Text style={headerText}>User Information</Text>
         </View>
         <View style={alignTopContainer}>
-          <View style={alignContainer}>
-            <Text style={titleText}>First Name</Text>
-            <Text style={text}>{firstName ? firstName : 'Not specified'}</Text>
-          </View>
-          <View style={alignContainer}>
-            <Text style={titleText}>Last Name</Text>
-            <Text style={text}>{lastName ? lastName : 'Not specified'}</Text>
-          </View>
+          <Section
+            title="First Name"
+            text={firstName ? firstName : 'Not specified'}
+            isAlign={true}
+          />
+          <Section
+            title="Last Name"
+            text={lastName ? lastName : 'Not specified'}
+            isAlign={true}
+          />
         </View>
-        <View style={container}>
-          <Text style={titleText}>Email Address</Text>
-          <Text style={text}>{email}</Text>
-        </View>
+        <Section title="Email Address" text={email} />
         <View style={alignTopContainer}>
           <View style={alignContainer}>
             <Text style={titleText}>Rate ($)</Text>
-            <InputField.Underlined onChangeText={setRate} />
+            <NumberInput
+              maxLength={10}
+              style={underlineInput}
+              onChangeText={(val: string) => setRate(val)}
+            />
           </View>
           <View style={alignContainer}>
             <Text style={titleText}>Rate Type</Text>
-            <DropDownPicker
+            <RateTypePicker
+              open={open}
+              value={rateType}
+              items={items}
+              setOpen={() => setOpen(!open)}
+              setValue={setRateType}
+              setItems={setItems}
+            />
+            {/* <DropDownPicker
               open={open}
               value={rateType}
               items={items}
@@ -122,7 +127,7 @@ const PersonalInfo = ({route, navigation}: any) => {
               setValue={setRateType}
               setItems={setItems}
               listMode="SCROLLVIEW"
-            />
+            /> */}
           </View>
         </View>
         <View style={container}>
@@ -141,14 +146,8 @@ const PersonalInfo = ({route, navigation}: any) => {
         </View>
         <View
           style={[alignTopContainer, modeOpen ? {zIndex: -1} : {zIndex: 1}]}>
-          <TouchableOpacity style={backBtn} onPress={goBack}>
-            <Text style={buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={continuBtn} onPress={proceed}>
-            <Text style={buttonText}>{`Continue  ${String.fromCharCode(
-              9654,
-            )}`}</Text>
-          </TouchableOpacity>
+          <Button title="Back" onPress={goBack} style={backBtn} />
+          <Button title="Continue" onPress={proceed} style={continuBtn} />
         </View>
       </ScrollView>
     </View>

@@ -1,6 +1,13 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, Alert, TouchableOpacity, ScrollView, SafeAreaView} from 'react-native';
+import {
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import {
   ContainerStyle,
   ButtonStyle,
@@ -12,6 +19,7 @@ import {deleteShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {alert} from '../../../helper/Alert';
 import {Screen, ProgressBar as Bar} from '../../../enums';
+import {Button, Error, Section, NumberInput, RateTypePicker} from '../../index';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -33,13 +41,16 @@ const WorkShifts = ({route, navigation}: any) => {
         null,
       );
     } else {
-      
       navigation.navigate(Screen.REVIEW, params);
     }
   };
 
   const navigateToAddSchedule = () => {
     navigation.navigate(Screen.REGISTER_WORK_SHIFTS, params);
+  };
+
+  const navigateBack = () => {
+    navigation.goBack();
   };
 
   let topContainer = ContainerStyle.createTopContainerStyle();
@@ -82,24 +93,10 @@ const WorkShifts = ({route, navigation}: any) => {
             <Text style={centerText}>No date and time selected</Text>
           )}
         </View>
-        <View style={btnContainer}>
-          <TouchableOpacity style={button} onPress={navigateToAddSchedule}>
-            <Text style={buttonText}>{`${String.fromCharCode(
-            43,
-          )}  Add Schedule`}</Text>
-          </TouchableOpacity>
-        </View>
+        <Button title="Add Schedule" onPress={navigateToAddSchedule} />
         <View style={alignTopContainer}>
-          <TouchableOpacity
-            style={backBtn}
-            onPress={() => navigation.goBack()}>
-            <Text style={buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={continueBtn} onPress={review}>
-            <Text style={buttonText}>{`Review  ${String.fromCharCode(
-              9654,
-            )}`}</Text>
-          </TouchableOpacity>
+          <Button title="Back" onPress={navigateBack} style={backBtn} />
+          <Button title='Review' onPress={review} style={continueBtn}/>
         </View>
       </ScrollView>
     </SafeAreaView>

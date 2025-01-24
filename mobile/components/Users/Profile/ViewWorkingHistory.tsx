@@ -7,6 +7,7 @@ import {styles} from '../../../styles/viewWorkingHistoryStyles.js';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {Footer, Button, Error, Separator, Input} from '../../index';
 
 interface searchResult {
   start_time: string;
@@ -87,9 +88,7 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
           }}
         />
       </View>
-      <TouchableOpacity style={styles.searchBtn} onPress={search}>
-        <Text style={styles.searchBtnText}>Search</Text>
-      </TouchableOpacity>
+      <Button title='Search' onPress={search} />
       <View style={styles.align}>
         <Text>Date</Text>
         <Text>Check In</Text>

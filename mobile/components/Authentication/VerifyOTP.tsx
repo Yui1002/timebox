@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Text, View, SafeAreaView} from 'react-native';
-import {ContainerStyle} from '../../styles';
-import {Footer, Button, Error, Separator, OTPInput} from '../index';
+import {ContainerStyle, InputStyle} from '../../styles';
+import {Footer, Button, Error, Separator, NumberInput} from '../index';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {ErrorModel} from '../../types';
@@ -53,9 +53,9 @@ const VerifyOTP = ({route, navigation}: any) => {
       await otpApi.verifyOTP(params);
       if (isSignUp) {
         setUser();
-        navigation.navigate(Screen.DRAWER_NAV, null)
+        navigation.navigate(Screen.DRAWER_NAV, null);
       } else {
-        navigation.navigate(Screen.RESET_PASSWORD, {email})
+        navigation.navigate(Screen.RESET_PASSWORD, {email});
       }
     } catch (e: any) {
       setErrors({message: ErrMsg.OTP_VERIFICATION_ERR});
@@ -79,6 +79,7 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   let topContainer = ContainerStyle.createTopContainerStyle();
   let container = ContainerStyle.createBasicContainerStyle();
+  let otpInput = InputStyle.createOTPInputStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -86,8 +87,14 @@ const VerifyOTP = ({route, navigation}: any) => {
       <View style={container}>
         <Text>We have sent the verification code to your email address</Text>
       </View>
-      <OTPInput onChangeText={val => setOtp(val)}/>
-      <Button title="Verify" onPress={verifyOTP} style={undefined}/>
+      <View style={container}>
+        <NumberInput
+          maxLength={6}
+          style={otpInput}
+          onChangeText={val => setOtp(val)}
+        />
+      </View>
+      <Button title="Verify" onPress={verifyOTP} style={undefined} />
       <Separator />
       <Footer
         leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}

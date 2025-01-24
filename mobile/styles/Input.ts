@@ -68,5 +68,15 @@ export default class InputStyle {
     }).dropdown;
   }
 
+  static createUnderlineInputStyle() {
+    return StyleSheet.create({
+      input: {
+        width: 100,
+        borderBottomWidth: 1,
+        padding: 8,
+        paddingTop: 14
+      }
+    }).input
+  }
 
 }

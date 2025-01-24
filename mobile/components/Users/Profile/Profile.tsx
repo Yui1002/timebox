@@ -16,6 +16,8 @@ import {navigate} from '../../../helper/navigate';
 import {Schedule} from '../../../type';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
 import {COLORS} from '../../../styles/theme';
+import {Button, Error, Section, NumberInput, RateTypePicker} from '../../index';
+
 
 const Profile = ({route, navigation}: any) => {
   const {first_name, last_name, email, status, rate, rate_type, schedule} =
@@ -118,11 +120,7 @@ const Profile = ({route, navigation}: any) => {
             <Text>Not specified</Text>
           )}
         </View>
-        <View style={buttonContainer}>
-          <TouchableOpacity style={button} onPress={viewWorkingHistory}>
-            <Text style={buttonText}>View working history</Text>
-          </TouchableOpacity>
-        </View>
+        <Button title='View working history' onPress={viewWorkingHistory}/>
       </ScrollView>
     </SafeAreaView>
   );

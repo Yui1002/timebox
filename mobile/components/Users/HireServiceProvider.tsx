@@ -1,22 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  InputStyle,
-  TextStyle,
-} from '../../styles';
+import {Text, View, SafeAreaView} from 'react-native';
+import {ContainerStyle} from '../../styles';
 import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
-import { Footer, Button, Error } from '../index'
+import {Button, Error, Input} from '../index';
 import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
 import Validator from '../../validator/validator';
 import {ErrorModel} from '../../types';
@@ -27,7 +16,7 @@ let api = DefaultApiFactory();
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>('gvfefdnnlecmyzpxvm@nbmbb.com');
+  const [searchInput, setSearchInput] = useState<string>('');
   const [error, setError] = useState<ErrorModel>({message: ''});
 
   useEffect(() => {
@@ -77,10 +66,6 @@ const HireServiceProvider = (props: any) => {
 
   let topContainer = ContainerStyle.createTopContainerStyle();
   let container = ContainerStyle.createBasicContainerStyle();
-  let btnContainer = ContainerStyle.createButtonContainerStyle();
-  let inputText = InputStyle.createBasicInputStyle();
-  let button = ButtonStyle.createBasicButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -93,21 +78,12 @@ const HireServiceProvider = (props: any) => {
           Enter the email of a service provider you would like to hire
         </Text>
       </View>
-      <View style={container}>
-        <Text>Email</Text>
-        <TextInput
-          value={searchInput}
-          style={inputText}
-          autoCorrect={false}
-          autoCapitalize="none"
-          onChangeText={val => setSearchInput(val)}
-        />
-      </View>
-      <View style={btnContainer}>
-        <TouchableOpacity style={button} onPress={searchEmail}>
-          <Text style={buttonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
+      <Input
+        title="Email"
+        secureTextEntry={false}
+        onChangeText={val => setSearchInput(val)}
+      />
+      <Button title="Continue" onPress={searchEmail} />
     </SafeAreaView>
   );
 };

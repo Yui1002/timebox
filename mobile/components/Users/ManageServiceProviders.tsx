@@ -21,6 +21,7 @@ import {
   RequestStatus,
 } from '../../swagger/generated';
 import {Screen} from '../../enums';
+import {Button, Error, Section, NumberInput, RateTypePicker} from '../index';
 
 let api = DefaultApiFactory();
 
@@ -110,10 +111,11 @@ const ManageServiceProviders = (props: any) => {
                 </Text>
                 <Text>{serviceProvider.email}</Text>
               </View>
-                <TouchableOpacity
-                  onPress={() => navigateToProfile(serviceProvider)} style={recordBtn}>
-                  <Text style={btnText}>View</Text>
-                </TouchableOpacity>
+              <Button
+                title="View"
+                onPress={() => navigateToProfile(serviceProvider)}
+                style={recordBtn}
+              />
             </View>
           ))}
         </ScrollView>

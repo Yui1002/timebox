@@ -3,7 +3,10 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import {ContainerStyle, IconStyle, TextStyle, InputStyle} from '../../styles';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-date-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import {COLORS} from '../../styles/theme';
+import { RateTypeValue } from '../../enums';
+import { ModeSet, RateTypeSet } from '../../types';
 
 let dropdown = InputStyle.createDropdownStyle();
 let dropdownText = TextStyle.createDropdownTextStyle();
@@ -21,6 +24,15 @@ interface DatePickerdownProps {
   open: boolean;
   onConfirm: (date: Date) => void;
   onCancel: () => void;
+}
+
+interface RateTypePickerProps {
+    open: boolean;
+    value: RateTypeValue;
+    items: RateTypeSet[];
+    setOpen: () => void;
+    setValue: React.Dispatch<React.SetStateAction<RateTypeValue>>;
+    setItems: any;
 }
 
 const Dropdown = ({placeholder, onPress}: DropdownProps) => {
@@ -59,4 +71,18 @@ const DatePickerDropdown = ({
   );
 };
 
-export {Dropdown, DatePickerDropdown};
+const RateTypePicker = ({open, value, items, setOpen, setValue, setItems}: RateTypePickerProps) => {
+  return (
+    <DropDownPicker
+      open={open}
+      value={value}
+      items={items}
+      setOpen={setOpen}
+      setValue={setValue}
+      setItems={setItems}
+      listMode="SCROLLVIEW"
+    />
+  );
+};
+
+export {Dropdown, DatePickerDropdown, RateTypePicker};

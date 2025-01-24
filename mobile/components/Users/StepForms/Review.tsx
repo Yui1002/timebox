@@ -18,7 +18,7 @@ import {
   Mode,
 } from '../../../swagger/generated';
 import {ErrorModel} from '../../../types';
-import { Footer, Button, Error } from '../../index'
+import {Button, Error, Section, NumberInput, RateTypePicker} from '../../index';
 import {ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
 
 let api = DefaultApiFactory();
@@ -94,6 +94,10 @@ const Review = ({route, navigation}: any) => {
   let text = TextStyle.createBasicTextStyle();
   let editLinkText = TextStyle.createDeleteLinkTextStyle();
 
+  const navigateBack = () => {
+    navigation.goBack();
+  }
+
   return (
     <View style={topContainer}>
       <ProgressBar title={Bar.REVIEW} isFocused={true} />
@@ -165,14 +169,8 @@ const Review = ({route, navigation}: any) => {
           <Text style={text}>{isEnabled ? 'Yes' : 'No'}</Text>
         </View>
         <View style={alignTopContainer}>
-          <TouchableOpacity style={backBtn} onPress={() => navigation.goBack()}>
-            <Text style={buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={continueBtn}
-            onPress={confirmServiceProvider}>
-            <Text style={buttonText}>Confirm</Text>
-          </TouchableOpacity>
+          <Button title='Back' onPress={navigateBack} style={backBtn} />
+          <Button title='Confirm' onPress={confirmServiceProvider} style={continueBtn}/>
         </View>
       </ScrollView>
     </View>

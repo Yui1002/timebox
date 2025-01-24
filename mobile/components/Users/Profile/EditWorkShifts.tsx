@@ -124,14 +124,8 @@ const EditWorkShifts = ({route, navigation}: any) => {
         </View>
       </View>
       <View style={styles.workShiftsBtn}>
-        <TouchableOpacity
-          style={styles.workShiftsBtn_back}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.workShiftsBtn_add} onPress={add}>
-          <Text style={styles.buttonText}>Add</Text>
-        </TouchableOpacity>
+        <Button title='Cancel' onPress={() => navigation.goBack()} />
+        <Button title='Add' onPress={add} />
       </View>
     </ScrollView>
   );
