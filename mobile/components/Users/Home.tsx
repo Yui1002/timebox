@@ -47,7 +47,12 @@ const Home = (props: any) => {
         ) : (
           <ScrollView>
             {employers.map((employer, index) => (
-              <EmployerList key={index} employer={employer} email={email} />
+              <EmployerList
+                key={index}
+                employer={employer}
+                email={email}
+                navigation={props.navigation}
+              />
             ))}
           </ScrollView>
         )}

@@ -5,7 +5,7 @@ import {Employer} from '../../swagger/generated';
 import {Screen} from '../../enums';
 
 const EmployerList = (props: any) => {
-  const {employer, email} = props;
+  const {employer, email, navigation} = props;
   let listContainer = ContainerStyle.createListContainerStyle();
   let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let text = TextStyle.createBasicTextStyle();
@@ -13,7 +13,7 @@ const EmployerList = (props: any) => {
   let btnText = TextStyle.createButtonTextStyle();
 
   const navigateScreen = (employer: Employer): void => {
-    props.navigation.navigate(Screen.RECORD, {
+    navigation.navigate(Screen.RECORD, {
       employer: employer,
       serviceProviderEmail: email,
     });

@@ -53,7 +53,7 @@ const ResetPassword = ({route, navigation}: any) => {
         secureTextEntry={true}
         onChangeText={val => setConfirmedPassword(val)}
       />
-      <Button title="Reset Password" func={resetPassword} />
+      <Button title="Reset Password" onPress={resetPassword} style={undefined}/>
       <Separator />
       <Footer
         leftText={{text1: 'Go back to', text2: 'Sign In'}}

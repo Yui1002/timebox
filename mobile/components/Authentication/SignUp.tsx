@@ -74,17 +74,17 @@ const SignUp = ({navigation}: any) => {
         />
         <PasswordInput
           title="Password"
-          secureEntry={!showPassword}
+          secureTextEntry={!showPassword}
           onChangeText={val => setPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
         />
         <PasswordInput
           title="Confirm Password"
-          secureEntry={!showPassword}
+          secureTextEntry={!showPassword}
           onChangeText={val => setConfirmedPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
         />
-        <Button title="Sign Up" func={checkUserExists} />
+        <Button title="Sign Up" onPress={checkUserExists} style={undefined}/>
         <Separator />
         <Footer
           leftText={{text1: 'Already have account?', text2: 'Sign In'}}

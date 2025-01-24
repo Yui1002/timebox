@@ -50,7 +50,7 @@ const ForgotPassword = ({navigation}: any) => {
         secureTextEntry={false}
         onChangeText={val => setEmail(val)}
       />
-      <Button title="Verify Email" func={checkEmailRegistered} />
+      <Button title="Verify Email" onPress={checkEmailRegistered} style={undefined}/>
       <Separator />
       <Footer
         leftText={{text1: 'Go back to', text2: 'Sign In'}}

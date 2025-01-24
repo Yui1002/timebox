@@ -11,12 +11,10 @@ interface InputProps {
   title: string;
   secureTextEntry: boolean;
   onChangeText: (val: string) => void;
+  reactElem?: React.JSX.Element;
 }
 
-interface PasswordInputProps {
-  title: string;
-  secureEntry: boolean;
-  onChangeText: (val: string) => void;
+interface PasswordInputProps extends InputProps {
   onPress: () => void;
 }
 
@@ -24,7 +22,12 @@ interface OTPProps {
   onChangeText: (val: string) => void;
 }
 
-const Input = ({title, secureTextEntry, onChangeText}: InputProps) => {
+const Input = ({
+  title,
+  secureTextEntry,
+  onChangeText,
+  reactElem,
+}: InputProps) => {
   return (
     <View style={container}>
       <Text>{title}</Text>
@@ -35,34 +38,28 @@ const Input = ({title, secureTextEntry, onChangeText}: InputProps) => {
         secureTextEntry={secureTextEntry}
         onChangeText={onChangeText}
       />
+      {reactElem}
     </View>
   );
 };
 
 const PasswordInput = ({
   title,
-  secureEntry,
+  secureTextEntry,
   onChangeText,
   onPress,
 }: PasswordInputProps) => {
-  return (
-    <View style={[container, {position: 'relative'}]}>
-      <Text>{title}</Text>
-      <TextInput
-        style={input}
-        autoCorrect={false}
-        autoCapitalize="none"
-        secureTextEntry={secureEntry}
-        onChangeText={onChangeText}
-      />
-      <MaterialCommunityIcons
-        name={secureEntry ? 'eye-off-outline' : 'eye-outline'}
-        size={24}
-        onPress={onPress}
-        style={{position: 'absolute', top: 28, right: 20}}
-      />
-    </View>
+  let reactElem = (
+    <MaterialCommunityIcons
+      name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
+      size={24}
+      onPress={onPress}
+      style={{position: 'absolute', top: 28, right: 20}}
+    />
   );
+  let props = {title, secureTextEntry, onChangeText, reactElem} as InputProps;
+
+  return <Input {...props} />;
 };
 
 const OTPInput = ({onChangeText}: OTPProps) => {
@@ -76,7 +73,7 @@ const OTPInput = ({onChangeText}: OTPProps) => {
         onChangeText={onChangeText}
       />
     </View>
-  )
+  );
 };
 
 export {Input, PasswordInput, OTPInput};

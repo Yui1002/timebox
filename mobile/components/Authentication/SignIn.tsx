@@ -78,7 +78,7 @@ const SignIn = ({navigation}: any) => {
           secureTextEntry={true}
           onChangeText={val => setPassword(val)}
         />
-        <Button title="Sign In" func={signIn} />
+        <Button title="Sign In" onPress={signIn} />
         <Separator />
         <Footer
           leftText={{text1: 'New user?', text2: 'Sign Up'}}

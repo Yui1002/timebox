@@ -1,26 +1,11 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TouchableOpacity,
-  Touchable,
-} from 'react-native';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  InputStyle,
-  TextStyle,
-  IconStyle,
-} from '../../styles';
+import {Text, View, SafeAreaView} from 'react-native';
+import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
 import moment from 'moment';
-import DatePicker from 'react-native-date-picker';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Footer, Button, Error } from '../index'
-import {TimeType, ErrMsg, Parameters} from '../../enums';
-import {COLORS} from '../../styles/theme';
+import {Button, Error, Dropdown, DatePickerDropdown} from '../index';
+import {TimeType, Parameters} from '../../enums';
 import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, GetRecordRq} from '../../swagger/generated';
@@ -34,6 +19,11 @@ const Record = ({route}: any) => {
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
   const [error, setError] = useState<ErrorModel>({message: ''});
+  let minimumDate =
+    mode === 1
+      ? new Date(Parameters.DEFAULT_DATE)
+      : moment().startOf('day').toDate();
+  let maximumDate = moment().endOf('day').toDate();
 
   const validateInput = (type: TimeType): boolean => {
     const validateErr = Validator.validateRecordTime(type, startTime, endTime);
@@ -76,11 +66,7 @@ const Record = ({route}: any) => {
   let dropdownContainer = ContainerStyle.createDropdownContainer();
   let container = ContainerStyle.createBasicContainerStyle();
   let headerText = TextStyle.createHeaderTextStyle();
-  let dropdown = InputStyle.createDropdownStyle();
-  let dropdownText = TextStyle.createDropdownTextStyle();
-  let icon = IconStyle.createBasicIconStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createButtonTextStyle();
 
   return (
     <SafeAreaView style={topContainer}>
@@ -91,75 +77,49 @@ const Record = ({route}: any) => {
         </Text>
       </View>
       <View style={dropdownContainer}>
-        <TouchableOpacity
-          onPress={() => setStartOpen(!startOpen)}
-          style={dropdown}>
-          <Text style={dropdownText}>
-            {startTime
+        <Dropdown
+          placeholder={
+            startTime
               ? moment(startTime).format('MM/DD LT')
-              : `Select start time`}
-          </Text>
-          <MaterialIcons
-            name="arrow-drop-down"
-            size={36}
-            color={COLORS.BLACK}
-            style={icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
+              : `Select start time`
+          }
+          onPress={() => setStartOpen(!startOpen)}
+        />
+        <Button
+          title="Record"
+          onPress={() => saveRecord(TimeType.START)}
           style={recordBtn}
-          onPress={() => saveRecord(TimeType.START)}>
-          <Text style={btnText}>Record</Text>
-        </TouchableOpacity>
+        />
       </View>
       <View style={dropdownContainer}>
-        <TouchableOpacity onPress={() => setEndOpen(!endOpen)} style={dropdown}>
-          <Text style={dropdownText}>
-            {endTime ? moment(endTime).format('MM/DD LT') : `Select end time`}
-          </Text>
-          <MaterialIcons
-            name="arrow-drop-down"
-            size={36}
-            color={COLORS.BLACK}
-            style={icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
+        <Dropdown
+          placeholder={
+            endTime ? moment(endTime).format('MM/DD LT') : `Select end time`
+          }
+          onPress={() => setEndOpen(!endOpen)}
+        />
+        <Button
+          title="Record"
+          onPress={() => saveRecord(TimeType.END)}
           style={recordBtn}
-          onPress={() => saveRecord(TimeType.END)}>
-          <Text style={btnText}>Record</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-        <DatePicker
-          modal
-          open={startOpen}
-          mode="datetime"
-          date={new Date()}
-          onConfirm={(d: Date) => setStartTime(d.toString())}
-          onCancel={() => setStartOpen(false)}
-          minimumDate={
-            mode === 1
-              ? new Date(Parameters.DEFAULT_DATE)
-              : moment().startOf('day').toDate()
-          }
-          maximumDate={moment().endOf('day').toDate()}
-        />
-        <DatePicker
-          modal
-          open={endOpen}
-          mode="datetime"
-          date={new Date()}
-          onConfirm={(d: Date) => setEndTime(d.toString())}
-          onCancel={() => setEndOpen(false)}
-          minimumDate={
-            mode === 1
-              ? new Date(Parameters.DEFAULT_DATE)
-              : moment().startOf('day').toDate()
-          }
-          maximumDate={moment().endOf('day').toDate()}
         />
       </View>
+      <DatePickerDropdown
+        mode="datetime"
+        open={startOpen}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        onConfirm={(d: Date) => setStartTime(d.toString())}
+        onCancel={() => setStartOpen(false)}
+      />
+      <DatePickerDropdown
+        mode="datetime"
+        open={endOpen}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        onConfirm={(d: Date) => setEndTime(d.toString())}
+        onCancel={() => setEndOpen(false)}
+      />
     </SafeAreaView>
   );
 };

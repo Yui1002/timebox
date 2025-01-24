@@ -87,7 +87,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         <Text>We have sent the verification code to your email address</Text>
       </View>
       <OTPInput onChangeText={val => setOtp(val)}/>
-      <Button title="Verify" func={verifyOTP} />
+      <Button title="Verify" onPress={verifyOTP} style={undefined}/>
       <Separator />
       <Footer
         leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}
