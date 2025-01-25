@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, StyleProp} from 'react-native';
 import {ContainerStyle, IconStyle, TextStyle, InputStyle} from '../../styles';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-date-picker';
@@ -26,12 +26,12 @@ interface DatePickerdownProps {
   onCancel: () => void;
 }
 
-interface RateTypePickerProps {
+interface PickerProps {
     open: boolean;
-    value: RateTypeValue;
-    items: RateTypeSet[];
+    value: string;
+    items: any[];
     setOpen: () => void;
-    setValue: React.Dispatch<React.SetStateAction<RateTypeValue>>;
+    setValue: React.Dispatch<React.SetStateAction<any>>;
     setItems: any;
 }
 
@@ -71,7 +71,7 @@ const DatePickerDropdown = ({
   );
 };
 
-const RateTypePicker = ({open, value, items, setOpen, setValue, setItems}: RateTypePickerProps) => {
+const Picker = ({open, value, items, setOpen, setValue, setItems}: PickerProps) => {
   return (
     <DropDownPicker
       open={open}
@@ -85,4 +85,4 @@ const RateTypePicker = ({open, value, items, setOpen, setValue, setItems}: RateT
   );
 };
 
-export {Dropdown, DatePickerDropdown, RateTypePicker};
+export {Dropdown, DatePickerDropdown, Picker};

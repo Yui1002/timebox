@@ -6,7 +6,7 @@ import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {ErrorModel} from '../../../types';
-import { Footer, Button, Error } from '../../index'
+import {Footer, Button, Error} from '../../index';
 import Validator from '../../../validator/validator';
 import {Screen, Days} from '../../../enums';
 import {
@@ -31,7 +31,12 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const [error, setError] = useState<ErrorModel>({message: ''});
 
   const validateInput = () => {
-    const validateErr = Validator.validateWorkShifts(workShifts.workShifts, selectedDay, startTime, endTime);
+    const validateErr = Validator.validateWorkShifts(
+      workShifts.workShifts,
+      selectedDay,
+      startTime,
+      endTime,
+    );
     if (validateErr) {
       setError({message: validateErr});
     }
@@ -71,13 +76,13 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         {error.message && <Error msg={error.message} />}
         <Text style={titleText}>Select day and time</Text>
         <View style={wrapContainer}>
-          {Object.values(Days).map((day: string, key: number) => (
-            <TouchableOpacity
-              key={key}
+          {Object.values(Days).map((day: string, index: number) => (
+            <Button
+              key={index}
+              title={day}
+              onPress={() => setSelectedDay(day)}
               style={selectedDay === day ? selectedButton : button}
-              onPress={() => setSelectedDay(day)}>
-              <Text style={buttonText}>{day}</Text>
-            </TouchableOpacity>
+            />
           ))}
         </View>
         <View>

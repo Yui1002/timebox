@@ -61,6 +61,9 @@ const EditWorkShifts = ({route, navigation}: any) => {
     navigate(navigation, 'EditProfile', {sp: route.params.sp});
   };
 
+    let selectedButton = ButtonStyle.createSelectedDayButtonStyle();
+    let button = ButtonStyle.createDayButtonStyle();
+
   return (
     <ScrollView style={styles.container}>
       {error.message && <Error msg={error.message} />}
@@ -70,12 +73,11 @@ const EditWorkShifts = ({route, navigation}: any) => {
         </Text>
         <View style={styles.dayContainer}>
           {Object.values(Days).map((day: string, key: number) => (
-            <TouchableOpacity
-              key={key}
-              style={selectedDay === day ? styles.day_selected : styles.day}
-              onPress={() => setSelectedDay(day.toLowerCase())}>
-              <Text style={styles.day_text}>{day}</Text>
-            </TouchableOpacity>
+            <Button
+              title={day}
+              onPress={() => setSelectedDay(day)}
+              style={selectedDay === day ? selectedButton : button}
+            />
           ))}
         </View>
         <View>

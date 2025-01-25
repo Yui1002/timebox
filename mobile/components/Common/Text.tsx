@@ -4,13 +4,25 @@ import {ContainerStyle, TextStyle} from '../../styles';
 
 let container = ContainerStyle.createBasicContainerStyle();
 let alignContainer = ContainerStyle.createAlignContainer();
+let headerText = TextStyle.createHeaderTextStyle();
 let titleText = TextStyle.createTitleTextStyle();
 let plainText = TextStyle.createBasicTextStyle();
 
-interface SectionProps {
+interface HeaderProps {
   title: string;
+}
+
+interface SectionProps extends HeaderProps {
   text: string;
   isAlign?: boolean;
+}
+
+const Header = ({title}: HeaderProps) => {
+  return (
+    <View style={container}>
+      <Text style={headerText}>{title}</Text>
+    </View>
+  )
 }
 
 const Section = ({title, text, isAlign}: SectionProps) => {
@@ -22,4 +34,4 @@ const Section = ({title, text, isAlign}: SectionProps) => {
   )
 };
 
-export default Section;
+export {Section, Header};

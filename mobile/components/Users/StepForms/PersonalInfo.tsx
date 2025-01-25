@@ -11,7 +11,7 @@ import ProgressBar from './ProgressBar';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
-import {Button, Error, Section, NumberInput, RateTypePicker} from '../../index';
+import {Button, Error, Section, NumberInput, Picker, Header} from '../../index';
 import {
   RateTypeSet,
   PersonalInfoProps,
@@ -73,20 +73,17 @@ const PersonalInfo = ({route, navigation}: any) => {
   let container = ContainerStyle.createBasicContainerStyle();
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
-  let headerText = TextStyle.createHeaderTextStyle();
   let continuBtn = ButtonStyle.createContinueButtonStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
   let titleText = TextStyle.createTitleTextStyle();
   let underlineInput = InputStyle.createUnderlineInputStyle();
-
+  
   return (
     <View style={topContainer}>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
       <ScrollView>
         {error.message && <Error msg={error.message} />}
-        <View style={container}>
-          <Text style={headerText}>User Information</Text>
-        </View>
+        <Header title='User Information'/>
         <View style={alignTopContainer}>
           <Section
             title="First Name"
@@ -111,7 +108,7 @@ const PersonalInfo = ({route, navigation}: any) => {
           </View>
           <View style={alignContainer}>
             <Text style={titleText}>Rate Type</Text>
-            <RateTypePicker
+            <Picker
               open={open}
               value={rateType}
               items={items}
@@ -119,33 +116,23 @@ const PersonalInfo = ({route, navigation}: any) => {
               setValue={setRateType}
               setItems={setItems}
             />
-            {/* <DropDownPicker
-              open={open}
-              value={rateType}
-              items={items}
-              setOpen={() => setOpen(!open)}
-              setValue={setRateType}
-              setItems={setItems}
-              listMode="SCROLLVIEW"
-            /> */}
           </View>
         </View>
-        <View style={container}>
+        <View style={[container, {zIndex: open ? -1 : 1}]}>
           <Text style={titleText}>
             Allow the service provider to modify record time?
           </Text>
-          <DropDownPicker
+          <Picker
             open={modeOpen}
             value={mode}
             items={modeItems}
             setOpen={() => setModeOpen(!modeOpen)}
             setValue={setMode}
             setItems={setModeItems}
-            listMode="SCROLLVIEW"
           />
         </View>
         <View
-          style={[alignTopContainer, modeOpen ? {zIndex: -1} : {zIndex: 1}]}>
+          style={[alignTopContainer, {zIndex: modeOpen ? -1 : 1}]}>
           <Button title="Back" onPress={goBack} style={backBtn} />
           <Button title="Continue" onPress={proceed} style={continuBtn} />
         </View>

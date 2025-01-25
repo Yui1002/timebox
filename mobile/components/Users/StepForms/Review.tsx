@@ -18,7 +18,7 @@ import {
   Mode,
 } from '../../../swagger/generated';
 import {ErrorModel} from '../../../types';
-import {Button, Error, Section, NumberInput, RateTypePicker} from '../../index';
+import {Button, Error, Section, NumberInput, Header} from '../../index';
 import {ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
 
 let api = DefaultApiFactory();
@@ -96,30 +96,27 @@ const Review = ({route, navigation}: any) => {
 
   const navigateBack = () => {
     navigation.goBack();
-  }
+  };
 
   return (
     <View style={topContainer}>
       <ProgressBar title={Bar.REVIEW} isFocused={true} />
       <ScrollView>
         {error.message && <Error msg={error.message} />}
-        <View style={container}>
-          <Text style={headerText}>Review</Text>
-        </View>
+        <Header title="Review" />
         <View style={alignTopContainer}>
-          <View style={alignContainer}>
-            <Text style={titleText}>First Name</Text>
-            <Text style={text}>{firstName ? firstName : 'Not specified'}</Text>
-          </View>
-          <View style={alignContainer}>
-            <Text style={titleText}>Last Name</Text>
-            <Text style={text}>{lastName ? lastName : 'Not specified'}</Text>
-          </View>
+          <Section
+            title="First Name"
+            text={firstName ? firstName : 'Not specified'}
+            isAlign={true}
+          />
+          <Section
+            title="Last Name"
+            text={lastName ? lastName : 'Not specified'}
+            isAlign={true}
+          />
         </View>
-        <View style={container}>
-          <Text style={titleText}>Email Address</Text>
-          <Text style={text}>{email}</Text>
-        </View>
+        <Section title="Email Address" text={email} />
         <View style={alignTopContainer}>
           <View style={alignContainer}>
             <Text style={titleText}>
@@ -169,8 +166,12 @@ const Review = ({route, navigation}: any) => {
           <Text style={text}>{isEnabled ? 'Yes' : 'No'}</Text>
         </View>
         <View style={alignTopContainer}>
-          <Button title='Back' onPress={navigateBack} style={backBtn} />
-          <Button title='Confirm' onPress={confirmServiceProvider} style={continueBtn}/>
+          <Button title="Back" onPress={navigateBack} style={backBtn} />
+          <Button
+            title="Confirm"
+            onPress={confirmServiceProvider}
+            style={continueBtn}
+          />
         </View>
       </ScrollView>
     </View>
