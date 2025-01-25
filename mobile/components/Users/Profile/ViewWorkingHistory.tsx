@@ -8,6 +8,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import {Footer, Button, Error, Separator, Input} from '../../index';
+import WorkingHistoryList from '../../ServiceProvider/WorkingHistoryList';
+import { getDiff } from '../../../helper/momentHelper';
 
 interface searchResult {
   start_time: string;
@@ -99,18 +101,9 @@ const ViewWorkingHistory = ({route, navigation}: any) => {
       {searchResult && searchResult.length > 0 && (
         <View>
           {searchResult.map((s: searchResult, index: number) => {
-            const a = s.start_time ? moment(s.start_time) : null;
-            const b = s.end_time ? moment(s.end_time) : null;
-            const total = a && b ? `${b.diff(a, 'hours')}h` : 'N/A';
+            const total = getDiff({start: s.start_time, end: s.end_time})
             return (
-              <View style={styles.align} key={index}>
-                <Text>
-                  {a ? `${moment(a || b).format('YYYY/MM/DD')}` : 'N/A'}
-                </Text>
-                <Text>{a ? `${a.format('LT')}` : 'N/A'}</Text>
-                <Text>{b ? `${b.format('LT')}` : 'N/A'}</Text>
-                <Text>{`${total}`}</Text>
-              </View>
+              <WorkingHistoryList total={total} />
             );
           })}
         </View>
