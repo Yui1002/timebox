@@ -79,6 +79,8 @@ enum ErrMsg {
   INVALID_DURATION = 'Duration has to more than 1 hour',
   INVALID_TIME = 'Time is invalid',
   SAVE_FAIL = 'Failed to save changes',
+  EMPLOYER_NOT_SELECTED = "Employer's name is required",
+  
 }
 
 enum ProgressBar {

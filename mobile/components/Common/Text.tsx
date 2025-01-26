@@ -8,30 +8,30 @@ let headerText = TextStyle.createHeaderTextStyle();
 let titleText = TextStyle.createTitleTextStyle();
 let plainText = TextStyle.createBasicTextStyle();
 
-interface HeaderProps {
+interface Props {
   title: string;
 }
 
-interface SectionProps extends HeaderProps {
+interface SectionProps extends Props {
   text: string;
   isAlign?: boolean;
 }
 
-const Header = ({title}: HeaderProps) => {
-  return (
-    <View style={container}>
-      <Text style={headerText}>{title}</Text>
-    </View>
-  )
+const Header = ({title}: Props) => {
+  return <Text style={headerText}>{title}</Text>;
+};
+
+const Title = ({title}: Props) => {
+  return <Text style={titleText}>{title}</Text>
 }
 
 const Section = ({title, text, isAlign}: SectionProps) => {
-  return  (
+  return (
     <View style={isAlign ? alignContainer : container}>
       <Text style={titleText}>{title}</Text>
       <Text style={plainText}>{text}</Text>
     </View>
-  )
+  );
 };
 
-export {Section, Header};
+export {Section, Header, Title};

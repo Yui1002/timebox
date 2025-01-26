@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
+import {Container, TopContainer, Header, Title} from '../index';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, ScrollView} from 'react-native';
+import {Text, ScrollView} from 'react-native';
 import EmployerList from '../Employers/EmployerList';
-import {ContainerStyle, TextStyle} from '../../styles';
 import {useIsFocused} from '@react-navigation/native';
 import {DefaultApiFactory, Employer} from '../../swagger/generated';
 import {UserInfo} from '../../types';
@@ -30,19 +30,14 @@ const Home = (props: any) => {
     }
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let headerText = TextStyle.createHeaderTextStyle();
-  let titleText = TextStyle.createTitleTextStyle();
-
   return (
-    <SafeAreaView style={topContainer}>
-      <View style={container}>
-        <Text style={headerText}>Hi {firstName}!</Text>
-      </View>
-      <View>
-        <Text style={titleText}>My Employers</Text>
-        {employers == null ? (
+    <TopContainer>
+      <Container>
+        <Header title={`Hi ${firstName}!`} />
+      </Container>
+      <Container>
+        <Title title="My Employers" />
+        {!employers ? (
           <Text>Please use the menu to hire or manage service providers</Text>
         ) : (
           <ScrollView>
@@ -56,8 +51,8 @@ const Home = (props: any) => {
             ))}
           </ScrollView>
         )}
-      </View>
-    </SafeAreaView>
+      </Container>
+    </TopContainer>
   );
 };
 

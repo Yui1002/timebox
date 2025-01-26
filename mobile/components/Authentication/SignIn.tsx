@@ -6,12 +6,11 @@ import {
   GetUserRs,
   SignInUserRq,
 } from '../../swagger/generated';
-import {ContainerStyle} from '../../styles';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import Validator from '../../validator/validator';
 import {ErrorModel, SignInProps} from '../../types';
 import {Screen, ErrMsg} from '../../enums';
-import {Footer, Button, Error, Separator, Input} from '../index';
+import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
 let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
@@ -62,10 +61,8 @@ const SignIn = ({navigation}: any) => {
     );
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       <ScrollView>
         {errors.message && <Error msg={errors.message} />}
         <Input
@@ -87,7 +84,7 @@ const SignIn = ({navigation}: any) => {
           rightFunc={() => navigation.navigate(Screen.FORGOT_PASSWORD)}
         />
       </ScrollView>
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

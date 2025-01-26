@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native';
-import {ContainerStyle} from '../../styles';
-import {Footer, Button, Error, Separator, Input} from '../index';
+import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
 import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, ResetPasswordRq} from '../../swagger/generated';
@@ -38,10 +36,8 @@ const ResetPassword = ({route, navigation}: any) => {
     }
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       {errors.message && <Error msg={errors.message} />}
       <Input
         title="New Password"
@@ -53,7 +49,7 @@ const ResetPassword = ({route, navigation}: any) => {
         secureTextEntry={true}
         onChangeText={val => setConfirmedPassword(val)}
       />
-      <Button title="Reset Password" onPress={resetPassword} style={undefined}/>
+      <Button title="Reset Password" onPress={resetPassword}/>
       <Separator />
       <Footer
         leftText={{text1: 'Go back to', text2: 'Sign In'}}
@@ -61,7 +57,7 @@ const ResetPassword = ({route, navigation}: any) => {
         rightText={undefined}
         rightFunc={undefined}
       />
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

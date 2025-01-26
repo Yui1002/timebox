@@ -8,7 +8,7 @@ import DropdownPicker from 'react-native-dropdown-picker';
 import {navigate} from '../../../helper/navigate';
 import {Schedule, ErrorModel} from '../../../types';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
-import {Footer, Button, Error} from '../../index';
+import {TopContainer, Button, Error, AlignContainer, Title} from '../../index';
 import {ContainerStyle} from '../../../styles';
 import {Screen, ErrMsg, RateTypeValue} from '../../../enums';
 import Validator from '../../../validator/validator';
@@ -93,22 +93,21 @@ const EditProfile = ({route, navigation}: any) => {
     );
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
   let titleText = TextStyle.createTitleTextStyle();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <TopContainer>
       <ScrollView>
         {error.message && <Error msg={error.message} />}
-        <View style={alignTopContainer}>
+        <AlignContainer>
           <View style={alignContainer}>
-            <Text style={titleText}>Rate ($)</Text>
+            <Title title={'Rate ($)'}/>
             <InputField.Underlined onChangeText={val => setUpdatedRate(val)} />
           </View>
           <View style={alignContainer}>
-            <Text style={titleText}>Rate Type</Text>
+            <Title title='Rate Type' />
             <DropdownPicker
               open={rateTypeOpen}
               value={updatedRateType}
@@ -119,9 +118,9 @@ const EditProfile = ({route, navigation}: any) => {
               listMode="SCROLLVIEW"
             />
           </View>
-        </View>
+        </AlignContainer>
         <View style={alignContainer}>
-          <Text style={titleText}>Status</Text>
+          <Title title='Status' />
           <DropdownPicker
             open={statusOpen}
             value={updatedStatus}
@@ -133,7 +132,7 @@ const EditProfile = ({route, navigation}: any) => {
           />
         </View>
         <View style={statusOpen ? {zIndex: -1} : null}>
-          <Text style={titleText}>Schedule</Text>
+        <Title title='Schedules' />
           {updatedSchedule?.length ? (
             updatedSchedule.map((s: Schedule, index: number) => {
               if (s.day && s.startTime && s.endTime) {
@@ -165,7 +164,7 @@ const EditProfile = ({route, navigation}: any) => {
         </View>
         <Button title="Save" onPress={saveChanges} />
       </ScrollView>
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

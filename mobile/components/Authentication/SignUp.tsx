@@ -1,8 +1,15 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView} from 'react-native';
+import {ScrollView} from 'react-native';
 import Validator from '../../validator/validator';
-import {ContainerStyle} from '../../styles';
-import {Footer, Button, Error, Separator, Input, PasswordInput} from '../index';
+import {
+  Footer,
+  Button,
+  Error,
+  Separator,
+  Input,
+  PasswordInput,
+  TopContainer,
+} from '../index';
 import {navigate} from '../../helper/navigate';
 import {DefaultApiFactory} from '../../swagger/generated';
 import {ErrorModel, SignUpProps} from '../../types';
@@ -51,11 +58,9 @@ const SignUp = ({navigation}: any) => {
     return validateErr == null;
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-
   return (
-    <ScrollView>
-      <SafeAreaView style={topContainer}>
+    <TopContainer>
+      <ScrollView>
         {errors.message && <Error msg={errors.message} />}
         <Input
           title="First Name"
@@ -84,7 +89,7 @@ const SignUp = ({navigation}: any) => {
           onChangeText={val => setConfirmedPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
         />
-        <Button title="Sign Up" onPress={checkUserExists} style={undefined}/>
+        <Button title="Sign Up" onPress={checkUserExists} />
         <Separator />
         <Footer
           leftText={{text1: 'Already have account?', text2: 'Sign In'}}
@@ -92,8 +97,8 @@ const SignUp = ({navigation}: any) => {
           leftFunc={() => navigation.navigate(Screen.SIGN_IN)}
           rightFunc={undefined}
         />
-      </SafeAreaView>
-    </ScrollView>
+      </ScrollView>
+    </TopContainer>
   );
 };
 

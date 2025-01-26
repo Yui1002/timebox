@@ -18,3 +18,8 @@ export const getDiff = ({start, end}: GetDiffProps): number | null => {
 export const returnFormat = (value: string | null, format: string): string => {
     return moment(value).format(format);
 }
+
+export const getBeginningOfDay = () => {
+    console.log(moment().startOf('day').toDate())
+    return moment().startOf('day').toDate();
+}

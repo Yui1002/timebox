@@ -1,12 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  TextStyle,
-} from '../../styles';
-import moment from 'moment';
+import {Text, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {alert, alertError} from '../../helper/Alert';
 import {Days} from '../../enums';
@@ -17,6 +11,8 @@ import {
   GetUserScheduleRs,
   UpdateRequestStatusRq,
 } from '../../swagger/generated';
+import {TopContainer} from '../index';
+import NotificationList from './NotificationList';
 const api = DefaultApiFactory();
 
 const Notification = (props: any) => {
@@ -119,18 +115,8 @@ const Notification = (props: any) => {
     );
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let alignContainer = ContainerStyle.createAlignTopContainer();
-  let titleText = TextStyle.createTitleTextStyle();
-  let timeText = TextStyle.createRightTopTextStyle();
-  let btnText = TextStyle.createButtonTextStyle();
-  let text = TextStyle.createBasicTextStyle();
-  let acceptBtn = ButtonStyle.createAcceptButtonStyle();
-  let declineBtn = ButtonStyle.createDeclineButtonStyle();
-
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       <View>
         {requests.length ? (
           <View>
@@ -145,56 +131,14 @@ const Notification = (props: any) => {
                 schedules,
               } = r;
               if (status == RequestStatus.Approved) return;
-              return (
-                <View key={index} style={container}>
-                  <Text style={titleText}>
-                    {`Request from ${senderFirstName} ${senderLastName}`}
-                  </Text>
-                  <Text style={timeText}>{`${moment(requestDate).format(
-                    'YYYY/MM/DD h:mm',
-                  )}`}</Text>
-                  <Text style={text}>
-                    {`Pay: ${
-                      rate && rateType
-                        ? `$${rate} / ${rateType}`
-                        : `Not specified`
-                    }`}
-                  </Text>
-                  <View>
-                    <Text style={text}>Schedules:</Text>
-                    {schedules?.length ? (
-                      schedules.map((s: GetUserScheduleRs, index: number) => (
-                        <View key={index}>
-                          <Text style={text}>{`${String.fromCharCode(8226)} ${
-                            s.day
-                          } ${s.startTime} - ${s.endTime}`}</Text>
-                        </View>
-                      ))
-                    ) : (
-                      <Text>Not specified</Text>
-                    )}
-                  </View>
-                  <View style={alignContainer}>
-                    <TouchableOpacity
-                      style={declineBtn}
-                      onPress={() => alertConfirm(r, RequestStatus.Rejected)}>
-                      <Text style={btnText}>Decline</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={acceptBtn}
-                      onPress={() => alertConfirm(r, RequestStatus.Approved)}>
-                      <Text style={btnText}>Accept</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              );
+              return <NotificationList />;
             })}
           </View>
         ) : (
           <Text>There are no notifications</Text>
         )}
       </View>
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

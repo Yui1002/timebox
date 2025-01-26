@@ -1,14 +1,22 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import {LOCAL_HOST_URL} from '../../config.js';
-import {Text, View, SafeAreaView} from 'react-native';
-import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
-import moment from 'moment';
-import {Button, Error, Dropdown, DatePickerDropdown} from '../index';
+import {ButtonStyle} from '../../styles';
+import {
+  Button,
+  Error,
+  Dropdown,
+  DatePickerDropdown,
+  TopContainer,
+  Container,
+  Header,
+  DropdownContainer,
+} from '../index';
 import {TimeType, Parameters} from '../../enums';
 import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, GetRecordRq} from '../../swagger/generated';
+import {returnFormat, getBeginningOfDay} from '../../helper/momentHelper';
 const api = DefaultApiFactory();
 
 const Record = ({route}: any) => {
@@ -20,10 +28,7 @@ const Record = ({route}: any) => {
   const [endTime, setEndTime] = useState<string>('');
   const [error, setError] = useState<ErrorModel>({message: ''});
   let minimumDate =
-    mode === 1
-      ? new Date(Parameters.DEFAULT_DATE)
-      : moment().startOf('day').toDate();
-  let maximumDate = moment().endOf('day').toDate();
+    mode === 1 ? new Date(Parameters.DEFAULT_DATE) : getBeginningOfDay();
 
   const validateInput = (type: TimeType): boolean => {
     const validateErr = Validator.validateRecordTime(type, startTime, endTime);
@@ -62,53 +67,47 @@ const Record = ({route}: any) => {
     }
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let dropdownContainer = ContainerStyle.createDropdownContainer();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let headerText = TextStyle.createHeaderTextStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
 
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       {error.message && <Error msg={error.message} />}
-      <View style={container}>
-        <Text style={headerText}>
-          Employer: {firstName} {lastName}
-        </Text>
-      </View>
-      <View style={dropdownContainer}>
+      <Container>
+        <Header title={`Employer: ${firstName} ${lastName}`} />
+      </Container>
+      <DropdownContainer>
         <Dropdown
+          onPress={() => setStartOpen(!startOpen)}
           placeholder={
             startTime
-              ? moment(startTime).format('MM/DD LT')
+              ? returnFormat(startTime, 'MM/DD LT')
               : `Select start time`
           }
-          onPress={() => setStartOpen(!startOpen)}
         />
         <Button
           title="Record"
           onPress={() => saveRecord(TimeType.START)}
           style={recordBtn}
         />
-      </View>
-      <View style={dropdownContainer}>
+      </DropdownContainer>
+      <DropdownContainer>
         <Dropdown
-          placeholder={
-            endTime ? moment(endTime).format('MM/DD LT') : `Select end time`
-          }
           onPress={() => setEndOpen(!endOpen)}
+          placeholder={
+            endTime ? returnFormat(endTime, 'MM/DD LT') : `Select end time`
+          }
         />
         <Button
           title="Record"
           onPress={() => saveRecord(TimeType.END)}
           style={recordBtn}
         />
-      </View>
+      </DropdownContainer>
       <DatePickerDropdown
         mode="datetime"
         open={startOpen}
         minimumDate={minimumDate}
-        maximumDate={maximumDate}
+        maximumDate={new Date()}
         onConfirm={(d: Date) => setStartTime(d.toString())}
         onCancel={() => setStartOpen(false)}
       />
@@ -116,11 +115,11 @@ const Record = ({route}: any) => {
         mode="datetime"
         open={endOpen}
         minimumDate={minimumDate}
-        maximumDate={maximumDate}
+        maximumDate={new Date()}
         onConfirm={(d: Date) => setEndTime(d.toString())}
         onCancel={() => setEndOpen(false)}
       />
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

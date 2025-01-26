@@ -163,6 +163,17 @@ class Validator {
 
     return null;
   }
+
+  static validateWorkingRecordSelect(selected: string, from: string, to: string): ErrMsg | null {
+    if (!this.isNotEmpty(selected)) {
+      return ErrMsg.EMPLOYER_NOT_SELECTED;
+    } 
+
+    if (!this.isValidEndTime(from, to)) {
+      return ErrMsg.INVALID_TIME;
+    }
+    return null;
+  }
 }
 
 

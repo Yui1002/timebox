@@ -19,8 +19,8 @@ interface DropdownProps {
 
 interface DatePickerdownProps {
   mode: 'date' | 'time' | 'datetime' | undefined;
-  minimumDate: Date | undefined;
-  maximumDate: Date | undefined;
+  minimumDate?: Date | undefined;
+  maximumDate?: Date | undefined;
   open: boolean;
   onConfirm: (date: Date) => void;
   onCancel: () => void;

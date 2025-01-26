@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, SafeAreaView} from 'react-native';
-import {ContainerStyle, InputStyle} from '../../styles';
-import {Footer, Button, Error, Separator, NumberInput} from '../index';
+import {Text, View} from 'react-native';
+import {InputStyle} from '../../styles';
+import {Footer, Button, Error, Separator, NumberInput, TopContainer, Container} from '../index';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
 import {ErrorModel} from '../../types';
@@ -77,24 +77,22 @@ const VerifyOTP = ({route, navigation}: any) => {
     }
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
   let otpInput = InputStyle.createOTPInputStyle();
 
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       {errors.message && <Error msg={errors.message} />}
-      <View style={container}>
+      <Container>
         <Text>We have sent the verification code to your email address</Text>
-      </View>
-      <View style={container}>
+      </Container>
+      <Container>
         <NumberInput
           maxLength={6}
           style={otpInput}
           onChangeText={val => setOtp(val)}
         />
-      </View>
-      <Button title="Verify" onPress={verifyOTP} style={undefined} />
+      </Container>
+      <Button title="Verify" onPress={verifyOTP}/>
       <Separator />
       <Footer
         leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}
@@ -102,7 +100,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         leftFunc={setOTP}
         rightFunc={() => navigation.navigate(Screen.SIGN_IN)}
       />
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

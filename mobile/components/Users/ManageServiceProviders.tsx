@@ -1,27 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  TextStyle,
-  CheckboxStyle,
-} from '../../styles';
+import {Text, ScrollView} from 'react-native';
+import {TextStyle, CheckboxStyle} from '../../styles';
 import CheckBox from '@react-native-community/checkbox';
-import {
-  DefaultApiFactory,
-  ServiceProvider,
-  RequestStatus,
-} from '../../swagger/generated';
+import {DefaultApiFactory, ServiceProvider} from '../../swagger/generated';
 import {Screen} from '../../enums';
-import {Button, Error, Section, NumberInput, RateTypePicker} from '../index';
+import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
+import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
 
 let api = DefaultApiFactory();
 
@@ -71,24 +57,15 @@ const ManageServiceProviders = (props: any) => {
     });
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let listContainer = ContainerStyle.createListContainerStyle();
-  let listSubContainer = ContainerStyle.createListSubContainerStyle();
-  let checkboxContainer = ContainerStyle.createCheckBoxContainer();
   let checkBox = CheckboxStyle.createBasicCheckboxStyle();
-  let headerText = TextStyle.createHeaderTextStyle();
-  let titleText = TextStyle.createTitleTextStyle();
   let text = TextStyle.createBasicTextStyle();
-  let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createButtonTextStyle();
 
   return (
-    <SafeAreaView style={topContainer}>
-      <View style={container}>
-        <Text style={headerText}>Service Providers</Text>
-      </View>
-      <View style={checkboxContainer}>
+    <TopContainer>
+      <Container>
+        <Header title="Service Providers" />
+      </Container>
+      <CheckBoxContainer>
         <CheckBox
           style={checkBox}
           boxType="square"
@@ -97,30 +74,17 @@ const ManageServiceProviders = (props: any) => {
           onChange={() => setIsBoxChecked(!isBoxChecked)}
         />
         <Text style={text}>Show not currently employed</Text>
-      </View>
+      </CheckBoxContainer>
       {serviceProviders == null ? (
         <Text>You don't have service providers</Text>
       ) : (
         <ScrollView>
           {serviceProviders.map((serviceProvider, index) => (
-            <View key={index} style={listContainer}>
-              <View style={listSubContainer}>
-                <Text style={text}>{serviceProvider.status}</Text>
-                <Text style={titleText}>
-                  {serviceProvider.first_name} {serviceProvider.last_name}
-                </Text>
-                <Text>{serviceProvider.email}</Text>
-              </View>
-              <Button
-                title="View"
-                onPress={() => navigateToProfile(serviceProvider)}
-                style={recordBtn}
-              />
-            </View>
+            <ServiceProviderList key={index} props={serviceProvider} />
           ))}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

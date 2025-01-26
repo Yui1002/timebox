@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native';
-import {ContainerStyle} from '../../styles';
 import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger/generated';
 import {Screen, ErrMsg} from '../../enums';
-import {Footer, Button, Error, Separator, Input} from '../index';
+import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
@@ -40,17 +38,15 @@ const ForgotPassword = ({navigation}: any) => {
     }
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       {errors.message && <Error msg={errors.message} />}
       <Input
         title="Email"
         secureTextEntry={false}
         onChangeText={val => setEmail(val)}
       />
-      <Button title="Verify Email" onPress={checkEmailRegistered} style={undefined}/>
+      <Button title="Verify Email" onPress={checkEmailRegistered} />
       <Separator />
       <Footer
         leftText={{text1: 'Go back to', text2: 'Sign In'}}
@@ -58,7 +54,7 @@ const ForgotPassword = ({navigation}: any) => {
         rightText={undefined}
         rightFunc={undefined}
       />
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

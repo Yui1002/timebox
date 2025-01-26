@@ -1,23 +1,22 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, TouchableOpacity} from 'react-native';
-import DropdownPicker from '../DropdownPicker';
+import {View, Text} from 'react-native';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {ErrorModel} from '../../../types';
-import {Footer, Button, Error} from '../../index';
+import {
+  TopContainer,
+  Button,
+  Error,
+  DatePickerDropdown,
+  AlignContainer,
+  Dropdown,
+  Title,
+} from '../../index';
 import Validator from '../../../validator/validator';
 import {Screen, Days} from '../../../enums';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  InputStyle,
-  TextStyle,
-  IconStyle,
-} from '../../../styles';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {COLORS} from '../../../styles/theme';
+import {ContainerStyle, ButtonStyle} from '../../../styles';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -56,91 +55,72 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let wrapContainer = ContainerStyle.createWrapContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
-  let titleText = TextStyle.createTitleTextStyle();
   let selectedButton = ButtonStyle.createSelectedDayButtonStyle();
   let button = ButtonStyle.createDayButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
   let continuBtn = ButtonStyle.createContinueButtonStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
-  let dropdown = InputStyle.createDropdown3Style();
-  let dropdownText = TextStyle.createDropdownTextStyle();
-  let icon = IconStyle.createBasicIconStyle();
 
   return (
-    <View style={topContainer}>
-      <View style={{marginTop: 30}}>
-        {error.message && <Error msg={error.message} />}
-        <Text style={titleText}>Select day and time</Text>
-        <View style={wrapContainer}>
-          {Object.values(Days).map((day: string, index: number) => (
-            <Button
-              key={index}
-              title={day}
-              onPress={() => setSelectedDay(day)}
-              style={selectedDay === day ? selectedButton : button}
-            />
-          ))}
-        </View>
-        <View>
-          {startOpen && (
-            <DropdownPicker.DateDropdownPicker
-              open={startOpen}
-              date={startTime}
-              setOpen={setStartOpen}
-              setDate={setStartTime}
-            />
-          )}
-          {endOpen && (
-            <DropdownPicker.DateDropdownPicker
-              open={endOpen}
-              date={endTime}
-              setOpen={setEndOpen}
-              setDate={setEndTime}
-            />
-          )}
-        </View>
-        <View style={alignTopContainer}>
-          <View style={alignContainer}>
-            <Text style={titleText}>Start time</Text>
-            <TouchableOpacity
-              onPress={() => setStartOpen(true)}
-              style={dropdown}>
-              <Text style={dropdownText}>{moment(startTime).format('LT')}</Text>
-              <MaterialIcons
-                name="arrow-drop-down"
-                size={36}
-                color={COLORS.BLACK}
-                style={icon}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={alignContainer}>
-            <Text style={titleText}>End time</Text>
-            <TouchableOpacity style={dropdown} onPress={() => setEndOpen(true)}>
-              <Text style={dropdownText}>{moment(endTime).format('LT')}</Text>
-              <MaterialIcons
-                name="arrow-drop-down"
-                size={36}
-                color={COLORS.BLACK}
-                style={icon}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+    <TopContainer>
+      {error.message && <Error msg={error.message} />}
+      <Title title="Select day and time" />
+      <View style={wrapContainer}>
+        {Object.values(Days).map((day: string, index: number) => (
+          <Button
+            key={index}
+            title={day}
+            onPress={() => setSelectedDay(day)}
+            style={selectedDay === day ? selectedButton : button}
+          />
+        ))}
       </View>
-      <View style={alignTopContainer}>
-        <TouchableOpacity style={backBtn} onPress={() => navigation.goBack()}>
-          <Text style={buttonText}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={continuBtn} onPress={add}>
-          <Text style={buttonText}>Add</Text>
-        </TouchableOpacity>
+      <View>
+        {startOpen && (
+          <DatePickerDropdown mode="time" open={startOpen}  />
+          // <DropdownPicker.DateDropdownPicker
+          //   open={startOpen}
+          //   date={startTime}
+          //   setOpen={setStartOpen}
+          //   setDate={setStartTime}
+          // />
+        )}
+        {endOpen && (
+          <DatePickerDropdown
+            mode="time"
+            open={endOpen}
+            date={endTime}
+            setOpen={setEndOpen}
+            setDate={setEndTime}
+          />
+        )}
       </View>
-    </View>
+      <AlignContainer>
+        <View style={alignContainer}>
+          <Title title="Start time" />
+          <Dropdown
+            placeholder={moment(startTime).format('LT')}
+            onPress={() => setStartOpen(true)}
+          />
+        </View>
+        <View style={alignContainer}>
+          <Title title="End time" />
+          <Dropdown
+            placeholder={moment(endTime).format('LT')}
+            onPress={() => setEndOpen(true)}
+          />
+        </View>
+      </AlignContainer>
+      <AlignContainer>
+        <Button
+          title="Cancel"
+          onPress={() => navigation.goBack()}
+          style={backBtn}
+        />
+        <Button title="Continue" onPress={add} style={continuBtn} />
+      </AlignContainer>
+    </TopContainer>
   );
 };
 

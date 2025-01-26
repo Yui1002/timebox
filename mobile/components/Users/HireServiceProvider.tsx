@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView} from 'react-native';
-import {ContainerStyle} from '../../styles';
+import {Text} from 'react-native';
 import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
-import {Button, Error, Input} from '../index';
+import {Button, Container, Error, Input, TopContainer} from '../index';
 import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
 import Validator from '../../validator/validator';
 import {ErrorModel} from '../../types';
@@ -64,27 +63,24 @@ const HireServiceProvider = (props: any) => {
     setError({message: ''});
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       {error.message && <Error msg={error.message} />}
       {modalVisible && (
         <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
       )}
-      <View style={container}>
+      <Container>
         <Text>
           Enter the email of a service provider you would like to hire
         </Text>
-      </View>
+      </Container>
       <Input
         title="Email"
         secureTextEntry={false}
         onChangeText={val => setSearchInput(val)}
       />
       <Button title="Continue" onPress={searchEmail} />
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 
