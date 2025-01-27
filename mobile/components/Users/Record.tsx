@@ -1,6 +1,4 @@
 import React, {useState} from 'react';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../config.js';
 import {ButtonStyle} from '../../styles';
 import {
   Button,
@@ -12,62 +10,86 @@ import {
   Header,
   DropdownContainer,
 } from '../index';
-import {TimeType, Parameters} from '../../enums';
+import {TimeType, Parameters, ErrMsg} from '../../enums';
 import {ErrorModel} from '../../types';
 import Validator from '../../validator/validator';
-import {DefaultApiFactory, GetRecordRq} from '../../swagger/generated';
+import {
+  DefaultApiFactory,
+  GetRecordRq,
+  Employer,
+  SetRecordRq,
+} from '../../swagger';
 import {returnFormat, getBeginningOfDay} from '../../helper/momentHelper';
 const api = DefaultApiFactory();
 
+interface RecordProps {
+  employer: Employer;
+  serviceProviderEmail: string;
+}
+
 const Record = ({route}: any) => {
-  const {firstName, lastName, email, mode} = route.params.employer;
-  const serviceProviderEmail = route.params.serviceProviderEmail;
+  const {employer, serviceProviderEmail}: RecordProps = route.params;
+  const {firstName, lastName, email, mode} = employer;
+  let recordBtn = ButtonStyle.createRecordButtonStyle();
+
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [startTime, setStartTime] = useState<Date | undefined>(undefined);
+  const [endTime, setEndTime] = useState<Date | undefined>(undefined);
   const [error, setError] = useState<ErrorModel>({message: ''});
   let minimumDate =
     mode === 1 ? new Date(Parameters.DEFAULT_DATE) : getBeginningOfDay();
 
   const validateInput = (type: TimeType): boolean => {
-    const validateErr = Validator.validateRecordTime(type, startTime, endTime);
+    const validateErr = Validator.validateRecordTime(type, startTime!, endTime!);
     if (validateErr) {
       setError({message: validateErr});
     }
     return validateErr == null;
   };
 
-  const checkRecordExists = async (type: string) => {
+  const checkRecordExists = async (type: string): Promise<boolean> => {
     try {
       const params: GetRecordRq = {
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
       };
 
-      const {data} = await api.getRecord(params);
-    } catch (e: any) {
-      console.log('error', e.response.data.message);
+      await api.getRecord(params.employerEmail, params.serviceProviderEmail);
+      return true;
+    } catch {
+      // no record found
+      return false;
     }
   };
 
   const saveRecord = async (type: TimeType) => {
-    if (!validateInput(type)) return;
-    checkRecordExists('start');
+
+    if (!validateInput(type) || (await checkRecordExists(type))) return;
+
+    // const stringStartTime = returnFormat(startTime);
+    const stringStartTime = returnFormat(startTime, 'YYYY')
+    const stringEndTime = returnFormat(endTime);
+    {console.log(startTime)}
 
     try {
-      const response = await axios.post(`${LOCAL_HOST_URL}/setRecord`, {
+      await api.setRecord({
         employerEmail: email,
         serviceProviderEmail: serviceProviderEmail,
-        // recordTime: date,
-        type: type,
-      });
+        recordTime: type === TimeType.START ? stringStartTime : stringEndTime,
+        type: TimeType.START,
+      } as SetRecordRq);
     } catch (e: any) {
-      console.log('error', e);
+      console.log(e)
+      setError({message: ErrMsg.FAIL_RECORD});
+    } finally {
+      clearInput();
     }
   };
 
-  let recordBtn = ButtonStyle.createRecordButtonStyle();
+  const clearInput = () => {
+    setError({message: ''});
+  }
 
   return (
     <TopContainer>
@@ -78,11 +100,7 @@ const Record = ({route}: any) => {
       <DropdownContainer>
         <Dropdown
           onPress={() => setStartOpen(!startOpen)}
-          placeholder={
-            startTime
-              ? returnFormat(startTime, 'MM/DD LT')
-              : `Select start time`
-          }
+          placeholder={ startTime?.momentFormat("MM/DD LT") ?? "Select Start Time"}
         />
         <Button
           title="Record"
@@ -94,7 +112,9 @@ const Record = ({route}: any) => {
         <Dropdown
           onPress={() => setEndOpen(!endOpen)}
           placeholder={
-            endTime ? returnFormat(endTime, 'MM/DD LT') : `Select end time`
+            endTime
+              ? returnFormat(endTime, 'MM/DD LT') || ''
+              : `Select end time`
           }
         />
         <Button
@@ -108,7 +128,8 @@ const Record = ({route}: any) => {
         open={startOpen}
         minimumDate={minimumDate}
         maximumDate={new Date()}
-        onConfirm={(d: Date) => setStartTime(d.toString())}
+        // onConfirm={(d: Date) => setStartTime(d.toString())}
+        onConfirm={(d: Date) => setStartTime(d)}
         onCancel={() => setStartOpen(false)}
       />
       <DatePickerDropdown
@@ -116,7 +137,7 @@ const Record = ({route}: any) => {
         open={endOpen}
         minimumDate={minimumDate}
         maximumDate={new Date()}
-        onConfirm={(d: Date) => setEndTime(d.toString())}
+        onConfirm={(d: Date) => setEndTime(d)}
         onCancel={() => setEndOpen(false)}
       />
     </TopContainer>

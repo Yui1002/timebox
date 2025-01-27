@@ -11,6 +11,7 @@ interface WorkingHistoryProps {
 
 const WorkingHistoryList = (props: WorkingHistoryProps) => {
   let date = returnFormat(props.start || props.end, 'YYYY/MM/DD');
+  // props.start.formatDate('YYYY/MM/DD')
   let start = returnFormat(props.start, 'LT');
   let end = returnFormat(props.end, 'LT');
   let noRecord = 'N/A'

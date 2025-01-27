@@ -4,7 +4,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {Text, ScrollView} from 'react-native';
 import {TextStyle, CheckboxStyle} from '../../styles';
 import CheckBox from '@react-native-community/checkbox';
-import {DefaultApiFactory, ServiceProvider} from '../../swagger/generated';
+import {DefaultApiFactory, ServiceProvider} from '../../swagger';
 import {Screen} from '../../enums';
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';

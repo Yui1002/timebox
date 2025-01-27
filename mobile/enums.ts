@@ -80,6 +80,7 @@ enum ErrMsg {
   INVALID_TIME = 'Time is invalid',
   SAVE_FAIL = 'Failed to save changes',
   EMPLOYER_NOT_SELECTED = "Employer's name is required",
+  FAIL_RECORD = 'Failed to record time',
   
 }
 

@@ -5,7 +5,7 @@ import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
 import {Button, Container, Error, Input, TopContainer} from '../index';
-import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
+import {DefaultApiFactory, GetUserRs} from '../../swagger';
 import Validator from '../../validator/validator';
 import {ErrorModel} from '../../types';
 import {Screen, ErrMsg} from '../../enums';

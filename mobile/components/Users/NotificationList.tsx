@@ -12,7 +12,7 @@ import {
   Request,
   GetUserScheduleRs,
   UpdateRequestStatusRq,
-} from '../../swagger/generated';
+} from '../../swagger';
 import {
   TopContainer,
   Button,

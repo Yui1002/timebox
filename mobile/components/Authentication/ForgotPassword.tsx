@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {ErrorModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
-import {DefaultApiFactory} from '../../swagger/generated';
+import {DefaultApiFactory} from '../../swagger';
 import {Screen, ErrMsg} from '../../enums';
 import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
 let api = DefaultApiFactory();

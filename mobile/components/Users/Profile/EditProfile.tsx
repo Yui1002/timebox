@@ -13,7 +13,7 @@ import {ContainerStyle} from '../../../styles';
 import {Screen, ErrMsg, RateTypeValue} from '../../../enums';
 import Validator from '../../../validator/validator';
 import InputField from '../../InputField';
-import {UserStatus} from '../../../swagger/generated';
+import {UserStatus} from '../../../swagger';
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();

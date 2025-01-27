@@ -1,18 +1,15 @@
 import React from 'react';
-import {Text, View, TouchableOpacity} from 'react-native';
-import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
-import {Employer} from '../../swagger/generated';
+import {Text} from 'react-native';
+import {ButtonStyle, TextStyle} from '../../styles';
 import {Screen} from '../../enums';
+import {ListContainer, ListSubContainer, Button} from '../index';
 
 const EmployerList = (props: any) => {
   const {employer, email, navigation} = props;
-  let listContainer = ContainerStyle.createListContainerStyle();
-  let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let text = TextStyle.createBasicTextStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
-  let btnText = TextStyle.createButtonTextStyle();
 
-  const navigateScreen = (employer: Employer): void => {
+  const navigateScreen = (): void => {
     navigation.navigate(Screen.RECORD, {
       employer: employer,
       serviceProviderEmail: email,
@@ -20,19 +17,15 @@ const EmployerList = (props: any) => {
   };
 
   return (
-    <View style={listContainer}>
-      <View style={listSubContainer}>
+    <ListContainer>
+      <ListSubContainer>
         <Text style={text}>
           {employer.firstName} {employer.lastName}
         </Text>
         <Text>{employer.email}</Text>
-      </View>
-      <TouchableOpacity
-        style={recordBtn}
-        onPress={() => navigateScreen(employer)}>
-        <Text style={btnText}>Record</Text>
-      </TouchableOpacity>
-    </View>
+      </ListSubContainer>
+      <Button title="Record" onPress={navigateScreen} style={recordBtn} />
+    </ListContainer>
   );
 };
 

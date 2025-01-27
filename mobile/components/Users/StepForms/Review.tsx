@@ -16,7 +16,7 @@ import {
   DefaultApiFactory,
   SetRequestRq,
   Mode,
-} from '../../../swagger/generated';
+} from '../../../swagger';
 import {ErrorModel} from '../../../types';
 import {Button, Error, Section, NumberInput, Header} from '../../index';
 import {ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';

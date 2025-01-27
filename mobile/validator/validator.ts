@@ -33,16 +33,16 @@ class Validator {
     return !isEmpty(rateType);
   }
 
-  static isValidStartTime(start: string, end: string) {
+  static isValidStartTime(start: Date, end: Date) {
     return moment(start).isBefore(moment(end))
   }
 
-  static isValidEndTime(start: string, end: string) {
+  static isValidEndTime(start: Date, end: Date) {
     return moment(end).isAfter(moment(start))
   }
 
-  static isValidDate(date: string): boolean {
-    return isDate(date);
+  static isValidDate(date: Date): boolean {
+    return moment(date).isValid();
   }
 
   static isValidDuration(startTime: string, endTime: string) {
@@ -80,12 +80,12 @@ class Validator {
     return null;
   }
 
-  static validateSignIn(props: SignInProps): ErrMsg | null {
-    if (!this.isValidEmail(props.email)) {
+  static validateSignIn(email: string, password: string): ErrMsg | null {
+    if (!this.isValidEmail(email)) {
       return ErrMsg.INVALID_EMAIL;
     }
     
-    if (!this.isValidPassword(props.password)) {
+    if (!this.isValidPassword(password)) {
       return ErrMsg.INVALID_PASSWORD;
     }
 
@@ -111,7 +111,7 @@ class Validator {
     return null;
   }
 
-  static validateRecordTime(type: TimeType, startTime: string, endTime: string): ErrMsg | null {
+  static validateRecordTime(type: TimeType, startTime: Date, endTime: Date): ErrMsg | null {
     if (type === TimeType.START) {
       if (!this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
@@ -123,7 +123,7 @@ class Validator {
       if (!this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }
-      if (startTime && !this.isValidEndTime(startTime, endTime)) {
+      if (startTime && !this.isValidEndTime(startTime, endTime!)) {
         return ErrMsg.INVALID_END_TIME;
       }
     }

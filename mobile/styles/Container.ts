@@ -10,6 +10,16 @@ export default class ContainerStyle {
     }).container;
   }
 
+  static createCenterContainerStyle() {
+    let container = StyleSheet.create({
+      container: {
+        alignItems: 'center',
+      }
+    }).container;
+    return StyleSheet.compose(this.createBasicContainerStyle(), container);
+  }
+
+
   static createInputContainerStyle() {
     let container = StyleSheet.create({
       container: {
@@ -40,6 +50,7 @@ export default class ContainerStyle {
       buttonContainer,
     );
   }
+
 
   static createAlignedButtonContainerStyle() {
     let buttonContainer = StyleSheet.create({
@@ -77,11 +88,13 @@ export default class ContainerStyle {
   static createErrorContainerStyle() {
     return StyleSheet.create({
       errContainer: {
-        width: 300,
-        height: 30,
+        width: '100%',
+        height: 'auto',
         backgroundColor: COLORS.PINK,
         borderRadius: 6,
         flexDirection: 'row',
+        alignItems: 'center',
+        flexWrap: 'wrap'
       },
     }).errContainer;
   }

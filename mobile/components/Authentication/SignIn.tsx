@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import {ScrollView, SafeAreaView} from 'react-native';
+import {ScrollView} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {
   DefaultApiFactory,
   GetUserRs,
   SignInUserRq,
-} from '../../swagger/generated';
+} from '../../swagger';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import Validator from '../../validator/validator';
-import {ErrorModel, SignInProps} from '../../types';
+import {ErrorModel} from '../../types';
 import {Screen, ErrMsg} from '../../enums';
 import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
 let userApi = DefaultApiFactory();
@@ -21,10 +21,7 @@ const SignIn = ({navigation}: any) => {
   const [errors, setErrors] = useState<ErrorModel>({message: ''});
 
   const validateInput = (): boolean => {
-    const validateErr = Validator.validateSignIn({
-      email,
-      password,
-    } as SignInProps);
+    const validateErr = Validator.validateSignIn(email, password);
     if (validateErr) {
       setErrors({message: validateErr});
     }
@@ -34,12 +31,13 @@ const SignIn = ({navigation}: any) => {
   const signIn = async (): Promise<void> => {
     if (!validateInput()) return;
 
-    const params: SignInUserRq = {email, password};
-
     try {
-      const {data} = await userApi.signInUser(params);
+      const {data} = await userApi.signInUser({
+        email, password
+      } as SignInUserRq);
       dispatchUser(data);
-      navigation.navigate(Screen.DRAWER_NAV)
+      clearInput();
+      navigation.navigate(Screen.DRAWER_NAV);
     } catch (e: any) {
       setErrors({message: ErrMsg.SIGNIN_ERROR});
     }
@@ -52,13 +50,8 @@ const SignIn = ({navigation}: any) => {
   };
 
   const dispatchUser = (data: GetUserRs): void => {
-    dispatch(
-      signInUser({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-      }),
-    );
+    const {firstName, lastName, email} = data;
+    dispatch(signInUser({firstName, lastName, email}));
   };
 
   return (
@@ -71,7 +64,7 @@ const SignIn = ({navigation}: any) => {
           onChangeText={val => setEmail(val)}
         />
         <Input
-          title='Password'
+          title="Password"
           secureTextEntry={true}
           onChangeText={val => setPassword(val)}
         />

@@ -3,7 +3,7 @@ import {Text, View} from 'react-native';
 import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
 import {Button} from '../index';
 import {Screen} from '../../enums';
-import {ServiceProvider} from '../../swagger/generated';
+import {ServiceProvider} from '../../swagger';
 
 interface ServiceProviderListProps {
   

@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {Container, TopContainer, Header, Title} from '../index';
+import {Container, TopContainer, Header, Title, CenterContainer} from '../index';
 import {useSelector} from 'react-redux';
 import {Text, ScrollView} from 'react-native';
 import EmployerList from '../Employers/EmployerList';
 import {useIsFocused} from '@react-navigation/native';
-import {DefaultApiFactory, Employer} from '../../swagger/generated';
+import {DefaultApiFactory, Employer} from '../../swagger';
 import {UserInfo} from '../../types';
 
 let employerApi = DefaultApiFactory();
@@ -32,9 +32,9 @@ const Home = (props: any) => {
 
   return (
     <TopContainer>
-      <Container>
+      <CenterContainer>
         <Header title={`Hi ${firstName}!`} />
-      </Container>
+      </CenterContainer>
       <Container>
         <Title title="My Employers" />
         {!employers ? (

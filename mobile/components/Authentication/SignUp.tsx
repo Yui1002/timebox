@@ -10,8 +10,7 @@ import {
   PasswordInput,
   TopContainer,
 } from '../index';
-import {navigate} from '../../helper/navigate';
-import {DefaultApiFactory} from '../../swagger/generated';
+import {DefaultApiFactory} from '../../swagger';
 import {ErrorModel, SignUpProps} from '../../types';
 import {Screen, ErrMsg} from '../../enums';
 let userApi = DefaultApiFactory();
@@ -40,7 +39,7 @@ const SignUp = ({navigation}: any) => {
         confirmedPassword,
         isSignUp: true,
       };
-      navigate(navigation, Screen.VERIFY_OTP, navigationProps);
+      navigation.navigate(Screen.VERIFY_OTP, navigationProps);
     }
   };
 

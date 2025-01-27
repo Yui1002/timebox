@@ -10,7 +10,7 @@ import {
   Request,
   GetUserScheduleRs,
   UpdateRequestStatusRq,
-} from '../../swagger/generated';
+} from '../../swagger';
 import {TopContainer} from '../index';
 import NotificationList from './NotificationList';
 const api = DefaultApiFactory();
