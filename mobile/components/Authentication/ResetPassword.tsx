@@ -1,21 +1,24 @@
 import React, {useState} from 'react';
-import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
-import {ErrorModel} from '../../types';
+import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
+import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, ResetPasswordRq} from '../../swagger';
-import {Screen, ErrMsg} from '../../enums';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 
 const ResetPassword = ({route, navigation}: any) => {
   const email = route.params.email;
   const [password, setPassword] = useState<string>('');
   const [confirmedPassword, setConfirmedPassword] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validatePassword(password, confirmedPassword);
     if (validateErr) {
-      setErrors({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr == null;
   };
@@ -32,13 +35,13 @@ const ResetPassword = ({route, navigation}: any) => {
       await api.resetPassword(params);
       navigation.navigate(Screen.DRAWER_NAV, null)
     } catch (e) {
-      setErrors({message: ErrMsg.PASSWORD_REUSE});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.PASSWORD_REUSE});
     }
   };
 
   return (
     <TopContainer>
-      {errors.message && <Error msg={errors.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
       <Input
         title="New Password"
         secureTextEntry={true}

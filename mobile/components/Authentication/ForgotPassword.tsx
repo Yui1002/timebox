@@ -1,19 +1,22 @@
 import React, {useState} from 'react';
-import {ErrorModel, ForgotPasswordProps} from '../../types';
+import {ResultModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger';
-import {Screen, ErrMsg} from '../../enums';
-import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
   const [email, setEmail] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateEmail = (): boolean => {
     const validateErr = Validator.validateEmail(email);
     if (validateErr) {
-      setErrors({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr == null;
   };
@@ -34,13 +37,13 @@ const ForgotPassword = ({navigation}: any) => {
       await api.getUser(email);
       navigateScreen();
     } catch (e) {
-      setErrors({message: ErrMsg.EMAIL_NOT_FOUND});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.EMAIL_NOT_FOUND});
     }
   };
 
   return (
     <TopContainer>
-      {errors.message && <Error msg={errors.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
       <Input
         title="Email"
         secureTextEntry={false}

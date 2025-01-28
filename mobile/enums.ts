@@ -1,3 +1,9 @@
+enum StatusModel {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  NULL = ''
+}
+
 enum Parameters {
   DEFAULT_DATE = '2020-01-01T00:00:00'
 }
@@ -81,6 +87,9 @@ enum ErrMsg {
   SAVE_FAIL = 'Failed to save changes',
   EMPLOYER_NOT_SELECTED = "Employer's name is required",
   FAIL_RECORD = 'Failed to record time',
+  FAIL_UPDATE_RECORD = 'Failed to update record time',
+  SUCCESS_UPDATE_RECORD = 'Updated record time successfully',
+  SUCCESS_SET_RECORD = 'Set record time successfully',
   
 }
 
@@ -90,4 +99,8 @@ enum ProgressBar {
   REVIEW = 'Review'
 }
 
-export { Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, Mode }
+enum MomentFormat {
+  DATETIME = 'MM/DD LT',
+}
+
+export { StatusModel, Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, Mode, MomentFormat }

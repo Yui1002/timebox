@@ -1,6 +1,7 @@
 import React from 'react';
 import {SafeAreaView, View} from 'react-native';
-import {ContainerStyle, TextStyle} from '../../styles';
+import {ContainerStyle} from '../../styles';
+import { COLORS } from '../../styles/theme';
 
 let topContainer = ContainerStyle.createTopContainerStyle();
 let alignContainer = ContainerStyle.createAlignTopContainer();
@@ -8,7 +9,8 @@ let centerContainer = ContainerStyle.createCenterContainerStyle();
 let container = ContainerStyle.createBasicContainerStyle();
 let dropdownContainer = ContainerStyle.createDropdownContainer();
 let checkboxContainer = ContainerStyle.createCheckBoxContainer();
-let errorContainer = ContainerStyle.createErrorContainerStyle();
+let errorContainer = ContainerStyle.createResultContainerStyle(COLORS.PINK);
+let successContainer = ContainerStyle.createResultContainerStyle(COLORS.LIGHT_GREEN);
 let listContainer = ContainerStyle.createListContainerStyle();
 let listSubContainer = ContainerStyle.createListSubContainerStyle();
 
@@ -27,6 +29,10 @@ const CenterContainer = ({children}: any): React.JSX.Element => {
 const ErrorContainer = ({children}: any): React.JSX.Element => {
   return <View style={errorContainer}>{children}</View>;
 };
+
+const SuccessContainer = ({children}: any): React.JSX.Element => {
+  return <View style={successContainer}>{children}</View>;
+}
 
 const AlignContainer = ({children}: any): React.JSX.Element => {
   return <View style={alignContainer}>{children}</View>;
@@ -58,5 +64,6 @@ export {
   CenterContainer,
   ErrorContainer,
   ListContainer,
-  ListSubContainer
+  ListSubContainer,
+  SuccessContainer
 };

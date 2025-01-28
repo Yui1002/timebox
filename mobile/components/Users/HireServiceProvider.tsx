@@ -4,11 +4,11 @@ import {Text} from 'react-native';
 import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
-import {Button, Container, Error, Input, TopContainer} from '../index';
+import {Button, Container, Input, Result, TopContainer} from '../index';
 import {DefaultApiFactory, GetUserRs} from '../../swagger';
 import Validator from '../../validator/validator';
-import {ErrorModel} from '../../types';
-import {Screen, ErrMsg} from '../../enums';
+import {ResultModel} from '../../types';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
 
 let api = DefaultApiFactory();
 
@@ -16,7 +16,10 @@ const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   useEffect(() => {
     setModalVisible(true);
@@ -24,7 +27,7 @@ const HireServiceProvider = (props: any) => {
 
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
-      setError({message: ErrMsg.INVALID_EMAIL});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_EMAIL});
       return false;
     }
     return true;
@@ -38,7 +41,7 @@ const HireServiceProvider = (props: any) => {
       const serviceProvider = data.serviceProviderUser;
       showConfirmMsg(serviceProvider);
     } catch (e) {
-      setError({message: ErrMsg.DUPLICATE_REQUEST});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_REQUEST});
     }
   };
 
@@ -60,12 +63,12 @@ const HireServiceProvider = (props: any) => {
 
   const clearInput = () => {
     setSearchInput('');
-    setError({message: ''});
+    setResult({status: StatusModel.NULL, message: ''});
   };
 
   return (
     <TopContainer>
-      {error.message && <Error msg={error.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
       {modalVisible && (
         <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
       )}

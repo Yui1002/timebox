@@ -70,14 +70,14 @@ export default class TextStyle {
     }).toggle;
   }
 
-  static createErrorTextStyle() {
+  static createResultTextStyle() {
     return StyleSheet.create({
-      error: {
+      text: {
         fontWeight: '500',
         lineHeight: 30,
         paddingHorizontal: 6,
       },
-    }).error;
+    }).text;
   }
 
   static createDropdownTextStyle() {

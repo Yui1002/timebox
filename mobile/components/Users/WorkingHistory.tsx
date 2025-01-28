@@ -6,21 +6,22 @@ import {View, Text, ScrollView} from 'react-native';
 import {ContainerStyle, TextStyle} from '../../styles';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
-import {RawEmployer, FormattedEmployer, Record, ErrorModel} from '../../types';
+import {RawEmployer, FormattedEmployer, Record, ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {
   TopContainer,
   Dropdown,
-  Error,
   Title,
   Picker,
   DatePickerDropdown,
   Button,
   Separator,
   AlignContainer,
+  Result,
 } from '../index';
 import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
 import {getDiff} from '../../helper/momentHelper';
+import { StatusModel } from '../../enums';
 
 const WorkingHistory = (props: any) => {
   const {email} = useSelector(state => state.userInfo);
@@ -33,7 +34,10 @@ const WorkingHistory = (props: any) => {
   const [to, setTo] = useState<string>('');
   const [employers, setEmployers] = useState<FormattedEmployer[]>([]);
   const [records, setRecords] = useState<Record[]>([]);
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   useEffect(() => {
     if (isFocused) {
@@ -72,7 +76,7 @@ const WorkingHistory = (props: any) => {
       to,
     );
     if (validateErr) {
-      setErrors({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
 
     return validateErr == null;
@@ -117,7 +121,7 @@ const WorkingHistory = (props: any) => {
       {employers.length ? (
         <ScrollView>
           <View>
-            {errors.message && <Error msg={errors.message} />}
+          {result.status && <Result status={result.status} msg={result.message} />}
             <Title title="Select employer's name" />
             <Picker
               open={employerDropdownOpen}

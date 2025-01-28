@@ -11,15 +11,15 @@ import ProgressBar from './ProgressBar';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
-import {Button, Error, Section, NumberInput, Picker, Header} from '../../index';
+import {Button, Section, NumberInput, Picker, Header, Result} from '../../index';
 import {
   RateTypeSet,
   PersonalInfoProps,
   WorkShiftsProps,
-  ErrorModel,
+  ResultModel,
   ModeSet,
 } from '../../../types';
-import {RateTypeValue, Screen, ProgressBar as Bar, Mode} from '../../../enums';
+import {RateTypeValue, Screen, ProgressBar as Bar, Mode, StatusModel} from '../../../enums';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -38,13 +38,16 @@ const PersonalInfo = ({route, navigation}: any) => {
   const [rateType, setRateType] = useState<RateTypeValue>(RateTypeValue.HOURLY);
   const [mode, setMode] = useState<Mode>(Mode.NO);
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
   const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
     const validateErr = Validator.validateRate(rate, rateType);
     if (validateErr) {
-      setError({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr == null;
   };
@@ -81,8 +84,8 @@ const PersonalInfo = ({route, navigation}: any) => {
   return (
     <View style={topContainer}>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
+      {result.status && <Result status={result.status} msg={result.message} />}
       <ScrollView>
-        {error.message && <Error msg={error.message} />}
         <Header title='User Information'/>
         <View style={alignTopContainer}>
           <Section

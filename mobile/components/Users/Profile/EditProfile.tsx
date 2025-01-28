@@ -6,11 +6,11 @@ import {LOCAL_HOST_URL} from '../../../config.js';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
 import {navigate} from '../../../helper/navigate';
-import {Schedule, ErrorModel} from '../../../types';
+import {Schedule, ResultModel} from '../../../types';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
-import {TopContainer, Button, Error, AlignContainer, Title} from '../../index';
+import {TopContainer, Button, AlignContainer, Title, Result} from '../../index';
 import {ContainerStyle} from '../../../styles';
-import {Screen, ErrMsg, RateTypeValue} from '../../../enums';
+import {Screen, ErrMsg, RateTypeValue, StatusModel} from '../../../enums';
 import Validator from '../../../validator/validator';
 import InputField from '../../InputField';
 import {UserStatus} from '../../../swagger';
@@ -43,7 +43,10 @@ const EditProfile = ({route, navigation}: any) => {
   //   {label: 'Active', value: 'active'},
   //   {label: 'Inactive', value: 'inactive'},
   // ]);
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const deleteDate = (itemToDelete: Schedule) => {
     const result = serviceProviderData.schedule.map((schedule: Schedule) => {
@@ -62,7 +65,7 @@ const EditProfile = ({route, navigation}: any) => {
   const validateInput = (): boolean => {
     const validateErr = Validator.validateRate(updatedRate, updatedRateType);
     if (validateErr) {
-      setError({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr === null;
   };
@@ -81,7 +84,7 @@ const EditProfile = ({route, navigation}: any) => {
       });
       navigate(navigation, Screen.PROFILE, route.params.sp);
     } catch (e) {
-      setError({message: ErrMsg.SAVE_FAIL});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.SAVE_FAIL});
     }
   };
 
@@ -95,12 +98,11 @@ const EditProfile = ({route, navigation}: any) => {
 
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
-  let titleText = TextStyle.createTitleTextStyle();
 
   return (
     <TopContainer>
       <ScrollView>
-        {error.message && <Error msg={error.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
         <AlignContainer>
           <View style={alignContainer}>
             <Title title={'Rate ($)'}/>

@@ -4,15 +4,15 @@ import Validator from '../../validator/validator';
 import {
   Footer,
   Button,
-  Error,
   Separator,
   Input,
   PasswordInput,
   TopContainer,
+  Result
 } from '../index';
 import {DefaultApiFactory} from '../../swagger';
-import {ErrorModel, SignUpProps} from '../../types';
-import {Screen, ErrMsg} from '../../enums';
+import {ResultModel, SignUpProps} from '../../types';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
 let userApi = DefaultApiFactory();
 
 const SignUp = ({navigation}: any) => {
@@ -22,14 +22,17 @@ const SignUp = ({navigation}: any) => {
   const [password, setPassword] = useState<string>('');
   const [confirmedPassword, setConfirmedPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  });
 
   const checkUserExists = async (): Promise<void> => {
     if (!validateInput()) return;
 
     try {
       await userApi.getUser(email);
-      setErrors({message: ErrMsg.DUPLICATE_EMAIL});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_EMAIL});
     } catch (e) {
       let navigationProps: SignUpProps = {
         firstName,
@@ -52,7 +55,7 @@ const SignUp = ({navigation}: any) => {
       confirmedPassword,
     } as SignUpProps);
     if (validateErr) {
-      setErrors({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr == null;
   };
@@ -60,7 +63,7 @@ const SignUp = ({navigation}: any) => {
   return (
     <TopContainer>
       <ScrollView>
-        {errors.message && <Error msg={errors.message} />}
+        {result.status && <Result status={result.status} msg={result.message} />}
         <Input
           title="First Name"
           secureTextEntry={false}

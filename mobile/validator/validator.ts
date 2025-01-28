@@ -113,14 +113,14 @@ class Validator {
 
   static validateRecordTime(type: TimeType, startTime: Date, endTime: Date): ErrMsg | null {
     if (type === TimeType.START) {
-      if (!this.isValidDate(startTime)) {
+      if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
       if (endTime && this.isValidStartTime(startTime, endTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
     } else if (type === TimeType.END) {
-      if (!this.isValidDate(endTime)) {
+      if (!endTime || !this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }
       if (startTime && !this.isValidEndTime(startTime, endTime!)) {

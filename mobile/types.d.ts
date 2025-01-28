@@ -1,4 +1,4 @@
-import {RateTypeValue, Mode} from './enums';
+import {RateTypeValue, Mode, StatusModel} from './enums';
 
 type UserInfo = {
   firstName: string;
@@ -42,7 +42,8 @@ type Record = {
   endTime: string | null;
 };
 
-type ErrorModel = {
+type ResultModel = {
+  status: StatusModel;
   message: string;
 };
 
@@ -111,7 +112,7 @@ export {
   UserInfo,
   PersonalInfoProps,
   RateTypeSet,
-  ErrorModel,
+  ResultModel,
   Schedule,
   ServiceProvider,
   RawEmployer,

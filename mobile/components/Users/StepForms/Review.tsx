@@ -1,25 +1,16 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  TextStyle,
-  InputStyle,
-} from '../../../styles';
+import {ContainerStyle, ButtonStyle, TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import {Schedule, WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import {
-  DefaultApiFactory,
-  SetRequestRq,
-  Mode,
-} from '../../../swagger';
-import {ErrorModel} from '../../../types';
-import {Button, Error, Section, NumberInput, Header} from '../../index';
-import {ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
+import {DefaultApiFactory, SetRequestRq, Mode} from '../../../swagger';
+import {ResultModel} from '../../../types';
+import {Button, Section, NumberInput, Header, Result} from '../../index';
+import {ErrMsg, Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
 
 let api = DefaultApiFactory();
 
@@ -29,7 +20,10 @@ const Review = ({route, navigation}: any) => {
   const {firstName, lastName, email, rate, rateType, isEnabled} = params;
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: '',
+  });
 
   const editDay = () => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
@@ -54,7 +48,7 @@ const Review = ({route, navigation}: any) => {
       clearInput();
       showSuccess();
     } catch (e: any) {
-      setError({message: ErrMsg.REQUEST_SEND_ERR});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.REQUEST_SEND_ERR});
     }
   };
 
@@ -70,7 +64,7 @@ const Review = ({route, navigation}: any) => {
 
   const clearInput = (): void => {
     dispatch(resetShift(workShifts.workShifts));
-    setError({message: ''});
+    setResult({status: StatusModel.ERROR, message: ''});
   };
 
   let topContainer = ContainerStyle.createTopContainerStyle();
@@ -80,14 +74,6 @@ const Review = ({route, navigation}: any) => {
   let headerText = TextStyle.createHeaderTextStyle();
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
-  let inputText = InputStyle.createBasicInputStyle();
-  let button = ButtonStyle.createBasicButtonStyle();
-  let buttonText = TextStyle.createButtonTextStyle();
-  let linkText = TextStyle.createLinkTextStyle();
-  let dayText = TextStyle.createCustomWidthTextStyle('30%');
-  let timeText = TextStyle.createCustomWidthTextStyle('50%');
-  let deleteText = TextStyle.createDeleteLinkTextStyle();
-  let centerText = TextStyle.createCenterTextStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
   let continueBtn = ButtonStyle.createContinueButtonStyle();
   let titleText = TextStyle.createTitleTextStyle();
@@ -101,8 +87,8 @@ const Review = ({route, navigation}: any) => {
   return (
     <View style={topContainer}>
       <ProgressBar title={Bar.REVIEW} isFocused={true} />
+      {result.status && <Result status={result.status} msg={result.message} />}
       <ScrollView>
-        {error.message && <Error msg={error.message} />}
         <Header title="Review" />
         <View style={alignTopContainer}>
           <Section

@@ -8,9 +8,9 @@ import {
 } from '../../swagger';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import Validator from '../../validator/validator';
-import {ErrorModel} from '../../types';
-import {Screen, ErrMsg} from '../../enums';
-import {Footer, Button, Error, Separator, Input, TopContainer} from '../index';
+import {ResultModel} from '../../types';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {Footer, Button, Result, Separator, Input, TopContainer} from '../index';
 let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
@@ -18,12 +18,15 @@ const SignIn = ({navigation}: any) => {
 
   const [email, setEmail] = useState<string>('yuidayal@gmail.com');
   const [password, setPassword] = useState<string>('Gorilla123!');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignIn(email, password);
     if (validateErr) {
-      setErrors({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr == null;
   };
@@ -39,14 +42,14 @@ const SignIn = ({navigation}: any) => {
       clearInput();
       navigation.navigate(Screen.DRAWER_NAV);
     } catch (e: any) {
-      setErrors({message: ErrMsg.SIGNIN_ERROR});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.SIGNIN_ERROR});
     }
   };
 
   const clearInput = (): void => {
     setEmail('');
     setPassword('');
-    setErrors({message: ''});
+    setResult({status: StatusModel.NULL, message: ''});
   };
 
   const dispatchUser = (data: GetUserRs): void => {
@@ -57,7 +60,7 @@ const SignIn = ({navigation}: any) => {
   return (
     <TopContainer>
       <ScrollView>
-        {errors.message && <Error msg={errors.message} />}
+        {result.status && <Result status={result.status} msg={result.message} />}
         <Input
           title="Email"
           secureTextEntry={false}

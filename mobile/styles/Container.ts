@@ -85,18 +85,18 @@ export default class ContainerStyle {
     return StyleSheet.compose(this.createBasicContainerStyle(), alignContainer);
   }
 
-  static createErrorContainerStyle() {
+  static createResultContainerStyle(color: string) {
     return StyleSheet.create({
-      errContainer: {
+      container: {
         width: '100%',
         height: 'auto',
-        backgroundColor: COLORS.PINK,
+        backgroundColor: color,
         borderRadius: 6,
         flexDirection: 'row',
         alignItems: 'center',
         flexWrap: 'wrap'
-      },
-    }).errContainer;
+      }
+    }).container
   }
 
   static createListContainerStyle() {

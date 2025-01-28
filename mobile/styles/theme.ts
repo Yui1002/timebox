@@ -6,6 +6,7 @@ export const COLORS = {
     RED: '#ef5350',
     WHITE: '#fff',
     BLACK: '#000',
-    GREEN: '#008000',
-    ORANGE: '#F28C28'
+    GREEN: '#3c763d',
+    LIGHT_GREEN: '#dff0d8',
+    ORANGE: '#F28C28',
 }

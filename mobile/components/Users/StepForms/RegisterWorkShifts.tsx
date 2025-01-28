@@ -4,7 +4,7 @@ import {View, Text} from 'react-native';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
-import {ErrorModel} from '../../../types';
+import {ResultModel} from '../../../types';
 import {
   TopContainer,
   Button,
@@ -13,9 +13,10 @@ import {
   AlignContainer,
   Dropdown,
   Title,
+  Result,
 } from '../../index';
 import Validator from '../../../validator/validator';
-import {Screen, Days} from '../../../enums';
+import {Screen, Days, StatusModel} from '../../../enums';
 import {ContainerStyle, ButtonStyle} from '../../../styles';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
@@ -27,7 +28,10 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
   const [selectedDay, setSelectedDay] = useState<string>('');
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateInput = () => {
     const validateErr = Validator.validateWorkShifts(
@@ -37,7 +41,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
       endTime,
     );
     if (validateErr) {
-      setError({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return null;
   };
@@ -64,7 +68,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
 
   return (
     <TopContainer>
-      {error.message && <Error msg={error.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select day and time" />
       <View style={wrapContainer}>
         {Object.values(Days).map((day: string, index: number) => (

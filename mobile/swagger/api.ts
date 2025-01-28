@@ -877,6 +877,33 @@ export type TimeType = typeof TimeType[keyof typeof TimeType];
 /**
  * 
  * @export
+ * @interface UpdateRecordRq
+ */
+export interface UpdateRecordRq {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateRecordRq
+     */
+    'recordId'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRecordRq
+     */
+    'recordTime'?: string;
+    /**
+     * 
+     * @type {TimeType}
+     * @memberof UpdateRecordRq
+     */
+    'type'?: TimeType;
+}
+
+
+/**
+ * 
+ * @export
  * @interface UpdateRequestStatusRq
  */
 export interface UpdateRequestStatusRq {
@@ -1631,6 +1658,41 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {UpdateRecordRq} updateRecordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateRecord: async (updateRecordRq: UpdateRecordRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateRecordRq' is not null or undefined
+            assertParamExists('updateRecord', 'updateRecordRq', updateRecordRq)
+            const localVarPath = `/record/update`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateRecordRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {UpdateRequestStatusRq} updateRequestStatusRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1972,6 +2034,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {UpdateRecordRq} updateRecordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRecord(updateRecordRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateRecord']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {UpdateRequestStatusRq} updateRequestStatusRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2187,6 +2261,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): AxiosPromise<GetUserRs> {
             return localVarFp.signInUser(signInUserRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {UpdateRecordRq} updateRecordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateRecord(updateRecordRq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2431,6 +2514,17 @@ export class DefaultApi extends BaseAPI {
      */
     public signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).signInUser(signInUserRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {UpdateRecordRq} updateRecordRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).updateRecord(updateRecordRq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

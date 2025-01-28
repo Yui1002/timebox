@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {Text} from 'react-native';
 import {InputStyle} from '../../styles';
-import {Footer, Button, Error, Separator, NumberInput, TopContainer, Container, CenterContainer} from '../index';
+import {Footer, Button, Separator, NumberInput, TopContainer, Container, CenterContainer, Result} from '../index';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
-import {ErrorModel} from '../../types';
+import {ResultModel} from '../../types';
 import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger';
-import {ErrMsg, Screen} from '../../enums';
+import {ErrMsg, Screen, StatusModel} from '../../enums';
 import Validator from '../../validator/validator';
 let otpApi = DefaultApiFactory();
 
@@ -14,7 +14,10 @@ const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password, isSignUp} = route.params;
   const [otp, setOtp] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
   let otpInput = InputStyle.createOTPInputStyle();
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const VerifyOTP = ({route, navigation}: any) => {
   const validateInput = (): boolean => {
     const validationErr = Validator.validateOTP(otp);
     if (validationErr) {
-      setErrors({message: validationErr});
+      setResult({status: StatusModel.ERROR, message: validationErr});
     }
     return validationErr == null;
   };
@@ -36,7 +39,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         otp: ''
       } as SetOTPRq);
     } catch (e) {
-      setErrors({message: ErrMsg.OTP_SEND_ERR});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_SEND_ERR});
     }
   };
 
@@ -55,7 +58,7 @@ const VerifyOTP = ({route, navigation}: any) => {
         navigation.navigate(Screen.RESET_PASSWORD, {email});
       }
     } catch (e: any) {
-      setErrors({message: ErrMsg.OTP_VERIFICATION_ERR});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_VERIFICATION_ERR});
     }
   };
 
@@ -75,7 +78,7 @@ const VerifyOTP = ({route, navigation}: any) => {
 
   return (
     <TopContainer>
-      {errors.message && <Error msg={errors.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
       <Container>
         <Text>We have sent the verification code to your email address</Text>
       </Container>

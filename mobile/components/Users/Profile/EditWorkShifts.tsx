@@ -10,12 +10,12 @@ import {
   TopContainer,
   Title,
   Button,
-  Error,
   AlignContainer,
   Dropdown,
+  Result,
 } from '../../index';
-import {ErrorModel, Schedule} from '../../../types';
-import {Days} from '../../../enums';
+import {ResultModel, Schedule} from '../../../types';
+import {Days, StatusModel} from '../../../enums';
 import {navigate} from '../../../helper/navigate';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
 
@@ -36,7 +36,10 @@ const EditWorkShifts = ({route, navigation}: any) => {
   const [selectedDay, setSelectedDay] = useState<string>(
     editSelectedSchedule ? editSelectedSchedule.day : '',
   );
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateInput = () => {
     const validateErr = Validator.validateWorkShifts(
@@ -46,7 +49,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
       endTime,
     );
     if (validateErr) {
-      setError({message: validateErr});
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
     return validateErr === null;
   };
@@ -72,7 +75,7 @@ const EditWorkShifts = ({route, navigation}: any) => {
 
   return (
     <TopContainer>
-      {error.message && <Error msg={error.message} />}
+      {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select day and time" />
       <View style={wrapContainer}>
         {Object.values(Days).map((day: string, index: number) => (
