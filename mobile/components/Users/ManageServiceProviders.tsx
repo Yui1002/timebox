@@ -26,7 +26,6 @@ const ManageServiceProviders = (props: any) => {
   const getServiceProviders = async () => {
     try {
       const {data} = await api.getServiceProvider(email);
-      console.log('service providers', data.serviceProviders);
       // setServiceProviders(formatData(data.serviceProviders))
       setServiceProviders(data.serviceProviders);
     } catch (e: any) {

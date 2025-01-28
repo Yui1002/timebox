@@ -1,20 +1,21 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
-import {ContainerStyle, ButtonStyle, TextStyle} from '../../../styles';
+import {Text, ScrollView} from 'react-native';
+import {ButtonStyle, TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {deleteShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {alert} from '../../../helper/Alert';
 import {Screen, ProgressBar as Bar} from '../../../enums';
-import {Button, Error} from '../../index';
+import {
+  Button,
+  TopContainer,
+  AlignContainer,
+  Container,
+  Header,
+} from '../../index';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
+import {GetUserScheduleRs} from '../../../swagger';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -48,37 +49,33 @@ const WorkShifts = ({route, navigation}: any) => {
     navigation.goBack();
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let headerText = TextStyle.createHeaderTextStyle();
-  let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let centerText = TextStyle.createCenterTextStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
   let continueBtn = ButtonStyle.createContinueButtonStyle();
 
   return (
-    <SafeAreaView style={topContainer}>
+    <TopContainer>
       <ProgressBar title={Bar.WORK_SHIFTS} isFocused={true} />
       <ScrollView>
-        <View style={container}>
-          <Text style={headerText}>Work Schedules</Text>
-        </View>
-        <View style={container}>
+        <Container>
+          <Header title="Work Schedules" />
+        </Container>
+        <Container>
           {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map((w, index: number) => (
-              <ScheduleList key={index} w={w} />
-            ))
+            workShifts.workShifts.map((w: GetUserScheduleRs, index: number) => {
+              return <ScheduleList key={index} w={w} />;
+            })
           ) : (
             <Text style={centerText}>No date and time selected</Text>
           )}
-        </View>
+        </Container>
         <Button title="Add Schedule" onPress={navigateToAddSchedule} />
-        <View style={alignTopContainer}>
+        <AlignContainer>
           <Button title="Back" onPress={navigateBack} style={backBtn} />
           <Button title="Review" onPress={review} style={continueBtn} />
-        </View>
+        </AlignContainer>
       </ScrollView>
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

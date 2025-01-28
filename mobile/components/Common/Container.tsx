@@ -5,6 +5,7 @@ import { COLORS } from '../../styles/theme';
 
 let topContainer = ContainerStyle.createTopContainerStyle();
 let alignContainer = ContainerStyle.createAlignTopContainer();
+let subContainer = ContainerStyle.createAlignContainer();
 let centerContainer = ContainerStyle.createCenterContainerStyle();
 let container = ContainerStyle.createBasicContainerStyle();
 let dropdownContainer = ContainerStyle.createDropdownContainer();
@@ -13,6 +14,7 @@ let errorContainer = ContainerStyle.createResultContainerStyle(COLORS.PINK);
 let successContainer = ContainerStyle.createResultContainerStyle(COLORS.LIGHT_GREEN);
 let listContainer = ContainerStyle.createListContainerStyle();
 let listSubContainer = ContainerStyle.createListSubContainerStyle();
+let notificationContainer = ContainerStyle.createNotificationContainerStyle();
 
 const TopContainer = ({children}: any): React.JSX.Element => {
   return <SafeAreaView style={topContainer}>{children}</SafeAreaView>;
@@ -38,6 +40,10 @@ const AlignContainer = ({children}: any): React.JSX.Element => {
   return <View style={alignContainer}>{children}</View>;
 };
 
+const SubContainer = ({children}: any): React.JSX.Element => {
+  return <View style={subContainer}>{children}</View>;
+};
+
 const DropdownContainer = ({children}: any): React.JSX.Element => {
   return <View style={dropdownContainer}>{children}</View>;
 };
@@ -54,6 +60,10 @@ const ListSubContainer = ({children}: any): React.JSX.Element => {
   return <View style={listSubContainer}>{children}</View>;
 };
 
+const NotificationContainer = ({children}: any): React.JSX.Element => {
+  return <View style={listSubContainer}>{children}</View>;
+};
+
 
 export {
   TopContainer,
@@ -65,5 +75,7 @@ export {
   ErrorContainer,
   ListContainer,
   ListSubContainer,
-  SuccessContainer
+  SuccessContainer,
+  SubContainer,
+  NotificationContainer
 };

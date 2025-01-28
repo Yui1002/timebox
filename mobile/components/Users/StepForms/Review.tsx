@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import {ContainerStyle, ButtonStyle, TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
-import {Schedule, WorkShiftsProps} from '../../../types';
+import {WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import {DefaultApiFactory, SetRequestRq, Mode} from '../../../swagger';
+import {DefaultApiFactory, SetRequestRq, Mode, GetUserScheduleRs} from '../../../swagger';
 import {ResultModel} from '../../../types';
-import {Button, Section, NumberInput, Header, Result} from '../../index';
+import {Button, Section, Header, Result, TopContainer, AlignContainer, Container} from '../../index';
 import {ErrMsg, Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
+import ScheduleList from '../../ServiceProvider/ScheduleList';
 
 let api = DefaultApiFactory();
 
@@ -67,12 +68,6 @@ const Review = ({route, navigation}: any) => {
     setResult({status: StatusModel.ERROR, message: ''});
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
-  let container = ContainerStyle.createBasicContainerStyle();
-  let listContainer = ContainerStyle.createListContainerStyle();
-  let btnContainer = ContainerStyle.createButtonContainerStyle();
-  let headerText = TextStyle.createHeaderTextStyle();
-  let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
   let backBtn = ButtonStyle.createBackButtonStyle();
   let continueBtn = ButtonStyle.createContinueButtonStyle();
@@ -85,12 +80,12 @@ const Review = ({route, navigation}: any) => {
   };
 
   return (
-    <View style={topContainer}>
+    <TopContainer>
       <ProgressBar title={Bar.REVIEW} isFocused={true} />
       {result.status && <Result status={result.status} msg={result.message} />}
       <ScrollView>
         <Header title="Review" />
-        <View style={alignTopContainer}>
+        <AlignContainer>
           <Section
             title="First Name"
             text={firstName ? firstName : 'Not specified'}
@@ -101,9 +96,9 @@ const Review = ({route, navigation}: any) => {
             text={lastName ? lastName : 'Not specified'}
             isAlign={true}
           />
-        </View>
+        </AlignContainer>
         <Section title="Email Address" text={email} />
-        <View style={alignTopContainer}>
+        <AlignContainer>
           <View style={alignContainer}>
             <Text style={titleText}>
               Rate{' '}
@@ -122,8 +117,8 @@ const Review = ({route, navigation}: any) => {
             </Text>
             <Text style={text}>{rateType}</Text>
           </View>
-        </View>
-        <View style={container}>
+        </AlignContainer>
+        <Container>
           <Text style={titleText}>
             Work Shifts{' '}
             <Text style={editLinkText} onPress={editDay}>
@@ -131,36 +126,29 @@ const Review = ({route, navigation}: any) => {
             </Text>
           </Text>
           {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map((shift: Schedule, index: number) => (
-              <View key={index} style={alignTopContainer}>
-                <Text style={text}>
-                  {String.fromCharCode(8226)} {shift.day}
-                </Text>
-                <Text style={text}>
-                  {shift.startTime} ~ {shift.endTime}
-                </Text>
-              </View>
+            workShifts.workShifts.map((shift: GetUserScheduleRs, index: number) => (
+              <ScheduleList w={shift} key={index} />
             ))
           ) : (
             <Text style={text}>No days selected</Text>
           )}
-        </View>
-        <View style={container}>
+        </Container>
+        <Container>
           <Text style={titleText}>
             Allow service provider to edit record time
           </Text>
           <Text style={text}>{isEnabled ? 'Yes' : 'No'}</Text>
-        </View>
-        <View style={alignTopContainer}>
+        </Container>
+        <AlignContainer>
           <Button title="Back" onPress={navigateBack} style={backBtn} />
           <Button
             title="Confirm"
             onPress={confirmServiceProvider}
             style={continueBtn}
           />
-        </View>
+        </AlignContainer>
       </ScrollView>
-    </View>
+    </TopContainer>
   );
 };
 

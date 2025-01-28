@@ -1,17 +1,21 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {
-  ContainerStyle,
-  ButtonStyle,
-  TextStyle,
-  InputStyle,
-} from '../../../styles';
+import {View, ScrollView} from 'react-native';
+import {ContainerStyle, ButtonStyle, InputStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
-import {Button, Section, NumberInput, Picker, Header, Result} from '../../index';
+import {
+  Button,
+  Section,
+  NumberInput,
+  Picker,
+  Header,
+  Result,
+  TopContainer,
+  AlignContainer,
+  Title,
+} from '../../index';
 import {
   RateTypeSet,
   PersonalInfoProps,
@@ -19,7 +23,13 @@ import {
   ResultModel,
   ModeSet,
 } from '../../../types';
-import {RateTypeValue, Screen, ProgressBar as Bar, Mode, StatusModel} from '../../../enums';
+import {
+  RateTypeValue,
+  Screen,
+  ProgressBar as Bar,
+  Mode,
+  StatusModel,
+} from '../../../enums';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -40,8 +50,8 @@ const PersonalInfo = ({route, navigation}: any) => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
   const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
@@ -72,22 +82,19 @@ const PersonalInfo = ({route, navigation}: any) => {
     navigation.goBack();
   };
 
-  let topContainer = ContainerStyle.createTopContainerStyle();
   let container = ContainerStyle.createBasicContainerStyle();
-  let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
   let continuBtn = ButtonStyle.createContinueButtonStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
-  let titleText = TextStyle.createTitleTextStyle();
   let underlineInput = InputStyle.createUnderlineInputStyle();
-  
+
   return (
-    <View style={topContainer}>
+    <TopContainer>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
       {result.status && <Result status={result.status} msg={result.message} />}
       <ScrollView>
-        <Header title='User Information'/>
-        <View style={alignTopContainer}>
+        <Header title="User Information" />
+        <AlignContainer>
           <Section
             title="First Name"
             text={firstName ? firstName : 'Not specified'}
@@ -98,11 +105,11 @@ const PersonalInfo = ({route, navigation}: any) => {
             text={lastName ? lastName : 'Not specified'}
             isAlign={true}
           />
-        </View>
+        </AlignContainer>
         <Section title="Email Address" text={email} />
-        <View style={alignTopContainer}>
+        <AlignContainer>
           <View style={alignContainer}>
-            <Text style={titleText}>Rate ($)</Text>
+            <Title title="Rate ($)" />
             <NumberInput
               maxLength={10}
               style={underlineInput}
@@ -110,7 +117,7 @@ const PersonalInfo = ({route, navigation}: any) => {
             />
           </View>
           <View style={alignContainer}>
-            <Text style={titleText}>Rate Type</Text>
+            <Title title="Rate Type" />
             <Picker
               open={open}
               value={rateType}
@@ -120,11 +127,9 @@ const PersonalInfo = ({route, navigation}: any) => {
               setItems={setItems}
             />
           </View>
-        </View>
+        </AlignContainer>
         <View style={[container, {zIndex: open ? -1 : 1}]}>
-          <Text style={titleText}>
-            Allow the service provider to modify record time?
-          </Text>
+          <Title title="Allow the service provider to modify record time?" />
           <Picker
             open={modeOpen}
             value={mode}
@@ -134,13 +139,12 @@ const PersonalInfo = ({route, navigation}: any) => {
             setItems={setModeItems}
           />
         </View>
-        <View
-          style={[alignTopContainer, {zIndex: modeOpen ? -1 : 1}]}>
+        <AlignContainer>
           <Button title="Back" onPress={goBack} style={backBtn} />
           <Button title="Continue" onPress={proceed} style={continuBtn} />
-        </View>
+        </AlignContainer>
       </ScrollView>
-    </View>
+    </TopContainer>
   );
 };
 

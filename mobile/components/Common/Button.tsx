@@ -4,7 +4,6 @@ import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
 
 let btnContainer = ContainerStyle.createButtonContainerStyle();
 let button = ButtonStyle.createBasicButtonStyle();
-let recordBtn = ButtonStyle.createRecordButtonStyle();
 let buttonText = TextStyle.createButtonTextStyle();
 
 interface ButtonProps {

@@ -8,13 +8,14 @@ import {ResultModel} from '../../../types';
 import {
   TopContainer,
   Button,
-  Error,
   DatePickerDropdown,
   AlignContainer,
   Dropdown,
   Title,
   Result,
+  SubContainer
 } from '../../index';
+import { GetUserScheduleRs } from '../../../swagger'
 import Validator from '../../../validator/validator';
 import {Screen, Days, StatusModel} from '../../../enums';
 import {ContainerStyle, ButtonStyle} from '../../../styles';
@@ -25,34 +26,34 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const workShifts = useSelector(state => state.workShifts);
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const [startTime, setStartTime] = useState<Date | undefined>(undefined);
+  const [endTime, setEndTime] = useState<Date | undefined>(undefined);
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
 
   const validateInput = () => {
     const validateErr = Validator.validateWorkShifts(
       workShifts.workShifts,
       selectedDay,
-      startTime,
-      endTime,
+      startTime!,
+      endTime!,
     );
     if (validateErr) {
       setResult({status: StatusModel.ERROR, message: validateErr});
     }
-    return null;
+    return validateErr === null;
   };
 
   const add = () => {
     if (!validateInput()) return;
 
-    const value: Schedule = {
+    const value: GetUserScheduleRs = {
       day: selectedDay,
-      startTime: moment(startTime).format('LT'),
-      endTime: moment(endTime).format('LT'),
+      startTime: startTime?.momentFormat('LT'),
+      endTime: endTime?.momentFormat('LT'),
     };
 
     dispatch(addShift(value));
@@ -80,39 +81,35 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
           />
         ))}
       </View>
-      <View>
-        {startOpen && (
-          <DatePickerDropdown mode="time" open={startOpen}  />
-          // <DropdownPicker.DateDropdownPicker
-          //   open={startOpen}
-          //   date={startTime}
-          //   setOpen={setStartOpen}
-          //   setDate={setStartTime}
-          // />
-        )}
-        {endOpen && (
-          <DatePickerDropdown
-            mode="time"
-            open={endOpen}
-            date={endTime}
-            setOpen={setEndOpen}
-            setDate={setEndTime}
-          />
-        )}
-      </View>
+      {startOpen && (
+        <DatePickerDropdown
+          mode="time"
+          open={startOpen}
+          onConfirm={(time: Date) => setStartTime(time)}
+          onCancel={() => setStartOpen(false)}
+        />
+      )}
+      {endOpen && (
+        <DatePickerDropdown
+          mode="time"
+          open={endOpen}
+          onConfirm={(time: Date) => setEndTime(time)}
+          onCancel={() => setEndOpen(false)}
+        />
+      )}
       <AlignContainer>
-        <View style={alignContainer}>
+        <View style={[alignContainer, {height: 40}]}>
           <Title title="Start time" />
           <Dropdown
             placeholder={moment(startTime).format('LT')}
-            onPress={() => setStartOpen(true)}
+            onPress={() => setStartOpen(!startOpen)}
           />
         </View>
-        <View style={alignContainer}>
+        <View style={[alignContainer, {height: 40}]}>
           <Title title="End time" />
           <Dropdown
             placeholder={moment(endTime).format('LT')}
-            onPress={() => setEndOpen(true)}
+            onPress={() => setEndOpen(!endOpen)}
           />
         </View>
       </AlignContainer>

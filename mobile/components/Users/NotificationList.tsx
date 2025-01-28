@@ -1,69 +1,99 @@
 import React, {useState, useEffect} from 'react';
-import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
-import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
+import {Text, View} from 'react-native';
 import moment from 'moment';
-import {useIsFocused} from '@react-navigation/native';
-import {alert, alertError} from '../../helper/Alert';
-import {Days} from '../../enums';
 import {
   DefaultApiFactory,
   RequestStatus,
-  Request,
   GetUserScheduleRs,
+  Request,
   UpdateRequestStatusRq,
 } from '../../swagger';
-import {
-  TopContainer,
-  Button,
-  Error,
-  DatePickerDropdown,
-  AlignContainer,
-  Dropdown,
-  Title,
-} from '../index';
+import {AlignContainer, Button} from '../index';
 const api = DefaultApiFactory();
+import ScheduleList from '../ServiceProvider/ScheduleList';
+import {ButtonStyle} from '../../styles';
+import {alert, alertError} from '../../helper/Alert';
 
-const NotificationList = (props: any) => {
+const NotificationList = ({notification, navigation}: any) => {
+  console.log(navigation);
+  const {
+    senderFirstName,
+    senderLastName,
+    rate,
+    rateType,
+    senderEmail,
+    receiverEmail,
+    requestDate,
+    schedules,
+  }: Request = notification;
+  let acceptBtn = ButtonStyle.createContinueButtonStyle();
+  let rejectBtn = ButtonStyle.createBackButtonStyle();
+
+  const alertConfirm = (status: RequestStatus) => {
+    alert(
+      `Do you want to ${status.toLowerCase()} \n ${senderFirstName} ${senderLastName}'s request?`,
+      '',
+      function () {
+        updateRequest(status);
+      },
+      null,
+    );
+  };
+
+  const updateRequest = async (status: RequestStatus) => {
+    try {
+      await api.updateRequestStatus({
+        senderEmail,
+        receiverEmail,
+        status,
+      } as UpdateRequestStatusRq);
+      alertSuccess(status);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const alertSuccess = (status: RequestStatus) => {
+    alertError(
+      `You successfully ${status.toLowerCase()}ed ${senderFirstName} ${senderLastName}'s request!`,
+      '',
+      function () {
+        navigation.goBack();
+      },
+    );
+  };
+
   return (
-    <View key={index} style={container}>
-      <Text style={titleText}>
-        {`Request from ${senderFirstName} ${senderLastName}`}
-      </Text>
-      <Text style={timeText}>{`${moment(requestDate).format(
-        'YYYY/MM/DD h:mm',
-      )}`}</Text>
-      <Text style={text}>
+    <View>
+      <Text>{`Request from ${senderFirstName} ${senderLastName}`}</Text>
+      <Text>{`${moment(requestDate).format('YYYY/MM/DD h:mm')}`}</Text>
+      <Text>
         {`Pay: ${
           rate && rateType ? `$${rate} / ${rateType}` : `Not specified`
         }`}
       </Text>
       <View>
-        <Text style={text}>Schedules:</Text>
+        <Text>Schedules:</Text>
         {schedules?.length ? (
           schedules.map((s: GetUserScheduleRs, index: number) => (
-            <View key={index}>
-              <Text style={text}>{`${String.fromCharCode(8226)} ${s.day} ${
-                s.startTime
-              } - ${s.endTime}`}</Text>
-            </View>
+            <ScheduleList w={s} key={index} />
           ))
         ) : (
           <Text>Not specified</Text>
         )}
       </View>
-      <View style={alignContainer}>
-        <TouchableOpacity
-          style={declineBtn}
-          onPress={() => alertConfirm(r, RequestStatus.Rejected)}>
-          <Text style={btnText}>Decline</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+      <AlignContainer>
+        <Button
+          title="Decline"
+          onPress={() => alertConfirm(RequestStatus.Rejected)}
+          style={rejectBtn}
+        />
+        <Button
+          title="Accept"
+          onPress={() => alertConfirm(RequestStatus.Approved)}
           style={acceptBtn}
-          onPress={() => alertConfirm(r, RequestStatus.Approved)}>
-          <Text style={btnText}>Accept</Text>
-        </TouchableOpacity>
-      </View>
+        />
+      </AlignContainer>
     </View>
   );
 };

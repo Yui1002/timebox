@@ -51,9 +51,9 @@ const HireServiceProvider = (props: any) => {
       '',
       function () {
         navigate(props.navigation, Screen.PERSONAL_INFO, {
-          firstName: serviceProvider ? serviceProvider.firstName : '',
-          lastName: serviceProvider ? serviceProvider.lastName : '',
-          email: serviceProvider ? serviceProvider.email : searchInput,
+          firstName: serviceProvider?.firstName ?? '',
+          lastName: serviceProvider?.lastName ?? '',
+          email: serviceProvider?.email ?? searchInput,
         });
         clearInput();
       },

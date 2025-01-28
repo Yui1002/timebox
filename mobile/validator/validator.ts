@@ -45,7 +45,8 @@ class Validator {
     return moment(date).isValid();
   }
 
-  static isValidDuration(startTime: string, endTime: string) {
+  static isValidDuration(startTime: Date, endTime: Date) {
+    console.log(startTime, endTime)
     let diff = moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'), 'hours');
     return diff >= 1;
   }
@@ -140,7 +141,7 @@ class Validator {
     return null;
   }
 
-  static validateWorkShifts(shifts: any, day: string, startTime: string, endTime: string): ErrMsg | null {
+  static validateWorkShifts(shifts: any, day: string, startTime: Date, endTime: Date): ErrMsg | null {
     if (!this.isNotEmpty(day)) {
       return ErrMsg.DAY_EMPTY;
     }
@@ -160,7 +161,7 @@ class Validator {
     if (!this.isValidDuration(startTime, endTime)) {
       return ErrMsg.INVALID_DURATION;
     }
-
+    
     return null;
   }
 

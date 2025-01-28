@@ -10,6 +10,14 @@ export default class ContainerStyle {
     }).container;
   }
 
+  static createTopContainerStyle() {
+    return StyleSheet.create({
+      topContainer: {
+        margin: '5%',
+      },
+    }).topContainer;
+  }
+
   static createCenterContainerStyle() {
     let container = StyleSheet.create({
       container: {
@@ -27,15 +35,6 @@ export default class ContainerStyle {
       }
     }).container
     return StyleSheet.compose(this.createBasicContainerStyle(), container);
-  }
-
-  static createTopContainerStyle() {
-    return StyleSheet.create({
-      topContainer: {
-        flex: 1,
-        margin: '5%',
-      },
-    }).topContainer;
   }
 
   static createButtonContainerStyle() {
@@ -80,6 +79,7 @@ export default class ContainerStyle {
     let alignContainer = StyleSheet.create({
       alignContainer: {
         width: '46%',
+  
       },
     }).alignContainer;
     return StyleSheet.compose(this.createBasicContainerStyle(), alignContainer);
@@ -185,5 +185,15 @@ export default class ContainerStyle {
       }
     }).container;
     return StyleSheet.compose(this.createAlignTopContainer(), container);
+  }
+
+  static createNotificationContainerStyle() {
+    let container = StyleSheet.create({
+      container: {
+        backgroundColor: COLORS.LIGHT_GREY,
+        width: '100%'
+      }
+    }).container;
+    return StyleSheet.compose(this.createBasicContainerStyle(), container);
   }
 }
