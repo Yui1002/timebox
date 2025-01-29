@@ -347,33 +347,34 @@ export interface GetUserRs {
 /**
  * 
  * @export
+ * @interface GetUserScheduleRq
+ */
+export interface GetUserScheduleRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetUserScheduleRq
+     */
+    'employerEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetUserScheduleRq
+     */
+    'serviceProviderEmail'?: string;
+}
+/**
+ * 
+ * @export
  * @interface GetUserScheduleRs
  */
 export interface GetUserScheduleRs {
     /**
      * 
-     * @type {number}
+     * @type {Array<UserSchedule>}
      * @memberof GetUserScheduleRs
      */
-    'id'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof GetUserScheduleRs
-     */
-    'day'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof GetUserScheduleRs
-     */
-    'startTime'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof GetUserScheduleRs
-     */
-    'endTime'?: string;
+    'rows'?: Array<UserSchedule>;
 }
 /**
  * 
@@ -560,10 +561,10 @@ export interface Request {
     'endTime'?: string;
     /**
      * 
-     * @type {Array<GetUserScheduleRs>}
+     * @type {Array<UserSchedule>}
      * @memberof Request
      */
-    'schedules'?: Array<GetUserScheduleRs>;
+    'schedules'?: Array<UserSchedule>;
     /**
      * 
      * @type {boolean}
@@ -844,6 +845,76 @@ export interface SetUserRq {
 /**
  * 
  * @export
+ * @interface SetUserScheduleRq
+ */
+export interface SetUserScheduleRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserScheduleRq
+     */
+    'employerEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserScheduleRq
+     */
+    'serviceProviderEmail'?: string;
+    /**
+     * 
+     * @type {Array<UserSchedule>}
+     * @memberof SetUserScheduleRq
+     */
+    'schedules'?: Array<UserSchedule>;
+}
+/**
+ * 
+ * @export
+ * @interface SetUserTransactionRq
+ */
+export interface SetUserTransactionRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserTransactionRq
+     */
+    'rate'?: string;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof SetUserTransactionRq
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserTransactionRq
+     */
+    'employerEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUserTransactionRq
+     */
+    'serviceProviderEmail'?: string;
+    /**
+     * 
+     * @type {UserStatus}
+     * @memberof SetUserTransactionRq
+     */
+    'status'?: UserStatus;
+    /**
+     * 
+     * @type {Mode}
+     * @memberof SetUserTransactionRq
+     */
+    'mode'?: Mode;
+}
+
+
+/**
+ * 
+ * @export
  * @interface SignInUserRq
  */
 export interface SignInUserRq {
@@ -925,6 +996,24 @@ export interface UpdateRequestStatusRq {
      * @memberof UpdateRequestStatusRq
      */
     'status'?: RequestStatus;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateRequestStatusRq
+     */
+    'rate'?: number;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof UpdateRequestStatusRq
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {Array<GetUserScheduleRs>}
+     * @memberof UpdateRequestStatusRq
+     */
+    'schedules'?: Array<GetUserScheduleRs>;
 }
 
 
@@ -967,6 +1056,37 @@ export interface UpdateServiceProviderRq {
 }
 
 
+/**
+ * 
+ * @export
+ * @interface UserSchedule
+ */
+export interface UserSchedule {
+    /**
+     * 
+     * @type {number}
+     * @memberof UserSchedule
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserSchedule
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserSchedule
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserSchedule
+     */
+    'endTime'?: string;
+}
 /**
  * 
  * @export
@@ -1303,6 +1423,45 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @param {string} [employerEmail] 
+         * @param {string} [serviceProviderEmail] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSchedule: async (employerEmail?: string, serviceProviderEmail?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/schedule`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (employerEmail !== undefined) {
+                localVarQueryParameter['employerEmail'] = employerEmail;
+            }
+
+            if (serviceProviderEmail !== undefined) {
+                localVarQueryParameter['serviceProviderEmail'] = serviceProviderEmail;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} [employerEmail] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1588,6 +1747,41 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {SetUserScheduleRq} setUserScheduleRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSchedule: async (setUserScheduleRq: SetUserScheduleRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setUserScheduleRq' is not null or undefined
+            assertParamExists('setSchedule', 'setUserScheduleRq', setUserScheduleRq)
+            const localVarPath = `/schedule`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setUserScheduleRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {SetUserRq} setUserRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1615,6 +1809,41 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(setUserRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {SetUserTransactionRq} setUserTransactionRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setUserTransaction: async (setUserTransactionRq: SetUserTransactionRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'setUserTransactionRq' is not null or undefined
+            assertParamExists('setUserTransaction', 'setUserTransactionRq', setUserTransactionRq)
+            const localVarPath = `/userTransaction`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(setUserTransactionRq, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1913,6 +2142,19 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} [employerEmail] 
+         * @param {string} [serviceProviderEmail] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getSchedule(employerEmail?: string, serviceProviderEmail?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetUserScheduleRs>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getSchedule(employerEmail, serviceProviderEmail, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.getSchedule']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} [employerEmail] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2010,6 +2252,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {SetUserScheduleRq} setUserScheduleRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setSchedule(setUserScheduleRq: SetUserScheduleRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setSchedule(setUserScheduleRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.setSchedule']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {SetUserRq} setUserRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2018,6 +2272,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.setUser(setUserRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.setUser']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {SetUserTransactionRq} setUserTransactionRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async setUserTransaction(setUserTransactionRq: SetUserTransactionRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.setUserTransaction(setUserTransactionRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.setUserTransaction']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -2173,6 +2439,16 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @param {string} [employerEmail] 
+         * @param {string} [serviceProviderEmail] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getSchedule(employerEmail?: string, serviceProviderEmail?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetUserScheduleRs> {
+            return localVarFp.getSchedule(employerEmail, serviceProviderEmail, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} [employerEmail] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2246,12 +2522,30 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @param {SetUserScheduleRq} setUserScheduleRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setSchedule(setUserScheduleRq: SetUserScheduleRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setSchedule(setUserScheduleRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {SetUserRq} setUserRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.setUser(setUserRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SetUserTransactionRq} setUserTransactionRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        setUserTransaction(setUserTransactionRq: SetUserTransactionRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.setUserTransaction(setUserTransactionRq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2407,6 +2701,18 @@ export class DefaultApi extends BaseAPI {
     /**
      * 
      * @param {string} [employerEmail] 
+     * @param {string} [serviceProviderEmail] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public getSchedule(employerEmail?: string, serviceProviderEmail?: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getSchedule(employerEmail, serviceProviderEmail, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} [employerEmail] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
@@ -2496,6 +2802,17 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @param {SetUserScheduleRq} setUserScheduleRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public setSchedule(setUserScheduleRq: SetUserScheduleRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).setSchedule(setUserScheduleRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {SetUserRq} setUserRq 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2503,6 +2820,17 @@ export class DefaultApi extends BaseAPI {
      */
     public setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).setUser(setUserRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SetUserTransactionRq} setUserTransactionRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public setUserTransaction(setUserTransactionRq: SetUserTransactionRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).setUserTransaction(setUserTransactionRq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

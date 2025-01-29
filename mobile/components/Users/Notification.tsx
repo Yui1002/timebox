@@ -25,7 +25,9 @@ const Notification = (props: any) => {
         userInfo.email,
         RequestStatus.Pending,
       );
+      console.log('data', data)
       const formatted = formatData(data.requests!);
+      console.log('formatted', formatted)
       setRequests(formatted);
     } catch (e) {
       setRequests([]);

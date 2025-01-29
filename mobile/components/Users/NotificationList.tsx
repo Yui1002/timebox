@@ -7,6 +7,10 @@ import {
   GetUserScheduleRs,
   Request,
   UpdateRequestStatusRq,
+  UserStatus,
+  Mode,
+  SetUserTransactionRq,
+  SetUserScheduleRq,
 } from '../../swagger';
 import {AlignContainer, Button} from '../index';
 const api = DefaultApiFactory();
@@ -15,7 +19,6 @@ import {ButtonStyle} from '../../styles';
 import {alert, alertError} from '../../helper/Alert';
 
 const NotificationList = ({notification, navigation}: any) => {
-  console.log(navigation);
   const {
     senderFirstName,
     senderLastName,
@@ -25,6 +28,7 @@ const NotificationList = ({notification, navigation}: any) => {
     receiverEmail,
     requestDate,
     schedules,
+    allowEdit,
   }: Request = notification;
   let acceptBtn = ButtonStyle.createContinueButtonStyle();
   let rejectBtn = ButtonStyle.createBackButtonStyle();
@@ -47,6 +51,25 @@ const NotificationList = ({notification, navigation}: any) => {
         receiverEmail,
         status,
       } as UpdateRequestStatusRq);
+
+      if (status === RequestStatus.Approved) {
+        Promise.all([
+          await api.setUserTransaction({
+            rate: rate,
+            rateType: rateType,
+            employerEmail: senderEmail,
+            serviceProviderEmail: receiverEmail,
+            status: UserStatus.Active,
+            mode: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0
+          } as SetUserTransactionRq),
+          await api.setSchedule({
+            employerEmail: senderEmail,
+            serviceProviderEmail: receiverEmail,
+            schedules: schedules
+          } as SetUserScheduleRq)
+        ]);
+      }
+      console.log('success 2')
       alertSuccess(status);
     } catch (e) {
       console.log(e);
