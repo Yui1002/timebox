@@ -1,22 +1,22 @@
 import {Days} from '../enums';
-import {Request, UserSchedule} from '../swagger';
+import {GetRequestRsMini, GetServiceProviderRsMini, UserSchedule} from '../swagger';
 
-export const formatData = (requests: Request[]): Request[] => {
-  let result: Request[] = [];
+export const formatData = (data: GetServiceProviderRsMini[] | GetRequestRsMini[]): GetServiceProviderRsMini[] | GetRequestRsMini[] => {
+  let result: GetServiceProviderRsMini[] | GetServiceProviderRsMini = [];
   
-  for (let i = 0; i < requests.length; i++) {
-    let senderEmail = requests[i].senderEmail;
-    let doesEmailExist = result.find(r => r.senderEmail === senderEmail);
+  for (let i = 0; i < data.length; i++) {
+    let email = data[i].email;
+    let doesEmailExist = result.find(r => r.email === email);
 
     let schedule: UserSchedule = {
-      day: requests[i].day,
-      startTime: requests[i].startTime,
-      endTime: requests[i].endTime,
+      day: data[i].day,
+      startTime: data[i].startTime,
+      endTime: data[i].endTime,
     };
-    
+
     if (!doesEmailExist) {
-      requests[i].schedules!.push(schedule)
-      result.push(requests[i]);
+      data[i].schedules!.push(schedule)
+      result.push(data[i]);
     } else {
       doesEmailExist.schedules!.push(schedule);
     }
@@ -24,11 +24,11 @@ export const formatData = (requests: Request[]): Request[] => {
   return sortDays(result);;
 };
 
-export const sortDays = (requests: Request[]): Request[] => {
+export const sortDays = (data: GetServiceProviderRsMini[] | GetRequestRsMini[]): GetServiceProviderRsMini[] | GetRequestRsMini[] => {
   const weekdayOrder: string[] = Object.values(Days);
 
-  for (let i = 0; i < requests.length; i++) {
-    requests[i].schedules?.sort(
+  for (let i = 0; i < data.length; i++) {
+    data[i].schedules?.sort(
       (schedule1: UserSchedule, schedule2: UserSchedule): number => {
         if (!schedule1.day || !schedule2.day) return 0;
         return (
@@ -39,7 +39,7 @@ export const sortDays = (requests: Request[]): Request[] => {
     );
   }
 
-  return requests;
+  return data;
 };
 
 

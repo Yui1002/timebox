@@ -3,20 +3,21 @@ import {Text, View} from 'react-native';
 import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
 import {Button} from '../index';
 import {Screen} from '../../enums';
-import {ServiceProvider} from '../../swagger';
+import {GetServiceProviderRsMini} from '../../swagger';
 
 interface ServiceProviderListProps {
   
 }
 
 const ServiceProviderList = ({props}) => {
+  console.log('props', props)
   let listContainer = ContainerStyle.createListContainerStyle();
   let listSubContainer = ContainerStyle.createListSubContainerStyle();
   let text = TextStyle.createBasicTextStyle();
   let titleText = TextStyle.createTitleTextStyle();
   let recordBtn = ButtonStyle.createRecordButtonStyle();
 
-  const navigateToProfile = (sp: ServiceProvider) => {
+  const navigateToProfile = (sp: GetServiceProviderRsMini) => {
     props.navigation.navigate(Screen.PROFILE, {
       sp,
     });
@@ -27,7 +28,7 @@ const ServiceProviderList = ({props}) => {
       <View style={listSubContainer}>
         <Text style={text}>{props.status}</Text>
         <Text style={titleText}>
-          {props.first_name} {props.last_name}
+          {props.firstName} {props.lastName}
         </Text>
         <Text>{props.email}</Text>
       </View>

@@ -4,17 +4,18 @@ import {useIsFocused} from '@react-navigation/native';
 import {Text, ScrollView} from 'react-native';
 import {TextStyle, CheckboxStyle} from '../../styles';
 import CheckBox from '@react-native-community/checkbox';
-import {DefaultApiFactory, ServiceProvider} from '../../swagger';
+import {DefaultApiFactory, GetServiceProviderRsMini} from '../../swagger';
 import {Screen} from '../../enums';
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
+import { formatData } from '../../helper/formatHelper';
 
 let api = DefaultApiFactory();
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
   const {email} = useSelector(state => state.userInfo);
-  const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>();
+  const [serviceProviders, setServiceProviders] = useState<GetServiceProviderRsMini[]>();
   const [isBoxChecked, setIsBoxChecked] = useState(true);
 
   useEffect(() => {
@@ -26,31 +27,14 @@ const ManageServiceProviders = (props: any) => {
   const getServiceProviders = async () => {
     try {
       const {data} = await api.getServiceProvider(email);
-      // setServiceProviders(formatData(data.serviceProviders))
-      setServiceProviders(data.serviceProviders);
+      const formatted = formatData(data)
+      setServiceProviders(formatted);
     } catch (e: any) {
       setServiceProviders([]);
     }
   };
 
-  // const formatData = (data: ServiceProvider[]): ServiceProvider[] => {
-  //   const formattedData = data.reduce((a, b) => {
-  //     const found = a.find((e: ServiceProvider) => e.email == b.email);
-
-  //     const item = {id: b.schedule_id, day: b.day, startTime: b.start_time, endTime: b.end_time};
-  //     ['schedule_id', 'day', 'start_time', 'end_time'].forEach(val => delete b[val]);
-
-  //     if (!item.id) {
-  //       return (found ? found.schedule.push([]) : a.push({...b, schedule: []}), a)
-  //     } else {
-  //       return (found ? found.schedule.push(item) : a.push({...b, schedule: [item]}), a)
-  //     }
-  //   }, []);
-
-  //   return formattedData;
-  // };
-
-  const navigateToProfile = (sp: ServiceProvider) => {
+  const navigateToProfile = (sp: GetServiceProviderRsMini) => {
     props.navigation.navigate(Screen.PROFILE, {
       sp,
     });

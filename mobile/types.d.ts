@@ -1,4 +1,5 @@
 import {RateTypeValue, Mode, StatusModel} from './enums';
+import { UserSchedule } from './swagger';
 
 type UserInfo = {
   firstName: string;
@@ -107,6 +108,13 @@ type ForgotPasswordProps = {
   email: string,
   isSignUp: boolean
 }
+
+type FormatRequest = {
+  email: string,
+  schedules: UserSchedule[]
+}
+
+
 
 export {
   UserInfo,

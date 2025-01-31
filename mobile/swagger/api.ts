@@ -275,11 +275,80 @@ export interface GetRequestRq {
 export interface GetRequestRs {
     /**
      * 
-     * @type {Array<Request>}
+     * @type {Array<RequestRawDB>}
      * @memberof GetRequestRs
      */
-    'requests'?: Array<Request>;
+    'requests'?: Array<RequestRawDB>;
 }
+/**
+ * 
+ * @export
+ * @interface GetRequestRsMini
+ */
+export interface GetRequestRsMini {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'firstName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'lastName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'rate'?: string;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof GetRequestRsMini
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'endTime'?: string;
+    /**
+     * 
+     * @type {Mode}
+     * @memberof GetRequestRsMini
+     */
+    'allowEdit'?: Mode;
+    /**
+     * 
+     * @type {any}
+     * @memberof GetRequestRsMini
+     */
+    'schedules'?: any;
+}
+
+
 /**
  * 
  * @export
@@ -296,16 +365,78 @@ export interface GetServiceProviderRq {
 /**
  * 
  * @export
- * @interface GetServiceProviderRs
+ * @interface GetServiceProviderRsMini
  */
-export interface GetServiceProviderRs {
+export interface GetServiceProviderRsMini {
     /**
      * 
-     * @type {Array<ServiceProvider>}
-     * @memberof GetServiceProviderRs
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
      */
-    'serviceProviders'?: Array<ServiceProvider>;
+    'firstName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
+     */
+    'lastName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {RequestStatus}
+     * @memberof GetServiceProviderRsMini
+     */
+    'status'?: RequestStatus;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
+     */
+    'rate'?: string;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof GetServiceProviderRsMini
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetServiceProviderRsMini
+     */
+    'endTime'?: string;
+    /**
+     * 
+     * @type {Mode}
+     * @memberof GetServiceProviderRsMini
+     */
+    'allowEdit'?: Mode;
+    /**
+     * 
+     * @type {any}
+     * @memberof GetServiceProviderRsMini
+     */
+    'schedules'?: any;
 }
+
+
 /**
  * 
  * @export
@@ -490,93 +621,87 @@ export interface Record {
 /**
  * 
  * @export
- * @interface Request
+ * @interface RequestRawDB
  */
-export interface Request {
+export interface RequestRawDB {
     /**
      * 
      * @type {number}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'id'?: number;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'senderFirstName'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'senderLastName'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'senderEmail'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'receiverEmail'?: string;
     /**
      * 
      * @type {RequestStatus}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'status'?: RequestStatus;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'rate'?: string;
     /**
      * 
      * @type {RateType}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'rateType'?: RateType;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
+     */
+    'requestDate'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RequestRawDB
      */
     'day'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'startTime'?: string;
     /**
      * 
      * @type {string}
-     * @memberof Request
+     * @memberof RequestRawDB
      */
     'endTime'?: string;
     /**
      * 
-     * @type {Array<UserSchedule>}
-     * @memberof Request
+     * @type {Mode}
+     * @memberof RequestRawDB
      */
-    'schedules'?: Array<UserSchedule>;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof Request
-     */
-    'allowEdit'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof Request
-     */
-    'requestDate'?: string;
+    'allowEdit'?: Mode;
 }
 
 
@@ -614,93 +739,6 @@ export interface ResetPasswordRq {
      */
     'newPassword'?: string;
 }
-/**
- * 
- * @export
- * @interface ServiceProvider
- */
-export interface ServiceProvider {
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceProvider
-     */
-    'id': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceProvider
-     */
-    'first_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceProvider
-     */
-    'last_name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceProvider
-     */
-    'email': string;
-    /**
-     * 
-     * @type {RequestStatus}
-     * @memberof ServiceProvider
-     */
-    'status': RequestStatus;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceProvider
-     */
-    'rate'?: number;
-    /**
-     * 
-     * @type {RateType}
-     * @memberof ServiceProvider
-     */
-    'rateType'?: RateType;
-    /**
-     * 
-     * @type {number}
-     * @memberof ServiceProvider
-     */
-    'scheduleId': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceProvider
-     */
-    'day': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceProvider
-     */
-    'startTime': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ServiceProvider
-     */
-    'endTime': string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ServiceProvider
-     */
-    'allowEdit': boolean;
-    /**
-     * 
-     * @type {Array<GetUserScheduleRs>}
-     * @memberof ServiceProvider
-     */
-    'schedule'?: Array<GetUserScheduleRs>;
-}
-
-
 /**
  * 
  * @export
@@ -1049,10 +1087,10 @@ export interface UpdateServiceProviderRq {
     'rateType'?: RateType;
     /**
      * 
-     * @type {Array<GetUserScheduleRs>}
+     * @type {Array<UserSchedule>}
      * @memberof UpdateServiceProviderRq
      */
-    'schedule'?: Array<GetUserScheduleRs>;
+    'schedule'?: Array<UserSchedule>;
 }
 
 
@@ -2133,7 +2171,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRequestRs>> {
+        async getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetRequestRsMini>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getRequestsByStatus(receiverEmail, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.getRequestsByStatus']?.[localVarOperationServerIndex]?.url;
@@ -2158,7 +2196,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getServiceProvider(employerEmail?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetServiceProviderRs>> {
+        async getServiceProvider(employerEmail?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetServiceProviderRsMini>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getServiceProvider(employerEmail, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.getServiceProvider']?.[localVarOperationServerIndex]?.url;
@@ -2433,7 +2471,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): AxiosPromise<GetRequestRs> {
+        getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetRequestRsMini>> {
             return localVarFp.getRequestsByStatus(receiverEmail, status, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2452,7 +2490,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getServiceProvider(employerEmail?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetServiceProviderRs> {
+        getServiceProvider(employerEmail?: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetServiceProviderRsMini>> {
             return localVarFp.getServiceProvider(employerEmail, options).then((request) => request(axios, basePath));
         },
         /**

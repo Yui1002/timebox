@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {Text, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
-import {DefaultApiFactory, RequestStatus, Request} from '../../swagger';
+import {DefaultApiFactory, RequestStatus, GetRequestRsMini} from '../../swagger';
 import {TopContainer} from '../index';
 import NotificationList from './NotificationList';
 import {formatData} from '../../helper/formatHelper';
@@ -10,7 +10,7 @@ const api = DefaultApiFactory();
 
 const Notification = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [requests, setRequests] = useState<Request[]>([]);
+  const [requests, setRequests] = useState<GetRequestRsMini[]>([]);
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -26,10 +26,11 @@ const Notification = (props: any) => {
         RequestStatus.Pending,
       );
       console.log('data', data)
-      const formatted = formatData(data.requests!);
-      console.log('formatted', formatted)
+      const formatted = formatData(data);
+      console.log('formatted notification', formatted)
       setRequests(formatted);
     } catch (e) {
+      console.log(e.response.data)
       setRequests([]);
     }
   };
@@ -38,7 +39,7 @@ const Notification = (props: any) => {
     <TopContainer>
       {requests.length ? (
         <View>
-          {requests.map((r: Request, index: number) => (
+          {requests.map((r: GetRequestRsMini, index: number) => (
             <NotificationList key={index} notification={r} navigation={props.navigation} />
           ))}
         </View>

@@ -69,7 +69,6 @@ const NotificationList = ({notification, navigation}: any) => {
           } as SetUserScheduleRq)
         ]);
       }
-      console.log('success 2')
       alertSuccess(status);
     } catch (e) {
       console.log(e);
