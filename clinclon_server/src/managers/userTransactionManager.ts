@@ -1,13 +1,13 @@
 import UserTransactionRepo from "../repositories/userTransactionRepo";
 import UserRepo from "../repositories/userRepo";
-import { GetUserTransactionRq, GetUserTransactionRs, UpdateUserTransactionRq } from "../models/UserTransaction";
+import { GetUserTransactionRq, GetUserTransactionRs, SetUserTransactionRq, UpdateUserTransactionRq } from "../models/UserTransaction";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 interface IUserTransactionManager {
     getUserTransaction(userTransactionRq: GetUserTransactionRq): Promise<GetUserTransactionRs>;
+    setUserTransaction(userTransactionRq: SetUserTransactionRq): Promise<void>;
 }
 
 class UserTransactionManager implements IUserTransactionManager {
@@ -37,6 +37,21 @@ class UserTransactionManager implements IUserTransactionManager {
         }
 
         return transactionData;
+    }
+
+    async setUserTransaction(userTransactionRq: SetUserTransactionRq): Promise<void> {
+        let [employerData, serviceProviderData] = await Promise.all(
+            [this._userRepo.getUser(userTransactionRq.employerEmail),
+            this._userRepo.getUser(userTransactionRq.serviceProviderEmail)]);
+        
+        if (!employerData || !serviceProviderData) {
+            throw new ResponseException(null, 400, 'no data found');
+        }
+
+        let employerId = employerData.id;
+        let serviceProviderId = serviceProviderData.id;
+
+        await this._userTransactionRepo.setUserTransaction(userTransactionRq, employerId, serviceProviderId);
     }
 
     async updateUserTransaction(userTransactionRq: UpdateUserTransactionRq): Promise<void> {

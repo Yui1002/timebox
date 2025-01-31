@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TextInput, StyleProp} from 'react-native';
 import {ContainerStyle, InputStyle} from '../../styles';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Icon} from '../index';
 
 let container = ContainerStyle.createInputContainerStyle();
 let input = InputStyle.createBasicInputStyle();
@@ -51,9 +51,10 @@ const PasswordInput = ({
   onPress,
 }: PasswordInputProps) => {
   let reactElem = (
-    <MaterialCommunityIcons
+    <Icon
       name={secureTextEntry ? 'eye-off-outline' : 'eye-outline'}
       size={24}
+      type="MaterialCommunity"
       onPress={onPress}
       style={{position: 'absolute', top: 28, right: 20}}
     />

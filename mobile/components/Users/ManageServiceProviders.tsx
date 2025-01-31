@@ -8,14 +8,15 @@ import {DefaultApiFactory, GetServiceProviderRsMini} from '../../swagger';
 import {Screen} from '../../enums';
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
-import { formatData } from '../../helper/formatHelper';
+import {formatData} from '../../helper/formatHelper';
 
 let api = DefaultApiFactory();
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
   const {email} = useSelector(state => state.userInfo);
-  const [serviceProviders, setServiceProviders] = useState<GetServiceProviderRsMini[]>();
+  const [serviceProviders, setServiceProviders] =
+    useState<GetServiceProviderRsMini[]>();
   const [isBoxChecked, setIsBoxChecked] = useState(true);
 
   useEffect(() => {
@@ -27,17 +28,11 @@ const ManageServiceProviders = (props: any) => {
   const getServiceProviders = async () => {
     try {
       const {data} = await api.getServiceProvider(email);
-      const formatted = formatData(data)
+      const formatted = formatData(data);
       setServiceProviders(formatted);
     } catch (e: any) {
       setServiceProviders([]);
     }
-  };
-
-  const navigateToProfile = (sp: GetServiceProviderRsMini) => {
-    props.navigation.navigate(Screen.PROFILE, {
-      sp,
-    });
   };
 
   let checkBox = CheckboxStyle.createBasicCheckboxStyle();
@@ -63,7 +58,11 @@ const ManageServiceProviders = (props: any) => {
       ) : (
         <ScrollView>
           {serviceProviders.map((serviceProvider, index) => (
-            <ServiceProviderList key={index} props={serviceProvider} />
+            <ServiceProviderList
+              key={index}
+              props={serviceProvider}
+              navigation={props.navigation}
+            />
           ))}
         </ScrollView>
       )}

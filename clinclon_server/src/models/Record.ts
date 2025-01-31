@@ -48,6 +48,16 @@ class SetRecordRq extends BaseRequest {
     type: TimeType = TimeType.START_TIME;
 }
 
+@JsonObject("UpdateRecordRq") 
+class UpdateRecordRq extends BaseRequest {
+    @JsonProperty("recordId", Number)
+    recordId: number = 0;
+    @JsonProperty("recordTime", String)
+    recordTime: string = "";
+    @JsonProperty("type")
+    type: TimeType = TimeType.START_TIME;
+}
+
 
 @JsonObject("Record")
 class Record {
@@ -65,4 +75,4 @@ class GetRecordRs {
     records: Record[] = [];
 }
 
-export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType}
+export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq}

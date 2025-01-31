@@ -43,24 +43,19 @@ class GetRequestByStatusQueryValidator extends SuperValidator {
         super(new GetRequestByStatusRq());
     }
 
-    // implement
-    validateAndConvertRequest(request: any): any {
-        this.throwError(null, "method not implemented exception");
-    }
-
-    // override
-    validateAndConvertQuery(request: GetRequestByStatusRq): GetRequestByStatusRq {
+    validateAndConvertRequest(request: GetRequestByStatusRq): GetRequestByStatusRq {
         this.checkRequestEmpty(request);
+        let instance = JSHelperInstance._converter.deserializeObject(request, GetRequestByStatusRq);
 
-        if (!isEmail(request.receiverEmail)) {
+        if (!isEmail(instance.receiverEmail)) {
             this.throwError(null, 'Email is invalid')
         }
 
-        if (isEmpty(request.status)) {
+        if (isEmpty(instance.status)) {
             this.throwError(null, 'status must not be empty');
         }
 
-        return request;
+        return instance;
     }
 }
 

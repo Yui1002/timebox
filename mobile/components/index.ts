@@ -19,6 +19,7 @@ import {
   SubContainer,
   NotificationContainer
 } from './Common/Container';
+import Icon from './Common/Icon';
 import Result from './Common/Result';
 import "./../helper/DateExtension"
 
@@ -49,5 +50,5 @@ export {
   Result,
   SubContainer,
   NotificationContainer,
-  
+  Icon
 };

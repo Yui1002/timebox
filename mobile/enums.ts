@@ -57,7 +57,9 @@ enum Screen {
   REVIEW = 'Review',
   REGISTER_WORK_SHIFTS = 'RegisterWorkShifts',
   PROFILE = 'Profile',
-  EDIT_WORK_SHIFTS = 'EditWorkShifts'
+  EDIT_WORK_SHIFTS = 'EditWorkShifts',
+  EDIT_PROFILE = 'EditProfile',
+  VIEW_WORKING_HISTORY = 'ViewWorkingHistory'
 }
 
 enum ErrMsg {
@@ -90,7 +92,6 @@ enum ErrMsg {
   FAIL_UPDATE_RECORD = 'Failed to update record time',
   SUCCESS_UPDATE_RECORD = 'Updated record time successfully',
   SUCCESS_SET_RECORD = 'Set record time successfully',
-  
 }
 
 enum ProgressBar {

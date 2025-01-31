@@ -19,4 +19,5 @@ enum Mode {
   True = 1
 }
 
+
 export { RequestStatus, UserStatus, RateType, Mode };
