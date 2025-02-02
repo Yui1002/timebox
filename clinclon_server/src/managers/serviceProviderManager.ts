@@ -1,8 +1,7 @@
 import ServiceProviderRepo from "../repositories/ServiceProviderRepo";
-import UserRepo from "../repositories/userRepo";
-import { GetServiceProviderRq, GetServiceProviderRs, GetServiceProviderRsMini, ServiceProviderRawDB, UpdateServiceProviderRq } from "../models/ServiceProvider";
+import UserRepo from "../repositories/UserRepo";
+import { GetServiceProviderRq, GetServiceProviderRsMini, ServiceProviderRawDB, UpdateServiceProviderRq } from "../models/ServiceProvider";
 import ResponseException from "../models/ResponseException";
-import { UserSchedule } from "../models/UserSchedule";
 
 interface IServiceProviderManager {
     getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRsMini[]>;
@@ -31,7 +30,6 @@ class ServiceProviderManager implements IServiceProviderManager {
             throw new ResponseException(null, 204, 'no data found')
         }
 
-        console.log('service provider data in backend', serviceProviderData)
         return serviceProviderData.serviceProviders.map((sp: ServiceProviderRawDB) => new GetServiceProviderRsMini(sp))
     }
     

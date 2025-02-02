@@ -1,4 +1,4 @@
-import UserRepo from "../repositories/userRepo";
+import UserRepo from "../repositories/UserRepo";
 import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq } from "../models/User";
 import ResponseException from "../models/ResponseException";
 import bcrypt from "bcrypt";

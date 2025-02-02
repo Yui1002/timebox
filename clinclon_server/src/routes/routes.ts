@@ -1,12 +1,12 @@
 import Validator from "../validators/Validator";
 
-import { UserController } from "../controllers/userController";
+import { UserController } from "../controllers/UserController";
 import {OTPController} from "../controllers/OTPController";
-import {ServiceProviderController} from "../controllers/serviceProviderController";
-import { EmployerController } from "../controllers/employerController";
-import {RecordController} from "../controllers/recordController";
-import {UserTransactionController} from "../controllers/userTransactionController";
-import {RequestController} from "../controllers/requestController";
+import {ServiceProviderController} from "../controllers/ServiceProviderController";
+import { EmployerController } from "../controllers/EmployerController";
+import {RecordController} from "../controllers/RecordController";
+import {UserTransactionController} from "../controllers/UserTransactionController";
+import {RequestController} from "../controllers/RequestController";
 
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from '../validators/ServiceProviderRequestValidator';
 import { GetUserRequestValidator, SetUserRequestValidator, SignInUserRequestValidator, ResetPasswordRequestValidator } from "../validators/UserRequestValidator";

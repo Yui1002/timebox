@@ -1,4 +1,4 @@
-import ServiceProviderManager from '../managers/serviceProviderManager';
+import ServiceProviderManager from '../managers/ServiceProviderManager';
 import SuperController from './SuperController';
 import { GetServiceProviderRq, UpdateServiceProviderRq, GetServiceProviderRs, GetServiceProviderRsMini } from '../models/ServiceProvider';
 import { Body, Get, Put, Queries, Route } from "tsoa";

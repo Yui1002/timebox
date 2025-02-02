@@ -3,7 +3,7 @@ import { RequestRawDB, GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRs, 
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
 import { GetUserScheduleRs, UserSchedule } from "../models/UserSchedule";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 import { RequestStatus } from "../helpers/enum";
 dotenv.config();
 

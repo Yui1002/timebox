@@ -2,9 +2,8 @@ import dotenv from "dotenv";
 import { GetUserTransactionRs, SetUserTransactionRq, UpdateUserTransactionRq } from "../models/UserTransaction";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
-
 
 interface IUserTransactionRepo {
     getUserTransaction(employerId: number, serviceProviderId: number): Promise<GetUserTransactionRs>;

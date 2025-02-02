@@ -7,7 +7,7 @@ import {
 } from "../models/ServiceProvider";
 import { GetUserTransactionRs } from "../models/UserTransaction";
 import { GetUserScheduleRs } from "../models/UserSchedule";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
 
 

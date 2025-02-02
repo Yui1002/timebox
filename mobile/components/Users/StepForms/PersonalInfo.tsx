@@ -47,7 +47,6 @@ const PersonalInfo = ({route, navigation}: any) => {
   const [rate, setRate] = useState<string>('0');
   const [rateType, setRateType] = useState<RateTypeValue>(RateTypeValue.HOURLY);
   const [mode, setMode] = useState<Mode>(Mode.NO);
-  const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
@@ -71,7 +70,6 @@ const PersonalInfo = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
-      isEnabled,
     };
 
     navigation.navigate(Screen.WORK_SHIFTS, props);

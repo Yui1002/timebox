@@ -1,5 +1,5 @@
-import RecordRepo from "../repositories/recordRepo";
-import UserTransactionManager from "./userTransactionManager";
+import RecordRepo from "../repositories/RecordRepo";
+import UserTransactionManager from "./UserTransactionManager";
 import {
   GetRecordRq,
   GetRecordByDateRq,

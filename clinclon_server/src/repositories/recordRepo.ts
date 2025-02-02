@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { GetRecordRq, GetRecordRs } from "../models/Record";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
 
 interface IRecordRepo {

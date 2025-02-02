@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 import { GetUserScheduleRs, SetUserScheduleRq, UserSchedule } from "../models/UserSchedule";
 dotenv.config();
 

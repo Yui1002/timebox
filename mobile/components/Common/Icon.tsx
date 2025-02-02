@@ -8,8 +8,8 @@ interface IconProps {
   name: string;
   type: 'MaterialCommunity' | 'Material';
   size: number;
-  style: StyleProp<any>
-  onPress?: () => void
+  style: StyleProp<any>;
+  onPress?: () => void;
 }
 
 const Icon = ({name, type, size, style, onPress}: IconProps) => {
@@ -22,7 +22,13 @@ const Icon = ({name, type, size, style, onPress}: IconProps) => {
       onPress={onPress}
     />
   ) : (
-    <MaterialIcons name={name} size={size} color={COLORS.BLACK} style={style} />
+    <MaterialIcons
+      name={name}
+      size={size}
+      color={COLORS.BLACK}
+      style={style}
+      onPress={onPress}
+    />
   );
 };
 

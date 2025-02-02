@@ -1,5 +1,5 @@
 import { Body, Get, Post, Queries, Route } from "tsoa";
-import RecordManager from "../managers/recordManager";
+import RecordManager from '../managers/RecordManager';
 import SuperController from "./SuperController";
 import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq } from "../models/Record";
 import Validate from "../validators/CustomValidator";

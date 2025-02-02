@@ -1,10 +1,9 @@
-import UserTransactionRepo from "../repositories/userTransactionRepo";
-import UserRepo from "../repositories/userRepo";
+import UserRepo from "../repositories/UserRepo";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 import { GetUserScheduleRq, GetUserScheduleRs, SetUserScheduleRq, UserSchedule } from "../models/UserSchedule";
-import UserScheduleRepo from "../repositories/userScheduleRepo";
-import UserTransactionManager from "./userTransactionManager";
+import UserScheduleRepo from "../repositories/UserScheduleRepo";
+import UserTransactionManager from "./UserTransactionManager";
 import { GetUserTransactionRq } from "../models/UserTransaction";
 dotenv.config();
 

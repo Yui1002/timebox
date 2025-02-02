@@ -1,12 +1,12 @@
-import RequestRepo from "../repositories/requestRepo";
-import UserRepo from "../repositories/userRepo";
+import RequestRepo from "../repositories/RequestRepo";
+import UserRepo from "../repositories/UserRepo";
 import { GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRq, GetRequestRs, GetRequestRsMini, RequestRawDB, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";
 import { RequestStatus } from "../helpers/enum";
-import UserTransactionRepo from "../repositories/userTransactionRepo";
+import UserTransactionRepo from "../repositories/UserTransactionRepo";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({

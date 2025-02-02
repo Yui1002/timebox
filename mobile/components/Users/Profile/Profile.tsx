@@ -1,5 +1,4 @@
 import React from 'react';
-import {useDispatch} from 'react-redux';
 import {Text, Linking, ScrollView} from 'react-native';
 import {TextStyle, IconStyle} from '../../../styles';
 import {useSelector} from 'react-redux';
@@ -20,14 +19,13 @@ const Profile = ({route, navigation}: any) => {
   const {firstName, lastName, email, status, rate, rateType, schedules} =
     route.params.sp;
   const userInfo = useSelector(state => state.userInfo);
-  const dispatch = useDispatch();
 
   const editProfile = () => {
-    navigation.navigate(navigation, Screen.EDIT_PROFILE, null);
+    navigation.navigate(Screen.EDIT_PROFILE);
   };
 
   const viewWorkingHistory = () => {
-    navigation.navigate(navigation, Screen.VIEW_WORKING_HISTORY, {
+    navigation.navigate(Screen.VIEW_WORKING_HISTORY, {
       spEmail: email,
     });
   };

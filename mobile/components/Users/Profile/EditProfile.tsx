@@ -1,19 +1,25 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {SafeAreaView, View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import axios from 'axios';
-import {LOCAL_HOST_URL} from '../../../config.js';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
 import {navigate} from '../../../helper/navigate';
-import {Schedule, ResultModel} from '../../../types';
+import {Schedule, ResultModel, RateTypeSet} from '../../../types';
 import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
-import {TopContainer, Button, AlignContainer, Title, Result} from '../../index';
-import {ContainerStyle} from '../../../styles';
+import {
+  TopContainer,
+  Button,
+  AlignContainer,
+  Title,
+  Result,
+  NumberInput,
+  Picker,
+} from '../../index';
+import {ContainerStyle, InputStyle} from '../../../styles';
 import {Screen, ErrMsg, RateTypeValue, StatusModel} from '../../../enums';
 import Validator from '../../../validator/validator';
-import InputField from '../../InputField';
-import {UserStatus} from '../../../swagger';
+import {DefaultApiFactory, UserStatus} from '../../../swagger';
+let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -28,25 +34,18 @@ const EditProfile = ({route, navigation}: any) => {
   const [updatedSchedule, setUpdatedSchedule] = useState(schedule);
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
-  const [rateTypeLabel, setRateTypeLabel] = useState([
-    {label: 'Hourly', value: 'hourly'},
-    {label: 'Daily', value: 'daily'},
+  const [rateTypeLabel, setRateTypeLabel] = useState<RateTypeSet[]>([
+    {label: RateTypeValue.HOURLY, value: RateTypeValue.HOURLY},
+    {label: RateTypeValue.DAILY, value: RateTypeValue.DAILY},
   ]);
-  //AMIT NOTE: You should not use string here in place of enum
-  //EXAMPLE:
   const [statusLabel, setStatusLabel] = useState([
-    {label: UserStatus.Active, value: 'active'},
-    {label: 'Inactive', value: 'inactive'},
+    {label: UserStatus.Active, value: UserStatus.Active},
+    {label: UserStatus.Inactive, value: UserStatus.Inactive},
   ]);
-
-  // const [statusLabel, setStatusLabel] = useState([
-  //   {label: 'Active', value: 'active'},
-  //   {label: 'Inactive', value: 'inactive'},
-  // ]);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
 
   const deleteDate = (itemToDelete: Schedule) => {
     const result = serviceProviderData.schedule.map((schedule: Schedule) => {
@@ -74,14 +73,17 @@ const EditProfile = ({route, navigation}: any) => {
     if (validateInput()) return;
 
     try {
-      await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`, {
-        employerEmail: employerData.email,
-        serviceProviderEmail: serviceProviderData.email,
-        rate: updatedRate,
-        rateType: updatedRateType,
-        status: updatedStatus,
-        schedule: updatedSchedule,
-      });
+      await api.updateServiceProvider({
+        
+      })
+      // await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`, {
+      //   employerEmail: employerData.email,
+      //   serviceProviderEmail: serviceProviderData.email,
+      //   rate: updatedRate,
+      //   rateType: updatedRateType,
+      //   status: updatedStatus,
+      //   schedule: updatedSchedule,
+      // });
       navigate(navigation, Screen.PROFILE, route.params.sp);
     } catch (e) {
       setResult({status: StatusModel.ERROR, message: ErrMsg.SAVE_FAIL});
@@ -98,31 +100,37 @@ const EditProfile = ({route, navigation}: any) => {
 
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
+  let underlineInput = InputStyle.createUnderlineInputStyle();
 
   return (
     <TopContainer>
       <ScrollView>
-      {result.status && <Result status={result.status} msg={result.message} />}
+        {result.status && (
+          <Result status={result.status} msg={result.message} />
+        )}
         <AlignContainer>
           <View style={alignContainer}>
-            <Title title={'Rate ($)'}/>
-            <InputField.Underlined onChangeText={val => setUpdatedRate(val)} />
+            <Title title={'Rate ($)'} />
+            <NumberInput
+              maxLength={10}
+              style={underlineInput}
+              onChangeText={(val: string) => setUpdatedRate(val)}
+            />
           </View>
           <View style={alignContainer}>
-            <Title title='Rate Type' />
-            <DropdownPicker
+            <Title title="Rate Type" />
+            <Picker
               open={rateTypeOpen}
               value={updatedRateType}
               items={rateTypeLabel}
-              setOpen={setRateTypeOpen}
+              setOpen={() => setRateTypeOpen(!rateTypeOpen)}
               setValue={setUpdatedRateType}
               setItems={setRateTypeLabel}
-              listMode="SCROLLVIEW"
             />
           </View>
         </AlignContainer>
         <View style={alignContainer}>
-          <Title title='Status' />
+          <Title title="Status" />
           <DropdownPicker
             open={statusOpen}
             value={updatedStatus}
@@ -134,7 +142,7 @@ const EditProfile = ({route, navigation}: any) => {
           />
         </View>
         <View style={statusOpen ? {zIndex: -1} : null}>
-        <Title title='Schedules' />
+          <Title title="Schedules" />
           {updatedSchedule?.length ? (
             updatedSchedule.map((s: Schedule, index: number) => {
               if (s.day && s.startTime && s.endTime) {

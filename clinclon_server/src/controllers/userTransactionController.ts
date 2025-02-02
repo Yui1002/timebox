@@ -1,4 +1,4 @@
-import UserTransactionManager from '../managers/userTransactionManager';
+import UserTransactionManager from '../managers/UserTransactionManager';
 import SuperController from './SuperController';
 import { GetUserTransactionRq, GetUserTransactionRs, SetUserTransactionRq } from '../models/UserTransaction';
 import { Get, Queries, Route, Post, Body } from "tsoa";

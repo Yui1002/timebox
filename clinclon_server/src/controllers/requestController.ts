@@ -7,7 +7,7 @@ import {
     Route,
     Put
   } from "tsoa";
-import RequestManager from '../managers/requestManager';
+import RequestManager from '../managers/RequestManager';
 import SuperController from './SuperController';
 import { GetRequestRq, GetRequestByEmailRq, GetRequestByStatusRq, SetRequestRq, UpdateRequestStatusRq, GetRequestRs, GetRequestRsMini } from '../models/Request';
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";

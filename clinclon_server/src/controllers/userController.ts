@@ -1,5 +1,5 @@
 import { Body, Get, Post, Route, Queries } from "tsoa";
-import UserManager from '../managers/userManager';
+import UserManager from '../managers/UserManager';
 import SuperController from './SuperController';
 import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq } from '../models/User';
 import Validate from "../validators/CustomValidator";

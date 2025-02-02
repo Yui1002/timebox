@@ -1,5 +1,5 @@
-import UserTransactionRepo from "../repositories/userTransactionRepo";
-import UserRepo from "../repositories/userRepo";
+import UserTransactionRepo from "../repositories/UserTransactionRepo";
+import UserRepo from "../repositories/UserRepo";
 import { GetUserTransactionRq, GetUserTransactionRs, SetUserTransactionRq, UpdateUserTransactionRq } from "../models/UserTransaction";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';

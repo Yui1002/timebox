@@ -39,7 +39,7 @@ export default class IconStyle {
   static createAlignProfileIconStyle() {
     return StyleSheet.create({
       icon: {
-        width: '50%',
+        width: '46%',
         textAlign: 'center',
       },
     }).icon;

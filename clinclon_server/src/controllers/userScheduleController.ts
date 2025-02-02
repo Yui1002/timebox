@@ -2,7 +2,7 @@ import SuperController from './SuperController';
 import { GetUserScheduleRq, GetUserScheduleRs, SetUserScheduleRq } from '../models/UserSchedule';
 import { Get, Queries, Route, Post, Body } from "tsoa";
 import Validate from '../validators/CustomValidator';
-import UserScheduleManager from '../managers/userScheduleManager';
+import UserScheduleManager from '../managers/UserScheduleManager';
 
 interface IUserScheduleController {
     getSchedule(rq: GetUserScheduleRq): Promise<GetUserScheduleRs>;

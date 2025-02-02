@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { GetEmployerRs } from "../models/Employer";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
 
 

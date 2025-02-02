@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { SetUserRq, UserRawDB, ResetPasswordRq } from "../models/User";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
 
 
