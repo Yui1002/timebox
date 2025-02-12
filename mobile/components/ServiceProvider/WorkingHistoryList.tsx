@@ -1,30 +1,24 @@
 import React from 'react';
-import {Text, View} from 'react-native';
-import {ContainerStyle} from '../../styles';
-import { returnFormat } from '../../helper/momentHelper';
+import {Text} from 'react-native';
+import {getDiff} from '../../helper/momentHelper';
+import {Record} from '../../swagger';
+import {AlignContainer} from '../index';
 
 interface WorkingHistoryProps {
-    start: string | null;
-    end: string | null;
-    total: number;
+  list: Record;
 }
 
 const WorkingHistoryList = (props: WorkingHistoryProps) => {
-  let date = returnFormat(props.start || props.end, 'YYYY/MM/DD');
-  // props.start.formatDate('YYYY/MM/DD')
-  let start = returnFormat(props.start, 'LT');
-  let end = returnFormat(props.end, 'LT');
-  let noRecord = 'N/A'
-
-  let alignTopContainer = ContainerStyle.createAlignTopContainer();
+  const {startTime, endTime} = props.list;
+  const total = getDiff({start: startTime, end: endTime});
 
   return (
-    <View style={alignTopContainer}>
-      <Text>{props.start ? date : noRecord}</Text>
-      <Text>{props.start ? start : noRecord}</Text>
-      <Text>{props.end ? end : noRecord}</Text>
-      <Text>{props.total ? `${props.total}h` : noRecord}</Text>
-    </View>
+    <AlignContainer>
+      <Text>{startTime ? new Date(startTime).momentFormat('YYYY/MM/DD') : 'N/A'}</Text>
+      <Text>{startTime ? new Date(startTime).momentFormat('LT') : 'N/A'}</Text>
+      <Text>{endTime ? new Date(endTime).momentFormat('LT') : 'N/A'}</Text>
+      <Text>{total ? `${total}h` : 'N/A'}</Text>
+    </AlignContainer>
   );
 };
 

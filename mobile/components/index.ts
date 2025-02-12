@@ -4,7 +4,7 @@ import Error from './Common/Error';
 import Separator from './Common/Separator';
 import {Input, PasswordInput, NumberInput} from './Common/Input';
 import {Dropdown, DatePickerDropdown, Picker} from './Common/Dropdown';
-import {Section, Header, Title} from './Common/Text';
+import {Section, Header, Title, Center} from './Common/Text';
 import {
   TopContainer,
   Container,
@@ -50,5 +50,6 @@ export {
   Result,
   SubContainer,
   NotificationContainer,
-  Icon
+  Icon,
+  Center
 };

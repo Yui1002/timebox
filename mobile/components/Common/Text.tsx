@@ -7,6 +7,7 @@ let alignContainer = ContainerStyle.createAlignContainer();
 let headerText = TextStyle.createHeaderTextStyle();
 let titleText = TextStyle.createTitleTextStyle();
 let plainText = TextStyle.createBasicTextStyle();
+let centerText = TextStyle.createCenterTextStyle();
 
 interface Props {
   title: string;
@@ -34,4 +35,8 @@ const Section = ({title, text, isAlign}: SectionProps) => {
   );
 };
 
-export {Section, Header, Title};
+const Center = ({title}: Props) => {
+  return <Text style={centerText}>{title}</Text>
+}
+
+export {Section, Header, Title, Center};

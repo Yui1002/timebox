@@ -8,7 +8,7 @@ interface IconProps {
   name: string;
   type: 'MaterialCommunity' | 'Material';
   size: number;
-  style: StyleProp<any>;
+  style?: StyleProp<any>;
   onPress?: () => void;
 }
 

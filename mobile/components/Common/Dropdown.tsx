@@ -1,20 +1,17 @@
 import React, {ReactNode} from 'react';
-import {View, Text, TouchableOpacity, StyleProp} from 'react-native';
-import {ContainerStyle, IconStyle, TextStyle, InputStyle} from '../../styles';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {Text, TouchableOpacity, DimensionValue} from 'react-native';
+import {InputStyle} from '../../styles';
 import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {COLORS} from '../../styles/theme';
-import { RateTypeValue } from '../../enums';
-import { ModeSet, RateTypeSet } from '../../types';
+import {Icon} from '../index';
 
 let dropdown = InputStyle.createDropdownStyle();
-let dropdownText = TextStyle.createDropdownTextStyle();
-let icon = IconStyle.createBasicIconStyle();
 
 interface DropdownProps {
   placeholder: string;
   onPress: () => void;
+  width: DimensionValue;
+  height: DimensionValue;
 }
 
 interface DatePickerdownProps {
@@ -27,24 +24,21 @@ interface DatePickerdownProps {
 }
 
 interface PickerProps {
-    open: boolean;
-    value: string;
-    items: any[];
-    setOpen: () => void;
-    setValue: React.Dispatch<React.SetStateAction<any>>;
-    setItems: any;
+  open: boolean;
+  value: string;
+  items: any[];
+  setOpen: () => void;
+  setValue: React.Dispatch<React.SetStateAction<any>>;
+  setItems: any;
 }
 
-const Dropdown = ({placeholder, onPress}: DropdownProps) => {
+const Dropdown = ({placeholder, onPress, width, height}: DropdownProps) => {
   return (
-    <TouchableOpacity onPress={onPress} style={dropdown}>
-      <Text style={dropdownText}>{placeholder}</Text>
-      <MaterialIcons
-        name="arrow-drop-down"
-        size={36}
-        color={COLORS.BLACK}
-        style={icon}
-      />
+    <TouchableOpacity
+      onPress={onPress}
+      style={[dropdown, {width: width, height: height}]}>
+      <Text>{placeholder}</Text>
+      <Icon name="arrow-drop-down" type="Material" size={36} />
     </TouchableOpacity>
   );
 };
@@ -71,7 +65,14 @@ const DatePickerDropdown = ({
   );
 };
 
-const Picker = ({open, value, items, setOpen, setValue, setItems}: PickerProps) => {
+const Picker = ({
+  open,
+  value,
+  items,
+  setOpen,
+  setValue,
+  setItems,
+}: PickerProps) => {
   return (
     <DropDownPicker
       open={open}

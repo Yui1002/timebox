@@ -1,9 +1,8 @@
 import {isEmail, isFloat, isEmpty, isStrongPassword, isDate} from 'validator';
 import moment from 'moment';
 import {PASSWORD_RULES} from '../config.js';
-import { SignInProps, SignUpProps } from '../types';
-import { ErrMsg, RateTypeValue, TimeType } from '../enums';
-
+import {SignUpProps} from '../types';
+import {ErrMsg, RateTypeValue, TimeType} from '../enums';
 
 class Validator {
   static isNotEmpty(name: string): boolean {
@@ -34,11 +33,11 @@ class Validator {
   }
 
   static isValidStartTime(start: Date, end: Date) {
-    return moment(start).isBefore(moment(end))
+    return moment(start).isBefore(moment(end));
   }
 
   static isValidEndTime(start: Date, end: Date) {
-    return moment(end).isAfter(moment(start))
+    return moment(end).isAfter(moment(start));
   }
 
   static isValidDate(date: Date): boolean {
@@ -46,8 +45,11 @@ class Validator {
   }
 
   static isValidDuration(startTime: Date, endTime: Date) {
-    console.log(startTime, endTime)
-    let diff = moment(endTime, 'h:mm A').diff(moment(startTime, 'h:mm A'), 'hours');
+    console.log(startTime, endTime);
+    let diff = moment(endTime, 'h:mm A').diff(
+      moment(startTime, 'h:mm A'),
+      'hours',
+    );
     return diff >= 1;
   }
 
@@ -56,22 +58,21 @@ class Validator {
     const isValidOTP = regex.test(otp);
     if (!isValidOTP) {
       return ErrMsg.INVALID_OTP;
-    } 
+    }
     return null;
   }
 
-  
   static validateSignUp(props: SignUpProps): ErrMsg | null {
     if (!this.isNotEmpty(props.firstName) || !this.isNotEmpty(props.lastName)) {
-      return ErrMsg.INVALID_NAME
+      return ErrMsg.INVALID_NAME;
     }
 
     if (!this.isValidEmail(props.email)) {
-        return ErrMsg.INVALID_EMAIL;
+      return ErrMsg.INVALID_EMAIL;
     }
 
     if (!this.isValidPassword(props.password)) {
-        return ErrMsg.INVALID_PASSWORD;
+      return ErrMsg.INVALID_PASSWORD;
     }
 
     if (!this.isPasswordMatch(props.password, props.confirmedPassword)) {
@@ -85,7 +86,7 @@ class Validator {
     if (!this.isValidEmail(email)) {
       return ErrMsg.INVALID_EMAIL;
     }
-    
+
     if (!this.isValidPassword(password)) {
       return ErrMsg.INVALID_PASSWORD;
     }
@@ -100,7 +101,10 @@ class Validator {
     return null;
   }
 
-  static validatePassword(password: string, confirmedPassword: string): ErrMsg | null {
+  static validatePassword(
+    password: string,
+    confirmedPassword: string,
+  ): ErrMsg | null {
     if (!this.isValidPassword(password)) {
       return ErrMsg.INVALID_PASSWORD;
     }
@@ -112,7 +116,11 @@ class Validator {
     return null;
   }
 
-  static validateRecordTime(type: TimeType, startTime: Date, endTime: Date): ErrMsg | null {
+  static validateRecordTime(
+    type: TimeType,
+    startTime: Date,
+    endTime: Date,
+  ): ErrMsg | null {
     if (type === TimeType.START) {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
@@ -141,7 +149,12 @@ class Validator {
     return null;
   }
 
-  static validateWorkShifts(shifts: any, day: string, startTime: Date, endTime: Date): ErrMsg | null {
+  static validateWorkShifts(
+    shifts: any,
+    day: string,
+    startTime: Date,
+    endTime: Date,
+  ): ErrMsg | null {
     if (!this.isNotEmpty(day)) {
       return ErrMsg.DAY_EMPTY;
     }
@@ -161,21 +174,33 @@ class Validator {
     if (!this.isValidDuration(startTime, endTime)) {
       return ErrMsg.INVALID_DURATION;
     }
-    
+
     return null;
   }
 
-  static validateWorkingRecordSelect(selected: string, from: string, to: string): ErrMsg | null {
+  static validateWorkingRecordSelect(
+    selected: string,
+    from: string,
+    to: string,
+  ): ErrMsg | null {
     if (!this.isNotEmpty(selected)) {
       return ErrMsg.EMPLOYER_NOT_SELECTED;
-    } 
+    }
 
     if (!this.isValidEndTime(from, to)) {
       return ErrMsg.INVALID_TIME;
     }
     return null;
   }
-}
 
+  static validatePeriod(startTime: Date, endTime: Date) {
+    if (
+      !this.isValidStartTime(startTime, endTime) ||
+      !this.isValidEndTime(startTime, endTime)
+    ) {
+      return ErrMsg.INVALID_TIME;
+    }
+  }
+}
 
 export default Validator;

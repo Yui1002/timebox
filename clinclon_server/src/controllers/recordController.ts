@@ -47,7 +47,6 @@ export class RecordController extends SuperController implements IRecordControll
     @Post('/update')
     @Validate
     public async updateRecord(@Body() request: UpdateRecordRq): Promise<void> {
-        console.log('here')
         await this._recordManager.updateRecord(request);
     }
 }

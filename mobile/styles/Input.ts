@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {DimensionValue, StyleSheet} from 'react-native';
 import {COLORS} from './theme';
 
 export default class InputStyle {
@@ -28,18 +28,16 @@ export default class InputStyle {
     return StyleSheet.compose(this.createBasicInputStyle(), otpInput);
   }
 
-  static createDropdownStyle() {
+  static createDropdownStyle(width: DimensionValue = '75%', height: DimensionValue = '100%') {
     return StyleSheet.create({
       dropdown: {
-        width: '75%',
-        height: '100%',
         flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         borderWidth: 1,
-        borderColor: '#000',
+        borderColor: COLORS.BLACK,
         borderRadius: 6,
-        backgroundColor: '#ddd',
-        justifyContent: 'center',
-        alignItems: 'center'
+        paddingHorizontal: 20,
       },
     }).dropdown;
   }

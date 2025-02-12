@@ -1,8 +1,8 @@
 import moment, { Moment } from 'moment';
 
 interface GetDiffProps {
-    start: Moment | string | null;
-    end: Moment | string | null;
+    start: Moment | string | null | undefined;
+    end: Moment | string | null | undefined;
 }
 
 export const getDiff = ({start, end}: GetDiffProps): number | null => {
@@ -15,6 +15,10 @@ export const getDiff = ({start, end}: GetDiffProps): number | null => {
     return end.diff(start, 'hours');
 }
 
-export const getBeginningOfDay = () => {
-    return moment().startOf('day').toDate();
+export const getBeginningOfDay = (date: Date = new Date()): Date => {
+    return moment(date).startOf('day').toDate();
+}
+
+export const getEndOfDay = (date: Date = new Date()): Date => {
+    return moment(date).endOf('day').toDate();
 }
