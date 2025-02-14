@@ -7,9 +7,22 @@ import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import {DefaultApiFactory, SetRequestRq, Mode, GetUserScheduleRs} from '../../../swagger';
+import {
+  DefaultApiFactory,
+  SetRequestRq,
+  Mode,
+  GetUserScheduleRs,
+} from '../../../swagger';
 import {ResultModel} from '../../../types';
-import {Button, Section, Header, Result, TopContainer, AlignContainer, Container} from '../../index';
+import {
+  Button,
+  Section,
+  Header,
+  Result,
+  TopContainer,
+  AlignContainer,
+  Container,
+} from '../../index';
 import {ErrMsg, Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
 
@@ -65,7 +78,7 @@ const Review = ({route, navigation}: any) => {
 
   const clearInput = (): void => {
     dispatch(resetShift(workShifts.workShifts));
-    setResult({status: StatusModel.ERROR, message: ''});
+    setResult({status: StatusModel.NULL, message: ''});
   };
 
   let alignContainer = ContainerStyle.createAlignContainer();
@@ -126,9 +139,11 @@ const Review = ({route, navigation}: any) => {
             </Text>
           </Text>
           {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map((shift: GetUserScheduleRs, index: number) => (
-              <ScheduleList w={shift} key={index} />
-            ))
+            workShifts.workShifts.map(
+              (shift: GetUserScheduleRs, index: number) => (
+                <ScheduleList w={shift} key={index} />
+              ),
+            )
           ) : (
             <Text style={text}>No days selected</Text>
           )}

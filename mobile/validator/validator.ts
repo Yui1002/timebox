@@ -1,4 +1,4 @@
-import {isEmail, isFloat, isEmpty, isStrongPassword, isDate} from 'validator';
+import {isEmail, isFloat, isEmpty, isStrongPassword, isDate, isCurrency} from 'validator';
 import moment from 'moment';
 import {PASSWORD_RULES} from '../config.js';
 import {SignUpProps} from '../types';
@@ -22,10 +22,7 @@ class Validator {
   }
 
   static isValidRate(rate: string): boolean {
-    return isFloat(rate, {
-      min: 1.0,
-      max: 3000.0,
-    });
+    return isCurrency(rate) && rate >= '10.00';
   }
 
   static isValidRateType(rateType: RateTypeValue) {

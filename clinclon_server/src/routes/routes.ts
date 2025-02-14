@@ -14,7 +14,7 @@ import { GetOTPRequestValidator, SetOTPRequestValidator } from "../validators/OT
 import { GetEmployerRequestValidator } from "../validators/EmployerRequestValidator";
 import { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator } from "../validators/RecordRequestValidator";
 import { GetUserTransactionRequestValidator } from "../validators/UserTransactionRequestValidator";
-import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestStatusValidator, GetRequestByStatuslValidator } from "../validators/RequestValidator";
+import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestValidator, GetRequestByStatuslValidator } from "../validators/RequestValidator";
 
 interface IRoutes {
     applyRouting(app: any): void;
@@ -62,7 +62,7 @@ class Routes implements IRoutes  {
             new GetRequestsValidator(),
             new GetRequestByEmailValidator(),
             new SetRequestValidator(),
-            new UpdateRequestStatusValidator(),
+            new UpdateRequestValidator(),
             new GetRequestByStatuslValidator()
         ])
     }
@@ -91,7 +91,7 @@ class Routes implements IRoutes  {
         app.post('/getRequests', this._requestController.getRequests.bind(this._requestController));
         app.post('/getRequestByEmail', this._requestController.getRequestByEmail.bind(this._requestController));
         app.post('/setRequest', this._requestController.setRequest.bind(this._recordController));
-        app.post('/updateRequestStatus', this._requestController.updateRequestStatus.bind(this._requestController));
+        app.post('/updateRequest', this._requestController.updateRequest.bind(this._requestController));
     }
 }
 

@@ -44,7 +44,7 @@ const PersonalInfo = ({route, navigation}: any) => {
     {label: Mode.YES, value: Mode.YES},
     {label: Mode.NO, value: Mode.NO},
   ]);
-  const [rate, setRate] = useState<string>('0');
+  const [rate, setRate] = useState<string>('');
   const [rateType, setRateType] = useState<RateTypeValue>(RateTypeValue.HOURLY);
   const [mode, setMode] = useState<Mode>(Mode.NO);
   const [result, setResult] = useState<ResultModel>({
@@ -137,6 +137,7 @@ const PersonalInfo = ({route, navigation}: any) => {
             setItems={setModeItems}
           />
         </View>
+        <View style={{marginVertical: 20}}/>
         <AlignContainer>
           <Button title="Back" onPress={goBack} style={backBtn} />
           <Button title="Continue" onPress={proceed} style={continuBtn} />

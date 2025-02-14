@@ -1,7 +1,7 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
 import { RateType, RequestStatus, Mode } from '../helpers/enum';
-import { GetUserScheduleRs, UserSchedule } from './UserSchedule';
+import { UserSchedule } from './UserSchedule';
 
 @JsonObject("RequestRawDB")
 class RequestRawDB extends BaseRequest {
@@ -59,6 +59,8 @@ class GetRequestRsMini {
     allowEdit: Mode = Mode.False;
     @JsonProperty("schedules")
     schedules?: any;
+    @JsonProperty("requestDate", Date)
+    requestDate: Date = new Date();
 
     constructor(requestResult: RequestRawDB) {
         this.firstName = requestResult.senderFirstName;
@@ -71,6 +73,7 @@ class GetRequestRsMini {
         this.endTime = requestResult.endTime;
         this.allowEdit = requestResult.allowEdit;
         this.schedules = [];
+        this.requestDate = requestResult.requestDate;
     }
 }
 
@@ -107,27 +110,29 @@ class SetRequestRq extends BaseRequest {
     rate: number = 0;
     @JsonProperty("rateType")
     rateType: RateType = RateType.HOURLY;
-    @JsonProperty('schedules', [GetUserScheduleRs])
-    schedules: GetUserScheduleRs[] = []
+    @JsonProperty('schedules', [UserSchedule])
+    schedules: UserSchedule[] = []
     @JsonProperty("mode")
     mode: Mode = Mode.False;
 }
 
 
-@JsonObject("UpdateRequestStatusRq")
-class UpdateRequestStatusRq extends BaseRequest {
+@JsonObject("UpdateRequestRq")
+class UpdateRequestRq extends BaseRequest {
     @JsonProperty("senderEmail", String)
     senderEmail: string = "";
     @JsonProperty("receiverEmail", String)
     receiverEmail: string = "";
     @JsonProperty("status")
     status: RequestStatus = RequestStatus.PENDING;
-    @JsonProperty("rate", Number)
-    rate?: number = 0;
+    @JsonProperty("rate", String)
+    rate?: string = '';
     @JsonProperty("rateType")
     rateType?: RateType = RateType.HOURLY;
     @JsonProperty("schedules")
-    schedules?: GetUserScheduleRs[] = [];
+    schedules?: UserSchedule[] = [];
+    @JsonProperty("mode")
+    mode: Mode = Mode.False;
 }
 
 @JsonObject("Request")
@@ -176,4 +181,4 @@ class GetRequestRs {
     requests: RequestRawDB[] = [];
 }
 
-export { GetRequestRsMini, RequestRawDB, GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRq, GetRequestRs, SetRequestRq, UpdateRequestStatusRq };
+export { GetRequestRsMini, RequestRawDB, GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRq, GetRequestRs, SetRequestRq, UpdateRequestRq };

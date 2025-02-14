@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-import { RequestRawDB, GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRs, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
+import { GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRs, SetRequestRq, UpdateRequestRq } from "../models/Request";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import { GetUserScheduleRs, UserSchedule } from "../models/UserSchedule";
+import { UserSchedule } from "../models/UserSchedule";
 import Repositories from "./Repositories";
 import { RequestStatus } from "../helpers/enum";
 dotenv.config();
@@ -13,7 +13,7 @@ interface IRequestRepo {
     getRequestByEmail(requestRq: GetRequestByEmailRq): Promise<GetRequestRs>;
     getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRs>;
     setRequest(requestRq: SetRequestRq, schedule: UserSchedule): Promise<void>;
-    updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void>;
+    updateRequest(requestRq: UpdateRequestRq): Promise<void>;
 }
 
 class RequestRepo extends Repositories implements IRequestRepo {
@@ -104,7 +104,7 @@ class RequestRepo extends Repositories implements IRequestRepo {
         }
     }
 
-    async setRequest(requestRq: SetRequestRq, schedule: UserSchedule): Promise<void> {
+    async setRequest(requestRq: SetRequestRq, schedule?: UserSchedule): Promise<void> {
         try {
             const sql = `INSERT INTO requests (
                             request_id, 
@@ -118,17 +118,19 @@ class RequestRepo extends Repositories implements IRequestRepo {
                             request_schedule_start_time, 
                             request_schedule_end_time, request_mode) 
                         VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4, $5, $6, $7, $8, $9);`;
-            await this.queryDB(sql, [requestRq.senderEmail, requestRq.receiverEmail, RequestStatus.PENDING, requestRq.rate, requestRq.rateType, schedule.day, schedule.startTime, schedule.endTime, requestRq.mode]);
+            await this.queryDB(sql, [requestRq.senderEmail, requestRq.receiverEmail, RequestStatus.PENDING, requestRq.rate, requestRq.rateType, schedule?.day, schedule?.startTime, schedule?.endTime, requestRq.mode]);
         } catch (e: any) {
+            console.log('error', e);
             throw new ResponseException(e, 500, 'unable to insert into db');
         }
     }
 
-    async updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void> {
+    async updateRequest(requestRq: UpdateRequestRq): Promise<void> {
         try {
             const sql = "UPDATE requests SET status = $1, request_date = CURRENT_TIMESTAMP WHERE sender_email = $2 AND receiver_email = $3;";
             await this.queryDB(sql, [requestRq.status, requestRq.senderEmail, requestRq.receiverEmail]);
         } catch (e: any) {
+            console.log('update error', e)
             throw new ResponseException(e, 500, 'unable to update db');
         }
     }

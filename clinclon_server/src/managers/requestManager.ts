@@ -1,12 +1,16 @@
 import RequestRepo from "../repositories/RequestRepo";
 import UserRepo from "../repositories/UserRepo";
-import { GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRq, GetRequestRs, GetRequestRsMini, RequestRawDB, SetRequestRq, UpdateRequestStatusRq } from "../models/Request";
+import { GetRequestByEmailRq, GetRequestByStatusRq, GetRequestRq, GetRequestRs, GetRequestRsMini, RequestRawDB, SetRequestRq, UpdateRequestRq } from "../models/Request";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";
-import { RequestStatus } from "../helpers/enum";
+import { RequestStatus, UserStatus } from "../helpers/enum";
 import UserTransactionRepo from "../repositories/UserTransactionRepo";
+import UserTransactionManager from "./UserTransactionManager";
+import UserScheduleManager from "./UserScheduleManager";
+import { SetUserTransactionRq } from "../models/UserTransaction";
+import { SetUserScheduleRq } from "../models/UserSchedule";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
@@ -22,19 +26,23 @@ interface IRequestManager {
     getRequestByEmail(requestRq: GetRequestByEmailRq): Promise<GetRequestRs>;
     getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRsMini[]>;
     setRequest(request: SetRequestRq): Promise<void>;
-    updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void>;
+    updateRequest(requestRq: UpdateRequestRq): Promise<void>;
     sendRequestViaMail(requestRq: SetRequestRq): Promise<void>;
 }
 
 class RequestManager implements IRequestManager {
     private _requestRepo: RequestRepo;
     private _userRepo: UserRepo;
-    private _userTransactionRepo: UserTransactionRepo
+    private _userTransactionRepo: UserTransactionRepo;
+    private _userTransactionManager: UserTransactionManager;
+    private _userScheduleManager: UserScheduleManager;
 
     constructor() {
         this._requestRepo = new RequestRepo();
         this._userRepo = new UserRepo();
         this._userTransactionRepo = new UserTransactionRepo();
+        this._userTransactionManager = new UserTransactionManager();
+        this._userScheduleManager = new UserScheduleManager();
     }
 
     async getRequests(requestRq: GetRequestRq): Promise<GetRequestRs> {
@@ -63,10 +71,13 @@ class RequestManager implements IRequestManager {
     }
 
     async setRequest(requestRq: SetRequestRq): Promise<void> {
-        requestRq.schedules.map(async (schedule) => {
-            // await this._requestRepo.setRequest(requestRq, schedule);
-        });
-
+        if (requestRq.schedules.length <= 0) {
+            await this._requestRepo.setRequest(requestRq);
+        } else {
+            requestRq.schedules.map(async (schedule) => {
+                await this._requestRepo.setRequest(requestRq, schedule);
+            });
+        }
         await this.sendRequestViaMail(requestRq);
     }
 
@@ -93,27 +104,26 @@ class RequestManager implements IRequestManager {
         transporter.close();
     }
 
-    async updateRequestStatus(requestRq: UpdateRequestStatusRq): Promise<void> {
-    // if request is accepted, 
-        await this._requestRepo.updateRequestStatus(requestRq);
+    async updateRequest(requestRq: UpdateRequestRq): Promise<void> {
+        await this._requestRepo.updateRequest(requestRq);
 
         if (requestRq.status === RequestStatus.APPROVED) {
-            let [employerData, serviceProviderData] = await Promise.all(
-                [this._userRepo.getUser(requestRq.senderEmail),
-                this._userRepo.getUser(requestRq.receiverEmail)]);
-            
-            if (!employerData || !serviceProviderData) {
-                throw new ResponseException(null, 400, 'no data found');
-            }
-            // need employerId + service provider id
-            // this._userTransactionRepo.setUserTransaction(requestRq);
+            Promise.all([
+                await this._userTransactionManager.setUserTransaction({
+                    rate: requestRq.rate,
+                    rateType: requestRq.rateType,
+                    employerEmail: requestRq.senderEmail,
+                    serviceProviderEmail: requestRq.receiverEmail,
+                    status: UserStatus.ACTIVE,
+                    mode: requestRq.mode
+                } as SetUserTransactionRq),
+                await this._userScheduleManager.setUserSchedule({
+                    employerEmail: requestRq.senderEmail,
+                    serviceProviderEmail: requestRq.receiverEmail,
+                    schedules: requestRq.schedules
+                } as SetUserScheduleRq)
+            ])
         }
-      // means receiver becomes employee of the sender
-      // create new data for user transaction 
-      // create new data for user  schedule
-    // if request is denied, 
-      // just update request status 
-        await this._requestRepo.updateRequestStatus(requestRq);
     }
 
     async isRequestValid(requestRq: GetRequestByEmailRq): Promise<ServiceProviderMiniRs> {

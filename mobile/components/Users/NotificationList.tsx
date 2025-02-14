@@ -1,16 +1,14 @@
 import React, {useState, useEffect} from 'react';
+import {useSelector} from 'react-redux';
 import {Text, View} from 'react-native';
 import moment from 'moment';
 import {
   DefaultApiFactory,
   RequestStatus,
   GetUserScheduleRs,
-  Request,
-  UpdateRequestStatusRq,
+  UpdateRequestRq,
   UserStatus,
   Mode,
-  SetUserTransactionRq,
-  SetUserScheduleRq,
 } from '../../swagger';
 import {AlignContainer, Button} from '../index';
 const api = DefaultApiFactory();
@@ -19,23 +17,23 @@ import {ButtonStyle} from '../../styles';
 import {alert, alertError} from '../../helper/Alert';
 
 const NotificationList = ({notification, navigation}: any) => {
+  const user = useSelector(state => state.userInfo);
   const {
-    senderFirstName,
-    senderLastName,
+    firstName,
+    lastName,
     rate,
     rateType,
-    senderEmail,
-    receiverEmail,
+    email,
     requestDate,
     schedules,
     allowEdit,
-  }: Request = notification;
+  } = notification;
   let acceptBtn = ButtonStyle.createContinueButtonStyle();
   let rejectBtn = ButtonStyle.createBackButtonStyle();
 
   const alertConfirm = (status: RequestStatus) => {
     alert(
-      `Do you want to ${status.toLowerCase()} \n ${senderFirstName} ${senderLastName}'s request?`,
+      `Do you want to ${status.toLowerCase()} \n ${firstName} ${lastName}'s request?`,
       '',
       function () {
         updateRequest(status);
@@ -46,29 +44,15 @@ const NotificationList = ({notification, navigation}: any) => {
 
   const updateRequest = async (status: RequestStatus) => {
     try {
-      await api.updateRequestStatus({
-        senderEmail,
-        receiverEmail,
+      await api.updateRequest({
+        senderEmail: email,
+        receiverEmail: user.email,
         status,
-      } as UpdateRequestStatusRq);
-
-      if (status === RequestStatus.Approved) {
-        Promise.all([
-          await api.setUserTransaction({
-            rate: rate,
-            rateType: rateType,
-            employerEmail: senderEmail,
-            serviceProviderEmail: receiverEmail,
-            status: UserStatus.Active,
-            mode: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0
-          } as SetUserTransactionRq),
-          await api.setSchedule({
-            employerEmail: senderEmail,
-            serviceProviderEmail: receiverEmail,
-            schedules: schedules
-          } as SetUserScheduleRq)
-        ]);
-      }
+        rate,
+        rateType,
+        schedules: schedules[0].day == null ? [] : schedules,
+        mode: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0,
+      } as UpdateRequestRq);
       alertSuccess(status);
     } catch (e) {
       console.log(e);
@@ -77,7 +61,7 @@ const NotificationList = ({notification, navigation}: any) => {
 
   const alertSuccess = (status: RequestStatus) => {
     alertError(
-      `You successfully ${status.toLowerCase()}ed ${senderFirstName} ${senderLastName}'s request!`,
+      `You successfully ${status.toLowerCase()}ed ${firstName} ${lastName}'s request!`,
       '',
       function () {
         navigation.goBack();
@@ -87,7 +71,7 @@ const NotificationList = ({notification, navigation}: any) => {
 
   return (
     <View>
-      <Text>{`Request from ${senderFirstName} ${senderLastName}`}</Text>
+      <Text>{`Request from ${firstName} ${lastName}`}</Text>
       <Text>{`${moment(requestDate).format('YYYY/MM/DD h:mm')}`}</Text>
       <Text>
         {`Pay: ${
@@ -96,7 +80,7 @@ const NotificationList = ({notification, navigation}: any) => {
       </Text>
       <View>
         <Text>Schedules:</Text>
-        {schedules?.length ? (
+        {schedules[0].day !== null ? (
           schedules.map((s: GetUserScheduleRs, index: number) => (
             <ScheduleList w={s} key={index} />
           ))

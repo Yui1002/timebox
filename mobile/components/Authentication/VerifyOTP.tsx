@@ -14,6 +14,7 @@ const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password, isSignUp} = route.params;
   const [otp, setOtp] = useState<string>('');
+  const [otpResent, setOtpResent] = useState<boolean>(false);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: ''
@@ -21,7 +22,9 @@ const VerifyOTP = ({route, navigation}: any) => {
   let otpInput = InputStyle.createOTPInputStyle();
 
   useEffect(() => {
-    setOTP();
+    if (!otpResent) {
+      setOTP();
+    }
   }, []);
 
   const validateInput = (): boolean => {
@@ -42,6 +45,19 @@ const VerifyOTP = ({route, navigation}: any) => {
       setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_SEND_ERR});
     }
   };
+
+  const resendOTP = async () => {
+    setOtpResent(true);
+    try {
+      await otpApi.setOTP({
+        email: email,
+        otp: ''
+      } as SetOTPRq);
+      setResult({status: StatusModel.SUCCESS, message: ErrMsg.OTP_SEND_SUCCESS})
+    } catch (e) {
+      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_SEND_ERR});
+    }
+  }
 
   const verifyOTP = async () => {
     if (!validateInput()) return;
@@ -94,7 +110,7 @@ const VerifyOTP = ({route, navigation}: any) => {
       <Footer
         leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}
         rightText={{text1: 'Go back to', text2: 'Sign In'}}
-        leftFunc={setOTP}
+        leftFunc={resendOTP}
         rightFunc={() => navigation.navigate(Screen.SIGN_IN)}
       />
     </TopContainer>

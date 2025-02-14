@@ -47,10 +47,8 @@ class UserScheduleManager implements IUserScheduleManager {
         } as GetUserTransactionRq);
 
         let transactionId = transactionData.id;
-        console.log('transaction Id', transactionId)
 
         userScheduleRq.schedules.map(async (schedule: UserSchedule) => {
-            console.log('schedule', schedule)
             await this._userScheduleRepo.setUserSchedule(schedule, serviceProviderId, transactionId);
         })
     }

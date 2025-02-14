@@ -9,7 +9,7 @@ import { GetUserRequestValidator, ResetPasswordRequestValidator, SetUserRequestV
 import { GetOTPRequestValidator, SetOTPRequestValidator } from "./validators/OTPRequestValidator";
 import { GetEmployerRequestValidator } from "./validators/EmployerRequestValidator";
 import { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator } from "./validators/RecordRequestValidator";
-import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestStatusValidator, GetRequestByStatuslValidator } from "./validators/RequestValidator";
+import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestValidator, GetRequestByStatuslValidator } from "./validators/RequestValidator";
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from "./validators/ServiceProviderRequestValidator";
 import { GetUserTransactionRequestValidator, SetUserTransactionRequestValidator } from "./validators/UserTransactionRequestValidator";
 import swaggerUi from "swagger-ui-express";
@@ -62,7 +62,7 @@ function initializeValidator() {
       new GetRequestsValidator(),
       new GetRequestByEmailValidator(),
       new SetRequestValidator(),
-      new UpdateRequestStatusValidator(),
+      new UpdateRequestValidator(),
       new GetRequestByStatuslValidator(),
       new SetUserTransactionRequestValidator(),
       new GetUserScheduleRequestValidator(),

@@ -26,7 +26,7 @@ const Home = (props: any) => {
       let {data} = await employerApi.getEmployer(email);
       setEmployers(data.employers);
     } catch (e) {
-      console.log(e);
+      setEmployers([]);
     }
   };
 
@@ -37,7 +37,7 @@ const Home = (props: any) => {
       </CenterContainer>
       <Container>
         <Title title="My Employers" />
-        {!employers ? (
+        {!employers?.length ? (
           <Text>Please use the menu to hire or manage service providers</Text>
         ) : (
           <ScrollView>

@@ -16,7 +16,7 @@ let userApi = DefaultApiFactory();
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState<string>('yuidayal@gmail.com');
+  const [email, setEmail] = useState<string>('tvhtialbgalbylukwh@ytnhy.com');
   const [password, setPassword] = useState<string>('Gorilla123!');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,

@@ -15,7 +15,7 @@ import {
   Result,
   SubContainer
 } from '../../index';
-import { GetUserScheduleRs } from '../../../swagger'
+import { UserSchedule } from '../../../swagger'
 import Validator from '../../../validator/validator';
 import {Screen, Days, StatusModel} from '../../../enums';
 import {ContainerStyle, ButtonStyle} from '../../../styles';
@@ -26,8 +26,8 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const workShifts = useSelector(state => state.workShifts);
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<Date | undefined>(undefined);
-  const [endTime, setEndTime] = useState<Date | undefined>(undefined);
+  const [startTime, setStartTime] = useState<Date>(new Date());
+  const [endTime, setEndTime] = useState<Date>(new Date());
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -50,7 +50,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   const add = () => {
     if (!validateInput()) return;
 
-    const value: GetUserScheduleRs = {
+    const value: UserSchedule = {
       day: selectedDay,
       startTime: startTime?.momentFormat('LT'),
       endTime: endTime?.momentFormat('LT'),

@@ -15,7 +15,7 @@ let api = DefaultApiFactory();
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>('lfhoqudfzurpkbskmi@hthlm.com');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: ''
@@ -28,6 +28,10 @@ const HireServiceProvider = (props: any) => {
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
       setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_EMAIL});
+      return false;
+    }
+    if (searchInput === userInfo.email) {
+      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_REQUEST})
       return false;
     }
     return true;

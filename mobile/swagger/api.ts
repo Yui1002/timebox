@@ -346,6 +346,12 @@ export interface GetRequestRsMini {
      * @memberof GetRequestRsMini
      */
     'schedules'?: any;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestRsMini
+     */
+    'requestDate'?: string;
 }
 
 
@@ -388,10 +394,10 @@ export interface GetServiceProviderRsMini {
     'email'?: string;
     /**
      * 
-     * @type {RequestStatus}
+     * @type {string}
      * @memberof GetServiceProviderRsMini
      */
-    'status'?: RequestStatus;
+    'status'?: string;
     /**
      * 
      * @type {string}
@@ -836,10 +842,10 @@ export interface SetRequestRq {
     'rateType'?: RateType;
     /**
      * 
-     * @type {Array<GetUserScheduleRs>}
+     * @type {Array<UserSchedule>}
      * @memberof SetRequestRq
      */
-    'schedules'?: Array<GetUserScheduleRs>;
+    'schedules'?: Array<UserSchedule>;
     /**
      * 
      * @type {Mode}
@@ -1013,45 +1019,51 @@ export interface UpdateRecordRq {
 /**
  * 
  * @export
- * @interface UpdateRequestStatusRq
+ * @interface UpdateRequestRq
  */
-export interface UpdateRequestStatusRq {
+export interface UpdateRequestRq {
     /**
      * 
      * @type {string}
-     * @memberof UpdateRequestStatusRq
+     * @memberof UpdateRequestRq
      */
     'senderEmail'?: string;
     /**
      * 
      * @type {string}
-     * @memberof UpdateRequestStatusRq
+     * @memberof UpdateRequestRq
      */
     'receiverEmail'?: string;
     /**
      * 
      * @type {RequestStatus}
-     * @memberof UpdateRequestStatusRq
+     * @memberof UpdateRequestRq
      */
     'status'?: RequestStatus;
     /**
      * 
-     * @type {number}
-     * @memberof UpdateRequestStatusRq
+     * @type {string}
+     * @memberof UpdateRequestRq
      */
-    'rate'?: number;
+    'rate'?: string;
     /**
      * 
      * @type {RateType}
-     * @memberof UpdateRequestStatusRq
+     * @memberof UpdateRequestRq
      */
     'rateType'?: RateType;
     /**
      * 
-     * @type {Array<GetUserScheduleRs>}
-     * @memberof UpdateRequestStatusRq
+     * @type {Array<UserSchedule>}
+     * @memberof UpdateRequestRq
      */
-    'schedules'?: Array<GetUserScheduleRs>;
+    'schedules'?: Array<UserSchedule>;
+    /**
+     * 
+     * @type {Mode}
+     * @memberof UpdateRequestRq
+     */
+    'mode'?: Mode;
 }
 
 
@@ -1960,13 +1972,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+         * @param {UpdateRequestRq} updateRequestRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateRequestStatus: async (updateRequestStatusRq: UpdateRequestStatusRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'updateRequestStatusRq' is not null or undefined
-            assertParamExists('updateRequestStatus', 'updateRequestStatusRq', updateRequestStatusRq)
+        updateRequest: async (updateRequestRq: UpdateRequestRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateRequestRq' is not null or undefined
+            assertParamExists('updateRequest', 'updateRequestRq', updateRequestRq)
             const localVarPath = `/request`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1986,7 +1998,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(updateRequestStatusRq, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(updateRequestRq, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2350,14 +2362,14 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+         * @param {UpdateRequestRq} updateRequestRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateRequestStatus(updateRequestStatusRq: UpdateRequestStatusRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRequestStatus(updateRequestStatusRq, options);
+        async updateRequest(updateRequestRq: UpdateRequestRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateRequest(updateRequestRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateRequestStatus']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateRequest']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -2605,12 +2617,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+         * @param {UpdateRequestRq} updateRequestRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateRequestStatus(updateRequestStatusRq: UpdateRequestStatusRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.updateRequestStatus(updateRequestStatusRq, options).then((request) => request(axios, basePath));
+        updateRequest(updateRequestRq: UpdateRequestRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateRequest(updateRequestRq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2895,13 +2907,13 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
-     * @param {UpdateRequestStatusRq} updateRequestStatusRq 
+     * @param {UpdateRequestRq} updateRequestRq 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public updateRequestStatus(updateRequestStatusRq: UpdateRequestStatusRq, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).updateRequestStatus(updateRequestStatusRq, options).then((request) => request(this.axios, this.basePath));
+    public updateRequest(updateRequestRq: UpdateRequestRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).updateRequest(updateRequestRq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

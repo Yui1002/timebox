@@ -25,12 +25,10 @@ const Notification = (props: any) => {
         userInfo.email,
         RequestStatus.Pending,
       );
-      console.log('data', data)
       const formatted = formatData(data);
-      console.log('formatted notification', formatted)
+      console.log('formatted', formatted[0].schedules)
       setRequests(formatted);
     } catch (e) {
-      console.log(e.response.data)
       setRequests([]);
     }
   };

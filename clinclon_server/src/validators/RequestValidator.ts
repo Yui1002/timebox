@@ -1,5 +1,5 @@
 import SuperValidator from "./SuperValidator";
-import { GetRequestRq, GetRequestByEmailRq, SetRequestRq, UpdateRequestStatusRq, GetRequestByStatusRq } from "../models/Request";
+import { GetRequestRq, GetRequestByEmailRq, SetRequestRq, UpdateRequestRq, GetRequestByStatusRq } from "../models/Request";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import {isEmail, isFloat, isEmpty} from "validator";
 import { RateType, Mode } from "../helpers/enum";
@@ -89,15 +89,15 @@ class SetRequestValidator extends SuperValidator {
     }
 }
 
-class UpdateRequestStatusValidator extends SuperValidator {
+class UpdateRequestValidator extends SuperValidator {
     constructor() {
-        super(new UpdateRequestStatusRq());
+        super(new UpdateRequestRq());
     }
 
-    validateAndConvertRequest(request: any): UpdateRequestStatusRq | null {
+    validateAndConvertRequest(request: any): UpdateRequestRq | null {
         this.checkRequestEmpty(request);
 
-        let instance = JSHelperInstance._converter.deserializeObject(request, UpdateRequestStatusRq);
+        let instance = JSHelperInstance._converter.deserializeObject(request, UpdateRequestRq);
         
         if (!isEmail(instance.senderEmail) || !isEmail(instance.receiverEmail)) {
             this.throwError(null, 'Email is invalid')
@@ -110,4 +110,4 @@ class UpdateRequestStatusValidator extends SuperValidator {
     }
 }
 
-export { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestStatusValidator, GetRequestByStatusQueryValidator as GetRequestByStatuslValidator };
+export { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestValidator, GetRequestByStatusQueryValidator as GetRequestByStatuslValidator };

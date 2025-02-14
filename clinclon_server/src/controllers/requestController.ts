@@ -9,7 +9,7 @@ import {
   } from "tsoa";
 import RequestManager from '../managers/RequestManager';
 import SuperController from './SuperController';
-import { GetRequestRq, GetRequestByEmailRq, GetRequestByStatusRq, SetRequestRq, UpdateRequestStatusRq, GetRequestRs, GetRequestRsMini } from '../models/Request';
+import { GetRequestRq, GetRequestByEmailRq, GetRequestByStatusRq, SetRequestRq, UpdateRequestRq, GetRequestRs, GetRequestRsMini } from '../models/Request';
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";
 import Validate from "../validators/CustomValidator";
 
@@ -18,7 +18,7 @@ interface IRequestController {
     getRequestByEmail(rq: GetRequestByEmailRq): Promise<GetRequestRs>;
     getRequestsByStatus(rq: GetRequestByStatusRq): Promise<GetRequestRsMini[]>;
     setRequest(rq: SetRequestRq): Promise<void>;
-    updateRequestStatus(rq: UpdateRequestStatusRq): Promise<void>;
+    updateRequest(rq: UpdateRequestRq): Promise<void>;
     isRequestValid(rq: GetRequestByEmailRq): Promise<ServiceProviderMiniRs>
 }
 
@@ -57,8 +57,8 @@ export class RequestController extends SuperController implements IRequestContro
 
     @Put()
     @Validate
-    async updateRequestStatus(@Body() rq: UpdateRequestStatusRq): Promise<void> {
-        await this._requestManager.updateRequestStatus(rq);
+    async updateRequest(@Body() rq: UpdateRequestRq): Promise<void> {
+        await this._requestManager.updateRequest(rq);
     }
 
     @Get('/eligible')
