@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {styles} from '../../../styles/stepFormsStyles.js';
+import React, {useState} from 'react';
+import {View, Text, ScrollView} from 'react-native';
+import {ContainerStyle, ButtonStyle, TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
-import {Schedule, WorkShiftsProps} from '../../../types';
+import {WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import { DefaultApiFactory, SetRequestRq, Mode } from '../../../swagger/generated';
-import { ErrorModel } from '../../../types';
-import Error from '../../Error';
-import { ErrMsg, Screen, ProgressBar as Bar} from '../../../enums';
+import {
+  DefaultApiFactory,
+  SetRequestRq,
+  Mode,
+  GetUserScheduleRs,
+} from '../../../swagger';
+import {ResultModel} from '../../../types';
+import {
+  Button,
+  Section,
+  Header,
+  Result,
+  TopContainer,
+  AlignContainer,
+  Container,
+} from '../../index';
+import {ErrMsg, Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
+import ScheduleList from '../../ServiceProvider/ScheduleList';
 
 let api = DefaultApiFactory();
 
@@ -20,8 +34,10 @@ const Review = ({route, navigation}: any) => {
   const {firstName, lastName, email, rate, rateType, isEnabled} = params;
   const userInfo = useSelector(state => state.userInfo);
   const workShifts = useSelector(state => state.workShifts);
-  const statusTitles = ['Information', 'Work Shifts', 'Review'];
-  const [error, setError] = useState<ErrorModel>({message: ''})
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: '',
+  });
 
   const editDay = () => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
@@ -38,17 +54,16 @@ const Review = ({route, navigation}: any) => {
       rate: Number(rate),
       rateType: rateType,
       schedules: workShifts.workShifts,
-      mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0
-    }
+      mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
+    };
 
     try {
       await api.setRequest(params);
       clearInput();
       showSuccess();
     } catch (e: any) {
-      setError({message: ErrMsg.REQUEST_SEND_ERR})
+      setResult({status: StatusModel.ERROR, message: ErrMsg.REQUEST_SEND_ERR});
     }
-    await api.setRequest(params)
   };
 
   const showSuccess = () => {
@@ -63,93 +78,92 @@ const Review = ({route, navigation}: any) => {
 
   const clearInput = (): void => {
     dispatch(resetShift(workShifts.workShifts));
-    setError({message: ''});
+    setResult({status: StatusModel.NULL, message: ''});
+  };
+
+  let alignContainer = ContainerStyle.createAlignContainer();
+  let backBtn = ButtonStyle.createBackButtonStyle();
+  let continueBtn = ButtonStyle.createContinueButtonStyle();
+  let titleText = TextStyle.createTitleTextStyle();
+  let text = TextStyle.createBasicTextStyle();
+  let editLinkText = TextStyle.createDeleteLinkTextStyle();
+
+  const navigateBack = () => {
+    navigation.goBack();
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <TopContainer>
       <ProgressBar title={Bar.REVIEW} isFocused={true} />
-      <View>
-        {error.message && <Error msg={error.message} />}
-        <View>
-          <Text style={styles.headerText}>Review</Text>
-        </View>
-        <View style={styles.align}>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>First Name</Text>
-            <Text style={styles.font_2}>{firstName ? firstName : 'Not specified'}</Text>
-          </View>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>Last Name</Text>
-            <Text style={styles.font_2}>{lastName ? lastName : 'Not specified'}</Text>
-          </View>
-        </View>
-        <View style={styles.margin}>
-          <Text style={styles.font_1}>Email Address</Text>
-          <Text style={styles.font_2}>{email}</Text>
-        </View>
-        <View style={styles.editContainer}>
-          <View style={styles.width}>
-            <Text style={styles.font_1}>
+      {result.status && <Result status={result.status} msg={result.message} />}
+      <ScrollView>
+        <Header title="Review" />
+        <AlignContainer>
+          <Section
+            title="First Name"
+            text={firstName ? firstName : 'Not specified'}
+            isAlign={true}
+          />
+          <Section
+            title="Last Name"
+            text={lastName ? lastName : 'Not specified'}
+            isAlign={true}
+          />
+        </AlignContainer>
+        <Section title="Email Address" text={email} />
+        <AlignContainer>
+          <View style={alignContainer}>
+            <Text style={titleText}>
               Rate{' '}
-              <Text style={styles.editText} onPress={editRate}>
+              <Text style={editLinkText} onPress={editRate}>
                 Edit
               </Text>
             </Text>
-            <Text style={styles.font_1}>${rate}</Text>
+            <Text style={text}>${rate}</Text>
           </View>
-          <View style={styles.width}>
-            <Text style={styles.font_2}>
+          <View style={alignContainer}>
+            <Text style={titleText}>
               Rate Type{' '}
-              <Text style={styles.editText} onPress={editRate}>
+              <Text style={editLinkText} onPress={editRate}>
                 Edit
               </Text>
             </Text>
-            <Text style={styles.font_1}>{rateType}</Text>
+            <Text style={text}>{rateType}</Text>
           </View>
-        </View>
-        <View style={styles.margin}>
-          <Text style={styles.font_2}>
+        </AlignContainer>
+        <Container>
+          <Text style={titleText}>
             Work Shifts{' '}
-            <Text style={styles.editText} onPress={editDay}>
+            <Text style={editLinkText} onPress={editDay}>
               Edit
             </Text>
           </Text>
           {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map((shift: Schedule, index: number) => (
-              <View key={index} style={styles.dateContainer}>
-                <Text style={styles.font_1}>
-                  {String.fromCharCode(8226)} {shift.day}
-                </Text>
-                <Text style={styles.font_1}>
-                  {shift.startTime} ~ {shift.endTime}
-                </Text>
-              </View>
-            ))
+            workShifts.workShifts.map(
+              (shift: GetUserScheduleRs, index: number) => (
+                <ScheduleList w={shift} key={index} />
+              ),
+            )
           ) : (
-            <Text style={{fontSize: 18}}>No days selected</Text>
+            <Text style={text}>No days selected</Text>
           )}
-        </View>
-        <View style={{marginTop: 20}}>
-          <Text style={{fontSize: 14}}>
+        </Container>
+        <Container>
+          <Text style={titleText}>
             Allow service provider to edit record time
           </Text>
-          <Text style={{fontSize: 18}}>{isEnabled ? 'Yes' : 'No'}</Text>
-        </View>
-        <View style={styles.workShiftsBtn}>
-          <TouchableOpacity
-            style={styles.workShiftsBtn_back}
-            onPress={() => navigation.goBack()}>
-            <Text style={styles.buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.workShiftsBtn_add}
-            onPress={confirmServiceProvider}>
-            <Text style={styles.buttonText}>Confirm</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+          <Text style={text}>{isEnabled ? 'Yes' : 'No'}</Text>
+        </Container>
+        <AlignContainer>
+          <Button title="Back" onPress={navigateBack} style={backBtn} />
+          <Button
+            title="Confirm"
+            onPress={confirmServiceProvider}
+            style={continueBtn}
+          />
+        </AlignContainer>
+      </ScrollView>
+    </TopContainer>
   );
 };
 

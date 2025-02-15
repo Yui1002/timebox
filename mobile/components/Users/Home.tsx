@@ -1,20 +1,11 @@
 import React, {useState, useEffect} from 'react';
+import {Container, TopContainer, Header, Title, CenterContainer} from '../index';
 import {useSelector} from 'react-redux';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {Text, ScrollView} from 'react-native';
+import EmployerList from '../Employers/EmployerList';
 import {useIsFocused} from '@react-navigation/native';
-import {styles} from '../../styles/homeStyles.js';
-import {
-  DefaultApiFactory,
-  Employer,
-} from '../../swagger/generated';
+import {DefaultApiFactory, Employer} from '../../swagger';
 import {UserInfo} from '../../types';
-import { Screen } from '../../enums';
 
 let employerApi = DefaultApiFactory();
 
@@ -35,50 +26,33 @@ const Home = (props: any) => {
       let {data} = await employerApi.getEmployer(email);
       setEmployers(data.employers);
     } catch (e) {
-      console.log(e);
+      setEmployers([]);
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.header}>Hi {firstName}!</Text>
-      </View>
-      <View>
-        <Text style={styles.title}>My Employers</Text>
-        {employers != null ? (
-          <FlatList
-            data={employers}
-            renderItem={({item}: any) => (
-              <View style={styles.listContainer}>
-                <View>
-                  <Text style={styles.nameTitle}>
-                    {item.firstName} {item.lastName}
-                  </Text>
-                  <Text>{item.email}</Text>
-                </View>
-                <View>
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      props.navigation.navigate(Screen.RECORD, {
-                        employer: item,
-                        serviceProviderEmail: email,
-                      })
-                    }>
-                    <Text style={styles.buttonText}>Record</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-          />
+    <TopContainer>
+      <CenterContainer>
+        <Header title={`Hi ${firstName}!`} />
+      </CenterContainer>
+      <Container>
+        <Title title="My Employers" />
+        {!employers?.length ? (
+          <Text>Please use the menu to hire or manage service providers</Text>
         ) : (
-          <Text style={{marginTop: 10}}>
-            Please use the menu to hire or manage service providers
-          </Text>
+          <ScrollView>
+            {employers.map((employer, index) => (
+              <EmployerList
+                key={index}
+                employer={employer}
+                email={email}
+                navigation={props.navigation}
+              />
+            ))}
+          </ScrollView>
         )}
-      </View>
-    </SafeAreaView>
+      </Container>
+    </TopContainer>
   );
 };
 

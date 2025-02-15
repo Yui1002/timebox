@@ -2,21 +2,26 @@ import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import {styles} from '../../styles/workingHistoryStyles.js';
-import DropDownPicker from 'react-native-dropdown-picker';
-import DatePicker from 'react-native-date-picker';
+import {View, Text, ScrollView} from 'react-native';
+import {ContainerStyle, TextStyle} from '../../styles';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
-import { RawEmployer, FormattedEmployer, Record } from '../../types';
-import validator from 'validator';
-import Error from '../Error';
+import {RawEmployer, FormattedEmployer, Record, ResultModel} from '../../types';
+import Validator from '../../validator/validator';
+import {
+  TopContainer,
+  Dropdown,
+  Title,
+  Picker,
+  DatePickerDropdown,
+  Button,
+  Separator,
+  AlignContainer,
+  Result,
+} from '../index';
+import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
+import {getDiff} from '../../helper/momentHelper';
+import { StatusModel } from '../../enums';
 
 const WorkingHistory = (props: any) => {
   const {email} = useSelector(state => state.userInfo);
@@ -29,7 +34,10 @@ const WorkingHistory = (props: any) => {
   const [to, setTo] = useState<string>('');
   const [employers, setEmployers] = useState<FormattedEmployer[]>([]);
   const [records, setRecords] = useState<Record[]>([]);
-  const [errors, setErrors] = useState({});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   useEffect(() => {
     if (isFocused) {
@@ -40,11 +48,10 @@ const WorkingHistory = (props: any) => {
   const getEmployers = async () => {
     try {
       const response = await axios.post(`${LOCAL_HOST_URL}/getEmployer`, {
-        email
+        email,
       });
       setEmployers(formatData(response.data.employers));
-    } 
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
   };
@@ -63,18 +70,16 @@ const WorkingHistory = (props: any) => {
   };
 
   const validateInput = (): boolean => {
-    let errors: any = {};
-
-    if (validator.isEmpty(selectedEmployer)) {
-      errors.emptyValue = "Employer's name is required";
+    const validateErr = Validator.validateWorkingRecordSelect(
+      selectedEmployer,
+      from,
+      to,
+    );
+    if (validateErr) {
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
 
-    if (moment(from).isAfter(moment(to))) {
-      errors.invalidTime = "Invalid time";
-    }
-    
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return validateErr == null;
   };
 
   const searchRecord = async (): Promise<void> => {
@@ -84,13 +89,12 @@ const WorkingHistory = (props: any) => {
       const response = await axios.post(`${LOCAL_HOST_URL}/getRecordByPeriod`, {
         employerEmail: selectedEmployer,
         serviceProviderEmail: email,
-        from: from ? from : '1950-01-01',
-        to: to ? to : moment().format('YYYY-MM-DD')
+        from: from ? from : '2020-01-01',
+        to: to ? to : moment().format('YYYY-MM-DD'),
       });
 
       setRecords(sortRecords(response.data.records));
-    } 
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
   };
@@ -99,7 +103,7 @@ const WorkingHistory = (props: any) => {
     if (!recordData.length) return recordData;
 
     return recordData.sort((a, b) => {
-      return moment(a.startTime).diff(moment(b.startTime))
+      return moment(a.startTime).diff(moment(b.startTime));
     });
   };
 
@@ -108,101 +112,80 @@ const WorkingHistory = (props: any) => {
     type === 'from' ? setFrom(selected) : setTo(selected);
   };
 
+  let titleText = TextStyle.createTitleTextStyle();
+  let topAlignContainer = ContainerStyle.createAlignTopContainer();
+  let centerText = TextStyle.createCenterTextStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <TopContainer>
       {employers.length ? (
         <ScrollView>
           <View>
-            <Text style={styles.subHeader}>Select employer's name</Text>
-            {Object.values(errors).map((error, key) => (
-              <Error key={key} msg={error} />
-            ))}
-            <DropDownPicker
+          {result.status && <Result status={result.status} msg={result.message} />}
+            <Title title="Select employer's name" />
+            <Picker
               open={employerDropdownOpen}
               value={selectedEmployer}
               items={employers}
-              setOpen={setEmployerDropdownOpen}
+              setOpen={() => setEmployerDropdownOpen(!employerDropdownOpen)}
               setValue={setSelectedEmployer}
               setItems={setEmployers}
-              placeholder="Employer's name"
-              listMode="SCROLLVIEW"
             />
           </View>
-          <View style={employerDropdownOpen ? styles.dropdownOpen : null}>
-            <Text style={styles.subHeader}>Select period</Text>
-            <TouchableOpacity
+          <View style={employerDropdownOpen ? {zIndex: -1} : null}>
+            <Text style={titleText}>Select period</Text>
+            <Dropdown
+              placeholder={from ? from : 'From'}
               onPress={() => setFromDropDown(!fromDropdown)}
-              style={styles.dropdown}>
-              <Text style={styles.dropdownText}>{from ? from : 'From'}</Text>
-              <View style={styles.arrow} />
-            </TouchableOpacity>
-            <TouchableOpacity
+            />
+            <Dropdown
+              placeholder={to ? to : 'To'}
               onPress={() => setToDropDown(!toDropdown)}
-              style={styles.dropdown}>
-              <Text style={styles.dropdownText}>{to ? to : 'To'}</Text>
-              <View style={styles.arrow} />
-            </TouchableOpacity>
+            />
           </View>
           <View>
-            <DatePicker
-              modal
+            <DatePickerDropdown
               open={fromDropdown}
               mode="date"
-              date={new Date()}
               onConfirm={d => onPeriodChange('from', d)}
               onCancel={() => {
                 setFromDropDown(false);
               }}
-              minimumDate={new Date('1950-01-01')}
+              minimumDate={new Date('2020-01-01')}
               maximumDate={new Date()}
             />
-            <DatePicker
-              modal
+            <DatePickerDropdown
               open={toDropdown}
               mode="date"
-              date={new Date()}
               onConfirm={d => onPeriodChange('to', d)}
               onCancel={() => {
                 setToDropDown(false);
               }}
-              minimumDate={new Date('1950-01-01')}
+              minimumDate={new Date('2020-01-01')}
               maximumDate={new Date()}
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={searchRecord}>
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-          <View style={styles.listHeader}>
+          <Button title="Search" onPress={searchRecord} />
+          <AlignContainer>
             <Text>Date</Text>
             <Text>Check In</Text>
             <Text>Check Out</Text>
             <Text>Total</Text>
-          </View>
-          <View style={styles.separator}></View>
-          {records && records.length > 0 ? (
+          </AlignContainer>
+          <Separator />
+          {records?.length ? (
             records.map((h: Record, index: number) => {
-              const a = h.startTime ? moment(h.startTime) : null;
-              const b = h.endTime ? moment(h.endTime) : null;
-              const total = a && b ? `${b.diff(a, 'hours')}h` : '0h';
-              return (
-                <View style={styles.list} key={index}>
-                  <Text>
-                    {a ? `${moment(a || b).format('YYYY/MM/DD')}` : 'No record'}
-                  </Text>
-                  <Text>{a ? `${a.format('LT')}` : 'No record'}</Text>
-                  <Text>{b ? `${b.format('LT')}` : 'No record'}</Text>
-                  <Text>{`${total}`}</Text>
-                </View>
-              );
+              const total = getDiff({start: h.startTime, end: h.endTime});
+              return <WorkingHistoryList total={total} />;
             })
           ) : (
-            <Text style={styles.noMatch}>No records matched</Text>
+            <Text style={centerText}>No records matched</Text>
           )}
         </ScrollView>
       ) : (
         <Text>You currenly have no working records</Text>
       )}
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

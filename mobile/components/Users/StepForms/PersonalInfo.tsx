@@ -1,42 +1,64 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import {styles} from '../../../styles/stepFormsStyles.js';
+import {View, ScrollView} from 'react-native';
+import {ContainerStyle, ButtonStyle, InputStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
-import InputField from '../../InputField';
-import DropDownPicker from 'react-native-dropdown-picker';
-import {deleteShift, resetShift} from '../../../redux/actions/workShiftsAction';
-import {ErrorModel} from '../../../types';
+import {resetShift} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
-import Error from '../../Error';
-import {RateTypeSet, PersonalInfoProps, WorkShiftsProps} from '../../../types';
-import {RateTypeValue, Screen, ErrMsg, ProgressBar as Bar} from '../../../enums';
+import {
+  Button,
+  Section,
+  NumberInput,
+  Picker,
+  Header,
+  Result,
+  TopContainer,
+  AlignContainer,
+  Title,
+} from '../../index';
+import {
+  RateTypeSet,
+  PersonalInfoProps,
+  WorkShiftsProps,
+  ResultModel,
+  ModeSet,
+} from '../../../types';
+import {
+  RateTypeValue,
+  Screen,
+  ProgressBar as Bar,
+  Mode,
+  StatusModel,
+} from '../../../enums';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email}: PersonalInfoProps = route.params;
-  const statusTitles = ['Information', 'Work Shifts', 'Review'];
   const [open, setOpen] = useState<boolean>(false);
+  const [modeOpen, setModeOpen] = useState<boolean>(false);
   const [items, setItems] = useState<RateTypeSet[]>([
     {label: RateTypeValue.HOURLY, value: RateTypeValue.HOURLY},
     {label: RateTypeValue.DAILY, value: RateTypeValue.DAILY},
   ]);
-  const [rate, setRate] = useState<string>('0');
+  const [modeItems, setModeItems] = useState<ModeSet[]>([
+    {label: Mode.YES, value: Mode.YES},
+    {label: Mode.NO, value: Mode.NO},
+  ]);
+  const [rate, setRate] = useState<string>('');
   const [rateType, setRateType] = useState<RateTypeValue>(RateTypeValue.HOURLY);
-  const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [mode, setMode] = useState<Mode>(Mode.NO);
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: '',
+  });
   const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
-    if (!Validator.isValidRate(rate)) {
-      setError({message: ErrMsg.INVALID_RATE});
-      return false;
+    const validateErr = Validator.validateRate(rate, rateType);
+    if (validateErr) {
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
-    if (!Validator.isValidRateType(rateType)) {
-      setError({message: ErrMsg.INVALID_RATE_TYPE});
-      return false;
-    }
-    return true;
+    return validateErr == null;
   };
 
   const proceed = () => {
@@ -48,7 +70,6 @@ const PersonalInfo = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
-      isEnabled,
     };
 
     navigation.navigate(Screen.WORK_SHIFTS, props);
@@ -59,99 +80,70 @@ const PersonalInfo = ({route, navigation}: any) => {
     navigation.goBack();
   };
 
+  let container = ContainerStyle.createBasicContainerStyle();
+  let alignContainer = ContainerStyle.createAlignContainer();
+  let continuBtn = ButtonStyle.createContinueButtonStyle();
+  let backBtn = ButtonStyle.createBackButtonStyle();
+  let underlineInput = InputStyle.createUnderlineInputStyle();
+
   return (
-    <View style={styles.container}>
+    <TopContainer>
       <ProgressBar title={Bar.INFORMATION} isFocused={true} />
+      {result.status && <Result status={result.status} msg={result.message} />}
       <ScrollView>
-        {error.message && <Error msg={error.message} />}
-        <View style={styles.header}>
-          <Text style={styles.headerText}>User Information</Text>
+        <Header title="User Information" />
+        <AlignContainer>
+          <Section
+            title="First Name"
+            text={firstName ? firstName : 'Not specified'}
+            isAlign={true}
+          />
+          <Section
+            title="Last Name"
+            text={lastName ? lastName : 'Not specified'}
+            isAlign={true}
+          />
+        </AlignContainer>
+        <Section title="Email Address" text={email} />
+        <AlignContainer>
+          <View style={alignContainer}>
+            <Title title="Rate ($)" />
+            <NumberInput
+              maxLength={10}
+              style={underlineInput}
+              onChangeText={(val: string) => setRate(val)}
+            />
+          </View>
+          <View style={alignContainer}>
+            <Title title="Rate Type" />
+            <Picker
+              open={open}
+              value={rateType}
+              items={items}
+              setOpen={() => setOpen(!open)}
+              setValue={setRateType}
+              setItems={setItems}
+            />
+          </View>
+        </AlignContainer>
+        <View style={[container, {zIndex: open ? -1 : 1}]}>
+          <Title title="Allow the service provider to modify record time?" />
+          <Picker
+            open={modeOpen}
+            value={mode}
+            items={modeItems}
+            setOpen={() => setModeOpen(!modeOpen)}
+            setValue={setMode}
+            setItems={setModeItems}
+          />
         </View>
-        <View>
-          <View style={styles.align}>
-            <View style={styles.width}>
-              <Text style={styles.font_1}>First Name</Text>
-              <Text style={styles.font_2}>
-                {firstName ? firstName : 'Not specified'}
-              </Text>
-            </View>
-            <View style={styles.width}>
-              <Text style={styles.font_1}>Last Name</Text>
-              <Text style={styles.font_2}>
-                {lastName ? lastName : 'Not specified'}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.margin}>
-            <Text style={styles.font_1}>Email Address</Text>
-            <Text style={styles.font_2}>{email}</Text>
-          </View>
-          <View style={[styles.align, styles.margin]}>
-            <View style={styles.width}>
-              <Text>Rate ($)</Text>
-              <InputField.Underlined onChangeText={setRate} />
-            </View>
-            <View style={styles.width}>
-              <Text>Rate Type</Text>
-              <DropDownPicker
-                open={open}
-                value={rateType}
-                items={items}
-                setOpen={() => setOpen(!open)}
-                setValue={setRateType}
-                setItems={setItems}
-                listMode="SCROLLVIEW"
-              />
-            </View>
-          </View>
-          <View style={open ? styles.open : styles.close}>
-            <Text style={styles.optionContainer}>
-              Allow the service provider to modify record time?
-            </Text>
-            <View style={styles.optionBox}>
-              <TouchableOpacity
-                style={[
-                  styles.mode,
-                  {backgroundColor: isEnabled ? '#24a0ed' : '#fff'},
-                ]}
-                onPress={() => setIsEnabled(true)}>
-                <Text
-                  style={[
-                    styles.modeText,
-                    {color: isEnabled ? '#fff' : '#000'},
-                  ]}>
-                  Yes
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.mode,
-                  {backgroundColor: isEnabled === false ? '#24a0ed' : '#fff'},
-                ]}
-                onPress={() => setIsEnabled(false)}>
-                <Text
-                  style={[
-                    styles.modeText,
-                    {color: isEnabled === false ? '#fff' : '#000'},
-                  ]}>
-                  No
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.workShiftsBtn}>
-          <TouchableOpacity style={styles.workShiftsBtn_back} onPress={goBack}>
-            <Text style={styles.buttonText}>Back</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.workShiftsBtn_add} onPress={proceed}>
-            <Text style={styles.buttonText}>{`Continue  ${String.fromCharCode(
-              9654,
-            )}`}</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={{marginVertical: 20}}/>
+        <AlignContainer>
+          <Button title="Back" onPress={goBack} style={backBtn} />
+          <Button title="Continue" onPress={proceed} style={continuBtn} />
+        </AlignContainer>
       </ScrollView>
-    </View>
+    </TopContainer>
   );
 };
 

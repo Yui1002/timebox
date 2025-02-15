@@ -1,6 +1,6 @@
 import SuperValidator from "./SuperValidator";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
-import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq } from "../models/Record";
+import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, UpdateRecordRq } from "../models/Record";
 import {isEmail, isEmpty} from 'validator';
 
 class GetRecordRequestValidator extends SuperValidator {
@@ -67,7 +67,7 @@ class SetRecordRequestValidator extends SuperValidator {
     validateAndConvertRequest(request: any): SetRecordRq | null {
         this.checkRequestEmpty(request);
 
-        let instance = JSHelperInstance._converter.deserializeObject(request.body, SetRecordRq);
+        let instance = JSHelperInstance._converter.deserializeObject(request, SetRecordRq);
         if (!isEmail(instance.employerEmail) || !isEmail(instance.serviceProviderEmail)) {
             this.throwError(null, 'Email is invalid')
         }
@@ -82,4 +82,27 @@ class SetRecordRequestValidator extends SuperValidator {
     }
 }
 
-export { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator }
+class UpdateRecordRequestValidator extends SuperValidator {
+    constructor() {
+        super(new UpdateRecordRq());
+    };
+
+    validateAndConvertRequest(request: any): UpdateRecordRq | null {
+        this.checkRequestEmpty(request);
+
+        let instance = JSHelperInstance._converter.deserializeObject(request, UpdateRecordRq);
+        if (!instance.recordId) {
+            this.throwError(null, 'Record ID must not be empty')
+        }
+        if (isEmpty(instance.recordTime)) {
+            this.throwError(null, 'Record time must not be empty');
+        }
+        if (!instance.type) {
+            this.throwError(null, 'Type must not be empty');
+        }
+
+        return instance;
+    }
+}
+
+export { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator }

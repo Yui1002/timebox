@@ -1,5 +1,5 @@
-import UserManager from '../..//managers/userManager';
-import UserRepo from '../../repositories/userRepo';
+import UserManager from '../..//managers/UserManager';
+import UserRepo from '../../repositories/UserRepo';
 import ResponseException from '../../models/ResponseException';
 import { GetUserRq, SetUserRq, SignInUserRq, UserRawDB } from '../../models/User';
 import bcrypt from 'bcrypt';

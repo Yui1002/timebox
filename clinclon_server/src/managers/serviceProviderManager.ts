@@ -1,10 +1,10 @@
 import ServiceProviderRepo from "../repositories/ServiceProviderRepo";
-import UserRepo from "../repositories/userRepo";
-import { GetServiceProviderRq, GetServiceProviderRs, UpdateServiceProviderRq } from "../models/ServiceProvider";
+import UserRepo from "../repositories/UserRepo";
+import { GetServiceProviderRq, GetServiceProviderRsMini, ServiceProviderRawDB, UpdateServiceProviderRq } from "../models/ServiceProvider";
 import ResponseException from "../models/ResponseException";
 
 interface IServiceProviderManager {
-    getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRs>;
+    getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRsMini[]>;
     updateServiceProvider(serviceProvider: UpdateServiceProviderRq): Promise<void>;
 }
 
@@ -17,7 +17,7 @@ class ServiceProviderManager implements IServiceProviderManager {
         this._userRepo = new UserRepo();
     }
 
-    async getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRs> {
+    async getServiceProvider(serviceProviderRq: GetServiceProviderRq): Promise<GetServiceProviderRsMini[]> {
         let employerData = await this._userRepo.getUser(serviceProviderRq.employerEmail);
         if (!employerData) {
             throw new ResponseException(null, 400, 'no data found');
@@ -30,7 +30,7 @@ class ServiceProviderManager implements IServiceProviderManager {
             throw new ResponseException(null, 204, 'no data found')
         }
 
-        return serviceProviderData
+        return serviceProviderData.serviceProviders.map((sp: ServiceProviderRawDB) => new GetServiceProviderRsMini(sp))
     }
     
     async updateServiceProvider(serviceProviderRq: UpdateServiceProviderRq): Promise<void> {
@@ -96,21 +96,21 @@ class ServiceProviderManager implements IServiceProviderManager {
 
         await this._serviceProviderRepo.updateUserTransaction(serviceProviderRq, transactionId);
         
-        await Promise.all(serviceProviderRq.schedule.map(async (item): Promise<void> => {
-            let scheduleData = await this._serviceProviderRepo.getSchedule(item.id);
-            if (!scheduleData) {
-                throw new ResponseException(null, 400, 'no data found');
-            } 
-            if (!item.day && !item.startTime && !item.endTime) {
-                await this._serviceProviderRepo.deleteSchedule(item.id);
-            } else {
-                let args: any = {};
-                if (item.day !== scheduleData.day) args['day'] = item.day;
-                if (item.startTime !== scheduleData.startTime) args['start_time'] = item.startTime;
-                if (item.endTime !== scheduleData.endTime) args['end_time'] = item.endTime;
-                await this._serviceProviderRepo.updateSchedule(args, item.id);
-            }
-        }));
+        // await Promise.all(serviceProviderRq.schedule.map(async (item: UserSchedule): Promise<void> => {
+        //     let scheduleData = await this._serviceProviderRepo.getSchedule(item.id);
+        //     if (!scheduleData) {
+        //         throw new ResponseException(null, 400, 'no data found');
+        //     } 
+        //     if (!item.day && !item.startTime && !item.endTime) {
+        //         await this._serviceProviderRepo.deleteSchedule(item.id);
+        //     } else {
+        //         let args: any = {};
+        //         if (item.day !== scheduleData.day) args['day'] = item.day;
+        //         if (item.startTime !== scheduleData.startTime) args['start_time'] = item.startTime;
+        //         if (item.endTime !== scheduleData.endTime) args['end_time'] = item.endTime;
+        //         await this._serviceProviderRepo.updateSchedule(args, item.id);
+        //     }
+        // }));
 
     }    
 }

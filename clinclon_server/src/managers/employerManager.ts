@@ -1,5 +1,5 @@
-import EmployerRepo from "../repositories/employerRepo";
-import UserRepo from "../repositories/userRepo";
+import EmployerRepo from "../repositories/EmployerRepo";
+import UserRepo from "../repositories/UserRepo";
 import { GetEmployerRq, GetEmployerRs } from "../models/Employer";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';

@@ -1,5 +1,5 @@
-import { UserController } from "../../controllers/userController";
-import UserManager from "../../managers/userManager";
+import { UserController } from "../../controllers/UserController";
+import UserManager from "../../managers/UserManager";
 import Validator from "../../validators/Validator";
 import { GetUserRq, GetUserRs, UserRawDB, SetUserRq, SignInUserRq } from "../../models/User";
 import {BaseRequest} from "../../models/BaseRequest";

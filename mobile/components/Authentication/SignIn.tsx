@@ -1,135 +1,86 @@
 import React, {useState} from 'react';
+import {ScrollView} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {
   DefaultApiFactory,
   GetUserRs,
   SignInUserRq,
-} from '../../swagger/generated';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
-import Error from '../Error';
-import {styles} from '../../styles/signInStyles.js';
+} from '../../swagger';
 import {signInUser} from '../../redux/actions/signInAction.js';
-import {navigate} from '../../helper/navigate';
 import Validator from '../../validator/validator';
-import {ErrorModel} from '../../types';
-import {Screen, ErrMsg} from '../../enums';
+import {ResultModel} from '../../types';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {Footer, Button, Result, Separator, Input, TopContainer} from '../index';
 let userApi = DefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [email, setEmail] = useState<string>('tvhtialbgalbylukwh@ytnhy.com');
+  const [password, setPassword] = useState<string>('Gorilla123!');
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateInput = (): boolean => {
-    if (!Validator.isValidEmail(email)) {
-      setErrors({message: ErrMsg.INVALID_EMAIL});
-      return false;
-    } else if (!Validator.isValidPassword(password)) {
-      setErrors({message: ErrMsg.INVALID_PASSWORD});
-      return false;
+    const validateErr = Validator.validateSignIn(email, password);
+    if (validateErr) {
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
-    return true;
+    return validateErr == null;
   };
 
   const signIn = async (): Promise<void> => {
     if (!validateInput()) return;
 
-    const params: SignInUserRq = {email, password};
-
     try {
-      const {data} = await userApi.signInUser(params);
+      const {data} = await userApi.signInUser({
+        email, password
+      } as SignInUserRq);
       dispatchUser(data);
-      navigateScreen(Screen.DRAWER_NAV);
+      clearInput();
+      navigation.navigate(Screen.DRAWER_NAV);
     } catch (e: any) {
-      setErrors({message: ErrMsg.SIGNIN_ERROR});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.SIGNIN_ERROR});
     }
   };
 
   const clearInput = (): void => {
     setEmail('');
     setPassword('');
-    setErrors({message: ''});
+    setResult({status: StatusModel.NULL, message: ''});
   };
 
   const dispatchUser = (data: GetUserRs): void => {
-    dispatch(
-      signInUser({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-      }),
-    );
-  };
-
-  const navigateScreen = (screenName: string) => {
-    clearInput();
-    navigate(navigation, screenName, null);
+    const {firstName, lastName, email} = data;
+    dispatch(signInUser({firstName, lastName, email}));
   };
 
   return (
-    <ScrollView>
-      <SafeAreaView style={styles.container}>
-        <View>
-          <View style={{marginVertical: 10}}>
-            {errors.message && <Error msg={errors.message} />}
-          </View>
-          <View>
-            <Text>Email</Text>
-            <TextInput
-              value={email}
-              style={styles.input}
-              autoCorrect={false}
-              autoCapitalize="none"
-              onChangeText={val => setEmail(val)}
-            />
-          </View>
-          <View style={{marginVertical: 10}} />
-          <View>
-            <Text>Password</Text>
-            <TextInput
-              value={password}
-              style={styles.input}
-              autoCorrect={false}
-              autoCapitalize="none"
-              secureTextEntry={true}
-              onChangeText={val => setPassword(val)}
-            />
-          </View>
-          <View style={{marginVertical: 20}} />
-          <TouchableOpacity style={styles.button} onPress={signIn}>
-            <Text style={styles.buttonText}>Sign In</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.separator}></View>
-        <View style={styles.footer}>
-          <View>
-            <Text>New user?</Text>
-            <Text
-              style={styles.link}
-              onPress={() => navigateScreen(Screen.SIGN_UP)}>
-              Sign Up
-            </Text>
-          </View>
-          <View>
-            <Text>Forgot password?</Text>
-            <Text
-              style={styles.link}
-              onPress={() => navigateScreen(Screen.FORGOT_PASSWORD)}>
-              Reset password
-            </Text>
-          </View>
-        </View>
-      </SafeAreaView>
-    </ScrollView>
+    <TopContainer>
+      <ScrollView>
+        {result.status && <Result status={result.status} msg={result.message} />}
+        <Input
+          title="Email"
+          secureTextEntry={false}
+          onChangeText={val => setEmail(val)}
+        />
+        <Input
+          title="Password"
+          secureTextEntry={true}
+          onChangeText={val => setPassword(val)}
+        />
+        <Button title="Sign In" onPress={signIn} />
+        <Separator />
+        <Footer
+          leftText={{text1: 'New user?', text2: 'Sign Up'}}
+          rightText={{text1: 'Forgot password?', text2: 'Reset password'}}
+          leftFunc={() => navigation.navigate(Screen.SIGN_UP)}
+          rightFunc={() => navigation.navigate(Screen.FORGOT_PASSWORD)}
+        />
+      </ScrollView>
+    </TopContainer>
   );
 };
 

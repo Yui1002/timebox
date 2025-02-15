@@ -7,7 +7,7 @@ import {
 } from "../models/ServiceProvider";
 import { GetUserTransactionRs } from "../models/UserTransaction";
 import { GetUserScheduleRs } from "../models/UserSchedule";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
 
 
@@ -16,7 +16,6 @@ interface IServiceProviderRepo {
 }
 
 class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
-
   public async getServiceProvider(employerId: number): Promise<GetServiceProviderRs> {
     try {
       const sql = `SELECT 
@@ -38,11 +37,12 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
                 LEFT JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
                 WHERE u.user_id = $1`;
       const data = await this.queryDB(sql, [employerId]);
-
+      console.log('data', data)
       if (data?.rows.length <= 0) {
         return null;
       }
 
+      console.log('data original', data)
       return JSHelperInstance._converter.deserializeObject(data, GetServiceProviderRs);
     } catch (e) {
       console.log(e);

@@ -1,23 +1,24 @@
 import React, {useState} from 'react';
-import {Text, View, SafeAreaView, TextInput, Button} from 'react-native';
-import {styles} from '../../styles/forgotPasswordStyles.js';
-import Error from '../Error';
-import {ErrorModel, ForgotPasswordProps} from '../../types';
+import {ResultModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
-import {DefaultApiFactory} from '../../swagger/generated';
-import {Screen, ErrMsg} from '../../enums';
+import {DefaultApiFactory} from '../../swagger';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
   const [email, setEmail] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   const validateEmail = (): boolean => {
-    if (!Validator.isValidEmail(email)) {
-      setErrors({message: ErrMsg.INVALID_EMAIL});
-      return false;
+    const validateErr = Validator.validateEmail(email);
+    if (validateErr) {
+      setResult({status: StatusModel.ERROR, message: validateErr});
     }
-    return true;
+    return validateErr == null;
   };
 
   const navigateScreen = () => {
@@ -36,42 +37,27 @@ const ForgotPassword = ({navigation}: any) => {
       await api.getUser(email);
       navigateScreen();
     } catch (e) {
-      setErrors({message: ErrMsg.EMAIL_NOT_FOUND});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.EMAIL_NOT_FOUND});
     }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.header}>Verify Email</Text>
-        {errors.message && <Error msg={errors.message} />}
-        <View style={{marginVertical: 10}} />
-        <View>
-          <Text>Email</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize="none"
-            onChangeText={val => setEmail(val)}
-          />
-        </View>
-        <View style={{marginVertical: 20}} />
-        <View style={styles.button}>
-          <Button title="Submit" color="#fff" onPress={checkEmailRegistered} />
-        </View>
-      </View>
-      <View style={styles.separator}></View>
-      <View style={styles.footer}>
-        <View>
-          <Text>Go back to</Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
-            Sign In
-          </Text>
-        </View>
-      </View>
-    </SafeAreaView>
+    <TopContainer>
+      {result.status && <Result status={result.status} msg={result.message} />}
+      <Input
+        title="Email"
+        secureTextEntry={false}
+        onChangeText={val => setEmail(val)}
+      />
+      <Button title="Verify Email" onPress={checkEmailRegistered} />
+      <Separator />
+      <Footer
+        leftText={{text1: 'Go back to', text2: 'Sign In'}}
+        leftFunc={() => navigation.navigate(Screen.SIGN_IN)}
+        rightText={undefined}
+        rightFunc={undefined}
+      />
+    </TopContainer>
   );
 };
 

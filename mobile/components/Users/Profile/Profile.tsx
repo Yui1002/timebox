@@ -1,93 +1,89 @@
-import React, {useEffect, useRef} from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  Linking,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
-import {styles} from '../../../styles/profileStyles.js';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import React from 'react';
+import {Text, Linking, ScrollView} from 'react-native';
+import {TextStyle, IconStyle} from '../../../styles';
 import {useSelector} from 'react-redux';
-import { navigate } from '../../../helper/navigate';
-import { Schedule } from '../../../type';
-import { updateServiceProvider } from '../../../redux/actions/updateServiceProviderAction.js';
+import {
+  Button,
+  Section,
+  TopContainer,
+  AlignContainer,
+  Container,
+  Title,
+  Icon,
+} from '../../index';
+import {Screen} from '../../../enums';
+import ScheduleList from '../../ServiceProvider/ScheduleList';
+import {UserSchedule} from '../../../swagger';
 
 const Profile = ({route, navigation}: any) => {
-  const {first_name, last_name, email, status, rate, rate_type, schedule} = route.params.sp;
-  console.log(route.params.sp)
+  const {firstName, lastName, email, status, rate, rateType, schedules} =
+    route.params.sp;
   const userInfo = useSelector(state => state.userInfo);
-  const dispatch = useDispatch();
-  dispatch(updateServiceProvider({ first_name, last_name, email, status, rate, rate_type, schedule }));
 
   const editProfile = () => {
-    navigate(navigation, 'EditProfile', null)
+    navigation.navigate(Screen.EDIT_PROFILE);
   };
 
   const viewWorkingHistory = () => {
-    navigation.navigate('ViewWorkingHistory', {
+    navigation.navigate(Screen.VIEW_WORKING_HISTORY, {
       spEmail: email,
     });
   };
 
+  let profileText = TextStyle.createProfileTextStyle();
+  let centerText = TextStyle.createCenterTextStyle();
+  let icon = IconStyle.createProfileIconStyle();
+  let icon2 = IconStyle.createAlignProfileIconStyle();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <TopContainer>
       <ScrollView>
-        <View style={styles.logoContainer}>
-          <MaterialCommunityIcons name="account" size={46} color="#000" />
-          <Text style={{fontSize: 20}}>
-            {first_name} {last_name}
+        <Container>
+          <Icon
+            name="account"
+            size={46}
+            type="MaterialCommunity"
+            style={icon}
+          />
+          <Text style={profileText}>
+            {firstName} {lastName}
           </Text>
-          <Text style={{fontSize: 14}}>{email}</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <MaterialIcons
+          <Text style={centerText}>{email}</Text>
+        </Container>
+        <AlignContainer>
+          <Icon
             name="edit"
             size={30}
-            color="#000"
+            type="Material"
             onPress={editProfile}
+            style={icon2}
           />
-          <MaterialCommunityIcons
+          <Icon
             name="message-processing-outline"
             size={30}
-            color="#000"
+            type="MaterialCommunity"
+            style={icon2}
             onPress={() => Linking.openURL(`mailto:${userInfo.email}`)}
           />
-        </View>
-        <View style={styles.title}>
-          <Text style={styles.text}>Status</Text>
-          <Text>{status}</Text>
-        </View>
-        <View style={styles.title}>
-          <Text style={styles.text}>Rate</Text>
-          <Text>
-            {!rate && !rate_type ? `Not specified` : `$${rate} / ${rate_type}`}
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.text}>Working schedules</Text>
-          {schedule.length ? (
-            schedule.map((s: Schedule, index: number) => (
-              <View key={index} style={styles.shiftText}>
-                <Text style={styles.day}>{`${String.fromCharCode(8226)} ${
-                  s.day
-                }`}</Text>
-                <Text
-                  style={styles.time}>{`${s.startTime} - ${s.endTime}`}</Text>
-              </View>
+        </AlignContainer>
+        <Section title="Status" text={status} isAlign={false} />
+        <Section
+          title="Rate"
+          text={!rate && !rateType ? `Not specified` : `$${rate} / ${rateType}`}
+        />
+        <Container>
+          <Title title="Working schedules" />
+          {schedules?.length ? (
+            schedules?.map((s: UserSchedule, index: number) => (
+              <ScheduleList key={index} w={s} />
             ))
           ) : (
             <Text>Not specified</Text>
           )}
-        </View>
-        <TouchableOpacity style={styles.button} onPress={viewWorkingHistory}>
-          <Text style={styles.buttonText}>View working history</Text>
-        </TouchableOpacity>
+        </Container>
+        <Button title="View working history" onPress={viewWorkingHistory} />
       </ScrollView>
-    </SafeAreaView>
+    </TopContainer>
   );
 };
 

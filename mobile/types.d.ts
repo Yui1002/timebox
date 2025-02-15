@@ -1,4 +1,5 @@
-import {RateTypeValue} from './enums';
+import {RateTypeValue, Mode, StatusModel} from './enums';
+import { UserSchedule } from './swagger';
 
 type UserInfo = {
   firstName: string;
@@ -42,7 +43,8 @@ type Record = {
   endTime: string | null;
 };
 
-type ErrorModel = {
+type ResultModel = {
+  status: StatusModel;
   message: string;
 };
 
@@ -63,13 +65,14 @@ type NotificationData = {
   requestDate: Date;
 };
 
-type RateType = {
-    rateType: RateTypeValue.HOURLY | RateTypeValue.DAILY;
-}
-
 type RateTypeSet = {
   label: RateTypeValue.HOURLY | RateTypeValue.DAILY;
   value: RateTypeValue.HOURLY | RateTypeValue.DAILY;
+};
+
+type ModeSet = {
+  label: Mode.YES | Mode.NO;
+  value: Mode.YES | Mode.NO;
 };
 
 type SignUpProps = {
@@ -77,7 +80,13 @@ type SignUpProps = {
   lastName: string,
   email: string,
   password: string,
+  confirmedPassword: string,
   isSignUp: boolean,
+}
+
+type SignInProps = {
+  email: string,
+  password: string
 }
 
 type PersonalInfoProps = {
@@ -92,7 +101,6 @@ type WorkShiftsProps = {
     email: string,
     rate: string,
     rateType: RateTypeValue.HOURLY | RateTypeValue.DAILY,
-    isEnabled: boolean;
 }
 
 type ForgotPasswordProps = {
@@ -100,12 +108,18 @@ type ForgotPasswordProps = {
   isSignUp: boolean
 }
 
+type FormatRequest = {
+  email: string,
+  schedules: UserSchedule[]
+}
+
+
+
 export {
   UserInfo,
   PersonalInfoProps,
   RateTypeSet,
-  RateType,
-  ErrorModel,
+  ResultModel,
   Schedule,
   ServiceProvider,
   RawEmployer,
@@ -114,5 +128,7 @@ export {
   NotificationData,
   WorkShiftsProps,
   SignUpProps,
-  ForgotPasswordProps
+  SignInProps,
+  ForgotPasswordProps,
+  ModeSet
 };

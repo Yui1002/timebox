@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { SetOTPRq, OTPRawDB, GetOTPRq } from "../models/OTP";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
-import Repositories from "./repositories";
+import Repositories from "./Repositories";
 dotenv.config();
 
 

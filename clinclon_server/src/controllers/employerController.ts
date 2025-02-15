@@ -1,5 +1,5 @@
 import Validate from '../validators/CustomValidator';
-import EmployerManager from '../managers/employerManager';
+import EmployerManager from '../managers/EmployerManager';
 import { GetEmployerRq, GetEmployerRs } from '../models/Employer';
 import SuperController from './SuperController';
 import { Get, Route, Queries } from "tsoa";

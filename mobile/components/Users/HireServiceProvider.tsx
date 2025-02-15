@@ -1,24 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
-import {styles} from '../../styles/hireServiceProviderStyles.js';
-import InputField from '../InputField';
+import {Text} from 'react-native';
 import Popup from '../Popup';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
-import Error from '../Error';
-import {DefaultApiFactory, GetUserRs} from '../../swagger/generated';
+import {Button, Container, Input, Result, TopContainer} from '../index';
+import {DefaultApiFactory, GetUserRs} from '../../swagger';
 import Validator from '../../validator/validator';
-import {ErrorModel} from '../../types';
-import { Screen, ErrMsg } from '../../enums';
+import {ResultModel} from '../../types';
+import {Screen, ErrMsg, StatusModel} from '../../enums';
 
 let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>('');
-  const [error, setError] = useState<ErrorModel>({message: ''});
+  const [searchInput, setSearchInput] = useState<string>('lfhoqudfzurpkbskmi@hthlm.com');
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
 
   useEffect(() => {
     setModalVisible(true);
@@ -26,7 +27,11 @@ const HireServiceProvider = (props: any) => {
 
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
-      setError({message: ErrMsg.INVALID_EMAIL});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_EMAIL});
+      return false;
+    }
+    if (searchInput === userInfo.email) {
+      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_REQUEST})
       return false;
     }
     return true;
@@ -40,7 +45,7 @@ const HireServiceProvider = (props: any) => {
       const serviceProvider = data.serviceProviderUser;
       showConfirmMsg(serviceProvider);
     } catch (e) {
-      setError({message: ErrMsg.DUPLICATE_REQUEST});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_REQUEST});
     }
   };
 
@@ -50,9 +55,9 @@ const HireServiceProvider = (props: any) => {
       '',
       function () {
         navigate(props.navigation, Screen.PERSONAL_INFO, {
-          firstName: serviceProvider ? serviceProvider.firstName : '',
-          lastName: serviceProvider ? serviceProvider.lastName : '',
-          email: serviceProvider ? serviceProvider.email : searchInput,
+          firstName: serviceProvider?.firstName ?? '',
+          lastName: serviceProvider?.lastName ?? '',
+          email: serviceProvider?.email ?? searchInput,
         });
         clearInput();
       },
@@ -62,34 +67,27 @@ const HireServiceProvider = (props: any) => {
 
   const clearInput = () => {
     setSearchInput('');
-    setError({message: ''});
+    setResult({status: StatusModel.NULL, message: ''});
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <TopContainer>
+      {result.status && <Result status={result.status} msg={result.message} />}
       {modalVisible && (
         <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
       )}
-      <View>
+      <Container>
         <Text>
           Enter the email of a service provider you would like to hire
         </Text>
-        {error.message && <Error msg={error.message} />}
-      </View>
-      <View style={styles.subContainer}>
-        <Text>Email</Text>
-        <InputField.Outlined
-          onChangeText={(val: any) => setSearchInput(val)}
-          isEditable={true}
-          value={searchInput}
-        />
-        <TouchableOpacity
-          style={[styles.button, {marginTop: 20}]}
-          onPress={searchEmail}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </Container>
+      <Input
+        title="Email"
+        secureTextEntry={false}
+        onChangeText={val => setSearchInput(val)}
+      />
+      <Button title="Continue" onPress={searchEmail} />
+    </TopContainer>
   );
 };
 

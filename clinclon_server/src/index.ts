@@ -8,11 +8,12 @@ import Validator from "./validators/Validator";
 import { GetUserRequestValidator, ResetPasswordRequestValidator, SetUserRequestValidator, SignInUserRequestValidator } from "./validators/UserRequestValidator";
 import { GetOTPRequestValidator, SetOTPRequestValidator } from "./validators/OTPRequestValidator";
 import { GetEmployerRequestValidator } from "./validators/EmployerRequestValidator";
-import { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator } from "./validators/RecordRequestValidator";
-import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestStatusValidator, GetRequestByStatuslValidator } from "./validators/RequestValidator";
+import { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator } from "./validators/RecordRequestValidator";
+import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestValidator, GetRequestByStatuslValidator } from "./validators/RequestValidator";
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from "./validators/ServiceProviderRequestValidator";
-import { GetUserTransactionRequestValidator } from "./validators/UserTransactionRequestValidator";
+import { GetUserTransactionRequestValidator, SetUserTransactionRequestValidator } from "./validators/UserTransactionRequestValidator";
 import swaggerUi from "swagger-ui-express";
+import { GetUserScheduleRequestValidator, SetUserScheduleRequestValidator } from "./validators/UserScheduleValidator";
 dotenv.config();
 
 app.use(express.json());
@@ -56,11 +57,16 @@ function initializeValidator() {
       new GetRecordByDateRequestValidator(),
       new GetRecordByPeriodRequestValidator(),
       new SetRecordRequestValidator(),
+      new UpdateRecordRequestValidator(),
       new GetUserTransactionRequestValidator(),
       new GetRequestsValidator(),
       new GetRequestByEmailValidator(),
       new SetRequestValidator(),
-      new UpdateRequestStatusValidator(),
-      new GetRequestByStatuslValidator()
+      new UpdateRequestValidator(),
+      new GetRequestByStatuslValidator(),
+      new SetUserTransactionRequestValidator(),
+      new GetUserScheduleRequestValidator(),
+      new SetUserScheduleRequestValidator(),
+      
   ])
 }

@@ -1,86 +1,91 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import {styles} from '../../styles/verifyOTP.js';
+import React, {useState, useEffect} from 'react';
+import {Text} from 'react-native';
+import {InputStyle} from '../../styles';
+import {Footer, Button, Separator, NumberInput, TopContainer, Container, CenterContainer, Result} from '../index';
 import {useDispatch} from 'react-redux';
 import {signInUser} from '../../redux/actions/signInAction';
-import {navigate} from '../../helper/navigate';
-import Error from '../Error';
-import {ErrorModel} from '../../types';
-import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger/generated';
-import {ErrMsg, Screen} from '../../enums';
+import {ResultModel} from '../../types';
+import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger';
+import {ErrMsg, Screen, StatusModel} from '../../enums';
+import Validator from '../../validator/validator';
 let otpApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const {firstName, lastName, email, password, isSignUp} = route.params;
   const [otp, setOtp] = useState<string>('');
-  const [errors, setErrors] = useState<ErrorModel>({message: ''});
+  const [otpResent, setOtpResent] = useState<boolean>(false);
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: ''
+  })
+  let otpInput = InputStyle.createOTPInputStyle();
 
   useEffect(() => {
-    setOTP();
+    if (!otpResent) {
+      setOTP();
+    }
   }, []);
 
-  const setOTP = async () => {
-    const params: SetOTPRq = {
-      email: email,
-      otp: '',
-    };
-
-    try {
-      await otpApi.setOTP(params);
-    } catch (e) {
-      setErrors({message: ErrMsg.OTP_SEND_ERR});
-    }
-  };
-
   const validateInput = (): boolean => {
-    const regex = /^[0-9]{6,6}$/;
-
-    if (!regex.test(otp)) {
-      setErrors({message: 'Verification code has to be 6 digit'});
-      return false;
+    const validationErr = Validator.validateOTP(otp);
+    if (validationErr) {
+      setResult({status: StatusModel.ERROR, message: validationErr});
     }
-
-    return true;
+    return validationErr == null;
   };
+
+  const setOTP = async () => {
+    try {
+      await otpApi.setOTP({
+        email: email,
+        otp: ''
+      } as SetOTPRq);
+    } catch (e) {
+      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_SEND_ERR});
+    }
+  };
+
+  const resendOTP = async () => {
+    setOtpResent(true);
+    try {
+      await otpApi.setOTP({
+        email: email,
+        otp: ''
+      } as SetOTPRq);
+      setResult({status: StatusModel.SUCCESS, message: ErrMsg.OTP_SEND_SUCCESS})
+    } catch (e) {
+      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_SEND_ERR});
+    }
+  }
 
   const verifyOTP = async () => {
     if (!validateInput()) return;
 
-    const params: SetOTPRq = {
-      email: email,
-      otp: otp,
-    };
-
     try {
-      await otpApi.verifyOTP(params);
-
+      await otpApi.verifyOTP({
+        email: email,
+        otp: otp,
+      } as SetOTPRq);
       if (isSignUp) {
         setUser();
-        navigate(navigation, Screen.DRAWER_NAV, null);
+        navigation.navigate(Screen.DRAWER_NAV, null);
       } else {
-        navigate(navigation, Screen.RESET_PASSWORD, {email});
+        navigation.navigate(Screen.RESET_PASSWORD, {email});
       }
     } catch (e: any) {
-      setErrors({message: ErrMsg.OTP_VERIFICATION_ERR});
+      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_VERIFICATION_ERR});
     }
   };
 
   const setUser = async () => {
     try {
-      const params: SetUserRq = {
+      otpApi.setUser({
         firstName,
         lastName,
         email,
         password,
-      };
-      otpApi.setUser(params);
+      } as SetUserRq);
       dispatch(signInUser({firstName, lastName, email}));
     } catch (e) {
       console.log(e);
@@ -88,44 +93,27 @@ const VerifyOTP = ({route, navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{height: '8%'}}>
-        <Text style={styles.header}>Verification code</Text>
-      </View>
-      {errors.message && <Error msg={errors.message} />}
-      <View style={{height: '8%'}}>
+    <TopContainer>
+      {result.status && <Result status={result.status} msg={result.message} />}
+      <Container>
         <Text>We have sent the verification code to your email address</Text>
-      </View>
-      <View style={styles.otpContainer}>
-        <TextInput
-          style={styles.otpBox}
+      </Container>
+      <CenterContainer>
+        <NumberInput
           maxLength={6}
-          keyboardType="numeric"
-          autoFocus
+          style={otpInput}
           onChangeText={val => setOtp(val)}
         />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={verifyOTP}>
-        <Text style={styles.buttonText}>Verify</Text>
-      </TouchableOpacity>
-      <View style={styles.separator}></View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <View>
-          <Text>Didn't receive a code?</Text>
-          <Text style={styles.link} onPress={setOTP}>
-            Resend
-          </Text>
-        </View>
-        <View>
-          <Text>Go back to</Text>
-          <Text
-            style={styles.link}
-            onPress={() => navigation.navigate(Screen.SIGN_IN)}>
-            Sign In
-          </Text>
-        </View>
-      </View>
-    </SafeAreaView>
+      </CenterContainer>
+      <Button title="Verify" onPress={verifyOTP}/>
+      <Separator />
+      <Footer
+        leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}
+        rightText={{text1: 'Go back to', text2: 'Sign In'}}
+        leftFunc={resendOTP}
+        rightFunc={() => navigation.navigate(Screen.SIGN_IN)}
+      />
+    </TopContainer>
   );
 };
 
