@@ -9,6 +9,7 @@ dotenv.config();
 
 interface IUserScheduleManager {
     getUserSchedule(userScheduleRq: GetUserScheduleRq): Promise<GetUserScheduleRs>;
+    getUserScheduleById(id: number[]): Promise<GetUserScheduleRs>
     setUserSchedule(userScheduleRq: SetUserScheduleRq): Promise<void>;
 }
 
@@ -31,6 +32,10 @@ class UserScheduleManager implements IUserScheduleManager {
 
         let transactionId = transactionData.id;
         return await this._userScheduleRepo.getUserSchedule(transactionId);
+    }
+
+    async getUserScheduleById(id: number[]): Promise<GetUserScheduleRs> {
+        return await this._userScheduleRepo.getUserScheduleById(id);
     }
 
     async setUserSchedule(userScheduleRq: SetUserScheduleRq): Promise<void> {

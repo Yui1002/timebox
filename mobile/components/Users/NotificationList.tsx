@@ -55,7 +55,7 @@ const NotificationList = ({notification, navigation}: any) => {
       } as UpdateRequestRq);
       alertSuccess(status);
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   };
 

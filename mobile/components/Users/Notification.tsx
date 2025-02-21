@@ -26,7 +26,6 @@ const Notification = (props: any) => {
         RequestStatus.Pending,
       );
       const formatted = formatData(data);
-      console.log('formatted', formatted[0].schedules)
       setRequests(formatted);
     } catch (e) {
       setRequests([]);
