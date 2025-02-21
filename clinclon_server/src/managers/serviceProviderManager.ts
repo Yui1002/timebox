@@ -48,10 +48,11 @@ class ServiceProviderManager implements IServiceProviderManager {
         });
 
         let combined = serviceProviderData.serviceProviders.concat(inactiveServiceProviderData.serviceProviders);
+        let finalData;
 
         if (ids.length > 0) {
             let spSchedule = await this._userScheduleManager.getUserScheduleById(ids);
-            return combined.map((sp: ServiceProviderRawDB) => {
+            finalData = combined.map((sp: ServiceProviderRawDB) => {
                 let matchedSchedules = spSchedule.rows.filter((us) => us.id == sp.scheduleId);
                 let returnObj = new GetServiceProviderRsMini(sp);
                 
@@ -59,8 +60,21 @@ class ServiceProviderManager implements IServiceProviderManager {
                 return returnObj;
             })
         } else {
-            return combined.map((sp: ServiceProviderRawDB) => new GetServiceProviderRsMini(sp))
+            finalData = combined.map((sp: ServiceProviderRawDB) => new GetServiceProviderRsMini(sp))
         }
+
+        const hashMap = new Map<string, GetServiceProviderRsMini>();
+
+        finalData.map((data) => {
+            if (hashMap.get(data.email)) {
+                let x = hashMap.get(data.email);
+                x.schedules.push(...data.schedules)
+            } else {
+                hashMap.set(data.email, data)
+            }
+        });
+
+        return Array.from(hashMap.values());
     }
     
     async updateServiceProvider(serviceProviderRq: UpdateServiceProviderRq): Promise<void> {

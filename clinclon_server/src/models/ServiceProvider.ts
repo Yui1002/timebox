@@ -40,14 +40,6 @@ class GetServiceProviderRsMini {
     rate: string = "0";
     @JsonProperty("rateType")
     rateType: RateType = RateType.HOURLY;
-    @JsonProperty("day", String)
-    day: string = "";
-
-    @JsonProperty("start_time", String)
-    startTime: string = "";
-
-    @JsonProperty("end_time", String)
-    endTime: string = "";
     @JsonProperty("allow_edit")
     allowEdit: Mode = Mode.False;
     @JsonProperty("schedules")

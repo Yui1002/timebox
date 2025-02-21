@@ -18,8 +18,8 @@ const ServiceProviderList = ({props, navigation}) => {
   return (
     <View style={listContainer}>
       <View style={listSubContainer}>
-        <Text style={text}>{props.status}</Text>
-        <Title title={`${props.firstName} ${props.lastName}`} />
+        <Text style={text}>{props.status.toLowerCase()}</Text>
+        <Title title={`${props.firstName ?? 'Not specified'} ${props.lastName?? ''}`} />
         <Text>{props.email}</Text>
       </View>
       <Button
