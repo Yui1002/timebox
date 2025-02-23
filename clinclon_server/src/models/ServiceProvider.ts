@@ -7,27 +7,21 @@ import { Mode, RateType, RequestStatus } from '../helpers/enum';
 @JsonObject("ServiceProviderRawDB")
 class ServiceProviderRawDB extends BaseRequest {
     @JsonProperty("id", Number)
-    id: number = 0;
+    id?: number = 0;
     @JsonProperty("first_name", String)
-    first_name: string = '';
+    first_name?: string = '';
     @JsonProperty("last_name", String)
-    last_name: string = '';
+    last_name?: string = '';
     @JsonProperty("email", String)
     email: string = '';
     @JsonProperty("status")
     status: string = '';
     @JsonProperty("rate", String)
-    rate?: string = '0';
+    rate: string = '0';
     @JsonProperty("rate_type")
-    rateType?: RateType = RateType.HOURLY;
-    @JsonProperty("schedule_id", Number)
-    scheduleId: number = 0;
-    @JsonProperty("day", String)
-    day: string = '';
-    @JsonProperty("start_time", String)
-    startTime: string = '';
-    @JsonProperty("end_time", String)
-    endTime: string = '';
+    rateType: RateType = RateType.HOURLY;
+    @JsonProperty("schedule_id", Number, true)
+    scheduleId?: number = 0;
     @JsonProperty("allow_edit")
     allowEdit: Mode = Mode.False;
 }
@@ -46,18 +40,10 @@ class GetServiceProviderRsMini {
     rate: string = "0";
     @JsonProperty("rateType")
     rateType: RateType = RateType.HOURLY;
-    @JsonProperty("day", String)
-    day: string = "";
-
-    @JsonProperty("start_time", String)
-    startTime: string = "";
-
-    @JsonProperty("end_time", String)
-    endTime: string = "";
     @JsonProperty("allow_edit")
     allowEdit: Mode = Mode.False;
     @JsonProperty("schedules")
-    schedules?: any = [];
+    schedules: UserSchedule[]
 
     constructor(serviceProviderResult: ServiceProviderRawDB) {
         this.firstName = serviceProviderResult.first_name;
@@ -66,9 +52,6 @@ class GetServiceProviderRsMini {
         this.status = serviceProviderResult.status;
         this.rate = serviceProviderResult.rate;
         this.rateType = serviceProviderResult.rateType;
-        this.day = serviceProviderResult.day;
-        this.startTime = serviceProviderResult.startTime;
-        this.endTime = serviceProviderResult.endTime;
         this.allowEdit = serviceProviderResult.allowEdit
         this.schedules = []
     }
@@ -100,6 +83,9 @@ class GetServiceProviderRs {
     serviceProviders: ServiceProviderRawDB[] = [];
 }
 
+@JsonObject("GetInactiveServiceProviderRs")
+class GetInactiveServiceProviderRs extends GetServiceProviderRs {}
+
 @JsonObject("ServiceProviderMini")
 class ServiceProviderMiniRs {
     @JsonProperty("serviceProviderUser", GetUserRs)
@@ -109,4 +95,4 @@ class ServiceProviderMiniRs {
     }
 }
 
-export { ServiceProviderRawDB, GetServiceProviderRsMini, GetServiceProviderRq, GetServiceProviderRs, UpdateServiceProviderRq, ServiceProviderMiniRs }
+export { ServiceProviderRawDB, GetServiceProviderRsMini, GetServiceProviderRq, GetServiceProviderRs, UpdateServiceProviderRq, ServiceProviderMiniRs, GetInactiveServiceProviderRs }

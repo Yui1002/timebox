@@ -4,8 +4,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {Text, ScrollView} from 'react-native';
 import {TextStyle, CheckboxStyle} from '../../styles';
 import CheckBox from '@react-native-community/checkbox';
-import {DefaultApiFactory, GetServiceProviderRsMini} from '../../swagger';
-import {Screen} from '../../enums';
+import {DefaultApiFactory, GetServiceProviderRsMini, RequestStatus} from '../../swagger';
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
 import {formatData} from '../../helper/formatHelper';
@@ -28,8 +27,7 @@ const ManageServiceProviders = (props: any) => {
   const getServiceProviders = async () => {
     try {
       const {data} = await api.getServiceProvider(email);
-      const formatted = formatData(data);
-      setServiceProviders(formatted);
+      setServiceProviders(data);
     } catch (e: any) {
       setServiceProviders([]);
     }
@@ -37,6 +35,8 @@ const ManageServiceProviders = (props: any) => {
 
   let checkBox = CheckboxStyle.createBasicCheckboxStyle();
   let text = TextStyle.createBasicTextStyle();
+
+  const filteredServiceProviders = isBoxChecked ? serviceProviders : serviceProviders?.filter(sp => sp.status === 'active' || sp.status === 'approved');
 
   return (
     <TopContainer>
@@ -50,6 +50,7 @@ const ManageServiceProviders = (props: any) => {
           animationDuration={0}
           value={isBoxChecked}
           onChange={() => setIsBoxChecked(!isBoxChecked)}
+          // onChange={onSelectChange}
         />
         <Text style={text}>Show not currently employed</Text>
       </CheckBoxContainer>
@@ -57,7 +58,7 @@ const ManageServiceProviders = (props: any) => {
         <Text>You don't have service providers</Text>
       ) : (
         <ScrollView>
-          {serviceProviders.map((serviceProvider, index) => (
+          {filteredServiceProviders?.map((serviceProvider, index) => (
             <ServiceProviderList
               key={index}
               props={serviceProvider}

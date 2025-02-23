@@ -93,8 +93,9 @@ class RequestRepo extends Repositories implements IRequestRepo {
                         r.request_schedule_end_time AS end_time,
                         r.request_mode AS allow_edit
                     FROM users u LEFT JOIN requests r on u.email_address = r.sender_email
-                    WHERE r.receiver_email = $1 AND r.status = $2;`;
-            const data = await this.queryDB(sql, [requestRq.receiverEmail, requestRq.status]);
+                    WHERE r.receiver_email = $1 AND r.status = $2`;
+            const finalSql = (requestRq.senderEmail) ? this.appendEmail(sql, 3) : sql;
+            const data = await this.queryDB(finalSql, [requestRq.receiverEmail, requestRq.status]);
             if (data?.rows.length <= 0) {
                 return null;
             }
@@ -102,6 +103,10 @@ class RequestRepo extends Repositories implements IRequestRepo {
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to get from db')
         }
+    }
+
+    appendEmail(basicQuery: string, count: number): string {
+        return `${basicQuery} AND r.sender_email = $${count};`;
     }
 
     async setRequest(requestRq: SetRequestRq, schedule?: UserSchedule): Promise<void> {

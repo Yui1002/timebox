@@ -15,9 +15,9 @@ class UserSchedule {
     id?: number = 0;
     @JsonProperty("day", String)
     day: string = "";
-    @JsonProperty("startTime", String)
+    @JsonProperty("start_time", String)
     startTime: string = "";
-    @JsonProperty("endTime", String)
+    @JsonProperty("end_time", String)
     endTime: string = "";
 }
 

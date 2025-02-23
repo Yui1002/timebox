@@ -8,6 +8,7 @@ dotenv.config();
 
 interface IUserScheduleRepo {
     getUserSchedule(transactionId: number): Promise<GetUserScheduleRs>;
+    getUserScheduleById(ids: number[]): Promise<GetUserScheduleRs>;
     setUserSchedule(userScheduleRq: UserSchedule, serviceProviderId: number, transactionId: number): Promise<void>;
 }
 
@@ -19,6 +20,26 @@ class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
             if (data?.rows.length <= 0) {
                 return null;
             }
+            return JSHelperInstance._converter.deserializeObject(data, GetUserScheduleRs);
+        } catch (e) {
+            throw new ResponseException(e, 500, "unable to get from db");
+        }
+    }
+
+    async getUserScheduleById(ids: number[]): Promise<GetUserScheduleRs> {
+        try {
+            const sql = `SELECT 
+                            user_schedule_id AS id, 
+                            day, 
+                            start_time, 
+                            end_time 
+                        FROM user_schedule 
+                        WHERE user_schedule_id = ANY($1::int[]);`;
+            const data = await this.queryDB(sql, [ids]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            console.log('dataaaaa', data)
             return JSHelperInstance._converter.deserializeObject(data, GetUserScheduleRs);
         } catch (e) {
             throw new ResponseException(e, 500, "unable to get from db");

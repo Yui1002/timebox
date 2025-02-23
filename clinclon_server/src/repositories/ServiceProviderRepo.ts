@@ -4,6 +4,7 @@ import ResponseException from "../models/ResponseException";
 import {
   GetServiceProviderRs,
   UpdateServiceProviderRq,
+  GetInactiveServiceProviderRs
 } from "../models/ServiceProvider";
 import { GetUserTransactionRs } from "../models/UserTransaction";
 import { GetUserScheduleRs } from "../models/UserSchedule";
@@ -16,36 +17,54 @@ interface IServiceProviderRepo {
 }
 
 class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
+
+
   public async getServiceProvider(employerId: number): Promise<GetServiceProviderRs> {
     try {
       const sql = `SELECT 
-                    u2.user_id AS id, 
-                    u2.first_name, 
-                    u2.last_name, 
-                    u2.email_address AS email, 
-                    u2.status,
+                    u.user_id AS id, 
+                    u.first_name,
+                    u.last_name,
+                    u.email_address AS email,
+                    u.status,
                     ut.rate,
                     ut.rate_type,
                     ut.mode AS allow_edit,
-                    us.user_schedule_id AS schedule_id,
-                    us.day,
-                    us.start_time,
-                    us.end_time
-                FROM user_transaction ut
-                INNER JOIN users u ON u.user_id = ut.employer_user_id
-                INNER JOIN users u2 ON u2.user_id = ut.service_provider_id
-                LEFT JOIN user_schedule us ON ut.user_transaction_id = us.user_transaction_id
-                WHERE u.user_id = $1`;
+                    us.user_schedule_id AS schedule_id
+                  FROM users u
+                  INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id
+                  LEFT JOIN user_schedule us ON us.service_provider_id = ut.service_provider_id
+                  WHERE ut.employer_user_id = $1;`;
       const data = await this.queryDB(sql, [employerId]);
-      console.log('data', data)
       if (data?.rows.length <= 0) {
         return null;
       }
-
-      console.log('data original', data)
       return JSHelperInstance._converter.deserializeObject(data, GetServiceProviderRs);
     } catch (e) {
-      console.log(e);
+      throw new ResponseException(e, 500, "unable to get from db");
+    }
+  } 
+
+  async getInactiveServiceProvider(senderEmail: string) {
+    try {
+      const sql = `SELECT DISTINCT 
+                    u.user_id AS id,
+                    u.first_name,
+                    u.last_name,
+                    r.receiver_email AS email,
+                    r.status,
+                    r.request_rate AS rate,
+                    r.request_rate_type AS rate_type,
+                    r.request_mode
+                  FROM users u 
+                  RIGHT JOIN requests r ON u.email_address = r.receiver_email
+                  WHERE r.status IN ('PENDING', 'REJECTED') AND r.sender_email = $1;`;
+      const data = await this.queryDB(sql, [senderEmail]);
+      if (data?.rows.length <= 0) {
+        return null;
+      }
+      return JSHelperInstance._converter.deserializeObject(data, GetInactiveServiceProviderRs);
+    } catch (e: any) {
       throw new ResponseException(e, 500, "unable to get from db");
     }
   }
