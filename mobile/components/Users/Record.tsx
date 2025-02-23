@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
 import {ButtonStyle} from '../../styles';
 import {
@@ -24,10 +24,12 @@ import {
   Employer,
   SetRecordRq,
   GetRecordRs,
+  Record as RecordType
 } from '../../swagger';
 import {getBeginningOfDay} from '../../helper/momentHelper';
 import {alert} from '../../helper/Alert';
 import Result from '../Common/Result';
+import RecordFooter from '../Record/RecordFooter';
 const api = DefaultApiFactory();
 
 interface RecordProps {
@@ -48,8 +50,30 @@ const Record = ({route}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
+  const [todayRecord, setTodayRecord] = useState<RecordType>();
   let minimumDate =
     mode === 1 ? new Date(Parameters.DEFAULT_DATE) : getBeginningOfDay();
+
+  useEffect(() => {
+    getTodaysRecord();
+  }, []);
+
+  const getTodaysRecord = async () => {
+    try {
+      const {data} = await api.getRecordByDate(
+        employer.email, 
+        serviceProviderEmail, 
+        new Date().momentFormat('')
+      );
+      console.log('api', data.records)
+      setTodayRecord({
+        startTime: data.records ? data.records[0].startTime : undefined,
+        endTime: data.records ? data.records[0].endTime : undefined
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   const validateInput = (type: TimeType): boolean => {
     const validateErr = Validator.validateRecordTime(
@@ -84,10 +108,8 @@ const Record = ({route}: any) => {
   };
 
   const saveRecord = async (type: TimeType, record: Date) => {
-    // valid input
     if (!validateInput(type)) return;
 
-    // check the record exist 
     const doesExist = await recordExists(type, record);
     if (doesExist) {
       alert(
@@ -112,9 +134,7 @@ const Record = ({route}: any) => {
       });
     } catch (e: any) {
       setResult({status: StatusModel.ERROR, message: ErrMsg.FAIL_RECORD});
-    } finally {
-      clearInput();
-    }
+    } 
   };
 
   const updateRecord = async (
@@ -157,6 +177,8 @@ const Record = ({route}: any) => {
             startTime?.momentFormat(MomentFormat.DATETIME) ??
             'Select Start Time'
           }
+          width={'70%'}
+          height={'100%'}
         />
         <Button
           title="Record"
@@ -170,6 +192,8 @@ const Record = ({route}: any) => {
           placeholder={
             endTime?.momentFormat(MomentFormat.DATETIME) ?? 'Select End Time'
           }
+          width={'70%'}
+          height={'100%'}
         />
         <Button
           title="Record"
@@ -193,6 +217,7 @@ const Record = ({route}: any) => {
         onConfirm={(d: Date) => setEndTime(d)}
         onCancel={() => setEndOpen(false)}
       />
+      <RecordFooter record={todayRecord} />
     </TopContainer>
   );
 };
