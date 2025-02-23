@@ -27,7 +27,6 @@ const ManageServiceProviders = (props: any) => {
   const getServiceProviders = async () => {
     try {
       const {data} = await api.getServiceProvider(email);
-      console.log('data', data);
       setServiceProviders(data);
     } catch (e: any) {
       setServiceProviders([]);
@@ -36,6 +35,8 @@ const ManageServiceProviders = (props: any) => {
 
   let checkBox = CheckboxStyle.createBasicCheckboxStyle();
   let text = TextStyle.createBasicTextStyle();
+
+  const filteredServiceProviders = isBoxChecked ? serviceProviders : serviceProviders?.filter(sp => sp.status === 'active' || sp.status === 'approved');
 
   return (
     <TopContainer>
@@ -49,6 +50,7 @@ const ManageServiceProviders = (props: any) => {
           animationDuration={0}
           value={isBoxChecked}
           onChange={() => setIsBoxChecked(!isBoxChecked)}
+          // onChange={onSelectChange}
         />
         <Text style={text}>Show not currently employed</Text>
       </CheckBoxContainer>
@@ -56,7 +58,7 @@ const ManageServiceProviders = (props: any) => {
         <Text>You don't have service providers</Text>
       ) : (
         <ScrollView>
-          {serviceProviders.map((serviceProvider, index) => (
+          {filteredServiceProviders?.map((serviceProvider, index) => (
             <ServiceProviderList
               key={index}
               props={serviceProvider}

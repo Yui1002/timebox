@@ -25,34 +25,25 @@ class ServiceProviderManager implements IServiceProviderManager {
         if (!employerData) {
             throw new ResponseException(null, 400, 'no data found');
         }
-        let employerId = employerData.id;
+        const { id: employerId, email: employerEmail } = employerData;
+        
+        let [activeServiceProviders, inactiveServiceProviders] = await Promise.all([
+            this._serviceProviderRepo.getServiceProvider(employerId),
+            this._serviceProviderRepo.getInactiveServiceProvider(employerEmail)
+        ]);
 
-        let serviceProviderData = await this._serviceProviderRepo.getServiceProvider(employerId);
-        if (!serviceProviderData) {
-            throw new ResponseException(null, 204, 'no data found')
-        }
-
-        let inactiveServiceProviderData = await this._serviceProviderRepo.getInactiveServiceProvider(employerData.email);
-
-        let ids: number[] = [];
-        serviceProviderData.serviceProviders.map((sp) => {
-            if (sp.scheduleId) {
-                ids.push(sp.scheduleId)
-            }
-        });
-
-        inactiveServiceProviderData.serviceProviders.map((sp) => {
+        let scheduleIds: number[] = [];
+        let serviceProviderData = [...activeServiceProviders.serviceProviders, ...inactiveServiceProviders.serviceProviders];
+        serviceProviderData.forEach((sp) => {
             if (sp.scheduleId && sp.scheduleId !== 0) {
-                ids.push(sp.scheduleId)
+                scheduleIds.push(sp.scheduleId);
             }
         });
-
-        let combined = serviceProviderData.serviceProviders.concat(inactiveServiceProviderData.serviceProviders);
-        let finalData;
-
-        if (ids.length > 0) {
-            let spSchedule = await this._userScheduleManager.getUserScheduleById(ids);
-            finalData = combined.map((sp: ServiceProviderRawDB) => {
+        let finalData: GetServiceProviderRsMini[];
+        
+        if (scheduleIds.length > 0) {
+            let spSchedule = await this._userScheduleManager.getUserScheduleById(scheduleIds);
+            finalData = serviceProviderData.map((sp: ServiceProviderRawDB) => {
                 let matchedSchedules = spSchedule.rows.filter((us) => us.id == sp.scheduleId);
                 let returnObj = new GetServiceProviderRsMini(sp);
                 
@@ -60,17 +51,17 @@ class ServiceProviderManager implements IServiceProviderManager {
                 return returnObj;
             })
         } else {
-            finalData = combined.map((sp: ServiceProviderRawDB) => new GetServiceProviderRsMini(sp))
+            finalData = serviceProviderData.map((sp: ServiceProviderRawDB) => new GetServiceProviderRsMini(sp))
         }
 
         const hashMap = new Map<string, GetServiceProviderRsMini>();
 
         finalData.map((data) => {
-            if (hashMap.get(data.email)) {
-                let x = hashMap.get(data.email);
-                x.schedules.push(...data.schedules)
+            let entry = hashMap.get(data.email)
+            if (!entry) {
+                hashMap.set(data.email, data);
             } else {
-                hashMap.set(data.email, data)
+                entry.schedules.push(...data.schedules)
             }
         });
 
