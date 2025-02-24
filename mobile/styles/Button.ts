@@ -24,12 +24,13 @@ export default class ButtonStyle {
     return StyleSheet.compose(this.createBasicButtonStyle(), button);
   }
 
-  static createRecordButtonStyle() {
+  static createRecordButtonStyle(disabled?: boolean) {
     let record = StyleSheet.create({
       record: {
         width: '25%',
         height: 'auto',
         borderRadius: 4,
+        backgroundColor: disabled ? COLORS.LIGHT_GREY : COLORS.BLUE
       }
     }).record;
     return StyleSheet.compose(this.createBasicButtonStyle(), record);

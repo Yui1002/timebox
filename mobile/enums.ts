@@ -93,7 +93,7 @@ enum ErrMsg {
   FAIL_RECORD = 'Failed to record time',
   FAIL_UPDATE_RECORD = 'Failed to update record time',
   SUCCESS_UPDATE_RECORD = 'Updated record time successfully',
-  SUCCESS_SET_RECORD = 'Set record time successfully',
+  SUCCESS_SET_RECORD = 'Set record time successfully as ',
 }
 
 enum ProgressBar {

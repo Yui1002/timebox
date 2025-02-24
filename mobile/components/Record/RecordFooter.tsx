@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {Container} from '../index';
+import {Container, Title, Separator} from '../index';
 
 interface RecordFooterProps {
-    record?: {
-        startTime?: string | undefined;
-        endTime?: string | undefined;
-    }
+  record?: {
+    startTime?: string | undefined;
+    endTime?: string | undefined;
+  };
 }
 
 const RecordFooter = ({record}: RecordFooterProps) => {
@@ -15,11 +15,14 @@ const RecordFooter = ({record}: RecordFooterProps) => {
 
   return (
     <Container>
-      <Text>Today's record</Text>
-      <View style={{flexDirection: 'row'}}>
-        <Text style={{width: '50%'}}>Start</Text>
-        <Text style={{width: '50%'}}>End</Text>
-      </View>
+      <Title title="Today's record" />
+      <Container>
+        <View style={{flexDirection: 'row'}}>
+            <Text style={{width: '50%'}}>Start</Text>
+            <Text style={{width: '50%'}}>End</Text>
+        </View>
+      </Container>
+      <Separator />
       <View style={{flexDirection: 'row'}}>
         <Text style={{width: '50%'}}>
           {startTime ? new Date(startTime).momentFormat('LT') : 'No Record'}

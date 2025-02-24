@@ -10,26 +10,16 @@ import {
   Header,
   DropdownContainer,
 } from '../index';
-import {
-  TimeType,
-  Parameters,
-  ErrMsg,
-  MomentFormat,
-  StatusModel,
-} from '../../enums';
+import {TimeType, ErrMsg, StatusModel} from '../../enums';
 import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {
   DefaultApiFactory,
   Employer,
   SetRecordRq,
-  GetRecordRs,
-  Record as RecordType
+  Record as RecordType,
 } from '../../swagger';
-import {getBeginningOfDay} from '../../helper/momentHelper';
-import {alert} from '../../helper/Alert';
 import Result from '../Common/Result';
-import RecordFooter from '../Record/RecordFooter';
 const api = DefaultApiFactory();
 
 interface RecordProps {
@@ -37,10 +27,9 @@ interface RecordProps {
   serviceProviderEmail: string;
 }
 
-const Record = ({route}: any) => {
+const Record = ({route, navigation}: any) => {
   const {employer, serviceProviderEmail}: RecordProps = route.params;
   const {firstName, lastName, email, mode} = employer;
-  let recordBtn = ButtonStyle.createRecordButtonStyle();
 
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
@@ -50,9 +39,16 @@ const Record = ({route}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
-  const [todayRecord, setTodayRecord] = useState<RecordType>();
-  let minimumDate =
-    mode === 1 ? new Date(Parameters.DEFAULT_DATE) : getBeginningOfDay();
+  const [todayRecord, setTodayRecord] = useState<RecordType>({
+    startTime: undefined,
+    endTime: undefined,
+  });
+  let startRecordBtn = ButtonStyle.createRecordButtonStyle(
+    todayRecord?.startTime ? true : false,
+  );
+  let endRecordBtn = ButtonStyle.createRecordButtonStyle(
+    todayRecord?.endTime ? true : false,
+  );
 
   useEffect(() => {
     getTodaysRecord();
@@ -61,19 +57,18 @@ const Record = ({route}: any) => {
   const getTodaysRecord = async () => {
     try {
       const {data} = await api.getRecordByDate(
-        employer.email, 
-        serviceProviderEmail, 
-        new Date().momentFormat('')
+        employer.email,
+        serviceProviderEmail,
+        new Date().momentFormat(''),
       );
-      console.log('api', data.records)
       setTodayRecord({
         startTime: data.records ? data.records[0].startTime : undefined,
-        endTime: data.records ? data.records[0].endTime : undefined
-      })
+        endTime: data.records ? data.records[0].endTime : undefined,
+      });
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const validateInput = (type: TimeType): boolean => {
     const validateErr = Validator.validateRecordTime(
@@ -89,37 +84,8 @@ const Record = ({route}: any) => {
     return validateErr == null;
   };
 
-  const recordExists = async (type: TimeType, record: Date): Promise<GetRecordRs | null> => {
-    try {
-      const records = (await api.getRecordByDate(
-        email,
-        serviceProviderEmail,
-        record.momentFormat(''),
-      )).data;
-      const { startTime, endTime } = records![0];
-      if (type === TimeType.END && !startTime) {
-        setResult({status: StatusModel.ERROR, message: ErrMsg.START_TIME_NOT_SELECTED});
-      }
-      return records;
-    } catch {
-      // no record found
-      return null;
-    }
-  };
-
   const saveRecord = async (type: TimeType, record: Date) => {
     if (!validateInput(type)) return;
-
-    const doesExist = await recordExists(type, record);
-    if (doesExist) {
-      alert(
-        'Duplicate Record',
-        'Do you want to overwrite record?',
-        () => updateRecord(doesExist, record, type),
-        null,
-      );
-      return;
-    }
 
     try {
       await api.setRecord({
@@ -130,38 +96,11 @@ const Record = ({route}: any) => {
       } as SetRecordRq);
       setResult({
         status: StatusModel.SUCCESS,
-        message: ErrMsg.SUCCESS_SET_RECORD,
+        message: `${ErrMsg.SUCCESS_SET_RECORD} ${record?.momentFormat('LT')}`,
       });
     } catch (e: any) {
       setResult({status: StatusModel.ERROR, message: ErrMsg.FAIL_RECORD});
-    } 
-  };
-
-  const updateRecord = async (
-    existRecord: GetRecordRs,
-    record: Date,
-    type: TimeType,
-  ): Promise<void> => {
-    try {
-      await api.updateRecord({
-        recordId: existRecord.records![0].id,
-        recordTime: record.momentFormat(''),
-        type: type,
-      });
-      setResult({
-        status: StatusModel.SUCCESS,
-        message: ErrMsg.SUCCESS_UPDATE_RECORD,
-      });
-    } catch (e: any) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: ErrMsg.FAIL_UPDATE_RECORD,
-      });
     }
-  };
-
-  const clearInput = () => {
-    setResult({status: StatusModel.NULL, message: ''});
   };
 
   return (
@@ -173,51 +112,45 @@ const Record = ({route}: any) => {
       <DropdownContainer>
         <Dropdown
           onPress={() => setStartOpen(!startOpen)}
-          placeholder={
-            startTime?.momentFormat(MomentFormat.DATETIME) ??
-            'Select Start Time'
-          }
+          placeholder={'Select Start Time'}
           width={'70%'}
           height={'100%'}
         />
         <Button
           title="Record"
           onPress={() => saveRecord(TimeType.START, startTime!)}
-          style={recordBtn}
+          style={startRecordBtn}
+          disabled={todayRecord.startTime ? true : false}
         />
       </DropdownContainer>
       <DropdownContainer>
         <Dropdown
           onPress={() => setEndOpen(!endOpen)}
-          placeholder={
-            endTime?.momentFormat(MomentFormat.DATETIME) ?? 'Select End Time'
-          }
+          placeholder={'Select End Time'}
           width={'70%'}
           height={'100%'}
         />
         <Button
           title="Record"
           onPress={() => saveRecord(TimeType.END, endTime!)}
-          style={recordBtn}
+          style={endRecordBtn}
+          disabled={todayRecord.startTime ? true : false}
         />
       </DropdownContainer>
       <DatePickerDropdown
-        mode="datetime"
+        mode="time"
         open={startOpen}
-        minimumDate={minimumDate}
-        maximumDate={new Date()}
         onConfirm={(d: Date) => setStartTime(d)}
         onCancel={() => setStartOpen(false)}
       />
       <DatePickerDropdown
-        mode="datetime"
+        mode="time"
         open={endOpen}
-        minimumDate={minimumDate}
-        maximumDate={new Date()}
         onConfirm={(d: Date) => setEndTime(d)}
         onCancel={() => setEndOpen(false)}
       />
-      <RecordFooter record={todayRecord} />
+      <View style={{marginVertical: 20}} />
+      <Button title='View Records' onPress={() => navigation.navigate()} />
     </TopContainer>
   );
 };
