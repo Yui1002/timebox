@@ -9,11 +9,15 @@ import {COLORS} from '../../styles/theme';
 
 const RecordHistory = ({route}: any) => {
   const [records, setRecords] = useState<Record[]>([]);
+  const [editSelected, setEditSelected] = useState({
+    editMode: false,
+    editRow: ''
+  });
   let centerText = TextStyle.createCenterTextStyle();
   const buttonStyle = {
     width: 60,
     height: 24,
-    backgroundColor: COLORS.BLUE,
+    backgroundColor: editSelected.editMode ? COLORS.BLUE : COLORS.LIGHT_GREY,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -43,7 +47,14 @@ const RecordHistory = ({route}: any) => {
         <Separator />
         {records?.length ? (
           records.map((record: Record, index: number) => {
-            return <WorkingHistoryList key={index} record={record} />;
+            return (
+              <WorkingHistoryList
+                key={index}
+                record={record}
+                editSelected={editSelected}
+                setEditSelected={setEditSelected}
+              />
+            );
           })
         ) : (
           <Text style={centerText}>No records matched</Text>
