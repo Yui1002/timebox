@@ -1,4 +1,11 @@
-import {isEmail, isFloat, isEmpty, isStrongPassword, isDate, isCurrency} from 'validator';
+import {
+  isEmail,
+  isFloat,
+  isEmpty,
+  isStrongPassword,
+  isDate,
+  isCurrency,
+} from 'validator';
 import moment from 'moment';
 import {PASSWORD_RULES} from '../config.js';
 import {SignUpProps} from '../types';
@@ -175,15 +182,7 @@ class Validator {
     return null;
   }
 
-  static validateWorkingRecordSelect(
-    selected: string,
-    from: string,
-    to: string,
-  ): ErrMsg | null {
-    if (!this.isNotEmpty(selected)) {
-      return ErrMsg.EMPLOYER_NOT_SELECTED;
-    }
-
+  static validateWorkingRecordSelect(from: string, to: string): ErrMsg | null {
     if (!this.isValidEndTime(from, to)) {
       return ErrMsg.INVALID_TIME;
     }

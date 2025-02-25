@@ -4,12 +4,12 @@ import {getDiff} from '../../helper/momentHelper';
 import {Record} from '../../swagger';
 import {AlignContainer} from '../index';
 
-interface WorkingHistoryProps {
-  list: Record;
+interface WorkingHistoryListProps {
+  record: Record;
 }
 
-const WorkingHistoryList = (props: WorkingHistoryProps) => {
-  const {startTime, endTime} = props.list;
+const WorkingHistoryList = ({record}: WorkingHistoryListProps) => {
+  const {startTime, endTime} = record;
   const total = getDiff({start: startTime, end: endTime});
 
   return (

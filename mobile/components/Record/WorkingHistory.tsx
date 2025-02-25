@@ -120,18 +120,7 @@ const WorkingHistory = (props: any) => {
     <TopContainer>
       {employers.length ? (
         <ScrollView>
-          <View>
           {result.status && <Result status={result.status} msg={result.message} />}
-            <Title title="Select employer's name" />
-            <Picker
-              open={employerDropdownOpen}
-              value={selectedEmployer}
-              items={employers}
-              setOpen={() => setEmployerDropdownOpen(!employerDropdownOpen)}
-              setValue={setSelectedEmployer}
-              setItems={setEmployers}
-            />
-          </View>
           <View style={employerDropdownOpen ? {zIndex: -1} : null}>
             <Text style={titleText}>Select period</Text>
             <Dropdown

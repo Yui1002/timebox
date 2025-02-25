@@ -10,7 +10,7 @@ import {
   Header,
   DropdownContainer,
 } from '../index';
-import {TimeType, ErrMsg, StatusModel} from '../../enums';
+import {TimeType, ErrMsg, StatusModel, Screen} from '../../enums';
 import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {
@@ -66,7 +66,10 @@ const Record = ({route, navigation}: any) => {
         endTime: data.records ? data.records[0].endTime : undefined,
       });
     } catch (e) {
-      console.log(e);
+      setTodayRecord({
+        startTime: undefined,
+        endTime: undefined
+      })
     }
   };
 
@@ -150,7 +153,14 @@ const Record = ({route, navigation}: any) => {
         onCancel={() => setEndOpen(false)}
       />
       <View style={{marginVertical: 20}} />
-      <Button title='View Records' onPress={() => navigation.navigate()} />
+      <Button
+        title="View Records"
+        onPress={() =>
+          navigation.navigate(Screen.RECORD_HISTORY, {
+            employer,
+          })
+        }
+      />
     </TopContainer>
   );
 };
