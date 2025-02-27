@@ -1,4 +1,4 @@
-import { Body, Get, Post, Queries, Route } from "tsoa";
+import { Body, Get, Post, Put, Queries, Route } from "tsoa";
 import RecordManager from '../managers/RecordManager';
 import SuperController from "./SuperController";
 import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq } from "../models/Record";
@@ -44,9 +44,11 @@ export class RecordController extends SuperController implements IRecordControll
         await this._recordManager.setRecord(request);
     }
 
-    @Post('/update')
+    //AMIT NOTE: Use PUT request instead of POST('/update')
+    @Put('/update')
     @Validate
     public async updateRecord(@Body() request: UpdateRecordRq): Promise<void> {
+        console.log('here')
         await this._recordManager.updateRecord(request);
     }
 }

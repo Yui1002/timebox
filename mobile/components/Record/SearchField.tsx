@@ -4,7 +4,7 @@ import {LOCAL_HOST_URL} from '../../config.js';
 import axios from 'axios';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
-import {RawEmployer, FormattedEmployer, Record, ResultModel} from '../../types';
+import {RawEmployer, FormattedEmployer, ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {
   TopContainer,
@@ -15,7 +15,7 @@ import {
   AlignContainer,
   Result,
 } from '../index';
-import {DefaultApiFactory} from '../../swagger';
+import {DefaultApiFactory, Record} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 
@@ -50,9 +50,7 @@ const SearchField = ({setRecords, employer}) => {
         from ? from : '2020-01-01',
         to ? to : moment().format('YYYY-MM-DD'),
       );
-      console.log('data', data)
       setRecords(data.records);
-    //   setRecords(sortRecords(data.records));
     } catch (e) {
       setRecords([])
     }

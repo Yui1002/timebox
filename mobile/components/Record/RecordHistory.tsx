@@ -2,10 +2,12 @@ import React, {useState} from 'react';
 import {Text, ScrollView, View} from 'react-native';
 import {TextStyle} from '../../styles';
 import {Record, DefaultApiFactory} from '../../swagger';
-import {TopContainer, Separator, AlignContainer, Button} from '../index';
+import {TopContainer, Separator, AlignContainer, Button, Result} from '../index';
 import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
 import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
+import {ResultModel} from '../../types';
+import { StatusModel } from '../../enums';
 let api = DefaultApiFactory();
 
 const RecordHistory = ({route}: any) => {
@@ -32,28 +34,27 @@ const RecordHistory = ({route}: any) => {
     justifyContent: 'center',
     marginLeft: 20,
   };
+  const [result, setResult] = useState<ResultModel>({
+    status: StatusModel.NULL,
+    message: '',
+  });
 
-  const editRecord = async () => {
-    console.log('editSelected', rowSelected)
+  const enableRecordMode = async () => {
     setEditSelected({
       editMode: true,
       editRow: rowSelected.selectRow
     })
-    try {
-
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   const deleteRecord = () => {};
 
   return (
     <TopContainer>
+      {result.status && <Result status={result.status} msg={result.message} />}
       <SearchField setRecords={setRecords} employer={route.params.employer} />
       {records?.length !== 0 && (
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <Button title="Edit" style={buttonStyle} onPress={editRecord} />
+          <Button title="Edit" style={buttonStyle} onPress={enableRecordMode} />
           <Button title="Delete" style={buttonStyle} onPress={deleteRecord} />
         </View>
       )}
@@ -75,6 +76,7 @@ const RecordHistory = ({route}: any) => {
                 editSelected={editSelected}
                 setRowSelected={setRowSelected}
                 setEditSelected={setEditSelected}
+                setResult={setResult}
               />
             );
           })

@@ -10,7 +10,7 @@ import {
   Header,
   DropdownContainer,
 } from '../index';
-import {TimeType, ErrMsg, StatusModel, Screen} from '../../enums';
+import {ErrMsg, StatusModel, Screen} from '../../enums';
 import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {
@@ -18,6 +18,7 @@ import {
   Employer,
   SetRecordRq,
   Record as RecordType,
+  TimeType
 } from '../../swagger';
 import Result from '../Common/Result';
 const api = DefaultApiFactory();
@@ -121,7 +122,7 @@ const Record = ({route, navigation}: any) => {
         />
         <Button
           title="Record"
-          onPress={() => saveRecord(TimeType.START, startTime!)}
+          onPress={() => saveRecord(TimeType.Start, startTime!)}
           style={startRecordBtn}
           disabled={todayRecord.startTime ? true : false}
         />
@@ -135,7 +136,7 @@ const Record = ({route, navigation}: any) => {
         />
         <Button
           title="Record"
-          onPress={() => saveRecord(TimeType.END, endTime!)}
+          onPress={() => saveRecord(TimeType.End, endTime!)}
           style={endRecordBtn}
           disabled={todayRecord.startTime ? true : false}
         />

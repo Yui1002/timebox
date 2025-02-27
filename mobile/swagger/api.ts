@@ -244,6 +244,12 @@ export interface GetRequestByStatusRq {
      * @type {string}
      * @memberof GetRequestByStatusRq
      */
+    'senderEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetRequestByStatusRq
+     */
     'receiverEmail'?: string;
     /**
      * 
@@ -412,34 +418,16 @@ export interface GetServiceProviderRsMini {
     'rateType'?: RateType;
     /**
      * 
-     * @type {string}
-     * @memberof GetServiceProviderRsMini
-     */
-    'day'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof GetServiceProviderRsMini
-     */
-    'startTime'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof GetServiceProviderRsMini
-     */
-    'endTime'?: string;
-    /**
-     * 
      * @type {Mode}
      * @memberof GetServiceProviderRsMini
      */
     'allowEdit'?: Mode;
     /**
      * 
-     * @type {any}
+     * @type {Array<UserSchedule>}
      * @memberof GetServiceProviderRsMini
      */
-    'schedules'?: any;
+    'schedules': Array<UserSchedule>;
 }
 
 
@@ -1433,12 +1421,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {string} [senderEmail] 
          * @param {string} [receiverEmail] 
          * @param {RequestStatus} [status] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRequestsByStatus: async (receiverEmail?: string, status?: RequestStatus, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getRequestsByStatus: async (senderEmail?: string, receiverEmail?: string, status?: RequestStatus, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/request/status`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1450,6 +1439,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (senderEmail !== undefined) {
+                localVarQueryParameter['senderEmail'] = senderEmail;
+            }
 
             if (receiverEmail !== undefined) {
                 localVarQueryParameter['receiverEmail'] = receiverEmail;
@@ -2178,13 +2171,14 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} [senderEmail] 
          * @param {string} [receiverEmail] 
          * @param {RequestStatus} [status] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetRequestRsMini>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getRequestsByStatus(receiverEmail, status, options);
+        async getRequestsByStatus(senderEmail?: string, receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetRequestRsMini>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getRequestsByStatus(senderEmail, receiverEmail, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.getRequestsByStatus']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -2478,13 +2472,14 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @param {string} [senderEmail] 
          * @param {string} [receiverEmail] 
          * @param {RequestStatus} [status] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetRequestRsMini>> {
-            return localVarFp.getRequestsByStatus(receiverEmail, status, options).then((request) => request(axios, basePath));
+        getRequestsByStatus(senderEmail?: string, receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetRequestRsMini>> {
+            return localVarFp.getRequestsByStatus(senderEmail, receiverEmail, status, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2738,14 +2733,15 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} [senderEmail] 
      * @param {string} [receiverEmail] 
      * @param {RequestStatus} [status] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public getRequestsByStatus(receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getRequestsByStatus(receiverEmail, status, options).then((request) => request(this.axios, this.basePath));
+    public getRequestsByStatus(senderEmail?: string, receiverEmail?: string, status?: RequestStatus, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).getRequestsByStatus(senderEmail, receiverEmail, status, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -119,6 +119,7 @@ class RecordManager implements IRecordManager {
   }
 
   async updateRecord(recordRq: UpdateRecordRq): Promise<GetRecordRs> {
+    console.log('recordRq', recordRq)
     if (recordRq.type === TimeType.START_TIME) {
       return await this._recordRepo.updateStartRecord(
         recordRq.recordId,

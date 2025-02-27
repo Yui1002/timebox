@@ -37,12 +37,6 @@ type FormattedEmployer = {
   value: string;
 };
 
-type Record = {
-  id: number;
-  startTime: string | null;
-  endTime: string | null;
-};
-
 type ResultModel = {
   status: StatusModel;
   message: string;
@@ -124,7 +118,6 @@ export {
   ServiceProvider,
   RawEmployer,
   FormattedEmployer,
-  Record,
   NotificationData,
   WorkShiftsProps,
   SignUpProps,

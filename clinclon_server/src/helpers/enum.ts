@@ -14,6 +14,7 @@ enum RateType {
   DAILY = 'daily'
 }
 
+//AMIT NOTE: What is mode?
 enum Mode {
   False = 0,
   True = 1

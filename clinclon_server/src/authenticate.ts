@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
+//AMIT NOTE: FIX THIS!! You need authentication on your api otherwise anyone can access
 
 export const auth = (req: any, res: any, next: any) => {
     next();

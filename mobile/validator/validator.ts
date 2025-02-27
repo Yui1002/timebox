@@ -9,7 +9,8 @@ import {
 import moment from 'moment';
 import {PASSWORD_RULES} from '../config.js';
 import {SignUpProps} from '../types';
-import {ErrMsg, RateTypeValue, TimeType} from '../enums';
+import {ErrMsg, RateTypeValue} from '../enums';
+import {TimeType} from '../swagger';
 
 class Validator {
   static isNotEmpty(name: string): boolean {
@@ -122,17 +123,17 @@ class Validator {
 
   static validateRecordTime(
     type: TimeType,
-    startTime: Date,
-    endTime: Date,
+    startTime: Date | undefined,
+    endTime: Date | undefined,
   ): ErrMsg | null {
-    if (type === TimeType.START) {
+    if (type === TimeType.Start) {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
       if (endTime && this.isValidStartTime(startTime, endTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
-    } else if (type === TimeType.END) {
+    } else if (type === TimeType.End) {
       if (!endTime || !this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }

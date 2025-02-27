@@ -39,7 +39,6 @@ class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
             if (data?.rows.length <= 0) {
                 return null;
             }
-            console.log('dataaaaa', data)
             return JSHelperInstance._converter.deserializeObject(data, GetUserScheduleRs);
         } catch (e) {
             throw new ResponseException(e, 500, "unable to get from db");

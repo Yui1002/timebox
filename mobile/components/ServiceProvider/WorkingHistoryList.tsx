@@ -1,18 +1,22 @@
 import React, {useState} from 'react';
 import {Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import {getDiff} from '../../helper/momentHelper';
-import {Record, TimeType} from '../../swagger';
+import {Record, TimeType, DefaultApiFactory} from '../../swagger';
 import {AlignContainer, DatePickerDropdown, Icon} from '../index';
 import {COLORS} from '../../styles/theme';
-import { ResultModel } from '../../types';
-import { ErrMsg, StatusModel } from '../../enums';
+import {ErrMsg, StatusModel} from '../../enums';
+import Validator from '../../validator/validator';
+import moment from 'moment';
+
+let api = DefaultApiFactory();
 
 interface WorkingHistoryListProps {
   record: Record;
   rowSelected: any;
   editSelected: any;
   setRowSelected: any;
-  setEditSelected;
+  setEditSelected: any;
+  setResult: any,
 }
 
 const style = StyleSheet.create({
@@ -29,21 +33,26 @@ const WorkingHistoryList = ({
   editSelected,
   setRowSelected,
   setEditSelected,
+  setResult,
 }: WorkingHistoryListProps) => {
-  const {startTime, endTime} = record;
+  const {id, startTime, endTime} = record;
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [start, setStart] = useState<string>(startTime ? new Date(startTime).momentFormat('LT') : 'N/A')
-  const [end, setEnd] = useState<string>(startTime ? new Date(startTime).momentFormat('LT') : 'N/A')
-  const [result, setResult] = useState<ResultModel>({
-    status: StatusModel.NULL,
-    message: ''
-  })
+  const [start, setStart] = useState<Date | undefined>(
+    startTime ? new Date(startTime) : undefined,
+  );
+  const [end, setEnd] = useState<Date | undefined>(
+    endTime ? new Date(endTime) : undefined,
+  );
   const date = startTime
     ? new Date(startTime).momentFormat('YYYY/MM/DD')
     : 'N/A';
 
-  const total = getDiff({start: startTime, end: endTime});
+  const total = getDiff(
+    startTime ? new Date(startTime) : undefined,
+    endTime ? new Date(endTime) : undefined,
+  );
+
   const rowStyle = {
     backgroundColor:
       JSON.stringify(record) === JSON.stringify(rowSelected.selectRow) &&
@@ -59,72 +68,85 @@ const WorkingHistoryList = ({
     });
   };
 
-  const onRowEdit = (time: Date, type: TimeType) => {
-    console.log('time', time);
-    if (type === TimeType.Start) {
-      setStart(time.momentFormat('LT'));
-    } else {
-      setEnd(time.momentFormat('LT'));
+  const validateInput = (type: TimeType): boolean => {
+    console.log('start', start, 'end', end)
+    let validateErr = Validator.validateRecordTime(type, start, end);
+    if (validateErr) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: validateErr,
+      });
+    }
+
+    return validateErr === null;
+  };
+
+  const editRecord = async (time: Date, type: TimeType) => {
+    type === TimeType.Start ? setStart(time) : setEnd(time);
+
+    if (!validateInput(type)) return;
+
+    let stringTime = moment(record.startTime).format('YYYY-MM-DD ') + moment(time).format('h:mm:ss');
+
+    try {
+      await api.updateRecord({
+        recordId: id,
+        recordTime: stringTime,
+        type: type,
+      });
+      setResult({
+        status: StatusModel.SUCCESS,
+        message: ErrMsg.SUCCESS_UPDATE_RECORD,
+      });
+    } catch (e) {
+      console.log('error', e.response.data)
+      setResult({
+        status: StatusModel.ERROR,
+        message: ErrMsg.FAIL_UPDATE_RECORD,
+      });
     }
   };
 
-  const validateInput = () => {
-
-  }
-
-  const editRecord = async () => {
-    try {
-
-    } catch (e) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: 
-      })
-    }
-  }
-
-  const deleteRecord = () => {
-
-  }
+  const deleteRecord = () => {};
 
   return (
     <TouchableOpacity onPress={onRowSelect} style={rowStyle}>
       <AlignContainer>
         <Text>{date}</Text>
         <Text>
-          {editSelected.editMode ? (
+          {editSelected.editMode && rowSelected.selectRow === record ? (
             <TouchableOpacity
               style={style.container}
               onPress={() => setStartOpen(!startOpen)}>
-              <Text>{start}</Text>
-              <Icon name="arrow-drop-down" size={20} type='Material'/>
+              <Text>{start ? start.momentFormat('LT') : 'N/A'}</Text>
+              <Icon name="arrow-drop-down" size={20} type="Material" />
             </TouchableOpacity>
           ) : (
-            <Text>{start}</Text>
+            <Text>{start ? start.momentFormat('LT') : 'N/A'}</Text>
           )}
         </Text>
         <DatePickerDropdown
           mode="time"
           open={startOpen}
-          onConfirm={t => onRowEdit(t, TimeType.Start)}
+          onConfirm={t => editRecord(t, TimeType.Start)}
           onCancel={() => setStartOpen(false)}
         />
         <Text>
-          {editSelected.editMode ? (
+          {editSelected.editMode && rowSelected.selectRow === record ? (
             <TouchableOpacity
               style={style.container}
               onPress={() => setEndOpen(!endOpen)}>
-              <Text>{end}</Text>
-              <Icon name="arrow-drop-down" size={20} type='Material'/>
+              <Text>{end ? end.momentFormat('LT') : 'N/A'}</Text>
+              <Icon name="arrow-drop-down" size={20} type="Material" />
             </TouchableOpacity>
           ) : (
-            <Text>{end}</Text>
+            <Text>{end ? end.momentFormat('LT') : 'N/A'}</Text>
           )}
         </Text>
         <DatePickerDropdown
           mode="time"
           open={endOpen}
-          onConfirm={t => onRowEdit(t, TimeType.End)}
+          onConfirm={t => editRecord(t, TimeType.End)}
           onCancel={() => setEndOpen(false)}
         />
         <Text>{total ? `${total}h` : 'N/A'}</Text>

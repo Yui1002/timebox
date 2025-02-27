@@ -1,3 +1,4 @@
+//AMIT NOTE: Create method for each type of exception to consolidate error messaging
 class ResponseException extends Error {
     public errorObj: any;
     public code: number;
