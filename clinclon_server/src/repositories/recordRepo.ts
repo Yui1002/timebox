@@ -13,6 +13,7 @@ interface IRecordRepo {
     setEndRecord(userTransactionId: number, endTime: string): Promise<GetRecordRs>;
     updateStartRecord(recordId: number, startTime: string): Promise<GetRecordRs>;
     updateEndRecord(recordId: number, endTime: string): Promise<GetRecordRs>;
+    deleteRecord(recordId: number): Promise<void>
 }
 
 class RecordRepo extends Repositories implements IRecordRepo  {
@@ -47,7 +48,7 @@ class RecordRepo extends Repositories implements IRecordRepo  {
 
     async getRecordByPeriod(userTransactionId: number, from: string, to: string): Promise<GetRecordRs> {
         try {
-            const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE (start_time, end_time) OVERLAPS ($1::DATE, $2::DATE) AND id_user_transaction = $3;";
+            const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE (start_time, end_time) OVERLAPS ($1::DATE, $2::DATE) AND id_user_transaction = $3 AND status = 'active';";
             const data = await this.queryDB(sql, [from, to, userTransactionId]);
             if (data?.rows.length <= 0) {
                 return null;
@@ -108,6 +109,15 @@ class RecordRepo extends Repositories implements IRecordRepo  {
             return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to insert into db');
+        }
+    }
+
+    async deleteRecord(recordId: number): Promise<void> {
+        try {   
+            const sql = "UPDATE time_record SET status = $1 WHERE time_record_id = $2;";
+            await this.queryDB(sql, ['inactive', recordId]);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, 'unable to delete from db');
         }
     }
 }

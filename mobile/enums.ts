@@ -23,6 +23,11 @@ enum TimeType {
   END = 'end'
 }
 
+enum ActionType {
+  DELETE = 'delete',
+  UPDATE = 'update'
+}
+
 enum Display {
   HIDE = 'Hide',
   SHOW = 'Show'
@@ -93,6 +98,8 @@ enum ErrMsg {
   EMPLOYER_NOT_SELECTED = "Employer's name is required",
   FAIL_RECORD = 'Failed to record time',
   FAIL_UPDATE_RECORD = 'Failed to update record time',
+  SUCCESS_DELETE_RECORD = 'Deleted record successfully',
+  FAIL_DELETE_RECORD = 'Failed to delete record',
   SUCCESS_UPDATE_RECORD = 'Updated record time successfully',
   SUCCESS_SET_RECORD = 'Set record time successfully as ',
 }
@@ -107,4 +114,4 @@ enum MomentFormat {
   DATETIME = 'MM/DD LT',
 }
 
-export { StatusModel, Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, Mode, MomentFormat }
+export { StatusModel, Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, Mode, MomentFormat, ActionType }

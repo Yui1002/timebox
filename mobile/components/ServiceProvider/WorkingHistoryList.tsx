@@ -69,7 +69,6 @@ const WorkingHistoryList = ({
   };
 
   const validateInput = (type: TimeType): boolean => {
-    console.log('start', start, 'end', end)
     let validateErr = Validator.validateRecordTime(type, start, end);
     if (validateErr) {
       setResult({
@@ -106,8 +105,6 @@ const WorkingHistoryList = ({
       });
     }
   };
-
-  const deleteRecord = () => {};
 
   return (
     <TouchableOpacity onPress={onRowSelect} style={rowStyle}>

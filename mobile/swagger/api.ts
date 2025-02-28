@@ -26,6 +26,19 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
+ * @interface DeleteRecordRq
+ */
+export interface DeleteRecordRq {
+    /**
+     * 
+     * @type {number}
+     * @memberof DeleteRecordRq
+     */
+    'recordId'?: number;
+}
+/**
+ * 
+ * @export
  * @interface Employer
  */
 export interface Employer {
@@ -1148,6 +1161,41 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
+         * @param {DeleteRecordRq} deleteRecordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteRecord: async (deleteRecordRq: DeleteRecordRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'deleteRecordRq' is not null or undefined
+            assertParamExists('deleteRecord', 'deleteRecordRq', deleteRecordRq)
+            const localVarPath = `/record`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(deleteRecordRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {string} [email] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -1937,7 +1985,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         updateRecord: async (updateRecordRq: UpdateRecordRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'updateRecordRq' is not null or undefined
             assertParamExists('updateRecord', 'updateRecordRq', updateRecordRq)
-            const localVarPath = `/record/update`;
+            const localVarPath = `/record`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1945,7 +1993,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -2078,6 +2126,18 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 export const DefaultApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
     return {
+        /**
+         * 
+         * @param {DeleteRecordRq} deleteRecordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteRecord(deleteRecordRq: DeleteRecordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteRecord(deleteRecordRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.deleteRecord']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
         /**
          * 
          * @param {string} [email] 
@@ -2348,7 +2408,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRecordRs>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updateRecord(updateRecordRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateRecord']?.[localVarOperationServerIndex]?.url;
@@ -2400,6 +2460,15 @@ export const DefaultApiFp = function(configuration?: Configuration) {
 export const DefaultApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = DefaultApiFp(configuration)
     return {
+        /**
+         * 
+         * @param {DeleteRecordRq} deleteRecordRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteRecord(deleteRecordRq: DeleteRecordRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.deleteRecord(deleteRecordRq, options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @param {string} [email] 
@@ -2607,7 +2676,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): AxiosPromise<GetRecordRs> {
             return localVarFp.updateRecord(updateRecordRq, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2647,6 +2716,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
  * @extends {BaseAPI}
  */
 export class DefaultApi extends BaseAPI {
+    /**
+     * 
+     * @param {DeleteRecordRq} deleteRecordRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public deleteRecord(deleteRecordRq: DeleteRecordRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).deleteRecord(deleteRecordRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {string} [email] 

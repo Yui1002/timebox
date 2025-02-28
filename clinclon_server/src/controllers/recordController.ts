@@ -1,7 +1,7 @@
-import { Body, Get, Post, Put, Queries, Route } from "tsoa";
+import { Body, Get, Post, Put, Delete, Queries, Route } from "tsoa";
 import RecordManager from '../managers/RecordManager';
 import SuperController from "./SuperController";
-import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq } from "../models/Record";
+import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq } from "../models/Record";
 import Validate from "../validators/CustomValidator";
 
 interface IRecordController {
@@ -9,6 +9,8 @@ interface IRecordController {
     getRecordByDate(rq: GetRecordByDateRq): Promise<GetRecordRs>;
     getRecordByPeriod(rq: GetRecordByPeriodRq): Promise<GetRecordRs>;
     setRecord(rq: SetRecordRq): Promise<void>;
+    updateRecord(rq: UpdateRecordRq): Promise<GetRecordRs>;
+    deleteRecord(rq: DeleteRecordRq): Promise<void>;
 }
 
 @Route('record')
@@ -44,11 +46,15 @@ export class RecordController extends SuperController implements IRecordControll
         await this._recordManager.setRecord(request);
     }
 
-    //AMIT NOTE: Use PUT request instead of POST('/update')
-    @Put('/update')
+    @Put('/')
     @Validate
-    public async updateRecord(@Body() request: UpdateRecordRq): Promise<void> {
-        console.log('here')
-        await this._recordManager.updateRecord(request);
+    public async updateRecord(@Body() request: UpdateRecordRq): Promise<GetRecordRs> {
+        return await this._recordManager.updateRecord(request);
+    }
+
+    @Delete('/')
+    @Validate
+    public async deleteRecord(@Body() request: DeleteRecordRq): Promise<void> {
+        await this._recordManager.deleteRecord(request);
     }
 }

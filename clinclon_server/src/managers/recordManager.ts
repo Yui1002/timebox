@@ -8,6 +8,7 @@ import {
   SetRecordRq,
   TimeType,
   UpdateRecordRq,
+  DeleteRecordRq,
 } from "../models/Record";
 import ResponseException from "../models/ResponseException";
 
@@ -16,6 +17,8 @@ interface IRecordManager {
   getRecordByDate(record: GetRecordByDateRq): Promise<GetRecordRs>;
   getRecordByPeriod(record: GetRecordByPeriodRq): Promise<GetRecordRs>;
   setRecord(record: SetRecordRq): Promise<GetRecordRs>;
+  updateRecord(record: UpdateRecordRq): Promise<GetRecordRs>;
+  deleteRecord(record: DeleteRecordRq): Promise<void>;
 }
 
 class RecordManager implements IRecordManager {
@@ -119,7 +122,6 @@ class RecordManager implements IRecordManager {
   }
 
   async updateRecord(recordRq: UpdateRecordRq): Promise<GetRecordRs> {
-    console.log('recordRq', recordRq)
     if (recordRq.type === TimeType.START_TIME) {
       return await this._recordRepo.updateStartRecord(
         recordRq.recordId,
@@ -131,6 +133,10 @@ class RecordManager implements IRecordManager {
         recordRq.recordTime
       );
     }
+  }
+
+  async deleteRecord(recordRq: DeleteRecordRq): Promise<void> {
+    await this._recordRepo.deleteRecord(recordRq.recordId);
   }
 }
 
