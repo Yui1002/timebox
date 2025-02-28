@@ -13,12 +13,13 @@ import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
 import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
 import {ResultModel} from '../../types';
-import {StatusModel, ActionType, ErrMsg} from '../../enums';
+import {StatusModel, ActionType, ErrMsg, Screen} from '../../enums';
 import {alert} from '../../helper/Alert';
+import TableHeader from './TableHeader';
 import moment from 'moment';
 let api = DefaultApiFactory();
 
-const RecordHistory = ({route}: any) => {
+const RecordHistory = ({route, navigation}: any) => {
   const [records, setRecords] = useState<Record[]>([]);
   const [rowSelected, setRowSelected] = useState({
     selectMode: false,
@@ -112,12 +113,7 @@ const RecordHistory = ({route}: any) => {
         </View>
       )}
       <ScrollView>
-        <AlignContainer>
-          <Text>Date</Text>
-          <Text>In</Text>
-          <Text>Out</Text>
-          <Text>Total</Text>
-        </AlignContainer>
+        <TableHeader />
         <Separator />
         {records?.length ? (
           records.map((record: Record, index: number) => {
@@ -137,6 +133,10 @@ const RecordHistory = ({route}: any) => {
           <Text style={centerText}>No records matched</Text>
         )}
       </ScrollView>
+      <Button
+        title="View changes on record"
+        onPress={() => navigation.navigate(Screen.RECORD_CHANGE)}
+      />
     </TopContainer>
   );
 };

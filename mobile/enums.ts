@@ -65,7 +65,8 @@ enum Screen {
   EDIT_WORK_SHIFTS = 'EditWorkShifts',
   EDIT_PROFILE = 'EditProfile',
   VIEW_WORKING_HISTORY = 'ViewWorkingHistory',
-  RECORD_HISTORY = 'RecordHistory'
+  RECORD_HISTORY = 'RecordHistory',
+  RECORD_CHANGE = 'RecordChange'
 }
 
 enum ErrMsg {

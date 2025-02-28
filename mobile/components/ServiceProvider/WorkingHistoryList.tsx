@@ -98,7 +98,6 @@ const WorkingHistoryList = ({
         message: ErrMsg.SUCCESS_UPDATE_RECORD,
       });
     } catch (e) {
-      console.log('error', e.response.data)
       setResult({
         status: StatusModel.ERROR,
         message: ErrMsg.FAIL_UPDATE_RECORD,
