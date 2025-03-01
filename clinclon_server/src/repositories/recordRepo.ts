@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { GetRecordRq, GetRecordRs } from "../models/Record";
+import { GetRecordChangeRs, GetRecordRs } from "../models/Record";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
 import Repositories from "./Repositories";
@@ -8,7 +8,8 @@ dotenv.config();
 interface IRecordRepo {
     getRecord(userTransactionId: number): Promise<GetRecordRs | null>
     getRecordByDate(userTransactionId: number, string: string): Promise<GetRecordRs>;
-    getRecordByPeriod(userTransactionId: number, from: string, to: string): Promise<GetRecordRs>
+    getRecordByPeriod(userTransactionId: number, from: string, to: string): Promise<GetRecordRs>;
+    getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs>;
     setStartRecord(userTransactionId: number, startTime: string): Promise<GetRecordRs>;
     setEndRecord(userTransactionId: number, endTime: string): Promise<GetRecordRs>;
     updateStartRecord(recordId: number, startTime: string): Promise<GetRecordRs>;
@@ -55,6 +56,21 @@ class RecordRepo extends Repositories implements IRecordRepo  {
             }
             return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
         } catch (e: any) {
+            throw new ResponseException(e, 500, 'unable to get from db');
+        }
+    }
+
+    async getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs> {
+        try {
+            const sql = `SELECT start_time, end_time, changed_on, updated_by FROM time_record_audits 
+                            WHERE time_record_id IN 
+                            (SELECT time_record_id FROM time_record WHERE id_user_transaction = $1);`;
+            const data = await this.queryDB(sql, [userTransactionId]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            return JSHelperInstance._converter.deserializeObject(data, GetRecordChangeRs);
+        } catch (e) {
             throw new ResponseException(e, 500, 'unable to get from db');
         }
     }

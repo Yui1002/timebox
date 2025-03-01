@@ -14,15 +14,21 @@ import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
 import {ResultModel} from '../../types';
 import {StatusModel, ActionType, ErrMsg} from '../../enums';
-import {alert} from '../../helper/Alert';
 import moment from 'moment';
 import TableHeader from './TableHeader';
 let api = DefaultApiFactory();
 
 const RecordChange = ({route, navigation}: any) => {
+  const headerContent = ['Date', 'In', 'Out', 'Updated by', 'Updated Date'];
+
+  const getRecordChanges = () => {
+    
+  }
+
   return (
     <TopContainer>
-        <TableHeader />
+        <SearchField />
+        <TableHeader headerContent={headerContent}/>
         <Separator />
     </TopContainer>
   );

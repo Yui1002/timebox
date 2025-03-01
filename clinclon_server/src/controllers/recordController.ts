@@ -1,7 +1,7 @@
 import { Body, Get, Post, Put, Delete, Queries, Route } from "tsoa";
 import RecordManager from '../managers/RecordManager';
 import SuperController from "./SuperController";
-import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq } from "../models/Record";
+import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs } from "../models/Record";
 import Validate from "../validators/CustomValidator";
 
 interface IRecordController {
@@ -38,6 +38,12 @@ export class RecordController extends SuperController implements IRecordControll
     @Validate
     public async getRecordByPeriod(@Queries() rq: GetRecordByPeriodRq): Promise<GetRecordRs> {
         return await this._recordManager.getRecordByPeriod(rq);
+    }
+
+    @Get('/changes')
+    @Validate
+    public async getRecordChanges(@Queries() rq: GetRecordByPeriodRq): Promise<GetRecordChangeRs> {
+        return await this._recordManager.getRecordChanges(rq);
     }
 
     @Post()

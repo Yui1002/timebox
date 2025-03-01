@@ -42,8 +42,12 @@ class SetRecordRq extends BaseRequest {
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
     serviceProviderEmail: string = "";
-    @JsonProperty("recordTime", String)
-    recordTime: string = "";
+    @JsonProperty('startTime', String)
+    startTime: string = '';
+    @JsonProperty('endTime', String)
+    endTime: string = '';
+    // @JsonProperty("recordTime", String)
+    // recordTime: string = "";
     @JsonProperty("type")
     type: TimeType = TimeType.START_TIME;
 }
@@ -74,10 +78,30 @@ class Record {
     endTime: Date = new Date();
 }
 
+@JsonObject("RecordChange")
+class RecordChange {
+    @JsonProperty("start_time", Date)
+    startTime: Date = new Date();
+    @JsonProperty("end_time", Date)
+    endTime: Date = new Date();
+    @JsonProperty("changed_on", Date)
+    changedOn: Date = new Date();
+    @JsonProperty("updated_by", String)
+    updatedBy: string = '';
+}
+
 @JsonObject("GetRecordRs")
 class GetRecordRs {
     @JsonProperty("rows", [Record])
     records: Record[] = [];
 }
 
-export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq}
+@JsonObject("GetRecordChangeRs")
+class GetRecordChangeRs {
+    @JsonProperty("rows", [RecordChange])
+    records: RecordChange[] = [];
+}
+
+
+
+export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs}

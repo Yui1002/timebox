@@ -47,6 +47,7 @@ const RecordHistory = ({route, navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
+  const headerContent = ['Date', 'In', 'Out', 'Total']
 
   const enableActionMode = async (type: ActionType) => {
     if (type === ActionType.UPDATE) {
@@ -113,7 +114,7 @@ const RecordHistory = ({route, navigation}: any) => {
         </View>
       )}
       <ScrollView>
-        <TableHeader />
+        <TableHeader headerContent={headerContent}/>
         <Separator />
         {records?.length ? (
           records.map((record: Record, index: number) => {

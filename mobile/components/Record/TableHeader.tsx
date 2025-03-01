@@ -1,16 +1,17 @@
 import React from 'react';
 import {Text} from 'react-native';
-import {
-  AlignContainer,
-} from '../index';
+import {AlignContainer} from '../index';
 
-const TableHeader = () => {
+interface TableHeaderProps {
+  headerContent: string[];
+}
+
+const TableHeader = (props: TableHeaderProps) => {
   return (
     <AlignContainer>
-      <Text>Date</Text>
-      <Text>In</Text>
-      <Text>Out</Text>
-      <Text>Total</Text>
+      {props.headerContent.map((header: string, index: number) => (
+        <Text key={index}>{header}</Text>
+      ))}
     </AlignContainer>
   );
 };
