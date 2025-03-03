@@ -9,7 +9,7 @@ const RecordChangeList = ({record}) => {
   return (
     <TouchableOpacity>
       <AlignContainer>
-        <Text>{new Date(startTime).momentFormat('YYYY/MM/DD')}</Text>
+        <Text>{new Date(startTime).momentFormat('MM/DD')}</Text>
         <Text>{new Date(startTime).momentFormat('LT')}</Text>
         <Text>{new Date(endTime).momentFormat('LT')}</Text>
         <Text>{updatedBy}</Text>

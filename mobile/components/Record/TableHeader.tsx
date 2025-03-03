@@ -10,7 +10,7 @@ const TableHeader = (props: TableHeaderProps) => {
   return (
     <AlignContainer>
       {props.headerContent.map((header: string, index: number) => (
-        <Text key={index}>{header}</Text>
+        <Text style={{width: '20%'}} key={index}>{header}</Text>
       ))}
     </AlignContainer>
   );

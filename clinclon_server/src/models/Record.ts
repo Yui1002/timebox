@@ -38,16 +38,14 @@ class GetRecordByPeriodRq extends BaseRequest {
 
 @JsonObject("SetRecordRq")
 class SetRecordRq extends BaseRequest {
+    @JsonProperty("id", Number)
+    id?: number = 0;
     @JsonProperty("employerEmail", String)
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
     serviceProviderEmail: string = "";
-    @JsonProperty('startTime', String)
-    startTime: string = '';
-    @JsonProperty('endTime', String)
-    endTime: string = '';
-    // @JsonProperty("recordTime", String)
-    // recordTime: string = "";
+    @JsonProperty("recordTime", String)
+    recordTime: string = "";
     @JsonProperty("type")
     type: TimeType = TimeType.START_TIME;
 }

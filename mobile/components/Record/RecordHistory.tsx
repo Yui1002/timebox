@@ -86,6 +86,9 @@ const RecordHistory = ({route, navigation}: any) => {
   };
 
   const searchRecord = async (): Promise<void> => {
+    console.log('from', selectedPeriod.from);
+    console.log('to', selectedPeriod.to);
+
     if (!validateInput()) return;
 
     try {
@@ -95,8 +98,10 @@ const RecordHistory = ({route, navigation}: any) => {
         selectedPeriod.from ? selectedPeriod.from : '2020-01-01',
         selectedPeriod.to ? selectedPeriod.to : new Date().momentFormat('YYYY-MM-DD'),
       );
+      console.log('data', data.records)
       setRecords(data.records!);
     } catch (e) {
+      console.log(e.response.data)
       setRecords([]);
     }
   };
@@ -124,7 +129,6 @@ const RecordHistory = ({route, navigation}: any) => {
       <SearchField
         selectedPeriod={selectedPeriod}
         setSelectedPeriod={setSelectedPeriod}
-        // setRecords={setRecords}
         onPress={searchRecord}
         employer={route.params.employer}
         serviceProviderEmail={serviceProviderEmail}

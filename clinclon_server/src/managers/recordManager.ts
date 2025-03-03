@@ -115,12 +115,12 @@ class RecordManager implements IRecordManager {
     if (recordRq.type === TimeType.START_TIME) {
       return await this._recordRepo.setStartRecord(
         transactionId,
-        recordRq.startTime
+        recordRq.recordTime
       );
     } else {
-      return await this._recordRepo.setEndRecord(
-        transactionId,
-        recordRq.endTime
+      return await this._recordRepo.updateEndRecord(
+        recordRq.id,
+        recordRq.recordTime
       );
     }
   }

@@ -37,15 +37,15 @@ class Validator {
     return !isEmpty(rateType);
   }
 
-  static isValidStartTime(start: Date, end: Date) {
+  static isValidStartTime(start: Date | string, end: Date | string) {
     return moment(start).isBefore(moment(end));
   }
 
-  static isValidEndTime(start: Date, end: Date) {
+  static isValidEndTime(start: Date | string, end: Date | string) {
     return moment(end).isAfter(moment(start));
   }
 
-  static isValidDate(date: Date): boolean {
+  static isValidDate(date: Date | string): boolean {
     return moment(date).isValid();
   }
 
@@ -123,8 +123,8 @@ class Validator {
 
   static validateRecordTime(
     type: TimeType,
-    startTime: Date | undefined,
-    endTime: Date | undefined,
+    startTime: Date | string | undefined,
+    endTime: Date | string | undefined,
   ): ErrMsg | null {
     if (type === TimeType.Start) {
       if (!startTime || !this.isValidDate(startTime)) {
