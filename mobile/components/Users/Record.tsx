@@ -159,6 +159,7 @@ const Record = ({route, navigation}: any) => {
         onPress={() =>
           navigation.navigate(Screen.RECORD_HISTORY, {
             employer,
+            serviceProviderEmail
           })
         }
       />

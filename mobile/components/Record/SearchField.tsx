@@ -19,42 +19,49 @@ import {DefaultApiFactory, Record} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 
-const SearchField = ({setRecords, employer}) => {
+// const SearchField = ({setRecords, employer, onPress}) => {
+const SearchField = ({
+  employer,
+  serviceProviderEmail,
+  onPress,
+  setSelectedPeriod,
+  selectedPeriod,
+}) => {
   const {email} = useSelector(state => state.userInfo);
-  const isFocused = useIsFocused();
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);
-  const [from, setFrom] = useState<string>('');
-  const [to, setTo] = useState<string>('');
+  // const [from, setFrom] = useState<string>('');
+  // const [to, setTo] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
 
-  const validateInput = (): boolean => {
-    const validateErr = Validator.validateWorkingRecordSelect(from, to);
-    if (validateErr) {
-      setResult({status: StatusModel.ERROR, message: validateErr});
-    }
+  console.log('from', selectedPeriod.from, 'to', selectedPeriod.to)
+  // const validateInput = (): boolean => {
+  //   const validateErr = Validator.validateWorkingRecordSelect(from, to);
+  //   if (validateErr) {
+  //     setResult({status: StatusModel.ERROR, message: validateErr});
+  //   }
 
-    return validateErr == null;
-  };
+  //   return validateErr == null;
+  // };
 
-  const searchRecord = async (): Promise<void> => {
-    if (!validateInput()) return;
+  // const searchRecord = async (): Promise<void> => {
+  //   if (!validateInput()) return;
 
-    try {
-      const {data} = await api.getRecordByPeriod(
-        employer.email,
-        email,
-        from ? from : '2020-01-01',
-        to ? to : moment().format('YYYY-MM-DD'),
-      );
-      setRecords(data.records);
-    } catch (e) {
-      setRecords([])
-    }
-  };
+  //   try {
+  //     const {data} = await api.getRecordByPeriod(
+  //       employer.email,
+  //       email,
+  //       from ? from : '2020-01-01',
+  //       to ? to : moment().format('YYYY-MM-DD'),
+  //     );
+  //     setRecords(data.records);
+  //   } catch (e) {
+  //     setRecords([]);
+  //   }
+  // };
 
   const sortRecords = (recordData: Record[]): Record[] => {
     if (!recordData || recordData.length) return [];
@@ -66,7 +73,16 @@ const SearchField = ({setRecords, employer}) => {
 
   const onPeriodChange = (type: string, data: Date) => {
     const selected = moment(data).format('YYYY-MM-DD');
-    type === 'from' ? setFrom(selected) : setTo(selected);
+    // type === 'from' ? setFrom(selected) : setTo(selected);
+    type === 'from'
+      ? setSelectedPeriod({
+          from: selected,
+          to: selectedPeriod.to,
+        })
+      : setSelectedPeriod({
+          from: selectedPeriod.from,
+          to: selected,
+        });
   };
 
   return (
@@ -75,13 +91,13 @@ const SearchField = ({setRecords, employer}) => {
       <Title title="Select period" />
       <AlignContainer>
         <Dropdown
-          placeholder={from ? from : 'From'}
+          placeholder={selectedPeriod.from ? selectedPeriod.from : 'From'}
           onPress={() => setFromDropDown(!fromDropdown)}
           width={'45%'}
           height={'100%'}
         />
         <Dropdown
-          placeholder={to ? to : 'To'}
+          placeholder={selectedPeriod.to ? selectedPeriod.to : 'To'}
           onPress={() => setToDropDown(!toDropdown)}
           width={'45%'}
           height={'100%'}
@@ -107,7 +123,8 @@ const SearchField = ({setRecords, employer}) => {
         minimumDate={new Date('2020-01-01')}
         maximumDate={new Date()}
       />
-      <Button title="Search" onPress={searchRecord} />
+      {/* <Button title="Search" onPress={searchRecord} /> */}
+      <Button title="Search" onPress={onPress} />
     </TopContainer>
   );
 };

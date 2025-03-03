@@ -2,13 +2,7 @@ import React, {useState} from 'react';
 import {Text, ScrollView, View} from 'react-native';
 import {TextStyle} from '../../styles';
 import {Record, DefaultApiFactory} from '../../swagger';
-import {
-  TopContainer,
-  Separator,
-  AlignContainer,
-  Button,
-  Result,
-} from '../index';
+import {TopContainer, Separator, Button, Result} from '../index';
 import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
 import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
@@ -17,9 +11,11 @@ import {StatusModel, ActionType, ErrMsg, Screen} from '../../enums';
 import {alert} from '../../helper/Alert';
 import TableHeader from './TableHeader';
 import moment from 'moment';
+import Validator from '../../validator/validator';
 let api = DefaultApiFactory();
 
 const RecordHistory = ({route, navigation}: any) => {
+  const {employer, serviceProviderEmail} = route.params;
   const [records, setRecords] = useState<Record[]>([]);
   const [rowSelected, setRowSelected] = useState({
     selectMode: false,
@@ -47,7 +43,11 @@ const RecordHistory = ({route, navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
-  const headerContent = ['Date', 'In', 'Out', 'Total']
+  const headerContent = ['Date', 'In', 'Out', 'Total'];
+  const [selectedPeriod, setSelectedPeriod] = useState({
+    from: '',
+    to: ''
+  });
 
   const enableActionMode = async (type: ActionType) => {
     if (type === ActionType.UPDATE) {
@@ -76,6 +76,31 @@ const RecordHistory = ({route, navigation}: any) => {
     );
   };
 
+  const validateInput = (): boolean => {
+    const validateErr = Validator.validateWorkingRecordSelect(selectedPeriod.from, selectedPeriod.to);
+    if (validateErr) {
+      setResult({status: StatusModel.ERROR, message: validateErr});
+    }
+
+    return validateErr == null;
+  };
+
+  const searchRecord = async (): Promise<void> => {
+    if (!validateInput()) return;
+
+    try {
+      const {data} = await api.getRecordByPeriod(
+        employer.email,
+        serviceProviderEmail,
+        selectedPeriod.from ? selectedPeriod.from : '2020-01-01',
+        selectedPeriod.to ? selectedPeriod.to : new Date().momentFormat('YYYY-MM-DD'),
+      );
+      setRecords(data.records!);
+    } catch (e) {
+      setRecords([]);
+    }
+  };
+
   const deleteRecord = async () => {
     try {
       await api.deleteRecord({
@@ -96,7 +121,14 @@ const RecordHistory = ({route, navigation}: any) => {
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
-      <SearchField setRecords={setRecords} employer={route.params.employer} />
+      <SearchField
+        selectedPeriod={selectedPeriod}
+        setSelectedPeriod={setSelectedPeriod}
+        // setRecords={setRecords}
+        onPress={searchRecord}
+        employer={route.params.employer}
+        serviceProviderEmail={serviceProviderEmail}
+      />
       {records?.length !== 0 && (
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
           <Button
@@ -114,7 +146,7 @@ const RecordHistory = ({route, navigation}: any) => {
         </View>
       )}
       <ScrollView>
-        <TableHeader headerContent={headerContent}/>
+        <TableHeader headerContent={headerContent} />
         <Separator />
         {records?.length ? (
           records.map((record: Record, index: number) => {
@@ -136,7 +168,12 @@ const RecordHistory = ({route, navigation}: any) => {
       </ScrollView>
       <Button
         title="View changes on record"
-        onPress={() => navigation.navigate(Screen.RECORD_CHANGE)}
+        onPress={() =>
+          navigation.navigate(Screen.RECORD_CHANGE, {
+            employer,
+            serviceProviderEmail,
+          })
+        }
       />
     </TopContainer>
   );
