@@ -86,9 +86,6 @@ const RecordHistory = ({route, navigation}: any) => {
   };
 
   const searchRecord = async (): Promise<void> => {
-    console.log('from', selectedPeriod.from);
-    console.log('to', selectedPeriod.to);
-
     if (!validateInput()) return;
 
     try {
@@ -98,7 +95,6 @@ const RecordHistory = ({route, navigation}: any) => {
         selectedPeriod.from ? selectedPeriod.from : '2020-01-01',
         selectedPeriod.to ? selectedPeriod.to : new Date().momentFormat('YYYY-MM-DD'),
       );
-      console.log('data', data.records)
       setRecords(data.records!);
     } catch (e) {
       console.log(e.response.data)
@@ -126,59 +122,62 @@ const RecordHistory = ({route, navigation}: any) => {
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
-      <SearchField
-        selectedPeriod={selectedPeriod}
-        setSelectedPeriod={setSelectedPeriod}
-        onPress={searchRecord}
-        employer={route.params.employer}
-        serviceProviderEmail={serviceProviderEmail}
-      />
-      {records?.length !== 0 && (
-        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <Button
-            title="Edit"
-            style={buttonStyle}
-            onPress={() => enableActionMode(ActionType.UPDATE)}
-          />
-          <Button
-            title="Delete"
-            style={buttonStyle}
-            onPress={() => {
-              enableActionMode(ActionType.DELETE), deleteAlert();
-            }}
-          />
-        </View>
-      )}
       <ScrollView>
-        <TableHeader headerContent={headerContent} />
-        <Separator />
-        {records?.length ? (
-          records.map((record: Record, index: number) => {
-            return (
-              <WorkingHistoryList
-                key={index}
-                record={record}
-                rowSelected={rowSelected}
-                editSelected={editSelected}
-                setRowSelected={setRowSelected}
-                setEditSelected={setEditSelected}
-                setResult={setResult}
-              />
-            );
-          })
-        ) : (
-          <Text style={centerText}>No records matched</Text>
+        <SearchField
+          selectedPeriod={selectedPeriod}
+          setSelectedPeriod={setSelectedPeriod}
+          onPress={searchRecord}
+          employer={route.params.employer}
+          serviceProviderEmail={serviceProviderEmail}
+        />
+        {records?.length !== 0 && (
+          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <Button
+              title="Edit"
+              style={buttonStyle}
+              onPress={() => enableActionMode(ActionType.UPDATE)}
+            />
+            <Button
+              title="Delete"
+              style={buttonStyle}
+              onPress={() => {
+                enableActionMode(ActionType.DELETE), deleteAlert();
+              }}
+            />
+          </View>
         )}
+        <ScrollView>
+          <TableHeader headerContent={headerContent} />
+          <Separator />
+          {records?.length ? (
+            records.map((record: Record, index: number) => {
+              return (
+                <WorkingHistoryList
+                  key={index}
+                  record={record}
+                  rowSelected={rowSelected}
+                  editSelected={editSelected}
+                  setRowSelected={setRowSelected}
+                  setEditSelected={setEditSelected}
+                  setResult={setResult}
+                />
+              );
+            })
+          ) : (
+            <Text style={centerText}>No records matched</Text>
+          )}
+        </ScrollView>
+        <Button
+          title="View changes on record"
+          onPress={() =>
+            navigation.navigate(Screen.RECORD_CHANGE, {
+              employer,
+              serviceProviderEmail,
+            })
+          }
+        />
+
       </ScrollView>
-      <Button
-        title="View changes on record"
-        onPress={() =>
-          navigation.navigate(Screen.RECORD_CHANGE, {
-            employer,
-            serviceProviderEmail,
-          })
-        }
-      />
     </TopContainer>
   );
 };

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Text, ScrollView, View} from 'react-native';
 import {Record, DefaultApiFactory} from '../../swagger';
 import {TopContainer, Separator} from '../index';
+import { TextStyle } from '../../styles';
 import SearchField from './SearchField';
 import TableHeader from './TableHeader';
 import RecordChangeList from './RecordChangeList';

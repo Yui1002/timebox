@@ -49,7 +49,10 @@ class RecordRepo extends Repositories implements IRecordRepo  {
 
     async getRecordByPeriod(userTransactionId: number, from: string, to: string): Promise<GetRecordRs> {
         try {
-            const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE (start_time, end_time) OVERLAPS ($1::DATE, $2::DATE) AND id_user_transaction = $3 AND status = 'active';";
+            const sql = `SELECT time_record_id AS id, start_time, end_time FROM time_record
+                            WHERE start_time >= $1 and end_time < $2
+                            AND id_user_transaction = $3 
+                            AND status = 'active';`
             const data = await this.queryDB(sql, [from, to, userTransactionId]);
             if (data?.rows.length <= 0) {
                 return null;

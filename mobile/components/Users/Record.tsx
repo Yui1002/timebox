@@ -112,7 +112,6 @@ const Record = ({route, navigation}: any) => {
       });
       getTodaysRecord();
     } catch (e: any) {
-      console.log('e', e.response.data);
       setResult({status: StatusModel.ERROR, message: ErrMsg.FAIL_RECORD});
     }
   };
@@ -122,6 +121,9 @@ const Record = ({route, navigation}: any) => {
       {result.status && <Result status={result.status} msg={result.message} />}
       <Container>
         <Header title={`Employer: ${firstName} ${lastName}`} />
+      </Container>
+      <Container>
+        <Text>{new Date().momentFormat('YYYY/MM/DD h:mm')}</Text>
       </Container>
       {todayRecord.startTime ? (
         <DropdownContainer>
