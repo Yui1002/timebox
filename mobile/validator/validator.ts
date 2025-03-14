@@ -1,8 +1,16 @@
-import {isEmail, isFloat, isEmpty, isStrongPassword, isDate, isCurrency} from 'validator';
+import {
+  isEmail,
+  isFloat,
+  isEmpty,
+  isStrongPassword,
+  isDate,
+  isCurrency,
+} from 'validator';
 import moment from 'moment';
 import {PASSWORD_RULES} from '../config.js';
 import {SignUpProps} from '../types';
-import {ErrMsg, RateTypeValue, TimeType} from '../enums';
+import {ErrMsg, RateTypeValue} from '../enums';
+import {TimeType} from '../swagger';
 
 class Validator {
   static isNotEmpty(name: string): boolean {
@@ -29,15 +37,15 @@ class Validator {
     return !isEmpty(rateType);
   }
 
-  static isValidStartTime(start: Date, end: Date) {
+  static isValidStartTime(start: Date | string, end: Date | string) {
     return moment(start).isBefore(moment(end));
   }
 
-  static isValidEndTime(start: Date, end: Date) {
+  static isValidEndTime(start: Date | string, end: Date | string) {
     return moment(end).isAfter(moment(start));
   }
 
-  static isValidDate(date: Date): boolean {
+  static isValidDate(date: Date | string): boolean {
     return moment(date).isValid();
   }
 
@@ -115,17 +123,17 @@ class Validator {
 
   static validateRecordTime(
     type: TimeType,
-    startTime: Date,
-    endTime: Date,
+    startTime: Date | string | undefined,
+    endTime: Date | string | undefined,
   ): ErrMsg | null {
-    if (type === TimeType.START) {
+    if (type === TimeType.Start) {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
       if (endTime && this.isValidStartTime(startTime, endTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
-    } else if (type === TimeType.END) {
+    } else if (type === TimeType.End) {
       if (!endTime || !this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }
@@ -175,15 +183,7 @@ class Validator {
     return null;
   }
 
-  static validateWorkingRecordSelect(
-    selected: string,
-    from: string,
-    to: string,
-  ): ErrMsg | null {
-    if (!this.isNotEmpty(selected)) {
-      return ErrMsg.EMPLOYER_NOT_SELECTED;
-    }
-
+  static validateWorkingRecordSelect(from: string, to: string): ErrMsg | null {
     if (!this.isValidEndTime(from, to)) {
       return ErrMsg.INVALID_TIME;
     }

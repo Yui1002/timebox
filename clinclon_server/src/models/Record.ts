@@ -38,6 +38,8 @@ class GetRecordByPeriodRq extends BaseRequest {
 
 @JsonObject("SetRecordRq")
 class SetRecordRq extends BaseRequest {
+    @JsonProperty("id", Number)
+    id?: number = 0;
     @JsonProperty("employerEmail", String)
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
@@ -58,6 +60,11 @@ class UpdateRecordRq extends BaseRequest {
     type: TimeType = TimeType.START_TIME;
 }
 
+@JsonObject("DeleteRecordRq") 
+class DeleteRecordRq extends BaseRequest {
+    @JsonProperty("recordId", Number)
+    recordId: number = 0;
+}
 
 @JsonObject("Record")
 class Record {
@@ -69,10 +76,30 @@ class Record {
     endTime: Date = new Date();
 }
 
+@JsonObject("RecordChange")
+class RecordChange {
+    @JsonProperty("start_time", Date)
+    startTime: Date = new Date();
+    @JsonProperty("end_time", Date)
+    endTime: Date = new Date();
+    @JsonProperty("changed_on", Date)
+    changedOn: Date = new Date();
+    @JsonProperty("updated_by", String)
+    updatedBy: string = '';
+}
+
 @JsonObject("GetRecordRs")
 class GetRecordRs {
     @JsonProperty("rows", [Record])
     records: Record[] = [];
 }
 
-export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq}
+@JsonObject("GetRecordChangeRs")
+class GetRecordChangeRs {
+    @JsonProperty("rows", [RecordChange])
+    records: RecordChange[] = [];
+}
+
+
+
+export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs}

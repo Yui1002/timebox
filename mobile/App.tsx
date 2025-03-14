@@ -27,6 +27,8 @@ import EditProfile from './components/Users/Profile/EditProfile';
 import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
 import ManageServiceProviders from './components/Users/ManageServiceProviders';
 import ViewWorkingHistory from './components/Users/Profile/ViewWorkingHistory';
+import RecordHistory from './components/Record/RecordHistory';
+import RecordChange from './components/Record/RecordChange';
 
 const Stack = createStackNavigator();
 
@@ -159,6 +161,20 @@ function App(): JSX.Element {
             component={ViewWorkingHistory}
             options={({navigation}) => ({
               headerTitle: 'Working History',
+            })}
+          />
+          <Stack.Screen
+            name="RecordHistory"
+            component={RecordHistory}
+            options={({navigation}) => ({
+              headerTitle: 'Record History',
+            })}
+          />
+          <Stack.Screen
+            name="RecordChange"
+            component={RecordChange}
+            options={({navigation}) => ({
+              headerTitle: 'Changes on Record',
             })}
           />
         </Stack.Navigator>

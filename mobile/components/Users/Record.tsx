@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
 import {ButtonStyle} from '../../styles';
 import {
@@ -10,23 +10,16 @@ import {
   Header,
   DropdownContainer,
 } from '../index';
-import {
-  TimeType,
-  Parameters,
-  ErrMsg,
-  MomentFormat,
-  StatusModel,
-} from '../../enums';
+import {ErrMsg, StatusModel, Screen} from '../../enums';
 import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {
   DefaultApiFactory,
   Employer,
   SetRecordRq,
-  GetRecordRs,
+  Record as RecordType,
+  TimeType,
 } from '../../swagger';
-import {getBeginningOfDay} from '../../helper/momentHelper';
-import {alert} from '../../helper/Alert';
 import Result from '../Common/Result';
 const api = DefaultApiFactory();
 
@@ -35,28 +28,65 @@ interface RecordProps {
   serviceProviderEmail: string;
 }
 
-const Record = ({route}: any) => {
+interface InputType {
+  start: Date | undefined;
+  end: Date | undefined;
+}
+
+const Record = ({route, navigation}: any) => {
   const {employer, serviceProviderEmail}: RecordProps = route.params;
   const {firstName, lastName, email, mode} = employer;
-  let recordBtn = ButtonStyle.createRecordButtonStyle();
 
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<Date | undefined>(undefined);
-  const [endTime, setEndTime] = useState<Date | undefined>(undefined);
+  // const [startTime, setStartTime] = useState<Date | undefined>(undefined);
+  // const [endTime, setEndTime] = useState<Date | undefined>(undefined);
+  const [timeSelected, setTimeSelected] = useState<InputType>({
+    start: undefined,
+    end: undefined,
+  });
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
-  let minimumDate =
-    mode === 1 ? new Date(Parameters.DEFAULT_DATE) : getBeginningOfDay();
+  const [todayRecord, setTodayRecord] = useState<RecordType>({
+    id: undefined,
+    startTime: undefined,
+    endTime: undefined,
+  });
+  let disabledBtn = ButtonStyle.createRecordButtonStyle(true);
+  let regularBtn = ButtonStyle.createRecordButtonStyle(false);
+
+  useEffect(() => {
+    getTodaysRecord();
+  }, []);
+
+  const getTodaysRecord = async () => {
+    try {
+      const {data} = await api.getRecordByDate(
+        employer.email,
+        serviceProviderEmail,
+        new Date().momentFormat(''),
+      );
+      setTodayRecord({
+        id: data.records ? data.records[0].id : undefined,
+        startTime: data.records ? data.records[0].startTime : undefined,
+        endTime: data.records ? data.records[0].endTime : undefined,
+      });
+    } catch (e) {
+      setTodayRecord({
+        startTime: undefined,
+        endTime: undefined,
+      });
+    }
+  };
 
   const validateInput = (type: TimeType): boolean => {
-    const validateErr = Validator.validateRecordTime(
-      type,
-      startTime!,
-      endTime!,
-    );
+    const start =
+      type === TimeType.Start ? timeSelected.start : todayRecord.startTime;
+    const end = type === TimeType.End ? timeSelected.end : todayRecord.endTime;
+
+    const validateErr = Validator.validateRecordTime(type, start, end);
 
     if (validateErr) {
       setResult({status: StatusModel.ERROR, message: validateErr});
@@ -65,39 +95,8 @@ const Record = ({route}: any) => {
     return validateErr == null;
   };
 
-  const recordExists = async (type: TimeType, record: Date): Promise<GetRecordRs | null> => {
-    try {
-      const records = (await api.getRecordByDate(
-        email,
-        serviceProviderEmail,
-        record.momentFormat(''),
-      )).data;
-      const { startTime, endTime } = records![0];
-      if (type === TimeType.END && !startTime) {
-        setResult({status: StatusModel.ERROR, message: ErrMsg.START_TIME_NOT_SELECTED});
-      }
-      return records;
-    } catch {
-      // no record found
-      return null;
-    }
-  };
-
   const saveRecord = async (type: TimeType, record: Date) => {
-    // valid input
     if (!validateInput(type)) return;
-
-    // check the record exist 
-    const doesExist = await recordExists(type, record);
-    if (doesExist) {
-      alert(
-        'Duplicate Record',
-        'Do you want to overwrite record?',
-        () => updateRecord(doesExist, record, type),
-        null,
-      );
-      return;
-    }
 
     try {
       await api.setRecord({
@@ -105,43 +104,17 @@ const Record = ({route}: any) => {
         serviceProviderEmail: serviceProviderEmail,
         recordTime: record?.momentFormat(''),
         type: type,
+        ...(type === TimeType.End && {id: todayRecord.id}),
       } as SetRecordRq);
       setResult({
         status: StatusModel.SUCCESS,
-        message: ErrMsg.SUCCESS_SET_RECORD,
+        message: `${ErrMsg.SUCCESS_SET_RECORD} ${record?.momentFormat('LT')}`,
       });
+      getTodaysRecord();
     } catch (e: any) {
+      console.log('e', e.response.data);
       setResult({status: StatusModel.ERROR, message: ErrMsg.FAIL_RECORD});
-    } finally {
-      clearInput();
     }
-  };
-
-  const updateRecord = async (
-    existRecord: GetRecordRs,
-    record: Date,
-    type: TimeType,
-  ): Promise<void> => {
-    try {
-      await api.updateRecord({
-        recordId: existRecord.records![0].id,
-        recordTime: record.momentFormat(''),
-        type: type,
-      });
-      setResult({
-        status: StatusModel.SUCCESS,
-        message: ErrMsg.SUCCESS_UPDATE_RECORD,
-      });
-    } catch (e: any) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: ErrMsg.FAIL_UPDATE_RECORD,
-      });
-    }
-  };
-
-  const clearInput = () => {
-    setResult({status: StatusModel.NULL, message: ''});
   };
 
   return (
@@ -150,48 +123,107 @@ const Record = ({route}: any) => {
       <Container>
         <Header title={`Employer: ${firstName} ${lastName}`} />
       </Container>
-      <DropdownContainer>
-        <Dropdown
-          onPress={() => setStartOpen(!startOpen)}
-          placeholder={
-            startTime?.momentFormat(MomentFormat.DATETIME) ??
-            'Select Start Time'
-          }
-        />
-        <Button
-          title="Record"
-          onPress={() => saveRecord(TimeType.START, startTime!)}
-          style={recordBtn}
-        />
-      </DropdownContainer>
-      <DropdownContainer>
-        <Dropdown
-          onPress={() => setEndOpen(!endOpen)}
-          placeholder={
-            endTime?.momentFormat(MomentFormat.DATETIME) ?? 'Select End Time'
-          }
-        />
-        <Button
-          title="Record"
-          onPress={() => saveRecord(TimeType.END, endTime!)}
-          style={recordBtn}
-        />
-      </DropdownContainer>
+      {todayRecord.startTime ? (
+        <DropdownContainer>
+          <Dropdown
+            placeholder={new Date(todayRecord.startTime).momentFormat('LT')}
+            width={'70%'}
+            height={'100%'}
+            onPress={() => null}
+          />
+          <Button
+            title="Record"
+            onPress={() => null}
+            style={disabledBtn}
+            disabled={true}
+          />
+        </DropdownContainer>
+      ) : (
+        <DropdownContainer>
+          <Dropdown
+            placeholder={
+              timeSelected.start
+                ? new Date(timeSelected.start).momentFormat('LT')
+                : 'Select start time'
+            }
+            width={'70%'}
+            height={'100%'}
+            onPress={() => setStartOpen(!startOpen)}
+          />
+          <Button
+            title="Record"
+            onPress={() => saveRecord(TimeType.Start, timeSelected.start!)}
+            style={regularBtn}
+            disabled={false}
+          />
+        </DropdownContainer>
+      )}
+      {todayRecord.endTime ? (
+        <DropdownContainer>
+          <Dropdown
+            placeholder={new Date(todayRecord.endTime).momentFormat('LT')}
+            width={'70%'}
+            height={'100%'}
+            onPress={() => null}
+          />
+          <Button
+            title="Record"
+            onPress={() => null}
+            style={disabledBtn}
+            disabled={true}
+          />
+        </DropdownContainer>
+      ) : (
+        <DropdownContainer>
+          <Dropdown
+            placeholder={
+              timeSelected.end
+                ? new Date(timeSelected.end).momentFormat('LT')
+                : 'Select end time'
+            }
+            width={'70%'}
+            height={'100%'}
+            onPress={() => setEndOpen(!endOpen)}
+          />
+          <Button
+            title="Record"
+            onPress={() => saveRecord(TimeType.End, timeSelected.end!)}
+            style={regularBtn}
+            disabled={false}
+          />
+        </DropdownContainer>
+      )}
       <DatePickerDropdown
-        mode="datetime"
+        mode="time"
         open={startOpen}
-        minimumDate={minimumDate}
-        maximumDate={new Date()}
-        onConfirm={(d: Date) => setStartTime(d)}
+        onConfirm={(d: Date) =>
+          setTimeSelected({
+            start: d,
+            end: timeSelected.end,
+          })
+        }
         onCancel={() => setStartOpen(false)}
       />
       <DatePickerDropdown
-        mode="datetime"
+        mode="time"
         open={endOpen}
-        minimumDate={minimumDate}
-        maximumDate={new Date()}
-        onConfirm={(d: Date) => setEndTime(d)}
+        onConfirm={(d: Date) =>
+          setTimeSelected({
+            start: timeSelected.start,
+            end: d,
+          })
+        }
         onCancel={() => setEndOpen(false)}
+      />
+      <View style={{marginVertical: 20}} />
+      <Button
+        title="View Records"
+        onPress={() =>
+          navigation.navigate(Screen.RECORD_HISTORY, {
+            employer,
+            serviceProviderEmail,
+          })
+        }
       />
     </TopContainer>
   );

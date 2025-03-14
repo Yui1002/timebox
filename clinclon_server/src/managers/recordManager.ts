@@ -8,6 +8,8 @@ import {
   SetRecordRq,
   TimeType,
   UpdateRecordRq,
+  DeleteRecordRq,
+  GetRecordChangeRs,
 } from "../models/Record";
 import ResponseException from "../models/ResponseException";
 
@@ -15,7 +17,10 @@ interface IRecordManager {
   getRecord(record: GetRecordRq): Promise<GetRecordRs>;
   getRecordByDate(record: GetRecordByDateRq): Promise<GetRecordRs>;
   getRecordByPeriod(record: GetRecordByPeriodRq): Promise<GetRecordRs>;
+  getRecordChanges(recordRq: GetRecordByPeriodRq): Promise<GetRecordChangeRs>;
   setRecord(record: SetRecordRq): Promise<GetRecordRs>;
+  updateRecord(record: UpdateRecordRq): Promise<GetRecordRs>;
+  deleteRecord(record: DeleteRecordRq): Promise<void>;
 }
 
 class RecordManager implements IRecordManager {
@@ -85,6 +90,17 @@ class RecordManager implements IRecordManager {
     return recordData;
   }
 
+  async getRecordChanges(recordRq: GetRecordByPeriodRq): Promise<GetRecordChangeRs> {
+    let transactionData = await this._userTransactionManager.getUserTransaction(recordRq);
+
+    if (!transactionData) {
+      throw new ResponseException(null, 400, "no data found");
+    }
+
+    let transactionId = transactionData.id;
+    return await this._recordRepo.getRecordChanges(transactionId)
+  }
+
   async setRecord(recordRq: SetRecordRq): Promise<GetRecordRs> {
     let transactionData = await this._userTransactionManager.getUserTransaction(
       recordRq
@@ -96,23 +112,14 @@ class RecordManager implements IRecordManager {
 
     let transactionId = transactionData.id;
 
-    let recordExists = await this._recordRepo.getRecordByDate(
-      transactionId,
-      recordRq.recordTime
-    );
-
-    if (recordExists) {
-        throw new ResponseException(null, 400, "duplicate record"); 
-    }
-
     if (recordRq.type === TimeType.START_TIME) {
       return await this._recordRepo.setStartRecord(
         transactionId,
         recordRq.recordTime
       );
     } else {
-      return await this._recordRepo.setEndRecord(
-        transactionId,
+      return await this._recordRepo.updateEndRecord(
+        recordRq.id,
         recordRq.recordTime
       );
     }
@@ -130,6 +137,10 @@ class RecordManager implements IRecordManager {
         recordRq.recordTime
       );
     }
+  }
+
+  async deleteRecord(recordRq: DeleteRecordRq): Promise<void> {
+    await this._recordRepo.deleteRecord(recordRq.recordId);
   }
 }
 
