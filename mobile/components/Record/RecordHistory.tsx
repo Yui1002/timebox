@@ -46,7 +46,7 @@ const RecordHistory = ({route, navigation}: any) => {
   const headerContent = ['Date', 'In', 'Out', 'Total'];
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: '',
-    to: ''
+    to: '',
   });
 
   const enableActionMode = async (type: ActionType) => {
@@ -77,7 +77,10 @@ const RecordHistory = ({route, navigation}: any) => {
   };
 
   const validateInput = (): boolean => {
-    const validateErr = Validator.validateWorkingRecordSelect(selectedPeriod.from, selectedPeriod.to);
+    const validateErr = Validator.validateWorkingRecordSelect(
+      selectedPeriod.from,
+      selectedPeriod.to,
+    );
     if (validateErr) {
       setResult({status: StatusModel.ERROR, message: validateErr});
     }
@@ -89,15 +92,22 @@ const RecordHistory = ({route, navigation}: any) => {
     if (!validateInput()) return;
 
     try {
+      const fromDate = selectedPeriod.from ? selectedPeriod.from : '2020-01-01';
+      const toDate = selectedPeriod.to
+        ? moment(selectedPeriod.to).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        : moment().endOf('day').format('YYYY-MM-DD HH:mm:ss');
+      const fromDateInEpoch = moment(fromDate).unix().toString();
+      const toDateInEpoch = moment(toDate).unix().toString();
+
       const {data} = await api.getRecordByPeriod(
         employer.email,
         serviceProviderEmail,
-        selectedPeriod.from ? selectedPeriod.from : '2020-01-01',
-        selectedPeriod.to ? selectedPeriod.to : new Date().momentFormat('YYYY-MM-DD'),
+        fromDateInEpoch,
+        toDateInEpoch,
       );
       setRecords(data.records!);
     } catch (e) {
-      console.log(e.response.data)
+      console.log(e.response.data);
       setRecords([]);
     }
   };
@@ -176,7 +186,6 @@ const RecordHistory = ({route, navigation}: any) => {
             })
           }
         />
-
       </ScrollView>
     </TopContainer>
   );

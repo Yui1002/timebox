@@ -51,7 +51,7 @@ class GetRecordByPeriodRequestValidator extends SuperValidator {
         if (!isEmail(instance.employerEmail) || !isEmail(instance.serviceProviderEmail)) {
             this.throwError(null, 'Email is invalid')
         }
-        if (isEmpty(instance.from) || isEmpty(instance.to)) {
+        if (!instance.from || !instance.to) {
             this.throwError(null, 'Period must not be empty');
         }
 
