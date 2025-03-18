@@ -65,11 +65,15 @@ const Record = ({route, navigation}: any) => {
   }, [todayRecord])
 
   const getTodaysRecord = async () => {
+    let currentEpochTime = Date.now();
+    let startInEpoch = getStartOfDayInEpoch();
+    let endInEpoch = getEndOfDayInEpoch();
+
     try {
-      const {data: {records}} = await api.getRecordByDate(
+      const {data: {records}} = await api.getRecordByPeriod(
         employer.email,
         serviceProviderEmail,
-        new Date().momentFormat(''),
+        currentEpochTime
       );
       setTodayRecord({
         id: records ? records[0].id : undefined,
@@ -96,8 +100,7 @@ const Record = ({route, navigation}: any) => {
 
   const saveRecord = async (type: TimeType, record: Date) => {
     console.log('record', record)
-    let epoch = convertToEpoch(record);
-    console.log('epoch', epoch)
+
     if (!validateInput(type)) return;
 
     try {
@@ -118,8 +121,16 @@ const Record = ({route, navigation}: any) => {
     }
   };
 
-  const convertToEpoch = (time: Date): number => {
-    return moment(time).unix();
+  const getStartOfDayInEpoch = (dateString?: string): number => {
+    const startOfDay = moment(dateString).startOf('day');
+    const epochTime = startOfDay.unix();
+    return epochTime;
+  }
+
+  const getEndOfDayInEpoch = (dateString?: string): number => {
+    const endOfDay = moment(dateString).endOf('day');
+    const epochTime = endOfDay.unix();
+    return epochTime;
   }
 
   return (

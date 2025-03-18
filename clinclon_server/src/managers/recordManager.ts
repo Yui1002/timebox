@@ -61,7 +61,7 @@ class RecordManager implements IRecordManager {
 
     let recordData = await this._recordRepo.getRecordByDate(
       transactionId,
-      recordRq.date
+      recordRq.dateInEpoch
     );
     if (!recordData) {
       throw new ResponseException(null, 400, "no data found");

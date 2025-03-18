@@ -31,7 +31,7 @@ class GetRecordByDateRequestValidator extends SuperValidator {
         if (!isEmail(instance.employerEmail) || !isEmail(instance.serviceProviderEmail)) {
             this.throwError(null, 'Email is invalid')
         }
-        if (isEmpty(instance.date)) {
+        if (!instance.dateInEpoch) {
             this.throwError(null, 'Date must not be empty');
         }
 

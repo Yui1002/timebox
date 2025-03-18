@@ -7,8 +7,8 @@ dotenv.config();
 
 interface IRecordRepo {
     getRecord(userTransactionId: number): Promise<GetRecordRs | null>
-    getRecordByDate(userTransactionId: number, string: string): Promise<GetRecordRs>;
-    getRecordByPeriod(userTransactionId: number, from: string, to: string): Promise<GetRecordRs>;
+    getRecordByDate(userTransactionId: number, epoch: number): Promise<GetRecordRs>;
+    getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs>;
     getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs>;
     setStartRecord(userTransactionId: number, startTime: string): Promise<GetRecordRs>;
     setEndRecord(userTransactionId: number, endTime: string): Promise<GetRecordRs>;
@@ -34,10 +34,12 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         } 
     }
 
-    async getRecordByDate(userTransactionId: number, date: string): Promise<GetRecordRs> {
+    async getRecordByDate(userTransactionId: number, epoch: number): Promise<GetRecordRs> {
         try {
-            const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = $2 OR end_time::DATE = $3);";
-            const data = await this.queryDB(sql, [userTransactionId, date, date]);
+            // const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = $2 OR end_time::DATE = $3);";
+            const sql = `SELECT epoch_start_time, epoch_end_time FROM time_record
+                            WHERE id_user_transaction = $1`
+            const data = await this.queryDB(sql, [userTransactionId, epoch, epoch]);
             if (data?.rows.length <= 0) {
                 return null;
             }
@@ -47,7 +49,7 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         }
     }
 
-    async getRecordByPeriod(userTransactionId: number, from: string, to: string): Promise<GetRecordRs> {
+    async getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs> {
         try {
             const sql = `SELECT 
                             time_record_id AS id, 
