@@ -22,6 +22,7 @@ import {
 } from '../../swagger';
 import Result from '../Common/Result';
 const api = DefaultApiFactory();
+import moment from 'moment';
 
 interface RecordProps {
   employer: Employer;
@@ -94,6 +95,9 @@ const Record = ({route, navigation}: any) => {
   };
 
   const saveRecord = async (type: TimeType, record: Date) => {
+    console.log('record', record)
+    let epoch = convertToEpoch(record);
+    console.log('epoch', epoch)
     if (!validateInput(type)) return;
 
     try {
@@ -113,6 +117,10 @@ const Record = ({route, navigation}: any) => {
       setResult({status: StatusModel.ERROR, message: ErrMsg.FAIL_RECORD});
     }
   };
+
+  const convertToEpoch = (time: Date): number => {
+    return moment(time).unix();
+  }
 
   return (
     <TopContainer>

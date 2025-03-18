@@ -4,6 +4,9 @@
 config.js
 .vscode/
 
+generate_mock_data.py
+mock_data.csv
+
 # Xcode
 #
 build/
