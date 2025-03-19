@@ -1,7 +1,7 @@
 import SuperValidator from "./SuperValidator";
 import { GetUserRq, SetUserRq, SignInUserRq, ResetPasswordRq } from "../models/User";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
-import {isEmail, isStrongPassword} from "validator";
+import {isEmail, isEmpty, isStrongPassword} from "validator";
 import { PASSWORD_RULES } from '../config'
 
 class GetUserRequestValidator extends SuperValidator {
@@ -30,6 +30,10 @@ class SetUserRequestValidator extends SuperValidator {
         this.checkRequestEmpty(request);
 
         let instance = JSHelperInstance._converter.deserializeObject(request, SetUserRq);
+        console.log('instance is', instance)
+        if (!instance.firstName || !instance.lastName) {
+            this.throwError(null, "Name is required")
+        }
         if (!isEmail(instance.email)) {
             this.throwError(null, 'Email is invalid')
         }

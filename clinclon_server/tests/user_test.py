@@ -100,6 +100,36 @@ def test_setUser(cursor, shared_state):
     # Store user data in shared state
     shared_state['user_data'] = user_data
 
+def test_setUser_missing_first_name():
+
+    user_data = create_user_data()
+    del user_data["firstName"]
+    response = requests.post(f"{BASE_URL}/user", json=user_data)
+    assert response.status_code == 400
+
+
+def test_setUser_missing_last_name():
+
+    user_data = create_user_data()
+    del user_data["lastName"]
+    response = requests.post(f"{BASE_URL}/user", json=user_data)
+    assert response.status_code == 400
+
+def test_setUser_missing_email():
+
+    user_data = create_user_data()
+    del user_data["email"]
+    response = requests.post(f"{BASE_URL}/user", json=user_data)
+    assert response.status_code == 400
+
+def test_setUser_missing_password():
+
+    user_data = create_user_data()
+    del user_data["password"]
+    response = requests.post(f"{BASE_URL}/user", json=user_data)
+    assert response.status_code == 400
+
+
 def test_signInUser(cursor, shared_state):
 
     user_data = shared_state.get('user_data')
