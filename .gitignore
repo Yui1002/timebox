@@ -7,6 +7,9 @@ config.js
 generate_mock_data.py
 mock_data.csv
 
+# Ignore Python cache files
+./clinclon_server/tests/__pycache__
+
 # Xcode
 #
 build/

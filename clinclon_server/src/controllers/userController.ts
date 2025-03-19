@@ -35,12 +35,14 @@ export class UserController extends SuperController implements IUserController {
     @Post('/signIn')
     @Validate
     public async signInUser(@Body() rq: SignInUserRq): Promise<GetUserRs> {
+        console.log('here')
         return await this._userManager.signInUser(rq);
     }  
     
     @Post('/resetPassword')
     @Validate
     public async resetPassword(@Body() rq: ResetPasswordRq): Promise<void> {
+        console.log('rq', rq)
         await this._userManager.resetPassword(rq);
     } 
 }
