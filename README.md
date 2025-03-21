@@ -1,4 +1,4 @@
-# Clinclon Server
+# Timebox
 
 ## Overview
 
@@ -15,7 +15,7 @@ This project is a timekeeping mobile app designed for employees. It enables user
   - [Running the Backend](#running-the-backend)
   - [Running the Frontend](#running-the-frontend)
 
-## Build With
+## Built With
 
 - ![React Native](https://img.shields.io/badge/React%20Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 - ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
@@ -66,7 +66,7 @@ This project is a timekeeping mobile app designed for employees. It enables user
   Create the `config.js` file in the `mobile` directory with the appropriate backend URL and password rules:
 
   ```javascript
-  export const LOCAL_HOST_URL = `YOU_LOCAL_HOST_URL`
+  export const LOCAL_HOST_URL = `YOUR_LOCAL_HOST_URL`
   export const PASSWORD_RULES = {
     minLength: 8,
     minLowercase: 1,
@@ -111,7 +111,7 @@ This project is a timekeeping mobile app designed for employees. It enables user
     npm start
     ```
 
-    The server will start on `YOU_LOCAL_HOST_URL`.
+    The server will start on `YOUR_LOCAL_HOST_URL`.
 
 ### Running the Frontend (React Native)
 
