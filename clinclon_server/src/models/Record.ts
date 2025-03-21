@@ -20,8 +20,8 @@ class GetRecordByDateRq extends BaseRequest {
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
     serviceProviderEmail: string = "";
-    @JsonProperty("date", String)
-    date: string = "";
+    @JsonProperty("dateInEpoch", Number)
+    dateInEpoch: number = 0;
 }
 
 @JsonObject("GetRecordByPeriodRq")
@@ -30,10 +30,10 @@ class GetRecordByPeriodRq extends BaseRequest {
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
     serviceProviderEmail: string = "";
-    @JsonProperty("from", String)
-    from: string = "";
-    @JsonProperty("to", String)
-    to: string = "";
+    @JsonProperty("from", Number)
+    from: number = 0;
+    @JsonProperty("to", Number)
+    to: number = 0;
 }
 
 @JsonObject("SetRecordRq")
@@ -70,10 +70,10 @@ class DeleteRecordRq extends BaseRequest {
 class Record {
     @JsonProperty("id", Number)
     id: number = 0;
-    @JsonProperty("start_time", Date)
-    startTime: Date = new Date();
-    @JsonProperty("end_time", Date)
-    endTime: Date = new Date();
+    @JsonProperty("start_time", String)
+    startTime: string = '';
+    @JsonProperty("end_time", String)
+    endTime: string = '';
 }
 
 @JsonObject("RecordChange")

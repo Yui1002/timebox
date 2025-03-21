@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View, StyleSheet} from 'react-native';
 import {getDiff} from '../../helper/momentHelper';
 import {Record, TimeType, DefaultApiFactory} from '../../swagger';
@@ -16,7 +16,7 @@ interface WorkingHistoryListProps {
   editSelected: any;
   setRowSelected: any;
   setEditSelected: any;
-  setResult: any,
+  setResult: any;
 }
 
 const style = StyleSheet.create({
@@ -32,10 +32,14 @@ const WorkingHistoryList = ({
   rowSelected,
   editSelected,
   setRowSelected,
-  setEditSelected,
   setResult,
 }: WorkingHistoryListProps) => {
   const {id, startTime, endTime} = record;
+  
+  const dateInEpoch = moment.unix(Number(startTime)).format('YYYY/MM/DD');
+  const startTimeInEpoch = moment.unix(Number(startTime)).format('LT');
+  const endTimeInEpoch = moment.unix(Number(endTime)).format('LT');
+
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
   const [start, setStart] = useState<Date | undefined>(
@@ -44,14 +48,17 @@ const WorkingHistoryList = ({
   const [end, setEnd] = useState<Date | undefined>(
     endTime ? new Date(endTime) : undefined,
   );
-  const date = startTime
-    ? new Date(startTime).momentFormat('YYYY/MM/DD')
-    : 'N/A';
+  const date = startTime ? startTimeInEpoch : 'N/A';
+  const epoch = parseInt(startTime!);
 
   const total = getDiff(
     startTime ? new Date(startTime) : undefined,
     endTime ? new Date(endTime) : undefined,
   );
+
+  // useEffect(() => {
+  //   convertEpochToDate(Number(startTime))
+  // }, [])
 
   const rowStyle = {
     backgroundColor:
@@ -60,6 +67,15 @@ const WorkingHistoryList = ({
         ? COLORS.BLUE
         : COLORS.LIGHT_GREY,
   };
+
+  // const convertEpochToDate = (epoch: number) => {
+    let dateObj = new Date(Number(startTime) * 1000);
+    
+    console.log(dateObj)
+    let utcString = dateObj.toUTCString();
+    let time = utcString.slice(-11, 4);
+    console.log('time', moment(dateObj).format('LT'))
+  // }
 
   const onRowSelect = () => {
     setRowSelected({
@@ -85,7 +101,9 @@ const WorkingHistoryList = ({
 
     if (!validateInput(type)) return;
 
-    let stringTime = moment(record.startTime).format('YYYY-MM-DD ') + moment(time).format('h:mm:ss');
+    let stringTime =
+      moment(record.startTime).format('YYYY-MM-DD ') +
+      moment(time).format('h:mm:ss');
 
     try {
       await api.updateRecord({
@@ -108,7 +126,7 @@ const WorkingHistoryList = ({
   return (
     <TouchableOpacity onPress={onRowSelect} style={rowStyle}>
       <AlignContainer>
-        <Text>{date}</Text>
+        <Text>{dateInEpoch}</Text>
         <Text>
           {editSelected.editMode && rowSelected.selectRow === record ? (
             <TouchableOpacity
@@ -118,7 +136,7 @@ const WorkingHistoryList = ({
               <Icon name="arrow-drop-down" size={20} type="Material" />
             </TouchableOpacity>
           ) : (
-            <Text>{start ? start.momentFormat('LT') : 'N/A'}</Text>
+            <Text>{start ? startTimeInEpoch : 'N/A'}</Text>
           )}
         </Text>
         <DatePickerDropdown
@@ -136,7 +154,7 @@ const WorkingHistoryList = ({
               <Icon name="arrow-drop-down" size={20} type="Material" />
             </TouchableOpacity>
           ) : (
-            <Text>{end ? end.momentFormat('LT') : 'N/A'}</Text>
+            <Text>{end ? endTimeInEpoch : 'N/A'}</Text>
           )}
         </Text>
         <DatePickerDropdown

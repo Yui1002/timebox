@@ -5,7 +5,6 @@ import axios from 'axios';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import {RawEmployer, FormattedEmployer, ResultModel} from '../../types';
-import Validator from '../../validator/validator';
 import {
   TopContainer,
   Dropdown,
@@ -19,7 +18,6 @@ import {DefaultApiFactory, Record} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 
-// const SearchField = ({setRecords, employer, onPress}) => {
 const SearchField = ({
   employer,
   serviceProviderEmail,
@@ -30,38 +28,10 @@ const SearchField = ({
   const {email} = useSelector(state => state.userInfo);
   const [fromDropdown, setFromDropDown] = useState(false);
   const [toDropdown, setToDropDown] = useState(false);
-  // const [from, setFrom] = useState<string>('');
-  // const [to, setTo] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
-
-  console.log('from', selectedPeriod.from, 'to', selectedPeriod.to)
-  // const validateInput = (): boolean => {
-  //   const validateErr = Validator.validateWorkingRecordSelect(from, to);
-  //   if (validateErr) {
-  //     setResult({status: StatusModel.ERROR, message: validateErr});
-  //   }
-
-  //   return validateErr == null;
-  // };
-
-  // const searchRecord = async (): Promise<void> => {
-  //   if (!validateInput()) return;
-
-  //   try {
-  //     const {data} = await api.getRecordByPeriod(
-  //       employer.email,
-  //       email,
-  //       from ? from : '2020-01-01',
-  //       to ? to : moment().format('YYYY-MM-DD'),
-  //     );
-  //     setRecords(data.records);
-  //   } catch (e) {
-  //     setRecords([]);
-  //   }
-  // };
 
   const sortRecords = (recordData: Record[]): Record[] => {
     if (!recordData || recordData.length) return [];
@@ -73,7 +43,6 @@ const SearchField = ({
 
   const onPeriodChange = (type: string, data: Date) => {
     const selected = moment(data).format('YYYY-MM-DD');
-    // type === 'from' ? setFrom(selected) : setTo(selected);
     type === 'from'
       ? setSelectedPeriod({
           from: selected,
@@ -123,7 +92,6 @@ const SearchField = ({
         minimumDate={new Date('2020-01-01')}
         maximumDate={new Date()}
       />
-      {/* <Button title="Search" onPress={searchRecord} /> */}
       <Button title="Search" onPress={onPress} />
     </TopContainer>
   );
