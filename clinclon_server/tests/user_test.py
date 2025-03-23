@@ -1,59 +1,13 @@
 import pytest
 import requests
-import psycopg2
 import random
 import string
-import time
-from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
-import os
-import pdb
 import bcrypt
-
-load_dotenv()
-
-#region setup db and http request
-BASE_URL = "http://localhost:3000"
-def is_server_running():
-    try:
-        response = requests.get(f"{BASE_URL}")
-        return response.status_code == 200
-    except requests.ConnectionError:
-        return False
-
-@pytest.fixture(scope='module')
-def db_connection():
-
-    conn = psycopg2.connect(
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT")
-    )
-
-    yield conn
-    conn.close()
-
-@pytest.fixture
-def cursor(db_connection):
-    cur = db_connection.cursor(cursor_factory=RealDictCursor)
-    yield cur
-    cur.close()
-
-@pytest.fixture(scope='module')
-def shared_state():
-    return {}
-#endregion
+from test_utils import db_connection, cursor, BASE_URL
+from test_helper import generate_random_email, generate_random_string, invalid_email, shared_state
 
 #region generate functions
-def generate_random_email():
-    return f"{generate_random_string(10)}@example.com"
-
-def generate_random_string(length=15):
-    letters = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters) for i in range(length))
-
 def generate_random_first_name():
     return generate_random_string(7).capitalize()
 
@@ -86,34 +40,11 @@ def create_user_data(email=None, password=None, firstName=None, lastName=None):
     }
 #endregion
 
-#region create valuables
-invalid_email = [
-    "invalidemail.com", "invalid@.com", "invalid@com", "invalid@com.", "invalid@com..com",
-    "invalid@com@com.com", "invalid@com#com.com", "invalid@com!com.com", "invalid@com$com.com",
-    "invalid@com%com.com", "invalid@com^com.com", "invalid@com&com.com", "invalid@com*com.com",
-    "invalid@com(com.com", "invalid@com)com.com", "invalid@com+com.com", "invalid@com=com.com",
-    "invalid@com{com.com", "invalid@com}com.com", "invalid@com[com.com", "invalid@com]com.com",
-    "invalid@com|com.com", "invalid@com\\com.com", "invalid@com;com.com", "invalid@com:com.com",
-    "invalid@com'com.com", "invalid@com\"com.com", "invalid@com,com.com", "invalid@com<com.com",
-    "invalid@com>com.com", "invalid@com/com.com", "invalid@com?com.com", "invalid@com~com.com",
-    "invalid@com`com.com"
-]
-
+#region create variable
 invalid_password = [
     "short", "alllowercase1", "ALLUPPERCASE1", "NoNumbers", "12345678", "NoSpecialChar1",
     "NoUppercase123", "nouppercase123", "NOLOWERCASE123", "NoNumbersUppercase"
 ]
-#endregion
-
-#region check if server is running
-@pytest.fixture(scope='module', autouse=True)
-def ensure_server_running():
-    # Wait for the server to start
-    for _ in range(10):
-        if is_server_running():
-            return
-        time.sleep(1)
-    pytest.fail("Node.js server is not running")
 #endregion
 
 #region test set user api 
