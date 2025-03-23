@@ -1,43 +1,82 @@
-import pytest;
-import requests;
-from unittest.mock import patch;
+import pytest
+import requests
+import random
+import string
+from datetime import datetime, timedelta
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
+from test_utils import db_connection, cursor, BASE_URL
+from test_helper import generate_random_email, generate_random_string, invalid_email
 
-BASE_URL = "http://localhost:3000"
+@pytest.fixture(scope='module')
+def shared_state():
+    return {}
 
-@pytest.fixture
-def mock_db():
-    with patch('src.repositories.RecordRepo.RecordRepo') as mock_db:
-        yield mock_db
+test_employer_email = "tvhtialbgalbylukwh@ytnhy.com"
+test_service_provider_email = "hgengxlxhcyosafmjr@ytnhy.com"
+record_type = ['start', 'end']
 
-def test_getRecordByPeriod(mock_db):
-    employer_email = "tvhtialbgalbylukwh@ytnhy.com"
-    service_provider_email = 'hgengxlxhcyosafmjr@ytnhy.com'
-    start_epoch = 1735968007
-    end_epoch = 1735996807
 
-    mock_db.return_value.getrecordByPeriod.return_value = [
-        {
-            "id": 1,
-            "start_time": 1735968007,
-            "end_time": 1735996807,
-            "status": "active",
-            "id_user_transaction": 1
-        }
-    ]
+def create_record_data(record_date: datetime, record_type: str, record_id: int = None):
+    if record_type == "start":
+        record_time = datetime(record_date.year, record_date.month, record_date.day, 9, 0).timestamp()
+    else:
+        record_time = datetime(record_date.year, record_date.month, record_date.day, 17, 0).timestamp()
+    
+    record_data = {
+        "employerEmail": test_employer_email,
+        "serviceProviderEmail": test_service_provider_email,
+        "recordTime": int(record_time),
+        "type": record_type
+    }
 
-    response = requests.get(f"{BASE_URL}/getRecordByPeriod", params={
-        "employer_email": employer_email,
-        "service_provider_email": service_provider_email,
-        "start_epoch": start_epoch,
-        "end_epoch": end_epoch
-    })
+    if record_id is not None:
+        record_data["id"] = record_id
 
+    return record_data
+
+@pytest.mark.parametrize("record_type", ["start", "end"])
+def test_set_record(record_type, shared_state):
+    
+    if record_type == "start":
+        record_date = datetime.now() - timedelta(days=random.randint(1, 30))
+        record_data = create_record_data(record_date, record_type)
+        response = requests.post(f"{BASE_URL}/record", json=record_data)
+        assert response.status_code == 200
+
+        id = response.json().get("records")[0].get("id")
+        shared_state["record_id"] = id
+        shared_state["record_date"] = record_date
+
+    else:
+        record_id = shared_state.get("record_id")
+        record_date = shared_state["record_date"]
+
+        record_data = create_record_data(record_date, record_type, record_id)
+        response = requests.post(f"{BASE_URL}/record", json=record_data)
+        assert response.status_code == 200
+
+        # shared_state.clear()
+
+def test_get_record(shared_state):
+    response = requests.get(f"{BASE_URL}/record?employerEmail={test_employer_email}&serviceProviderEmail={test_service_provider_email}")
     assert response.status_code == 200
-    records = response.json()
-    assert len(records) == 1
-    assert records[0]["id"] == 1
-    assert records[0]["start_time"] == 1735968007
-    assert records[0]["end_time"] == 1735996807 
-    assert records[0]["status"] == "active"
-    assert records[0]["id_user_transaction"] == 1
+    record_data = response.json()
+    assert "records" in record_data
+
+def test_get_record_by_date(shared_state):
+    record_date = shared_state.get("record_date")
+    date_in_epoch = int(record_date.timestamp())
+
+    response = requests.get(f"{BASE_URL}/record/date?employerEmail={test_employer_email}&serviceProviderEmail={test_service_provider_email}&dateInEpoch={date_in_epoch}")
+    assert response.status_code == 200
+
+    # Validate the response
+    record_data = response.json()
+    assert "records" in record_data
+    assert len(record_data["records"]) > 0
+    for record in record_data["records"]:
+        assert record["employerEmail"] == test_employer_email
+        assert record["serviceProviderEmail"] == test_service_provider_email
+
 
