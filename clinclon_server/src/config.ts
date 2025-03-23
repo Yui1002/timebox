@@ -5,3 +5,5 @@ export const PASSWORD_RULES = {
     minNumbers: 1,
     minSymbols: 0,
   };
+
+export const JWT = 'jwt'

@@ -1,8 +1,9 @@
 import ServiceProviderManager from '../managers/ServiceProviderManager';
 import SuperController from './SuperController';
 import { GetServiceProviderRq, UpdateServiceProviderRq, GetServiceProviderRs, GetServiceProviderRsMini } from '../models/ServiceProvider';
-import { Body, Get, Put, Queries, Route } from "tsoa";
+import { Body, Get, Put, Queries, Route, Security } from "tsoa";
 import Validate from '../validators/CustomValidator';
+import { JWT } from '../config';
 
 interface IServiceProviderController {
     getServiceProvider(rq: GetServiceProviderRq): Promise<GetServiceProviderRsMini[]>;
@@ -19,12 +20,14 @@ export class ServiceProviderController extends SuperController implements IServi
     }
 
     @Get()
+    @Security(JWT)
     @Validate
     public async getServiceProvider(@Queries() rq: GetServiceProviderRq): Promise<GetServiceProviderRsMini[]> {
         return await this._serviceProviderManager.getServiceProvider(rq);
     }
     
     @Put()
+    @Security(JWT)
     @Validate
     public async updateServiceProvider(@Body() rq: UpdateServiceProviderRq): Promise<void> {
         await this._serviceProviderManager.updateServiceProvider(rq);

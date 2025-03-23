@@ -5,6 +5,7 @@ from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 import os
 import pytest
+import jwt
 import random
 import string
 
@@ -56,3 +57,11 @@ def cursor(db_connection):
     cur = db_connection.cursor(cursor_factory=RealDictCursor)
     yield cur
     cur.close()
+
+def generate_jwt():
+    secret = os.getenv('JWT_SECRET')
+    payload = {
+        "website": "localhost:3000"
+    }
+    token = jwt.encode(payload, secret, "HS256")
+    return token
