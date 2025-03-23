@@ -10,10 +10,9 @@ interface IRecordRepo {
     getRecordByDate(userTransactionId: number, epoch: number): Promise<GetRecordRs>;
     getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs>;
     getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs>;
-    setStartRecord(userTransactionId: number, startTime: string): Promise<GetRecordRs>;
-    setEndRecord(userTransactionId: number, endTime: string): Promise<GetRecordRs>;
-    updateStartRecord(recordId: number, startTime: string): Promise<GetRecordRs>;
-    updateEndRecord(recordId: number, endTime: string): Promise<GetRecordRs>;
+    setStartRecord(userTransactionId: number, startTime: number): Promise<GetRecordRs>;
+    setEndRecord(userTransactionId: number, endTime: number): Promise<GetRecordRs>;
+    updateStartRecord(recordId: number, startTime: number): Promise<GetRecordRs>;
     deleteRecord(recordId: number): Promise<void>
 }
 
@@ -21,7 +20,7 @@ class RecordRepo extends Repositories implements IRecordRepo  {
 
     async getRecord(userTransactionId: number): Promise<GetRecordRs | null> {
         try {
-            const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE id_user_transaction = $1;";
+            const sql = "SELECT time_record_id AS id, epoch_start_time, epoch_end_time FROM time_record WHERE id_user_transaction = $1;";
             const data = await this.queryDB(sql, [userTransactionId]);
 
             if (data?.rows.length <= 0) {
@@ -36,7 +35,6 @@ class RecordRepo extends Repositories implements IRecordRepo  {
 
     async getRecordByDate(userTransactionId: number, epoch: number): Promise<GetRecordRs> {
         try {
-            // const sql = "SELECT time_record_id AS id, start_time, end_time FROM time_record WHERE id_user_transaction = $1 AND (start_time::DATE = $2 OR end_time::DATE = $3);";
             const sql = `SELECT epoch_start_time, epoch_end_time FROM time_record
                             WHERE id_user_transaction = $1`
             const data = await this.queryDB(sql, [userTransactionId, epoch, epoch]);
@@ -85,56 +83,27 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         }
     }
 
-    async setStartRecord(userTransactionId: number, startTime: string): Promise<GetRecordRs> {
+    async setStartRecord(userTransactionId: number, startTimeEpoch: number): Promise<GetRecordRs> {
         let now = new Date();
         try {
             const sql = `INSERT INTO time_record (
                             time_record_id, 
                             status, 
-                            start_time,
-                            end_time, 
-                            update_date, 
+                            update_date,
                             update_by, 
-                            id_user_transaction
+                            id_user_transaction, 
+                            epoch_start_time, 
+                            epoch_end_time
                         ) VALUES (
                             DEFAULT, 
-                            DEFAULT, 
-                            $1, 
-                            NULL, 
-                            $2, 
-                            $3, 
-                            $4
-                        ) RETURNING time_record_id AS id, start_time, end_time;`;
-            const data = await this.queryDB(sql, [startTime, now, 'temp', userTransactionId]);
-            if (data?.rows.length <= 0) {
-                return null;
-            }
-            return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
-        } catch (e: any) {
-            throw new ResponseException(e, 500, 'unable to insert into db');
-        }
-    }
-    
-    async setEndRecord(userTransactionId: number, endTime: string): Promise<GetRecordRs> {
-        try {
-            const sql = `INSERT INTO time_record (
-                            time_record_id, 
-                            status, 
-                            start_time, 
-                            end_time, 
-                            update_date, 
-                            update_by, 
-                            id_user_transaction
-                        ) VALUES (
-                            DEFAULT, 
-                            DEFAULT, 
-                            $1, 
-                            $2, 
+                            'active', 
                             CURRENT_TIMESTAMP, 
+                            $1, 
+                            $2, 
                             $3, 
-                            $4
-                        ) RETURNING time_record_id AS id, start_time, end_time;`
-            const data = await this.queryDB(sql, [null, endTime, 'temp', userTransactionId]);
+                            NULL
+                        ) RETURNING time_record_id AS id, epoch_start_time, epoch_end_time;`;
+            const data = await this.queryDB(sql, ['temp', userTransactionId, startTimeEpoch]);
             if (data?.rows.length <= 0) {
                 return null;
             }
@@ -144,12 +113,12 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         }
     }
 
-    async updateStartRecord(recordId: number, startTime: string): Promise<GetRecordRs> {
+    async updateStartRecord(recordId: number, startTime: number): Promise<GetRecordRs> {
         try {
             const sql = `UPDATE time_record 
-                            SET start_time = $1 
+                            SET epoch_start_time = $1 
                             WHERE time_record_id = $2 
-                            RETURNING time_record_id AS id, start_time, end_time;`;
+                            RETURNING time_record_id AS id, epoch_start_time, epoch_end_time;`;
             const data = await this.queryDB(sql, [startTime, recordId]);
             if (data?.rows.length <= 0) {
                 return null;
@@ -160,13 +129,13 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         }
     }
 
-    async updateEndRecord(recordId: number, endTime: string): Promise<GetRecordRs> {
+    async setEndRecord(recordId: number, endTimeEpoch: number): Promise<GetRecordRs> {
         try {
             const sql = `UPDATE time_record 
-                            SET end_time = $1 
+                            SET epoch_end_time = $1 
                             WHERE time_record_id = $2 
-                            RETURNING time_record_id AS id, start_time, end_time;`
-            const data = await this.queryDB(sql, [endTime, recordId]);
+                            RETURNING time_record_id AS id, epoch_start_time, epoch_end_time;`
+            const data = await this.queryDB(sql, [endTimeEpoch, recordId]);
             if (data?.rows.length <= 0) {
                 return null;
             }

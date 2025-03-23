@@ -21,8 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 
 initializeValidator();
 
-
-
 app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => {
   return res.send(
     swaggerUi.generateHTML(await import("../dist/swagger.json"))
