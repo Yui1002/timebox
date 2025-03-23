@@ -44,8 +44,8 @@ class SetRecordRq extends BaseRequest {
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
     serviceProviderEmail: string = "";
-    @JsonProperty("recordTime", String)
-    recordTime: string = "";
+    @JsonProperty("recordTime", Number)
+    recordTime: number = 0;
     @JsonProperty("type")
     type: TimeType = TimeType.START_TIME;
 }
@@ -54,8 +54,8 @@ class SetRecordRq extends BaseRequest {
 class UpdateRecordRq extends BaseRequest {
     @JsonProperty("recordId", Number)
     recordId: number = 0;
-    @JsonProperty("recordTime", String)
-    recordTime: string = "";
+    @JsonProperty("recordTime", Number)
+    recordTime: number = 0;
     @JsonProperty("type")
     type: TimeType = TimeType.START_TIME;
 }
@@ -70,10 +70,10 @@ class DeleteRecordRq extends BaseRequest {
 class Record {
     @JsonProperty("id", Number)
     id: number = 0;
-    @JsonProperty("start_time", String)
-    startTime: string = '';
-    @JsonProperty("end_time", String)
-    endTime: string = '';
+    @JsonProperty("epoch_start_time", String)
+    epoch_start_time: number = 0;
+    @JsonProperty("epoch_start_time", String)
+    epoch_end_time: number = 0;
 }
 
 @JsonObject("RecordChange")

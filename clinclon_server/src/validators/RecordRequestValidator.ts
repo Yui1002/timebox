@@ -71,12 +71,9 @@ class SetRecordRequestValidator extends SuperValidator {
         if (!isEmail(instance.employerEmail) || !isEmail(instance.serviceProviderEmail)) {
             this.throwError(null, 'Email is invalid')
         }
-        if (isEmpty(instance.recordTime)) {
+        if (!instance.recordTime) {
             this.throwError(null, 'Record time must not be empty');
         }
-        // if (isEmpty(instance.startTime) || isEmpty(instance.endTime)) {
-        //     this.throwError(null, 'Time must not be empty');
-        // }
         if (!instance.type) {
             this.throwError(null, 'Type must not be empty');
         }
@@ -97,7 +94,7 @@ class UpdateRecordRequestValidator extends SuperValidator {
         if (!instance.recordId) {
             this.throwError(null, 'Record ID must not be empty')
         }
-        if (isEmpty(instance.recordTime)) {
+        if (!instance.recordTime) {
             this.throwError(null, 'Record time must not be empty');
         }
         if (!instance.type) {

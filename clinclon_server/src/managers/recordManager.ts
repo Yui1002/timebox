@@ -105,7 +105,7 @@ class RecordManager implements IRecordManager {
     let transactionData = await this._userTransactionManager.getUserTransaction(
       recordRq
     );
-
+    
     if (!transactionData) {
       throw new ResponseException(null, 400, "no data found");
     }
@@ -118,7 +118,7 @@ class RecordManager implements IRecordManager {
         recordRq.recordTime
       );
     } else {
-      return await this._recordRepo.updateEndRecord(
+      return await this._recordRepo.setEndRecord(
         recordRq.id,
         recordRq.recordTime
       );
@@ -132,7 +132,7 @@ class RecordManager implements IRecordManager {
         recordRq.recordTime
       );
     } else {
-      return await this._recordRepo.updateEndRecord(
+      return await this._recordRepo.setEndRecord(
         recordRq.recordId,
         recordRq.recordTime
       );
