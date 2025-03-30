@@ -22,21 +22,9 @@ class Validator {
      * If the validation fails, an exception will be thrown
      * 
      * @param request raw json object
-     * @param objectType instance of type T
+     * @param instanceName instance of the object
      * @returns object of type T (specified by caller)
      */
-    // validateBody<T extends BaseRequest>(request: any, objectType: T): T {
-    //     console.log('request is', request)
-    //     let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === objectType.getInstanceName());
-    //     if (selectedValidators.length != 1) {
-    //         throw new ResponseException(null, 500, "Unable to parse validators");
-    //     }
-    //     let validator = selectedValidators[0];
-    //     if (!request)
-    //         return validator.validateAndConvertRequest(objectType);
-    //     return validator.validateAndConvertRequest(request)
-    // }
-
     validateBody(request: any, instanceName: string): any {
         let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === instanceName);
         if (selectedValidators.length != 1) {
