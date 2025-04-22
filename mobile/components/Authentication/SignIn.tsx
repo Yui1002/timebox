@@ -1,27 +1,25 @@
 import React, {useState} from 'react';
 import {ScrollView} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {
-  DefaultApiFactory,
-  GetUserRs,
-  SignInUserRq,
-} from '../../swagger';
+import {GetUserRs, SignInUserRq} from '../../swagger';
 import {signInUser} from '../../redux/actions/signInAction.js';
+import { storeToken } from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
 import {Footer, Button, Result, Separator, Input, TopContainer} from '../index';
-let userApi = DefaultApiFactory();
+import TimeboxApiInjector from '../../helper/DefaultApi.ts'; // Adjust the import path as necessary
+let userApi = new TimeboxApiInjector().getDefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
 
-  const [email, setEmail] = useState<string>('hgengxlxhcyosafmjr@ytnhy.com');
-  const [password, setPassword] = useState<string>('Gorilla123!');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignIn(email, password);
@@ -36,9 +34,11 @@ const SignIn = ({navigation}: any) => {
 
     try {
       const {data} = await userApi.signInUser({
-        email, password
+        email,
+        password,
       } as SignInUserRq);
-      dispatchUser(data);
+      await storeToken(data.token)
+      dispatchUser(data.user);
       clearInput();
       navigation.navigate(Screen.DRAWER_NAV);
     } catch (e: any) {
@@ -60,7 +60,9 @@ const SignIn = ({navigation}: any) => {
   return (
     <TopContainer>
       <ScrollView>
-        {result.status && <Result status={result.status} msg={result.message} />}
+        {result.status && (
+          <Result status={result.status} msg={result.message} />
+        )}
         <Input
           title="Email"
           secureTextEntry={false}

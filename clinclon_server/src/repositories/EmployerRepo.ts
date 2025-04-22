@@ -24,7 +24,6 @@ class EmployerRepo extends Repositories implements IEmployerRepo {
             }
             return JSHelperInstance._converter.deserializeObject(data, GetEmployerRs);
         } catch (e) {
-            console.log('error here', e);
             throw new ResponseException(e, 500, "unable to get from db");
         }
     }

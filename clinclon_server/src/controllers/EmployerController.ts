@@ -2,7 +2,8 @@ import Validate from '../validators/CustomValidator';
 import EmployerManager from '../managers/EmployerManager';
 import { GetEmployerRq, GetEmployerRs } from '../models/Employer';
 import SuperController from './SuperController';
-import { Get, Route, Queries } from "tsoa";
+import { Get, Route, Queries, Security } from "tsoa";
+import { JWT } from '../config';
 
 interface IEmployerController {
     getEmployer(request: GetEmployerRq, response: any, next: any): Promise<GetEmployerRs>;
@@ -18,9 +19,9 @@ export class EmployerController extends SuperController implements IEmployerCont
     }
 
     @Get()
+    @Security(JWT)
     @Validate
     public async getEmployer(@Queries() rq: GetEmployerRq): Promise<GetEmployerRs> {
         return await this._employerManager.getEmployer(rq);
     }
-    
 }

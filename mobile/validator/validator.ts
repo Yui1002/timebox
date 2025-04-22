@@ -50,7 +50,6 @@ class Validator {
   }
 
   static isValidDuration(startTime: Date, endTime: Date) {
-    console.log(startTime, endTime);
     let diff = moment(endTime, 'h:mm A').diff(
       moment(startTime, 'h:mm A'),
       'hours',

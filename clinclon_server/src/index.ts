@@ -19,9 +19,8 @@ dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 initializeValidator();
-
-
 
 app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => {
   return res.send(
@@ -37,6 +36,7 @@ RegisterRoutes(app);
 
 
 app.use(ErrorHandler);
+
 
 app.listen(port, function () {
   console.log("Listening on port", this.address().port);

@@ -5,7 +5,6 @@ import {AlignContainer, Container} from '../index';
 
 const RecordChangeList = ({record}) => {
   const {startTime, endTime, updatedBy, changedOn} = record;
-  console.log(record)
 
   return (
     <Container>

@@ -37,7 +37,6 @@ class UserRepo extends Repositories implements IUserRepo {
     }
 
     async resetPassword(passwordRq: ResetPasswordRq): Promise<void> {
-        console.log('passwordRq', passwordRq)
         try {
             const sql = "UPDATE users SET password = $1 WHERE email_address = $2;";
             await this.queryDB(sql, [passwordRq.newPassword, passwordRq.email]);

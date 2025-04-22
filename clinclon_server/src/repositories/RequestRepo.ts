@@ -36,7 +36,6 @@ class RequestRepo extends Repositories implements IRequestRepo {
                         FROM users u INNER JOIN requests r on u.email_address = r.sender_email
                         WHERE r.receiver_email = $1`;
             const data = await this.queryDB(sql, [receiverEmail]);
-            console.log('get requests data', data)
             if (data?.rows.length <= 0) {
                 return null;
             }
@@ -125,7 +124,6 @@ class RequestRepo extends Repositories implements IRequestRepo {
                         VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4, $5, $6, $7, $8, $9);`;
             await this.queryDB(sql, [requestRq.senderEmail, requestRq.receiverEmail, RequestStatus.PENDING, requestRq.rate, requestRq.rateType, schedule?.day, schedule?.startTime, schedule?.endTime, requestRq.mode]);
         } catch (e: any) {
-            console.log('error', e);
             throw new ResponseException(e, 500, 'unable to insert into db');
         }
     }
@@ -135,7 +133,6 @@ class RequestRepo extends Repositories implements IRequestRepo {
             const sql = "UPDATE requests SET status = $1, request_date = CURRENT_TIMESTAMP WHERE sender_email = $2 AND receiver_email = $3;";
             await this.queryDB(sql, [requestRq.status, requestRq.senderEmail, requestRq.receiverEmail]);
         } catch (e: any) {
-            console.log('update error', e)
             throw new ResponseException(e, 500, 'unable to update db');
         }
     }
