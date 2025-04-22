@@ -38,7 +38,6 @@ class OTPManager implements IOTPManager {
     }
 
     async setOTP(otpRq: SetOTPRq): Promise<void> {
-        console.log('otp request', otpRq)
         otpRq.otp = this.generateOTP();
         let otpExists = await this._OTPRepo.getOTP(otpRq.email);
 

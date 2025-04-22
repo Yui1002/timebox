@@ -47,8 +47,12 @@ const SignUp = ({navigation}: any) => {
     try {
       const params = { firstName, lastName, email, password };
       await userApi.signUpUser(params);
-      navigation.navigate(Screen.VERIFY_OTP, params);
+      navigation.navigate(Screen.VERIFY_OTP, {
+        params: params,
+        isSignUp: true
+      });
     } catch (err) {
+      console.log(err)
       setResult({
         status: StatusModel.ERROR, 
         message: "Sign-up failed"
