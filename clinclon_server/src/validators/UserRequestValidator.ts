@@ -30,7 +30,6 @@ class SetUserRequestValidator extends SuperValidator {
         this.checkRequestEmpty(request);
 
         let instance = JSHelperInstance._converter.deserializeObject(request, SetUserRq);
-        console.log('instance is', instance)
         if (!instance.firstName || !instance.lastName) {
             this.throwError(null, "Name is required")
         }

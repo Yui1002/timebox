@@ -99,7 +99,6 @@ const Record = ({route, navigation}: any) => {
   };
 
   const saveRecord = async (type: TimeType, record: Date) => {
-    console.log('record', record)
 
     if (!validateInput(type)) return;
 

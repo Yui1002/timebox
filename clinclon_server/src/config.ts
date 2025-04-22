@@ -6,4 +6,4 @@ export const PASSWORD_RULES = {
     minSymbols: 0,
   };
 
-export const JWT = 'jwt'
+export const JWT = 'bearerAuth'

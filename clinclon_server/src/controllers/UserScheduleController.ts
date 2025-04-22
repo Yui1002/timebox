@@ -30,7 +30,6 @@ export class UserScheduleController extends SuperController implements IUserSche
     @Security(JWT)
     @Validate
     public async setSchedule(@Body() rq: SetUserScheduleRq): Promise<void> {
-        console.log('request desu', rq)
         await this._userScheduleManager.setUserSchedule(rq);
     }
 }

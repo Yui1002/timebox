@@ -24,5 +24,4 @@ export class EmployerController extends SuperController implements IEmployerCont
     public async getEmployer(@Queries() rq: GetEmployerRq): Promise<GetEmployerRs> {
         return await this._employerManager.getEmployer(rq);
     }
-    
 }

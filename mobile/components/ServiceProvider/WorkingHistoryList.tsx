@@ -71,10 +71,8 @@ const WorkingHistoryList = ({
   // const convertEpochToDate = (epoch: number) => {
     let dateObj = new Date(Number(startTime) * 1000);
     
-    console.log(dateObj)
     let utcString = dateObj.toUTCString();
     let time = utcString.slice(-11, 4);
-    console.log('time', moment(dateObj).format('LT'))
   // }
 
   const onRowSelect = () => {

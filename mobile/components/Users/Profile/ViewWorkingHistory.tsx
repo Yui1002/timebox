@@ -51,7 +51,6 @@ const ViewWorkingHistory = ({route}: any) => {
 
   const search = async () => {
     if (!validateInput()) return;
-    console.log(from, to);
 
     try {
       const {data} = await api.getRecordByPeriod(

@@ -107,7 +107,6 @@ const RecordHistory = ({route, navigation}: any) => {
       );
       setRecords(data.records!);
     } catch (e) {
-      console.log(e.response.data);
       setRecords([]);
     }
   };

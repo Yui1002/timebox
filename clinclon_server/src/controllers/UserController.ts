@@ -8,7 +8,7 @@ import { JWT } from "../config";
 interface IUserController {
     getUser(rq: GetUserRq): Promise<GetUserRs>;
     setUser(request: SetUserRq): Promise<void>;
-    signInUser(request: SignInUserRq): Promise<GetUserRs>;
+    signInUser(request: SignInUserRq): Promise<{token: string, user: GetUserRs}>;
     resetPassword(request: ResetPasswordRq): Promise<void>;
 }
 
@@ -36,9 +36,8 @@ export class UserController extends SuperController implements IUserController {
     }
 
     @Post('/signIn')
-    @Security(JWT)
     @Validate
-    public async signInUser(@Body() rq: SignInUserRq): Promise<GetUserRs> {
+    public async signInUser(@Body() rq: SignInUserRq): Promise<{token: string, user: GetUserRs}> {
         return await this._userManager.signInUser(rq);
     }  
     

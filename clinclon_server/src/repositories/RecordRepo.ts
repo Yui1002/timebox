@@ -28,7 +28,6 @@ class RecordRepo extends Repositories implements IRecordRepo  {
             }
             return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
         } catch(e: any) {
-            console.log('error here', e) 
             throw new ResponseException(e, 500, 'unable to get from db');
         } 
     }

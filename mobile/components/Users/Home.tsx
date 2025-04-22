@@ -6,6 +6,7 @@ import EmployerList from '../Employers/EmployerList';
 import {useIsFocused} from '@react-navigation/native';
 import {DefaultApiFactory, Employer} from '../../swagger';
 import {UserInfo} from '../../types';
+import { getToken } from '../../tokenUtils';
 
 let employerApi = DefaultApiFactory();
 
@@ -23,7 +24,13 @@ const Home = (props: any) => {
 
   const getEmployers = async (): Promise<void> => {
     try {
-      let {data} = await employerApi.getEmployer(email);
+      const token = await getToken();
+
+      let {data} = await employerApi.getEmployer(email, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setEmployers(data.employers);
     } catch (e) {
       setEmployers([]);
