@@ -9,7 +9,6 @@ const options = {
 
 export function expressAuthentication(request: express.Request): Promise<any> {
   let token = request.headers["authorization"];
-  console.log('token', token)
   token = token?.replace(/^Bearer\s+/, "");
   return doAuth(token);
 }

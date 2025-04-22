@@ -8,7 +8,7 @@ let input = InputStyle.createBasicInputStyle();
 
 interface InputProps {
   title: string;
-  secureTextEntry: boolean;
+  secureTextEntry?: boolean;
   onChangeText: (val: string) => void;
   reactElem?: React.JSX.Element;
 }
@@ -25,7 +25,7 @@ interface NumberInputProps {
 
 const Input = ({
   title,
-  secureTextEntry,
+  secureTextEntry = false,
   onChangeText,
   reactElem,
 }: InputProps) => {

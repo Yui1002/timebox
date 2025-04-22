@@ -38,6 +38,7 @@ class OTPManager implements IOTPManager {
     }
 
     async setOTP(otpRq: SetOTPRq): Promise<void> {
+        console.log('otp request', otpRq)
         otpRq.otp = this.generateOTP();
         let otpExists = await this._OTPRepo.getOTP(otpRq.email);
 
@@ -63,6 +64,7 @@ class OTPManager implements IOTPManager {
             throw new ResponseException(null, 400, "otp expired");
         }
     }
+    
 
     generateOTP(): string {
         return Math.floor(100000 + Math.random() * 900000).toString();

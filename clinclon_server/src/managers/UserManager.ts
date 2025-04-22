@@ -1,4 +1,5 @@
 import UserRepo from "../repositories/UserRepo";
+import OTPRepo from "../repositories/OTPRepo";
 import {
   GetUserRq,
   GetUserRs,
@@ -11,6 +12,8 @@ import ResponseException from "../models/ResponseException";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { SetOTPRq } from "../models/OTP";
+import OTPManager from "./OTPManager";
 dotenv.config();
 
 interface IUserManager {
@@ -22,9 +25,11 @@ interface IUserManager {
 
 class UserManager implements IUserManager {
   private _userRepo: UserRepo;
+  private _otpManager: OTPManager;
 
   constructor() {
     this._userRepo = new UserRepo();
+    this._otpManager = new OTPManager();
   }
 
   async getUser(rq: GetUserRq): Promise<GetUserRs> {
@@ -96,6 +101,19 @@ class UserManager implements IUserManager {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+  }
+
+  async signUpUser(userRq: SetUserRq): Promise<void> {
+    const user = await this._userRepo.getUser(userRq.email);
+    if (user) {
+      throw new ResponseException(null, 409, "User already exists");
+    }
+
+    await this._userRepo.setTempUser(userRq);
+    await this._otpManager.setOTP({
+      email: userRq.email,
+      otp: ""
+    } as SetOTPRq);
   }
 }
 

@@ -8,7 +8,7 @@ import {
   Input,
   PasswordInput,
   TopContainer,
-  Result
+  Result,
 } from '../index';
 import {DefaultApiFactory} from '../../swagger';
 import {ResultModel, SignUpProps} from '../../types';
@@ -24,27 +24,8 @@ const SignUp = ({navigation}: any) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
+    message: '',
   });
-
-  const checkUserExists = async (): Promise<void> => {
-    if (!validateInput()) return;
-
-    try {
-      await userApi.getUser(email);
-      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_EMAIL});
-    } catch (e) {
-      let navigationProps: SignUpProps = {
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmedPassword,
-        isSignUp: true,
-      };
-      navigation.navigate(Screen.VERIFY_OTP, navigationProps);
-    }
-  };
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignUp({
@@ -60,25 +41,30 @@ const SignUp = ({navigation}: any) => {
     return validateErr == null;
   };
 
+  const handleSignUp = async (): Promise<void> => {
+    if (!validateInput()) return;
+
+    try {
+      const params = { firstName, lastName, email, password };
+      await userApi.signUpUser(params);
+      navigation.navigate(Screen.VERIFY_OTP, params);
+    } catch (err) {
+      setResult({
+        status: StatusModel.ERROR, 
+        message: "Sign-up failed"
+      })
+    }
+  }
+
   return (
     <TopContainer>
       <ScrollView>
-        {result.status && <Result status={result.status} msg={result.message} />}
-        <Input
-          title="First Name"
-          secureTextEntry={false}
-          onChangeText={val => setFirstName(val)}
-        />
-        <Input
-          title="Last Name"
-          secureTextEntry={false}
-          onChangeText={val => setLastName(val)}
-        />
-        <Input
-          title="Email"
-          secureTextEntry={false}
-          onChangeText={val => setEmail(val)}
-        />
+        {result.status && (
+          <Result status={result.status} msg={result.message} />
+        )}
+        <Input title="First Name" onChangeText={val => setFirstName(val)} />
+        <Input title="Last Name" onChangeText={val => setLastName(val)} />
+        <Input title="Email" onChangeText={val => setEmail(val)} />
         <PasswordInput
           title="Password"
           secureTextEntry={!showPassword}
@@ -91,7 +77,7 @@ const SignUp = ({navigation}: any) => {
           onChangeText={val => setConfirmedPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
         />
-        <Button title="Sign Up" onPress={checkUserExists} />
+        <Button title="Sign Up" onPress={handleSignUp} />
         <Separator />
         <Footer
           leftText={{text1: 'Already have account?', text2: 'Sign In'}}

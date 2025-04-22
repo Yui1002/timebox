@@ -1048,6 +1048,37 @@ export interface SignInUserRq {
 /**
  * 
  * @export
+ * @interface SignUpUserRq
+ */
+export interface SignUpUserRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof SignUpUserRq
+     */
+    'email'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignUpUserRq
+     */
+    'firstName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignUpUserRq
+     */
+    'lastName'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignUpUserRq
+     */
+    'password'?: string;
+}
+/**
+ * 
+ * @export
  * @enum {string}
  */
 
@@ -1350,9 +1381,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
             if (email !== undefined) {
                 localVarQueryParameter['email'] = email;
@@ -1947,9 +1975,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            // authentication bearerAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -2191,6 +2216,41 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {SignUpUserRq} signUpUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        signUpUser: async (signUpUserRq: SignUpUserRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'signUpUserRq' is not null or undefined
+            assertParamExists('signUpUser', 'signUpUserRq', signUpUserRq)
+            const localVarPath = `/user/signUp`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(signUpUserRq, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {UpdateRecordRq} updateRecordRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2323,9 +2383,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
     
@@ -2655,6 +2712,18 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {SignUpUserRq} signUpUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async signUpUser(signUpUserRq: SignUpUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.signUpUser(signUpUserRq, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.signUpUser']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {UpdateRecordRq} updateRecordRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2940,6 +3009,15 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): AxiosPromise<SignInUser200Response> {
             return localVarFp.signInUser(signInUserRq, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {SignUpUserRq} signUpUserRq 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        signUpUser(signUpUserRq: SignUpUserRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.signUpUser(signUpUserRq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3263,6 +3341,17 @@ export class DefaultApi extends BaseAPI {
      */
     public signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).signInUser(signInUserRq, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {SignUpUserRq} signUpUserRq 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public signUpUser(signUpUserRq: SignUpUserRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).signUpUser(signUpUserRq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

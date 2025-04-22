@@ -10,6 +10,7 @@ interface IUserController {
     setUser(request: SetUserRq): Promise<void>;
     signInUser(request: SignInUserRq): Promise<{token: string, user: GetUserRs}>;
     resetPassword(request: ResetPasswordRq): Promise<void>;
+    signUpUser(request: SetUserRq): Promise<void>;
 }
 
 @Route('user')
@@ -47,4 +48,10 @@ export class UserController extends SuperController implements IUserController {
     public async resetPassword(@Body() rq: ResetPasswordRq): Promise<void> {
         await this._userManager.resetPassword(rq);
     } 
+
+    @Post('/signUp')
+    @Validate
+    public async signUpUser(@Body() rq: SetUserRq): Promise<void> {
+        await this._userManager.signUpUser(rq);
+    }
 }

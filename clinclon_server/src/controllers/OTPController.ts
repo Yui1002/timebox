@@ -28,21 +28,19 @@ export class OTPController extends SuperController implements IOTPController {
     }
 
     @Get()
-    @Security(JWT)
     @Validate
     public async getOTP(@Queries() rq: GetOTPRq): Promise<GetOTPRs> {
         return await this._OTPManager.getOTP(rq);
     }
 
     @Post()
-    @Security(JWT)
     @Validate
     public async setOTP(@Body() request: SetOTPRq): Promise<void> {
+        console.log('hello')
         await this._OTPManager.setOTP(request);
     }
     
     @Post('/verify')
-    @Security(JWT)
     @Validate
     public async verifyOTP(@Body() request: SetOTPRq): Promise<void> {
         await this._OTPManager.verifyOTP(request);

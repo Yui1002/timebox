@@ -10,6 +10,7 @@ interface IUserRepo {
     getUser(email: string): Promise<UserRawDB>;
     setUser(userRq: SetUserRq): Promise<void>;
     resetPassword(passwordRq: ResetPasswordRq): Promise<void>;
+    setTempUser(userRq: SetUserRq): Promise<void>;
 }
 
 class UserRepo extends Repositories implements IUserRepo {
@@ -43,6 +44,15 @@ class UserRepo extends Repositories implements IUserRepo {
         } catch (e) {
             throw new ResponseException(e, 500, "unable to insert into db");
         } 
+    }
+
+    async setTempUser(userRq: SetUserRq): Promise<void> {
+        try {
+            const sql = "INSERT INTO temp_users (first_name, last_name, email_address, password, created_at) VALUES ($1, $2, $3, $4, $5);";
+            await this.queryDB(sql, [userRq.firstName, userRq.lastName, userRq.email, userRq.password, Date.now()])
+        } catch (e) {
+            throw new ResponseException(e, 500, "unable to insert into db")
+        }
     }
 
 } 
