@@ -9,17 +9,18 @@ import {DefaultApiFactory, GetUserRs} from '../../swagger';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {getToken} from '../../tokenUtils';
 
 let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>('lfhoqudfzurpkbskmi@hthlm.com');
+  const [searchInput, setSearchInput] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
 
   useEffect(() => {
     setModalVisible(true);
@@ -27,11 +28,17 @@ const HireServiceProvider = (props: any) => {
 
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_EMAIL});
+      setResult({
+        status: StatusModel.ERROR,
+        message: ErrMsg.INVALID_EMAIL,
+      });
       return false;
     }
     if (searchInput === userInfo.email) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_REQUEST})
+      setResult({
+        status: StatusModel.ERROR,
+        message: "You can't use your email address",
+      });
       return false;
     }
     return true;
@@ -39,25 +46,40 @@ const HireServiceProvider = (props: any) => {
 
   const searchEmail = async () => {
     if (!validateInput()) return;
+    console.log('validated');
+
+    const token = await getToken();
 
     try {
-      const {data} = await api.isRequestValid(userInfo.email, searchInput);
-      const serviceProvider = data.serviceProviderUser;
-      showConfirmMsg(serviceProvider);
+      const {data} = await api.isRequestValid(userInfo.email, searchInput, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('data', data);
+      showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_REQUEST});
+      setResult({
+        status: StatusModel.ERROR,
+        message: e.response.data.message,
+      });
+    } finally {
+      setResult({
+        status: StatusModel.NULL,
+        message: ""
+      });
     }
   };
 
-  const showConfirmMsg = (serviceProvider: GetUserRs | undefined) => {
+  const showConfirmMsg = ({firstName, lastName, email}: GetUserRs) => {
     alert(
-      `Do you want to hire ${searchInput} as a service provider?`,
+      `Do you want to hire ${firstName} ${lastName} as a service provider?`,
       '',
       function () {
         navigate(props.navigation, Screen.PERSONAL_INFO, {
-          firstName: serviceProvider?.firstName ?? '',
-          lastName: serviceProvider?.lastName ?? '',
-          email: serviceProvider?.email ?? searchInput,
+          firstName,
+          lastName,
+          email,
         });
         clearInput();
       },

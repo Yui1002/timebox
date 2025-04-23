@@ -30,7 +30,6 @@ export class UserController extends SuperController implements IUserController {
     }
 
     @Post()
-    @Security(JWT)
     @Validate
     public async setUser(@Body() rq: SetUserRq): Promise<void> {
         await this._userManager.setUser(rq);

@@ -128,18 +128,16 @@ class RequestManager implements IRequestManager {
     }
 
     async isRequestValid(requestRq: GetRequestByEmailRq): Promise<ServiceProviderMiniRs> {
-    /**
-     * Decides whether the owner can send a request to service provider
-     * 1) If there is a record in request table -> reject
-     * 2) There is no record in request table and service provider is not a user -> send request
-     * 3) There is no record in request table and service provider is a user -> set rate type -> send request
-     * @returns 
-     */
+
         let recordData = await this._requestRepo.getRequestByEmail(requestRq);
         let serviceProvider = await this._userRepo.getUser(requestRq.receiverEmail);
 
         if (recordData) {
             throw new ResponseException(null, 400, 'Duplicate request');
+        }
+
+        if (!serviceProvider) {
+            throw new ResponseException(null, 400, 'This user you have requested does not exist on this app.')
         }
 
         return new ServiceProviderMiniRs(serviceProvider);

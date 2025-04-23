@@ -18,14 +18,13 @@ import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger';
 import {ErrMsg, Screen, StatusModel} from '../../enums';
 import Validator from '../../validator/validator';
 let otpApi = DefaultApiFactory();
+let userApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  console.log('route.params', route.params)
   const {firstName, lastName, email, password} = route.params.params;
-  const isSignUp = route.params;
+  const isSignUp = route.params.isSignUp;
   const [otp, setOtp] = useState<string>('');
-  const [otpResent, setOtpResent] = useState<boolean>(false);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
@@ -41,18 +40,26 @@ const VerifyOTP = ({route, navigation}: any) => {
   };
 
   const resendOTP = async () => {
-    setOtpResent(true);
+    setResult({
+      status: StatusModel.INFO,
+      message: 'Sending a new OTP to your email...'
+    });
+
     try {
       await otpApi.setOTP({
         email: email,
         otp: '',
       } as SetOTPRq);
+
       setResult({
         status: StatusModel.SUCCESS,
         message: ErrMsg.OTP_SEND_SUCCESS,
       });
     } catch (e) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.OTP_SEND_ERR});
+      setResult({
+        status: StatusModel.ERROR, 
+        message: ErrMsg.OTP_SEND_ERR
+      });
     }
   };
 
@@ -62,7 +69,7 @@ const VerifyOTP = ({route, navigation}: any) => {
     try {
       await otpApi.verifyOTP({email, otp} as SetOTPRq);
       if (isSignUp) {
-        setUser();
+        await setUser();
         navigation.navigate(Screen.DRAWER_NAV, null);
       } else {
         navigation.navigate(Screen.RESET_PASSWORD, {email});
@@ -76,12 +83,17 @@ const VerifyOTP = ({route, navigation}: any) => {
   };
 
   const setUser = async () => {
-    const params = { firstName, lastName, email, password } as SetUserRq;
+    const params = {firstName, lastName, email, password} as SetUserRq;
     try {
-      otpApi.setUser(params);
+      await userApi.setUser(params);
       dispatch(signInUser({firstName, lastName, email}));
     } catch (e) {
-      console.log(e);
+      console.log(e)
+      setResult({
+        status: StatusModel.ERROR,
+        message: ErrMsg.FAIL_CREATE_USER,
+      });
+      return;
     }
   };
 

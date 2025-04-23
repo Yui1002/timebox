@@ -27,9 +27,11 @@ class GetRequestByEmailValidator extends SuperValidator {
     }
 
     validateAndConvertRequest(request: any): GetRequestByEmailRq | null {
+        console.log('request is', request)
         this.checkRequestEmpty(request);
 
         let instance = JSHelperInstance._converter.deserializeObject(request, GetRequestByEmailRq);
+        console.log('instance is', instance)
         if (!isEmail(instance.senderEmail) || !isEmail(instance.receiverEmail)) {
             this.throwError(null, 'Email is invalid')
         }

@@ -36,7 +36,6 @@ export class OTPController extends SuperController implements IOTPController {
     @Post()
     @Validate
     public async setOTP(@Body() request: SetOTPRq): Promise<void> {
-        console.log('hello')
         await this._OTPManager.setOTP(request);
     }
     

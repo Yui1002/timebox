@@ -11,10 +11,6 @@ from test_helper import generate_random_email, generate_random_string, invalid_e
 def generate_random_first_name():
     return generate_random_string(7).capitalize()
 
-def generate_auth_header():
-    jwt = generate_jwt()
-    return {"Authorization": f"Bearer {jwt}"}
-
 def generate_random_last_name():
     return generate_random_string(10).capitalize()
 
@@ -26,6 +22,10 @@ def generate_random_password():
         ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(5))
     )
     return ''.join(random.sample(password, len(password)))
+
+def generate_auth_header():
+    jwt = generate_jwt()
+    return {"Authorization": f"Bearer {jwt}"}
 
 def create_user_data(email=None, password=None, firstName=None, lastName=None):
     if email is None:
@@ -54,7 +54,7 @@ invalid_password = [
 #region test set user api 
 def test_set_user_happy_path(cursor, shared_state):
     user_data = create_user_data()
-    response = requests.post(f"{BASE_URL}/user", json=user_data, headers=generate_auth_header())
+    response = requests.post(f"{BASE_URL}/user", json=user_data)
     assert response.status_code == 204
 
     cursor.execute("SELECT * FROM users WHERE email_address = %s", (user_data["email"],))
