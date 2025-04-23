@@ -17,6 +17,9 @@ invalid_email = [
 def generate_random_email():
     return f"{generate_random_string(10)}@example.com"
 
+def generate_random_invalid_email():
+    return random.choice(invalid_email)
+
 def generate_random_string(length=15):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for i in range(length))
