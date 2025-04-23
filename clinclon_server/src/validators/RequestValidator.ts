@@ -27,11 +27,9 @@ class GetRequestByEmailValidator extends SuperValidator {
     }
 
     validateAndConvertRequest(request: any): GetRequestByEmailRq | null {
-        console.log('request is', request)
         this.checkRequestEmpty(request);
 
         let instance = JSHelperInstance._converter.deserializeObject(request, GetRequestByEmailRq);
-        console.log('instance is', instance)
         if (!isEmail(instance.senderEmail) || !isEmail(instance.receiverEmail)) {
             this.throwError(null, 'Email is invalid')
         }
@@ -74,16 +72,16 @@ class SetRequestValidator extends SuperValidator {
         if (!isEmail(instance.senderEmail) || !isEmail(instance.receiverEmail)) {
             this.throwError(null, 'Email is invalid')
         }
-        if (!instance.rate || !isFloat(instance.rate.toString(), {
+        if (!instance.hasOwnProperty('rate') || !isFloat(instance.rate.toString(), {
             min: 1.00,
             max: 3000.00
         })) {
             this.throwError(null, "Rate is invalid");
         }
-        if (instance.rateType !== RateType.DAILY && instance.rateType !== RateType.HOURLY) {
+        if (!instance.hasOwnProperty('rateType') || instance.rateType === RateType.UNSPECIFIED) {
             this.throwError(null, "Rate type is invalid");
         }
-        if (instance.mode !== Mode.True && instance.mode !== Mode.False) {
+        if (!instance.hasOwnProperty('mode') || (instance.mode !== Mode.True && instance.mode !== Mode.False)) {
             this.throwError(null, "Mode is invalid");
         } 
 

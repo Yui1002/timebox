@@ -111,8 +111,8 @@ class SetRequestRq extends BaseRequest {
     @JsonProperty("rate", Number)
     rate: number = 0;
     @JsonProperty("rateType")
-    rateType: RateType = RateType.HOURLY;
-    @JsonProperty('schedules', [UserSchedule])
+    rateType: RateType = RateType.UNSPECIFIED;
+    @JsonProperty('schedules')
     schedules: UserSchedule[] = []
     @JsonProperty("mode")
     mode: Mode = Mode.False;

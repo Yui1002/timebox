@@ -43,6 +43,7 @@ class Validator {
             throw new ResponseException(null, 500, "Unable to parse validators");
         }
         let validator = selectedValidators[0];
+
         return validator.validateAndConvertRequest(request)
     }
 

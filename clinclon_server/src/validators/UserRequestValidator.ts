@@ -27,7 +27,6 @@ class SetUserRequestValidator extends SuperValidator {
     }
 
     validateAndConvertRequest(request: any): SetUserRq | null {
-        console.log('request', request)
         this.checkRequestEmpty(request);
 
         let instance = JSHelperInstance._converter.deserializeObject(request, SetUserRq);

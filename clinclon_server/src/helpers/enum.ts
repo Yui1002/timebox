@@ -11,7 +11,8 @@ enum UserStatus {
 
 enum RateType {
   HOURLY = 'hourly',
-  DAILY = 'daily'
+  DAILY = 'daily',
+  UNSPECIFIED = undefined,
 }
 
 //AMIT NOTE: What is mode?
