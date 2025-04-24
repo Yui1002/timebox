@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Text} from 'react-native';
+import {Text, ActivityIndicator, View} from 'react-native';
 import {InputStyle} from '../../styles';
 import {
   Footer,
@@ -22,13 +22,14 @@ let userApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {firstName, lastName, email, password} = route.params.params;
-  const isSignUp = route.params.isSignUp;
+  const { firstName = '', lastName = '', email = '', password = ''} = route.params?.params || route.params;
+  const isSignUp = route.params?.isSignUp;
   const [otp, setOtp] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
   let otpInput = InputStyle.createOTPInputStyle();
 
   const validateInput = (): boolean => {
@@ -42,7 +43,7 @@ const VerifyOTP = ({route, navigation}: any) => {
   const resendOTP = async () => {
     setResult({
       status: StatusModel.INFO,
-      message: 'Sending a new OTP to your email...'
+      message: 'Sending a new OTP to your email...',
     });
 
     try {
@@ -57,8 +58,8 @@ const VerifyOTP = ({route, navigation}: any) => {
       });
     } catch (e) {
       setResult({
-        status: StatusModel.ERROR, 
-        message: ErrMsg.OTP_SEND_ERR
+        status: StatusModel.ERROR,
+        message: ErrMsg.OTP_SEND_ERR,
       });
     }
   };
@@ -66,6 +67,7 @@ const VerifyOTP = ({route, navigation}: any) => {
   const verifyOTP = async () => {
     if (!validateInput()) return;
 
+    setLoading(true);
     try {
       await otpApi.verifyOTP({email, otp} as SetOTPRq);
       if (isSignUp) {
@@ -79,6 +81,8 @@ const VerifyOTP = ({route, navigation}: any) => {
         status: StatusModel.ERROR,
         message: ErrMsg.OTP_VERIFICATION_ERR,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -88,7 +92,7 @@ const VerifyOTP = ({route, navigation}: any) => {
       await userApi.setUser(params);
       dispatch(signInUser({firstName, lastName, email}));
     } catch (e) {
-      console.log(e)
+      console.log(e);
       setResult({
         status: StatusModel.ERROR,
         message: ErrMsg.FAIL_CREATE_USER,
@@ -110,7 +114,13 @@ const VerifyOTP = ({route, navigation}: any) => {
           onChangeText={val => setOtp(val)}
         />
       </CenterContainer>
-      <Button title="Verify" onPress={verifyOTP} />
+      {loading ? (
+        <View style={{alignItems: 'center', marginVertical: 20}}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      ) : (
+        <Button title="Verify" onPress={verifyOTP} />
+      )}
       <Separator />
       <Footer
         leftText={{text1: "Didn't receive a code?", text2: 'Resend'}}

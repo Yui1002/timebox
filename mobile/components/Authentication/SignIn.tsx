@@ -1,18 +1,20 @@
-import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {ScrollView, ActivityIndicator, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {GetUserRs, SignInUserRq} from '../../swagger';
 import {signInUser} from '../../redux/actions/signInAction.js';
-import { storeToken } from '../../tokenUtils';
+import {storeToken} from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
 import {Footer, Button, Result, Separator, Input, TopContainer} from '../index';
 import TimeboxApiInjector from '../../helper/DefaultApi.ts'; // Adjust the import path as necessary
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 let userApi = new TimeboxApiInjector().getDefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -20,6 +22,13 @@ const SignIn = ({navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      clearInput();
+    }
+  }, [isFocused]);
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignIn(email, password);
@@ -32,17 +41,21 @@ const SignIn = ({navigation}: any) => {
   const signIn = async (): Promise<void> => {
     if (!validateInput()) return;
 
+    setLoading(true);
+
     try {
       const {data} = await userApi.signInUser({
         email,
         password,
       } as SignInUserRq);
-      await storeToken(data.token)
-      dispatchUser(data.user);
+      await storeToken(data.token);
       clearInput();
+      dispatchUser(data.user);
       navigation.navigate(Screen.DRAWER_NAV);
     } catch (e: any) {
       setResult({status: StatusModel.ERROR, message: ErrMsg.SIGNIN_ERROR});
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,13 +80,21 @@ const SignIn = ({navigation}: any) => {
           title="Email"
           secureTextEntry={false}
           onChangeText={val => setEmail(val)}
+          value={email}
         />
         <Input
           title="Password"
           secureTextEntry={true}
           onChangeText={val => setPassword(val)}
+          value={password}
         />
-        <Button title="Sign In" onPress={signIn} />
+        {loading ? (
+          <View style={{alignItems: 'center', marginVertical: 20}}>
+            <ActivityIndicator size="large" color="#000" />
+          </View>
+        ) : (
+          <Button title="Sign In" onPress={signIn} />
+        )}
         <Separator />
         <Footer
           leftText={{text1: 'New user?', text2: 'Sign Up'}}

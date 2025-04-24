@@ -55,6 +55,7 @@ const PersonalInfo = ({route, navigation}: any) => {
 
   const validateInput = () => {
     const validateErr = Validator.validateRate(rate, rateType);
+    
     if (validateErr) {
       setResult({status: StatusModel.ERROR, message: validateErr});
     }

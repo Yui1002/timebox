@@ -28,7 +28,7 @@ export class OTPController extends SuperController implements IOTPController {
     }
 
     @Get()
-    @Validate
+    @Validate 
     public async getOTP(@Queries() rq: GetOTPRq): Promise<GetOTPRs> {
         return await this._OTPManager.getOTP(rq);
     }

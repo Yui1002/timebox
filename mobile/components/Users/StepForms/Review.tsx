@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, ActivityIndicator} from 'react-native';
 import {ContainerStyle, ButtonStyle, TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
@@ -25,6 +25,7 @@ import {
 } from '../../index';
 import {ErrMsg, Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
+import {getToken} from '../../../tokenUtils';
 
 let api = DefaultApiFactory();
 
@@ -38,6 +39,7 @@ const Review = ({route, navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const editDay = () => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
@@ -57,12 +59,24 @@ const Review = ({route, navigation}: any) => {
       mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
     };
 
+    const token = await getToken();
+    setLoading(true);
+
     try {
-      await api.setRequest(params);
+      await api.setRequest(params, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       clearInput();
       showSuccess();
     } catch (e: any) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.REQUEST_SEND_ERR});
+      setResult({
+        status: StatusModel.ERROR,
+        message: e.response.data.message,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,11 +170,15 @@ const Review = ({route, navigation}: any) => {
         </Container>
         <AlignContainer>
           <Button title="Back" onPress={navigateBack} style={backBtn} />
-          <Button
-            title="Confirm"
-            onPress={confirmServiceProvider}
-            style={continueBtn}
-          />
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Button
+              title="Confirm"
+              onPress={confirmServiceProvider}
+              style={continueBtn}
+            />
+          )}
         </AlignContainer>
       </ScrollView>
     </TopContainer>

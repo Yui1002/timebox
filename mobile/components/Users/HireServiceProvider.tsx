@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {Text} from 'react-native';
-import Popup from '../Popup';
+import {Text, ActivityIndicator} from 'react-native';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
 import {Button, Container, Input, Result, TopContainer} from '../index';
@@ -15,16 +14,12 @@ let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
-
-  useEffect(() => {
-    setModalVisible(true);
-  }, []);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
@@ -46,9 +41,9 @@ const HireServiceProvider = (props: any) => {
 
   const searchEmail = async () => {
     if (!validateInput()) return;
-    console.log('validated');
 
     const token = await getToken();
+    setLoading(true);
 
     try {
       const {data} = await api.isRequestValid(userInfo.email, searchInput, {
@@ -56,7 +51,6 @@ const HireServiceProvider = (props: any) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('data', data);
       showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
       setResult({
@@ -64,10 +58,7 @@ const HireServiceProvider = (props: any) => {
         message: e.response.data.message,
       });
     } finally {
-      setResult({
-        status: StatusModel.NULL,
-        message: ""
-      });
+      setLoading(false);
     }
   };
 
@@ -95,9 +86,6 @@ const HireServiceProvider = (props: any) => {
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
-      {modalVisible && (
-        <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
-      )}
       <Container>
         <Text>
           Enter the email of a service provider you would like to hire
@@ -108,7 +96,11 @@ const HireServiceProvider = (props: any) => {
         secureTextEntry={false}
         onChangeText={val => setSearchInput(val)}
       />
-      <Button title="Continue" onPress={searchEmail} />
+      {loading ? (
+        <ActivityIndicator size="large" color="#000" />
+      ) : (
+        <Button title="Continue" onPress={searchEmail} />
+      )}
     </TopContainer>
   );
 };

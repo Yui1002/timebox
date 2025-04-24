@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, ActivityIndicator, View} from 'react-native';
 import Validator from '../../validator/validator';
 import {
   Footer,
@@ -26,6 +26,7 @@ const SignUp = ({navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignUp({
@@ -41,24 +42,26 @@ const SignUp = ({navigation}: any) => {
     return validateErr == null;
   };
 
-  const handleSignUp = async (): Promise<void> => {
+  const signUp = async (): Promise<void> => {
     if (!validateInput()) return;
 
+    setLoading(true);
     try {
-      const params = { firstName, lastName, email, password };
+      const params = {firstName, lastName, email, password};
       await userApi.signUpUser(params);
       navigation.navigate(Screen.VERIFY_OTP, {
         params: params,
-        isSignUp: true
+        isSignUp: true,
       });
     } catch (err) {
-      console.log(err)
       setResult({
-        status: StatusModel.ERROR, 
-        message: "Sign-up failed"
-      })
+        status: StatusModel.ERROR,
+        message: err.response.data.message,
+      });
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <TopContainer>
@@ -66,22 +69,42 @@ const SignUp = ({navigation}: any) => {
         {result.status && (
           <Result status={result.status} msg={result.message} />
         )}
-        <Input title="First Name" onChangeText={val => setFirstName(val)} />
-        <Input title="Last Name" onChangeText={val => setLastName(val)} />
-        <Input title="Email" onChangeText={val => setEmail(val)} />
+        <Input
+          title="First Name"
+          onChangeText={val => setFirstName(val)}
+          value={firstName}
+        />
+        <Input
+          title="Last Name"
+          onChangeText={val => setLastName(val)}
+          value={lastName}
+        />
+        <Input
+          title="Email"
+          onChangeText={val => setEmail(val)}
+          value={email}
+        />
         <PasswordInput
           title="Password"
           secureTextEntry={!showPassword}
           onChangeText={val => setPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
+          value={password}
         />
         <PasswordInput
           title="Confirm Password"
           secureTextEntry={!showPassword}
           onChangeText={val => setConfirmedPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
+          value={confirmedPassword}
         />
-        <Button title="Sign Up" onPress={handleSignUp} />
+        {loading ? (
+          <View style={{alignItems: 'center', marginVertical: 20}}>
+            <ActivityIndicator size="large" color="#000" />
+          </View>
+        ) : (
+          <Button title="Sign Up" onPress={signUp} />
+        )}
         <Separator />
         <Footer
           leftText={{text1: 'Already have account?', text2: 'Sign In'}}

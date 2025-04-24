@@ -8,6 +8,7 @@ let input = InputStyle.createBasicInputStyle();
 
 interface InputProps {
   title: string;
+  value: string;
   secureTextEntry?: boolean;
   onChangeText: (val: string) => void;
   reactElem?: React.JSX.Element;
@@ -25,6 +26,7 @@ interface NumberInputProps {
 
 const Input = ({
   title,
+  value,
   secureTextEntry = false,
   onChangeText,
   reactElem,
@@ -38,6 +40,7 @@ const Input = ({
         autoCapitalize="none"
         secureTextEntry={secureTextEntry}
         onChangeText={onChangeText}
+        value={value}
       />
       {reactElem}
     </View>

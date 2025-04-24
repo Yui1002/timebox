@@ -112,6 +112,14 @@ class UserManager implements IUserManager {
   async comparePassword(password1: string, password2: string) {
     return await bcrypt.compare(password1, password2);
   }
+
+  async verifyEmail(email: string): Promise<boolean> {
+    const user = await this._userRepo.getUser(email);
+    if (!user) {
+      throw new ResponseException(null, 400, "Email not verified")
+    }
+    return true;
+  }
 }
 
 export default UserManager;
