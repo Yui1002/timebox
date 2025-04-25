@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import {View, Text, ScrollView, ActivityIndicator} from 'react-native';
-import {ContainerStyle, ButtonStyle, TextStyle} from '../../../styles';
+import {Text, ScrollView} from 'react-native';
+import {TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
@@ -15,17 +15,17 @@ import {
 } from '../../../swagger';
 import {ResultModel} from '../../../types';
 import {
-  Button,
-  Section,
   Header,
   Result,
   TopContainer,
   AlignContainer,
   Container,
 } from '../../index';
-import {ErrMsg, Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
+import {Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {getToken} from '../../../tokenUtils';
+import InfoSection from '../../InfoSection';
+import LoadingButton from '../../LoadingButton';
 
 let api = DefaultApiFactory();
 
@@ -95,9 +95,6 @@ const Review = ({route, navigation}: any) => {
     setResult({status: StatusModel.NULL, message: ''});
   };
 
-  let alignContainer = ContainerStyle.createAlignContainer();
-  let backBtn = ButtonStyle.createBackButtonStyle();
-  let continueBtn = ButtonStyle.createContinueButtonStyle();
   let titleText = TextStyle.createTitleTextStyle();
   let text = TextStyle.createBasicTextStyle();
   let editLinkText = TextStyle.createDeleteLinkTextStyle();
@@ -113,37 +110,17 @@ const Review = ({route, navigation}: any) => {
       <ScrollView>
         <Header title="Review" />
         <AlignContainer>
-          <Section
-            title="First Name"
-            text={firstName ? firstName : 'Not specified'}
-            isAlign={true}
-          />
-          <Section
-            title="Last Name"
-            text={lastName ? lastName : 'Not specified'}
-            isAlign={true}
-          />
+          <InfoSection title="First Name" text={firstName || 'Not specified'} />
+          <InfoSection title="Last Name" text={lastName || 'Not specified'} />
         </AlignContainer>
-        <Section title="Email Address" text={email} />
+        <InfoSection title="Email Address" text={email} />
         <AlignContainer>
-          <View style={alignContainer}>
-            <Text style={titleText}>
-              Rate{' '}
-              <Text style={editLinkText} onPress={editRate}>
-                Edit
-              </Text>
-            </Text>
-            <Text style={text}>${rate}</Text>
-          </View>
-          <View style={alignContainer}>
-            <Text style={titleText}>
-              Rate Type{' '}
-              <Text style={editLinkText} onPress={editRate}>
-                Edit
-              </Text>
-            </Text>
-            <Text style={text}>{rateType}</Text>
-          </View>
+          <InfoSection title="Rate" text={`$${rate}`} onEdit={editRate} />
+          <InfoSection
+            title="Rate Type"
+            text={`${rateType}`}
+            onEdit={editRate}
+          />
         </AlignContainer>
         <Container>
           <Text style={titleText}>
@@ -163,23 +140,16 @@ const Review = ({route, navigation}: any) => {
           )}
         </Container>
         <Container>
-          <Text style={titleText}>
-            Allow service provider to edit record time
-          </Text>
-          <Text style={text}>{isEnabled ? 'Yes' : 'No'}</Text>
+          <InfoSection
+            title="Allow service provider to edit record time"
+            text={isEnabled ? 'Yes' : 'No'}
+          />
         </Container>
-        <AlignContainer>
-          <Button title="Back" onPress={navigateBack} style={backBtn} />
-          {loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : (
-            <Button
-              title="Confirm"
-              onPress={confirmServiceProvider}
-              style={continueBtn}
-            />
-          )}
-        </AlignContainer>
+        <LoadingButton
+          isLoading={loading}
+          onBack={navigateBack}
+          onConfirm={confirmServiceProvider}
+        />
       </ScrollView>
     </TopContainer>
   );
