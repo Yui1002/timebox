@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
-import {WorkShiftsProps, Schedule} from '../../../types';
+import {WorkShiftsProps} from '../../../types';
 import {ResultModel} from '../../../types';
 import {
   TopContainer,
@@ -13,12 +13,12 @@ import {
   Dropdown,
   Title,
   Result,
-  SubContainer
 } from '../../index';
 import { UserSchedule } from '../../../swagger'
 import Validator from '../../../validator/validator';
-import {Screen, Days, StatusModel} from '../../../enums';
+import {Screen, StatusModel} from '../../../enums';
 import {ContainerStyle, ButtonStyle} from '../../../styles';
+import DaySelection from '../../DaySelection';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -60,10 +60,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
-  let wrapContainer = ContainerStyle.createWrapContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
-  let selectedButton = ButtonStyle.createSelectedDayButtonStyle();
-  let button = ButtonStyle.createDayButtonStyle();
   let continuBtn = ButtonStyle.createContinueButtonStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
 
@@ -71,16 +68,7 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select day and time" />
-      <View style={wrapContainer}>
-        {Object.values(Days).map((day: string, index: number) => (
-          <Button
-            key={index}
-            title={day}
-            onPress={() => setSelectedDay(day)}
-            style={selectedDay === day ? selectedButton : button}
-          />
-        ))}
-      </View>
+      <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay}/>
       {startOpen && (
         <DatePickerDropdown
           mode="time"
