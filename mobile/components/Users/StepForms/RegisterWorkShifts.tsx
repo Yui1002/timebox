@@ -1,24 +1,15 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View} from 'react-native';
-import moment from 'moment';
 import {addShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps} from '../../../types';
 import {ResultModel} from '../../../types';
-import {
-  TopContainer,
-  Button,
-  DatePickerDropdown,
-  AlignContainer,
-  Dropdown,
-  Title,
-  Result,
-} from '../../index';
-import { UserSchedule } from '../../../swagger'
+import {TopContainer, Button, AlignContainer, Title, Result} from '../../index';
+import {UserSchedule} from '../../../swagger';
 import Validator from '../../../validator/validator';
 import {Screen, StatusModel} from '../../../enums';
-import {ContainerStyle, ButtonStyle} from '../../../styles';
+import {ButtonStyle} from '../../../styles';
 import DaySelection from '../../DaySelection';
+import TimePicker from '../../TimePicker';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -60,7 +51,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
-  let alignContainer = ContainerStyle.createAlignContainer();
   let continuBtn = ButtonStyle.createContinueButtonStyle();
   let backBtn = ButtonStyle.createBackButtonStyle();
 
@@ -68,38 +58,22 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select day and time" />
-      <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay}/>
-      {startOpen && (
-        <DatePickerDropdown
-          mode="time"
-          open={startOpen}
-          onConfirm={(time: Date) => setStartTime(time)}
-          onCancel={() => setStartOpen(false)}
-        />
-      )}
-      {endOpen && (
-        <DatePickerDropdown
-          mode="time"
-          open={endOpen}
-          onConfirm={(time: Date) => setEndTime(time)}
-          onCancel={() => setEndOpen(false)}
-        />
-      )}
+      <DaySelection selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
       <AlignContainer>
-        <View style={[alignContainer, {height: 40}]}>
-          <Title title="Start time" />
-          <Dropdown
-            placeholder={moment(startTime).format('LT')}
-            onPress={() => setStartOpen(!startOpen)}
-          />
-        </View>
-        <View style={[alignContainer, {height: 40}]}>
-          <Title title="End time" />
-          <Dropdown
-            placeholder={moment(endTime).format('LT')}
-            onPress={() => setEndOpen(!endOpen)}
-          />
-        </View>
+        <TimePicker
+          title="Start time"
+          time={startTime}
+          setTime={setStartTime}
+          isOpen={startOpen}
+          setIsOpen={setStartOpen}
+        />
+        <TimePicker
+          title="End time"
+          time={endTime}
+          setTime={setEndTime}
+          isOpen={endOpen}
+          setIsOpen={setEndOpen}
+        />
       </AlignContainer>
       <AlignContainer>
         <Button
