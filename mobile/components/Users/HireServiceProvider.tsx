@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {Text} from 'react-native';
-import Popup from '../Popup';
+import {Text, ActivityIndicator} from 'react-native';
 import {alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
 import {Button, Container, Input, Result, TopContainer} from '../index';
@@ -9,29 +8,32 @@ import {DefaultApiFactory, GetUserRs} from '../../swagger';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {getToken} from '../../tokenUtils';
 
 let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>('lfhoqudfzurpkbskmi@hthlm.com');
+  const [searchInput, setSearchInput] = useState<string>('intjexdicbbisxbhrj@nbmbb.com');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
-
-  useEffect(() => {
-    setModalVisible(true);
-  }, []);
+    message: '',
+  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateInput = () => {
     if (!Validator.isValidEmail(searchInput)) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_EMAIL});
+      setResult({
+        status: StatusModel.ERROR,
+        message: ErrMsg.INVALID_EMAIL,
+      });
       return false;
     }
     if (searchInput === userInfo.email) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_REQUEST})
+      setResult({
+        status: StatusModel.ERROR,
+        message: "You can't use your email address",
+      });
       return false;
     }
     return true;
@@ -40,24 +42,35 @@ const HireServiceProvider = (props: any) => {
   const searchEmail = async () => {
     if (!validateInput()) return;
 
+    const token = await getToken();
+    setLoading(true);
+
     try {
-      const {data} = await api.isRequestValid(userInfo.email, searchInput);
-      const serviceProvider = data.serviceProviderUser;
-      showConfirmMsg(serviceProvider);
+      const {data} = await api.isRequestValid(userInfo.email, searchInput, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_REQUEST});
+      setResult({
+        status: StatusModel.ERROR,
+        message: e.response.data.message,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const showConfirmMsg = (serviceProvider: GetUserRs | undefined) => {
+  const showConfirmMsg = ({firstName, lastName, email}: GetUserRs) => {
     alert(
-      `Do you want to hire ${searchInput} as a service provider?`,
+      `Do you want to hire ${firstName} ${lastName} as a service provider?`,
       '',
       function () {
         navigate(props.navigation, Screen.PERSONAL_INFO, {
-          firstName: serviceProvider?.firstName ?? '',
-          lastName: serviceProvider?.lastName ?? '',
-          email: serviceProvider?.email ?? searchInput,
+          firstName,
+          lastName,
+          email,
         });
         clearInput();
       },
@@ -73,9 +86,6 @@ const HireServiceProvider = (props: any) => {
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
-      {modalVisible && (
-        <Popup modalVisible={modalVisible} setModalVisible={setModalVisible} />
-      )}
       <Container>
         <Text>
           Enter the email of a service provider you would like to hire
@@ -86,7 +96,11 @@ const HireServiceProvider = (props: any) => {
         secureTextEntry={false}
         onChangeText={val => setSearchInput(val)}
       />
-      <Button title="Continue" onPress={searchEmail} />
+      {loading ? (
+        <ActivityIndicator size="large" color="#000" />
+      ) : (
+        <Button title="Continue" onPress={searchEmail} />
+      )}
     </TopContainer>
   );
 };

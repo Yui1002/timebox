@@ -1,4 +1,5 @@
 import UserRepo from "../repositories/UserRepo";
+import OTPRepo from "../repositories/OTPRepo";
 import {
   GetUserRq,
   GetUserRs,
@@ -11,6 +12,8 @@ import ResponseException from "../models/ResponseException";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { SetOTPRq } from "../models/OTP";
+import OTPManager from "./OTPManager";
 dotenv.config();
 
 interface IUserManager {
@@ -22,9 +25,11 @@ interface IUserManager {
 
 class UserManager implements IUserManager {
   private _userRepo: UserRepo;
+  private _otpManager: OTPManager;
 
   constructor() {
     this._userRepo = new UserRepo();
+    this._otpManager = new OTPManager();
   }
 
   async getUser(rq: GetUserRq): Promise<GetUserRs> {
@@ -36,10 +41,7 @@ class UserManager implements IUserManager {
   }
 
   async setUser(userRq: SetUserRq): Promise<void> {
-    userRq.password = await bcrypt.hash(
-      userRq.password,
-      Number(process.env.SALT_ROUNDS)
-    );
+    userRq.password = await this.hashPassword(userRq.password);
     await this._userRepo.setUser(userRq);
   }
 
@@ -52,8 +54,7 @@ class UserManager implements IUserManager {
       throw new ResponseException(null, 400, "Incorrect email or password");
     }
 
-    let passwordMatch = await bcrypt.compare(userRq.password, user.password);
-    if (!passwordMatch) {
+    if (!(await this.comparePassword(userRq.password, user.password))) {
       throw new ResponseException(null, 400, "Incorrect email or password");
     }
 
@@ -63,19 +64,28 @@ class UserManager implements IUserManager {
     };
   }
 
+  async signUpUser(userRq: SetUserRq): Promise<void> {
+    const user = await this._userRepo.getUser(userRq.email);
+    if (user) {
+      throw new ResponseException(null, 409, "User already exists");
+    }
+
+    userRq.password = await this.hashPassword(userRq.password);
+
+    await this._userRepo.setTempUser(userRq);
+    await this._otpManager.setOTP({
+      email: userRq.email,
+      otp: "",
+    } as SetOTPRq);
+  }
+
   async resetPassword(passwordRq: ResetPasswordRq): Promise<void> {
-    let userExists = await this._userRepo.getUser(passwordRq.email);
-    if (!userExists) {
+    let user = await this._userRepo.getUser(passwordRq.email);
+    if (!user) {
       throw new ResponseException(null, 400, "no data found");
     }
 
-    let oldPassword = userExists.password;
-    let passwordMatch = await bcrypt.compare(
-      passwordRq.newPassword,
-      oldPassword
-    );
-
-    if (passwordMatch) {
+    if (await this.comparePassword(passwordRq.newPassword, user.password)) {
       throw new ResponseException(
         null,
         400,
@@ -83,10 +93,7 @@ class UserManager implements IUserManager {
       );
     }
 
-    passwordRq.newPassword = await bcrypt.hash(
-      passwordRq.newPassword,
-      Number(process.env.SALT_ROUNDS)
-    );
+    passwordRq.newPassword = await this.hashPassword(passwordRq.newPassword);
     await this._userRepo.resetPassword(passwordRq);
   }
 
@@ -96,6 +103,22 @@ class UserManager implements IUserManager {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
+  }
+
+  async hashPassword(password: string) {
+    return await bcrypt.hash(password, Number(process.env.SALT_ROUNDS));
+  }
+
+  async comparePassword(password1: string, password2: string) {
+    return await bcrypt.compare(password1, password2);
+  }
+
+  async verifyEmail(email: string): Promise<boolean> {
+    const user = await this._userRepo.getUser(email);
+    if (!user) {
+      throw new ResponseException(null, 400, "Email not verified")
+    }
+    return true;
   }
 }
 

@@ -1,6 +1,7 @@
 enum StatusModel {
   SUCCESS = 'success',
   ERROR = 'error',
+  INFO = 'info',
   NULL = ''
 }
 
@@ -103,6 +104,7 @@ enum ErrMsg {
   FAIL_DELETE_RECORD = 'Failed to delete record',
   SUCCESS_UPDATE_RECORD = 'Updated record time successfully',
   SUCCESS_SET_RECORD = 'Set record time successfully as ',
+  FAIL_CREATE_USER = "Failed to create user"
 }
 
 enum ProgressBar {

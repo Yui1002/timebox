@@ -94,8 +94,6 @@ class GetRequestByEmailRq extends BaseRequest {
 
 @JsonObject("GetRequestByStatusRq")
 class GetRequestByStatusRq extends BaseRequest { 
-    @JsonProperty("senderEmail", String)
-    senderEmail?: string = "";
     @JsonProperty("receiverEmail", String)
     receiverEmail: string = "";
     @JsonProperty("status")
@@ -111,8 +109,8 @@ class SetRequestRq extends BaseRequest {
     @JsonProperty("rate", Number)
     rate: number = 0;
     @JsonProperty("rateType")
-    rateType: RateType = RateType.HOURLY;
-    @JsonProperty('schedules', [UserSchedule])
+    rateType: RateType = RateType.UNSPECIFIED;
+    @JsonProperty('schedules')
     schedules: UserSchedule[] = []
     @JsonProperty("mode")
     mode: Mode = Mode.False;

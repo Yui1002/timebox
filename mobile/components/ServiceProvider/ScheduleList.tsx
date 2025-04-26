@@ -1,22 +1,21 @@
 import React from 'react';
-import {useDispatch} from 'react-redux';
-import {deleteShift} from '../../redux/actions/workShiftsAction';
-import {Text} from 'react-native';
+import {Text, TouchableOpacity} from 'react-native';
 import {TextStyle} from '../../styles';
 import {UserSchedule} from '../../swagger';
 import {AlignContainer} from '../index';
 
-const ScheduleList = ({w}: any) => {
+interface ScheduleListProps {
+  w: UserSchedule;
+  showDeleteLink: boolean;
+  onDelete?: () => void;
+}
+
+const ScheduleList = ({w, showDeleteLink, onDelete}: ScheduleListProps) => {
   const {day, startTime, endTime}: UserSchedule = w;
-  const dispatch = useDispatch();
 
   let dayText = TextStyle.createCustomWidthTextStyle('30%');
   let timeText = TextStyle.createCustomWidthTextStyle('50%');
   let deleteText = TextStyle.createDeleteLinkTextStyle();
-
-  const deleteDate = (w: UserSchedule) => {
-    dispatch(deleteShift(w));
-  };
 
   return (
     <AlignContainer>
@@ -24,9 +23,11 @@ const ScheduleList = ({w}: any) => {
       <Text style={timeText}>
         {startTime} ~ {endTime}
       </Text>
-      <Text style={deleteText} onPress={() => deleteDate(w)}>
-        Delete
-      </Text>
+      {showDeleteLink && (
+        <TouchableOpacity onPress={onDelete}>
+          <Text style={deleteText}>Delete</Text>
+        </TouchableOpacity>
+      )}
     </AlignContainer>
   );
 };

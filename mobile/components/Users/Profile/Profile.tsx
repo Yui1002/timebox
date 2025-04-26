@@ -75,7 +75,7 @@ const Profile = ({route, navigation}: any) => {
           <Title title="Working schedules" />
           {schedules?.length ? (
             schedules?.map((s: UserSchedule, index: number) => (
-              <ScheduleList key={index} w={s} />
+              <ScheduleList key={index} w={s} showDeleteLink={false} />
             ))
           ) : (
             <Text>Not specified</Text>

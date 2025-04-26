@@ -76,25 +76,24 @@ class RequestRepo extends Repositories implements IRequestRepo {
 
     async getRequestsByStatus(requestRq: GetRequestByStatusRq): Promise<GetRequestRs> {
         try {
-            const sql = 
-                    `SELECT
-                        u.first_name AS sender_first_name,
-                        u.last_name AS sender_last_name,
-                        r.request_id AS id,
-                        r.sender_email,
-                        r.receiver_email,
-                        r.status,
-                        r.request_date,
-                        r.request_rate AS rate,
-                        r.request_rate_type AS rate_type,
-                        r.request_schedule_day AS day,
-                        r.request_schedule_start_time AS start_time,
-                        r.request_schedule_end_time AS end_time,
-                        r.request_mode AS allow_edit
-                    FROM users u LEFT JOIN requests r on u.email_address = r.sender_email
-                    WHERE r.receiver_email = $1 AND r.status = $2`;
-            const finalSql = (requestRq.senderEmail) ? this.appendEmail(sql, 3) : sql;
-            const data = await this.queryDB(finalSql, [requestRq.receiverEmail, requestRq.status]);
+            const sql = `SELECT
+                            r.request_id as id,
+                            u.first_name as sender_first_name,
+                            u.last_name as sender_last_name, 
+                            r.sender_email,
+                            r.receiver_email,
+                            r.status, 
+                            r.request_date, 
+                            r.request_rate as rate,
+                            r.request_rate_type as rate_type,
+                            r.request_date, 
+                            r.request_schedule_day as day, 
+                            r.request_schedule_start_time as start_time, 
+                            r.request_schedule_end_time as end_time,
+                            r.request_mode as allow_edit
+                        FROM users u LEFT JOIN requests r ON r.sender_email = u.email_address 
+                        WHERE r.receiver_email = $1 AND r.status = $2;`;
+            const data = await this.queryDB(sql, [requestRq.receiverEmail, requestRq.status]);
             if (data?.rows.length <= 0) {
                 return null;
             }
@@ -102,10 +101,6 @@ class RequestRepo extends Repositories implements IRequestRepo {
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to get from db')
         }
-    }
-
-    appendEmail(basicQuery: string, count: number): string {
-        return `${basicQuery} AND r.sender_email = $${count};`;
     }
 
     async setRequest(requestRq: SetRequestRq, schedule?: UserSchedule): Promise<void> {

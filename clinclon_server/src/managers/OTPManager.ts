@@ -63,6 +63,7 @@ class OTPManager implements IOTPManager {
             throw new ResponseException(null, 400, "otp expired");
         }
     }
+    
 
     generateOTP(): string {
         return Math.floor(100000 + Math.random() * 900000).toString();

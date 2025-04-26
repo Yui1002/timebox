@@ -26,7 +26,7 @@ class EmployerManager implements IEmployerManager {
 
         let employer = await this._employerRepo.getEmployer(user.id);
         if (!employer) {
-            throw new ResponseException(null, 204, 'No employers found');
+            throw new ResponseException(null, 400, 'No employers found');
         }
         
         return employer;

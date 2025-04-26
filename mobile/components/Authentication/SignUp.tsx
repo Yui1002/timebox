@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView} from 'react-native';
+import {ScrollView, ActivityIndicator, View} from 'react-native';
 import Validator from '../../validator/validator';
 import {
   Footer,
@@ -8,7 +8,7 @@ import {
   Input,
   PasswordInput,
   TopContainer,
-  Result
+  Result,
 } from '../index';
 import {DefaultApiFactory} from '../../swagger';
 import {ResultModel, SignUpProps} from '../../types';
@@ -24,27 +24,9 @@ const SignUp = ({navigation}: any) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
+    message: '',
   });
-
-  const checkUserExists = async (): Promise<void> => {
-    if (!validateInput()) return;
-
-    try {
-      await userApi.getUser(email);
-      setResult({status: StatusModel.ERROR, message: ErrMsg.DUPLICATE_EMAIL});
-    } catch (e) {
-      let navigationProps: SignUpProps = {
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmedPassword,
-        isSignUp: true,
-      };
-      navigation.navigate(Screen.VERIFY_OTP, navigationProps);
-    }
-  };
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignUp({
@@ -60,38 +42,69 @@ const SignUp = ({navigation}: any) => {
     return validateErr == null;
   };
 
+  const signUp = async (): Promise<void> => {
+    if (!validateInput()) return;
+
+    setLoading(true);
+    try {
+      const params = {firstName, lastName, email, password};
+      await userApi.signUpUser(params);
+      navigation.navigate(Screen.VERIFY_OTP, {
+        params: params,
+        isSignUp: true,
+      });
+    } catch (err) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: err.response.data.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <TopContainer>
       <ScrollView>
-        {result.status && <Result status={result.status} msg={result.message} />}
+        {result.status && (
+          <Result status={result.status} msg={result.message} />
+        )}
         <Input
           title="First Name"
-          secureTextEntry={false}
           onChangeText={val => setFirstName(val)}
+          value={firstName}
         />
         <Input
           title="Last Name"
-          secureTextEntry={false}
           onChangeText={val => setLastName(val)}
+          value={lastName}
         />
         <Input
           title="Email"
-          secureTextEntry={false}
           onChangeText={val => setEmail(val)}
+          value={email}
         />
         <PasswordInput
           title="Password"
           secureTextEntry={!showPassword}
           onChangeText={val => setPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
+          value={password}
         />
         <PasswordInput
           title="Confirm Password"
           secureTextEntry={!showPassword}
           onChangeText={val => setConfirmedPassword(val)}
           onPress={() => setShowPassword(!showPassword)}
+          value={confirmedPassword}
         />
-        <Button title="Sign Up" onPress={checkUserExists} />
+        {loading ? (
+          <View style={{alignItems: 'center', marginVertical: 20}}>
+            <ActivityIndicator size="large" color="#000" />
+          </View>
+        ) : (
+          <Button title="Sign Up" onPress={signUp} />
+        )}
         <Separator />
         <Footer
           leftText={{text1: 'Already have account?', text2: 'Sign In'}}

@@ -10,6 +10,8 @@ interface IUserController {
     setUser(request: SetUserRq): Promise<void>;
     signInUser(request: SignInUserRq): Promise<{token: string, user: GetUserRs}>;
     resetPassword(request: ResetPasswordRq): Promise<void>;
+    signUpUser(request: SetUserRq): Promise<void>;
+    verifyEmail(request: GetUserRq): Promise<boolean>;
 }
 
 @Route('user')
@@ -29,7 +31,6 @@ export class UserController extends SuperController implements IUserController {
     }
 
     @Post()
-    @Security(JWT)
     @Validate
     public async setUser(@Body() rq: SetUserRq): Promise<void> {
         await this._userManager.setUser(rq);
@@ -42,9 +43,20 @@ export class UserController extends SuperController implements IUserController {
     }  
     
     @Post('/resetPassword')
-    @Security(JWT)
     @Validate
     public async resetPassword(@Body() rq: ResetPasswordRq): Promise<void> {
         await this._userManager.resetPassword(rq);
     } 
-}
+
+    @Post('/signUp')
+    @Validate
+    public async signUpUser(@Body() rq: SetUserRq): Promise<void> {
+        await this._userManager.signUpUser(rq);
+    }
+
+    @Get('/verifyEmail')
+    @Validate
+    public async verifyEmail(@Queries() rq: GetUserRq): Promise<boolean> {
+        return await this._userManager.verifyEmail(rq.email)
+    }
+} 

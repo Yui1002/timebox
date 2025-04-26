@@ -8,7 +8,7 @@ import Validator from "./validators/Validator";
 import { GetUserRequestValidator, ResetPasswordRequestValidator, SetUserRequestValidator, SignInUserRequestValidator } from "./validators/UserRequestValidator";
 import { GetOTPRequestValidator, SetOTPRequestValidator } from "./validators/OTPRequestValidator";
 import { GetEmployerRequestValidator } from "./validators/EmployerRequestValidator";
-import { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator, DeleteRecordRequestValidator } from "./validators/RecordRequestValidator";
+import { GetRecordRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator, DeleteRecordRequestValidator } from "./validators/RecordRequestValidator";
 import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestValidator, GetRequestByStatuslValidator } from "./validators/RequestValidator";
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from "./validators/ServiceProviderRequestValidator";
 import { GetUserTransactionRequestValidator, SetUserTransactionRequestValidator } from "./validators/UserTransactionRequestValidator";
@@ -54,7 +54,6 @@ function initializeValidator() {
       new UpdateServiceProviderRequestValidator(),
       new GetEmployerRequestValidator(),
       new GetRecordRequestValidator(),
-      new GetRecordByDateRequestValidator(),
       new GetRecordByPeriodRequestValidator(),
       new SetRecordRequestValidator(),
       new UpdateRecordRequestValidator(),

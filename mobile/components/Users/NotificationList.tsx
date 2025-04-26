@@ -5,16 +5,17 @@ import moment from 'moment';
 import {
   DefaultApiFactory,
   RequestStatus,
-  GetUserScheduleRs,
   UpdateRequestRq,
-  UserStatus,
   Mode,
+  UserSchedule,
 } from '../../swagger';
 import {AlignContainer, Button} from '../index';
 const api = DefaultApiFactory();
 import ScheduleList from '../ServiceProvider/ScheduleList';
 import {ButtonStyle} from '../../styles';
 import {alert, alertError} from '../../helper/Alert';
+import { getToken } from '../../tokenUtils';
+import LoadingButton from '../LoadingButton';
 
 const NotificationList = ({notification, navigation}: any) => {
   const user = useSelector(state => state.userInfo);
@@ -30,6 +31,7 @@ const NotificationList = ({notification, navigation}: any) => {
   } = notification;
   let acceptBtn = ButtonStyle.createContinueButtonStyle();
   let rejectBtn = ButtonStyle.createBackButtonStyle();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const alertConfirm = (status: RequestStatus) => {
     alert(
@@ -44,6 +46,10 @@ const NotificationList = ({notification, navigation}: any) => {
 
   const updateRequest = async (status: RequestStatus) => {
     try {
+      setIsLoading(true);
+
+      const token = await getToken();
+
       await api.updateRequest({
         senderEmail: email,
         receiverEmail: user.email,
@@ -52,10 +58,16 @@ const NotificationList = ({notification, navigation}: any) => {
         rateType,
         schedules: schedules[0].day == null ? [] : schedules,
         mode: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0,
-      } as UpdateRequestRq);
+      } as UpdateRequestRq, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       alertSuccess(status);
     } catch (e) {
-      console.log(e)
+      console.log(e);
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -81,8 +93,8 @@ const NotificationList = ({notification, navigation}: any) => {
       <View>
         <Text>Schedules:</Text>
         {schedules[0].day !== null ? (
-          schedules.map((s: GetUserScheduleRs, index: number) => (
-            <ScheduleList w={s} key={index} />
+          schedules.map((s: UserSchedule, index: number) => (
+            <ScheduleList w={s} key={index} showDeleteLink={false} />
           ))
         ) : (
           <Text>Not specified</Text>

@@ -1,9 +1,11 @@
 import React, {useState} from 'react';
+import {ActivityIndicator, View} from 'react-native';
 import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
 import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, ResetPasswordRq} from '../../swagger';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
+import { getToken } from '../../tokenUtils';
 let api = DefaultApiFactory();
 
 const ResetPassword = ({route, navigation}: any) => {
@@ -12,8 +14,9 @@ const ResetPassword = ({route, navigation}: any) => {
   const [confirmedPassword, setConfirmedPassword] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validatePassword(password, confirmedPassword);
@@ -31,11 +34,18 @@ const ResetPassword = ({route, navigation}: any) => {
       newPassword: password,
     };
 
+    setLoading(true);
+
     try {
       await api.resetPassword(params);
-      navigation.navigate(Screen.DRAWER_NAV, null)
+      navigation.navigate(Screen.SIGN_IN);
     } catch (e) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.PASSWORD_REUSE});
+      setResult({
+        status: StatusModel.ERROR, 
+        message: e.reponse.data.message
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,13 +56,21 @@ const ResetPassword = ({route, navigation}: any) => {
         title="New Password"
         secureTextEntry={true}
         onChangeText={val => setPassword(val)}
+        value={password}
       />
       <Input
         title="Confirm New Password"
         secureTextEntry={true}
         onChangeText={val => setConfirmedPassword(val)}
+        value={confirmedPassword}
       />
-      <Button title="Reset Password" onPress={resetPassword}/>
+      {loading ? (
+        <View style={{alignItems: 'center', marginVertical: 20}}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      ) : (
+        <Button title="Reset Password" onPress={resetPassword} />
+      )}
       <Separator />
       <Footer
         leftText={{text1: 'Go back to', text2: 'Sign In'}}

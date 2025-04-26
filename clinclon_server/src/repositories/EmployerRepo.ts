@@ -14,10 +14,14 @@ class EmployerRepo extends Repositories implements IEmployerRepo {
 
     async getEmployer(id: number): Promise<GetEmployerRs> {
         try {
-            const sql = `SELECT u.first_name, u.last_name, u.email_address, ut.mode FROM users u
-                            INNER JOIN user_transaction ut
-                            ON ut.employer_user_id = u.user_id
-                            WHERE ut.service_provider_id = $1;`
+            const sql = `SELECT 
+                            u.first_name, 
+                            u.last_name, 
+                            u.email_address, 
+                            ut.mode 
+                        FROM users u
+                        INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id
+                        WHERE ut.service_provider_id = $1;`
             const data = await this.queryDB(sql, [id]);
             if (data?.rows.length <= 0) {
                 return null;

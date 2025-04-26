@@ -15,7 +15,7 @@ import {
   Header,
 } from '../../index';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
-import {GetUserScheduleRs} from '../../../swagger';
+import {GetUserScheduleRs, UserSchedule} from '../../../swagger';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -62,8 +62,8 @@ const WorkShifts = ({route, navigation}: any) => {
         </Container>
         <Container>
           {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map((w: GetUserScheduleRs, index: number) => {
-              return <ScheduleList key={index} w={w} />;
+            workShifts.workShifts.map((w: UserSchedule, index: number) => {
+              return <ScheduleList key={index} w={w} showDeleteLink={false} />;
             })
           ) : (
             <Text style={centerText}>No date and time selected</Text>

@@ -29,12 +29,12 @@ class Validator {
     return password === confirmedPassword;
   }
 
-  static isValidRate(rate: string): boolean {
-    return isCurrency(rate) && rate >= '10.00';
+  static isValidRate(rate: number): boolean {
+    return rate >= 5.00 && rate <= 10000.00;
   }
 
-  static isValidRateType(rateType: RateTypeValue) {
-    return !isEmpty(rateType);
+  static isValidRateType(rateType: RateTypeValue): boolean {
+    return rateType === RateTypeValue.HOURLY || rateType === RateTypeValue.DAILY;
   }
 
   static isValidStartTime(start: Date | string, end: Date | string) {
@@ -144,7 +144,7 @@ class Validator {
   }
 
   static validateRate(rate: string, rateType: RateTypeValue): ErrMsg | null {
-    if (!this.isValidRate(rate)) {
+    if (!this.isValidRate(Number(rate))) {
       return ErrMsg.INVALID_RATE;
     }
     if (!this.isValidRateType(rateType)) {

@@ -1,17 +1,20 @@
 import React, {useState} from 'react';
+import {ActivityIndicator, View} from 'react-native';
 import {ResultModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
 import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
+import { getToken } from '../../tokenUtils';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
   const [email, setEmail] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
-    message: ''
-  })
+    message: '',
+  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const validateEmail = (): boolean => {
     const validateErr = Validator.validateEmail(email);
@@ -30,14 +33,25 @@ const ForgotPassword = ({navigation}: any) => {
     navigation.navigate(Screen.VERIFY_OTP, params);
   };
 
-  const checkEmailRegistered = async (): Promise<void> => {
+  const verifyEmail = async (): Promise<void> => {
     if (!validateEmail()) return;
 
+    setLoading(true);
     try {
-      await api.getUser(email);
-      navigateScreen();
+      const isVerified = (await api.verifyEmail(email)).data;
+      if (isVerified) {
+        await api.setOTP({
+          email, otp: ''
+        })
+        navigateScreen();
+      }
     } catch (e) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.EMAIL_NOT_FOUND});
+      setResult({
+        status: StatusModel.ERROR, 
+        message: e.response.data.message || e.response.status
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,8 +62,15 @@ const ForgotPassword = ({navigation}: any) => {
         title="Email"
         secureTextEntry={false}
         onChangeText={val => setEmail(val)}
+        value={email}
       />
-      <Button title="Verify Email" onPress={checkEmailRegistered} />
+      {loading ? (
+        <View style={{alignItems: 'center', marginVertical: 20}}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      ) : (
+        <Button title="Verify Email" onPress={verifyEmail} />
+      )}
       <Separator />
       <Footer
         leftText={{text1: 'Go back to', text2: 'Sign In'}}
