@@ -12,7 +12,7 @@ import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidat
 import { GetUserRequestValidator, SetUserRequestValidator, SignInUserRequestValidator, ResetPasswordRequestValidator } from "../validators/UserRequestValidator";
 import { GetOTPRequestValidator, SetOTPRequestValidator } from "../validators/OTPRequestValidator";
 import { GetEmployerRequestValidator } from "../validators/EmployerRequestValidator";
-import { GetRecordRequestValidator, GetRecordByDateRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator } from "../validators/RecordRequestValidator";
+import { GetRecordRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator } from "../validators/RecordRequestValidator";
 import { GetUserTransactionRequestValidator } from "../validators/UserTransactionRequestValidator";
 import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, UpdateRequestValidator, GetRequestByStatuslValidator } from "../validators/RequestValidator";
 
@@ -55,7 +55,6 @@ class Routes implements IRoutes  {
             new UpdateServiceProviderRequestValidator(),
             new GetEmployerRequestValidator(),
             new GetRecordRequestValidator(),
-            new GetRecordByDateRequestValidator(),
             new GetRecordByPeriodRequestValidator(),
             new SetRecordRequestValidator(),
             new GetUserTransactionRequestValidator(),
@@ -84,7 +83,6 @@ class Routes implements IRoutes  {
         app.post('/getEmployer', this._employerController.getEmployer.bind(this._employerController));
 
         app.post('/getRecordAll', this._recordController.getRecord.bind(this._recordController));
-        app.post('/getRecordByDate', this._recordController.getRecordByDate.bind(this._recordController));
         app.post('/getRecordByPeriod', this._recordController.getRecordByPeriod.bind(this._recordController));
         app.post('/setRecord', this._recordController.setRecord.bind(this._recordController));
 

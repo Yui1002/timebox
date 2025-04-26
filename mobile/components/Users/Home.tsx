@@ -37,7 +37,6 @@ const Home = (props: any) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('data', data);
       setEmployers(data.employers);
     } catch (e) {
       setEmployers([]);
@@ -51,14 +50,14 @@ const Home = (props: any) => {
       </CenterContainer>
       <Container>
         <Title title="My Employers" />
-        {!employers?.length ? (
+        {employers?.length == 0 ? (
           <Text>
             You currently don't have service providers. Please use the menu to
             hire or manage service providers
           </Text>
         ) : (
           <ScrollView>
-            {employers.map((employer, index) => (
+            {employers?.map((employer, index) => (
               <EmployerList
                 key={index}
                 employer={employer}

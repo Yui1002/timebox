@@ -1,13 +1,12 @@
 import { Body, Get, Post, Put, Delete, Queries, Route, Security } from "tsoa";
 import RecordManager from '../managers/RecordManager'
 import SuperController from "./SuperController";
-import { GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs } from "../models/Record";
+import { GetRecordRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs } from "../models/Record";
 import Validate from "../validators/CustomValidator";
 import { JWT } from "../config";
 
 interface IRecordController {
     getRecord(rq: GetRecordRq): Promise<GetRecordRs>
-    getRecordByDate(rq: GetRecordByDateRq): Promise<GetRecordRs>;
     getRecordByPeriod(rq: GetRecordByPeriodRq): Promise<GetRecordRs>;
     setRecord(rq: SetRecordRq): Promise<GetRecordRs>;
     updateRecord(rq: UpdateRecordRq): Promise<GetRecordRs>;
@@ -28,13 +27,6 @@ export class RecordController extends SuperController implements IRecordControll
     @Validate
     public async getRecord(@Queries() rq: GetRecordRq): Promise<GetRecordRs> {
         return await this._recordManager.getRecord(rq);
-    }
-
-    @Get('/date')
-    @Security(JWT)
-    @Validate
-    public async getRecordByDate(@Queries() rq: GetRecordByDateRq): Promise<GetRecordRs> {
-        return await this._recordManager.getRecordByDate(rq);
     }
 
     @Get('/period')

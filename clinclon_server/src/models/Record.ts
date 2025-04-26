@@ -14,16 +14,6 @@ class GetRecordRq extends BaseRequest {
     serviceProviderEmail: string = "";
 }
 
-@JsonObject("GetRecordByDateRq")
-class GetRecordByDateRq extends BaseRequest {
-    @JsonProperty("employerEmail", String)
-    employerEmail: string = "";
-    @JsonProperty("serviceProviderEmail", String)
-    serviceProviderEmail: string = "";
-    @JsonProperty("dateInEpoch", Number)
-    dateInEpoch: number = 0;
-}
-
 @JsonObject("GetRecordByPeriodRq")
 class GetRecordByPeriodRq extends BaseRequest {
     @JsonProperty("employerEmail", String)
@@ -71,9 +61,9 @@ class Record {
     @JsonProperty("id", Number)
     id: number = 0;
     @JsonProperty("epoch_start_time", String)
-    epoch_start_time: number = 0;
-    @JsonProperty("epoch_start_time", String)
-    epoch_end_time: number = 0;
+    epoch_start_time: string | null = '';
+    @JsonProperty("epoch_end_time", String)
+    epoch_end_time: string | null = '';
 }
 
 @JsonObject("RecordChange")
@@ -102,4 +92,4 @@ class GetRecordChangeRs {
 
 
 
-export {GetRecordRq, GetRecordByDateRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs}
+export {GetRecordRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs}

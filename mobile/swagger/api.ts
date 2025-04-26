@@ -142,31 +142,6 @@ export interface GetOTPRs {
 /**
  * 
  * @export
- * @interface GetRecordByDateRq
- */
-export interface GetRecordByDateRq {
-    /**
-     * 
-     * @type {string}
-     * @memberof GetRecordByDateRq
-     */
-    'employerEmail'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof GetRecordByDateRq
-     */
-    'serviceProviderEmail'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof GetRecordByDateRq
-     */
-    'dateInEpoch'?: number;
-}
-/**
- * 
- * @export
  * @interface GetRecordByPeriodRq
  */
 export interface GetRecordByPeriodRq {
@@ -621,16 +596,16 @@ export interface Record {
     'id'?: number;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Record
      */
-    'epoch_start_time'?: number;
+    'epoch_start_time'?: string | null;
     /**
      * 
-     * @type {number}
+     * @type {string}
      * @memberof Record
      */
-    'epoch_end_time'?: number;
+    'epoch_end_time'?: string | null;
 }
 /**
  * 
@@ -1389,53 +1364,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 
             if (serviceProviderEmail !== undefined) {
                 localVarQueryParameter['serviceProviderEmail'] = serviceProviderEmail;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [employerEmail] 
-         * @param {string} [serviceProviderEmail] 
-         * @param {number} [dateInEpoch] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRecordByDate: async (employerEmail?: string, serviceProviderEmail?: string, dateInEpoch?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/record/date`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            if (employerEmail !== undefined) {
-                localVarQueryParameter['employerEmail'] = employerEmail;
-            }
-
-            if (serviceProviderEmail !== undefined) {
-                localVarQueryParameter['serviceProviderEmail'] = serviceProviderEmail;
-            }
-
-            if (dateInEpoch !== undefined) {
-                localVarQueryParameter['dateInEpoch'] = dateInEpoch;
             }
 
 
@@ -2458,20 +2386,6 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} [employerEmail] 
          * @param {string} [serviceProviderEmail] 
-         * @param {number} [dateInEpoch] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getRecordByDate(employerEmail?: string, serviceProviderEmail?: string, dateInEpoch?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRecordRs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getRecordByDate(employerEmail, serviceProviderEmail, dateInEpoch, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.getRecordByDate']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} [employerEmail] 
-         * @param {string} [serviceProviderEmail] 
          * @param {number} [from] 
          * @param {number} [to] 
          * @param {*} [options] Override http request option.
@@ -2826,17 +2740,6 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * 
          * @param {string} [employerEmail] 
          * @param {string} [serviceProviderEmail] 
-         * @param {number} [dateInEpoch] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getRecordByDate(employerEmail?: string, serviceProviderEmail?: string, dateInEpoch?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetRecordRs> {
-            return localVarFp.getRecordByDate(employerEmail, serviceProviderEmail, dateInEpoch, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {string} [employerEmail] 
-         * @param {string} [serviceProviderEmail] 
          * @param {number} [from] 
          * @param {number} [to] 
          * @param {*} [options] Override http request option.
@@ -3123,19 +3026,6 @@ export class DefaultApi extends BaseAPI {
      */
     public getRecord(employerEmail?: string, serviceProviderEmail?: string, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).getRecord(employerEmail, serviceProviderEmail, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {string} [employerEmail] 
-     * @param {string} [serviceProviderEmail] 
-     * @param {number} [dateInEpoch] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public getRecordByDate(employerEmail?: string, serviceProviderEmail?: string, dateInEpoch?: number, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).getRecordByDate(employerEmail, serviceProviderEmail, dateInEpoch, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

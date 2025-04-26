@@ -7,7 +7,6 @@ dotenv.config();
 
 interface IRecordRepo {
     getRecord(userTransactionId: number): Promise<GetRecordRs | null>
-    getRecordByDate(userTransactionId: number, epoch: number): Promise<GetRecordRs>;
     getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs>;
     getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs>;
     setStartRecord(userTransactionId: number, startTime: number): Promise<GetRecordRs>;
@@ -32,29 +31,19 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         } 
     }
 
-    async getRecordByDate(userTransactionId: number, epoch: number): Promise<GetRecordRs> {
-        try {
-            const sql = `SELECT epoch_start_time, epoch_end_time FROM time_record
-                            WHERE id_user_transaction = $1`
-            const data = await this.queryDB(sql, [userTransactionId, epoch, epoch]);
-            if (data?.rows.length <= 0) {
-                return null;
-            }
-            return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
-        } catch (e: any) {
-            throw new ResponseException(e, 500, 'unable to get from db');
-        }
-    }
-
     async getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs> {
         try {
             const sql = `SELECT 
                             time_record_id AS id, 
-                            epoch_start_time AS start_time, 
-                            epoch_end_time AS end_time 
+                            epoch_start_time, 
+                            epoch_end_time 
                         FROM time_record
-                        WHERE epoch_start_time >= $1 
-                            AND epoch_end_time < $2
+                        WHERE 
+                            (
+                                (epoch_start_time >= $1 AND epoch_end_time < $2) OR 
+                                (epoch_start_time >= $1 AND epoch_end_time IS NULL) OR
+                                (epoch_start_time IS NULL AND epoch_end_time < $2)
+                            )
                             AND id_user_transaction = $3 
                             AND status = 'active';`
             const data = await this.queryDB(sql, [from, to, userTransactionId]);

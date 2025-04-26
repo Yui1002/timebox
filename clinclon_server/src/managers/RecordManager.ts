@@ -2,7 +2,6 @@ import RecordRepo from "../repositories/RecordRepo";
 import UserTransactionManager from "./UserTransactionManager";
 import {
   GetRecordRq,
-  GetRecordByDateRq,
   GetRecordByPeriodRq,
   GetRecordRs,
   SetRecordRq,
@@ -15,7 +14,6 @@ import ResponseException from "../models/ResponseException";
 
 interface IRecordManager {
   getRecord(record: GetRecordRq): Promise<GetRecordRs>;
-  getRecordByDate(record: GetRecordByDateRq): Promise<GetRecordRs>;
   getRecordByPeriod(record: GetRecordByPeriodRq): Promise<GetRecordRs>;
   getRecordChanges(recordRq: GetRecordByPeriodRq): Promise<GetRecordChangeRs>;
   setRecord(record: SetRecordRq): Promise<GetRecordRs>;
@@ -43,26 +41,6 @@ class RecordManager implements IRecordManager {
     let transactionId = transactionData.id;
 
     let recordData = await this._recordRepo.getRecord(transactionId);
-    if (!recordData) {
-      throw new ResponseException(null, 400, "no data found");
-    }
-    return recordData;
-  }
-
-  async getRecordByDate(recordRq: GetRecordByDateRq): Promise<GetRecordRs> {
-    let transactionData = await this._userTransactionManager.getUserTransaction(
-      recordRq
-    );
-    if (!transactionData) {
-      throw new ResponseException(null, 400, "no data found");
-    }
-
-    let transactionId = transactionData.id;
-
-    let recordData = await this._recordRepo.getRecordByDate(
-      transactionId,
-      recordRq.dateInEpoch
-    );
     if (!recordData) {
       throw new ResponseException(null, 400, "no data found");
     }

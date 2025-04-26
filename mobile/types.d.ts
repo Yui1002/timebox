@@ -107,7 +107,11 @@ type FormatRequest = {
   schedules: UserSchedule[]
 }
 
-
+type Record = {
+  id?: number;
+  startTime: Date | null;
+  endTime: Date | null;
+}
 
 export {
   UserInfo,
@@ -123,5 +127,6 @@ export {
   SignUpProps,
   SignInProps,
   ForgotPasswordProps,
-  ModeSet
+  ModeSet,
+  Record
 };
