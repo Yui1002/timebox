@@ -19,12 +19,15 @@ class EmployerManager implements IEmployerManager {
     }
     
     async getEmployer(employerRq: GetEmployerRq): Promise<GetEmployerRs> {
+        console.log('employerRq is', employerRq)
         let user = await this._userRepo.getUser(employerRq.email);
+        console.log('user is', user)
         if (!user) {
             throw new ResponseException(null, 400, 'no data found');
         }
 
         let employer = await this._employerRepo.getEmployer(user.id);
+        console.log('employer is', employer)
         if (!employer) {
             throw new ResponseException(null, 204, 'No employers found');
         }

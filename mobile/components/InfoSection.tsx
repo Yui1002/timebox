@@ -1,5 +1,5 @@
 import React from 'react';
-import {ContainerStyle, TextStyle} from '../styles';
+import {TextStyle} from '../styles';
 import {View, Text} from 'react-native';
 
 interface InfoSectionProps {
@@ -9,13 +9,12 @@ interface InfoSectionProps {
 }
 
 const InfoSection = ({title, text, onEdit}: InfoSectionProps) => {
-  let alignContainer = ContainerStyle.createAlignContainer();
   let titleText = TextStyle.createTitleTextStyle();
   let editLinkText = TextStyle.createDeleteLinkTextStyle();
   let textStyle = TextStyle.createBasicTextStyle();
 
   return (
-    <View style={alignContainer}>
+    <View>
       <Text style={titleText}>
         {title}{' '}
         {onEdit && (

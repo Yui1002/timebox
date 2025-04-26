@@ -94,8 +94,6 @@ class GetRequestByEmailRq extends BaseRequest {
 
 @JsonObject("GetRequestByStatusRq")
 class GetRequestByStatusRq extends BaseRequest { 
-    @JsonProperty("senderEmail", String)
-    senderEmail?: string = "";
     @JsonProperty("receiverEmail", String)
     receiverEmail: string = "";
     @JsonProperty("status")

@@ -1,18 +1,12 @@
 import React, {useState} from 'react';
 import {Text, ScrollView} from 'react-native';
-import {TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import {resetShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import {
-  DefaultApiFactory,
-  SetRequestRq,
-  Mode,
-  GetUserScheduleRs,
-} from '../../../swagger';
+import {DefaultApiFactory, SetRequestRq, Mode} from '../../../swagger';
 import {ResultModel} from '../../../types';
 import {
   Header,
@@ -22,10 +16,10 @@ import {
   Container,
 } from '../../index';
 import {Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
-import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {getToken} from '../../../tokenUtils';
 import InfoSection from '../../InfoSection';
 import LoadingButton from '../../LoadingButton';
+import WorkShiftsSection from '../../WorkShiftsSection';
 
 let api = DefaultApiFactory();
 
@@ -34,7 +28,7 @@ const Review = ({route, navigation}: any) => {
   const params: WorkShiftsProps = route.params;
   const {firstName, lastName, email, rate, rateType, isEnabled} = params;
   const userInfo = useSelector(state => state.userInfo);
-  const workShifts = useSelector(state => state.workShifts);
+  const workShifts = useSelector(state => state.workShifts).workShifts;
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
@@ -55,7 +49,7 @@ const Review = ({route, navigation}: any) => {
       receiverEmail: email,
       rate: Number(rate),
       rateType: rateType,
-      schedules: workShifts.workShifts,
+      schedules: workShifts,
       mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
     };
 
@@ -95,10 +89,6 @@ const Review = ({route, navigation}: any) => {
     setResult({status: StatusModel.NULL, message: ''});
   };
 
-  let titleText = TextStyle.createTitleTextStyle();
-  let text = TextStyle.createBasicTextStyle();
-  let editLinkText = TextStyle.createDeleteLinkTextStyle();
-
   const navigateBack = () => {
     navigation.goBack();
   };
@@ -122,23 +112,7 @@ const Review = ({route, navigation}: any) => {
             onEdit={editRate}
           />
         </AlignContainer>
-        <Container>
-          <Text style={titleText}>
-            Work Shifts{' '}
-            <Text style={editLinkText} onPress={editDay}>
-              Edit
-            </Text>
-          </Text>
-          {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map(
-              (shift: GetUserScheduleRs, index: number) => (
-                <ScheduleList w={shift} key={index} />
-              ),
-            )
-          ) : (
-            <Text style={text}>No days selected</Text>
-          )}
-        </Container>
+        <WorkShiftsSection workShifts={workShifts} onEdit={editDay} />
         <Container>
           <InfoSection
             title="Allow service provider to edit record time"
