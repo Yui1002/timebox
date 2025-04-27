@@ -48,22 +48,6 @@ const Record = ({route, navigation}) => {
     return {startEpoch, endEpoch};
   };
 
-  const validateInput = (type: TimeType) => {
-    const validateErr = Validator.validateRecordTime(
-      type,
-      record.startTime,
-      record.endTime,
-    );
-
-    if (validateErr) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: validateErr,
-      });
-    }
-    return validateErr == null;
-  };
-
   const getRecord = async () => {
     try {
       const {startEpoch, endEpoch} = getTodayStartndEndEpoch();
@@ -74,6 +58,7 @@ const Record = ({route, navigation}) => {
         endEpoch,
         await getAuthHeader(),
       );
+      console.log('data', data);
       const record = data.records?.[0] || null;
       setRecord({
         id: record?.id,
@@ -93,8 +78,24 @@ const Record = ({route, navigation}) => {
     }
   };
 
+  const validateInput = (type: TimeType, time: Date | null) => {
+    const validateErr = Validator.validateRecordTime(
+      type,
+      type == TimeType.Start ? time : record.startTime,
+      type == TimeType.End ? time : record.endTime,
+    );
+
+    if (validateErr) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: validateErr,
+      });
+    }
+    return validateErr == null;
+  };
+
   const saveRecord = async (type: TimeType, recordTime: Date | null) => {
-    if (!validateInput(type)) return;
+    if (!validateInput(type, recordTime)) return;
 
     try {
       const epochTime = Math.floor(recordTime!.getTime() / 1000);
@@ -123,7 +124,7 @@ const Record = ({route, navigation}) => {
         `${type} time is saved as ${recordTime?.momentFormat('LT')}`,
       );
     } catch (e) {
-      console.log(e.response.data.message)
+      console.log(e.response.data.message);
       showAlert(`${e.reponse.data.message}`, '');
     }
   };
@@ -160,40 +161,30 @@ const Record = ({route, navigation}) => {
         <Text>{`Today's date: ${new Date().momentFormat('YYYY/MM/DD')}`}</Text>
       </Container>
       <RecordDropdown
-        placeholder={
-          record.startTime
-            ? record.startTime.momentFormat('LT')
-            : 'select start time'
+        placeholder={!record.startTime && 'Select start time'}
+        text={
+          record.startTime &&
+          `Start time is set at ${record.startTime.momentFormat('LT')}`
         }
+        isDisabled={!!record.startTime}
         isOpen={startOpen}
         date={record.startTime || new Date()}
-        onConfirm={(time: Date) =>
-          setRecord({
-            id: record.id,
-            startTime: time,
-            endTime: record.endTime,
-          })
-        }
+        onConfirm={(time: Date) => saveRecord(TimeType.Start, time)}
         onCancel={() => setStartOpen(false)}
         onPressDropdown={() => setStartOpen(!startOpen)}
-        // onPressButton={() => saveRecord(TimeType.Start, record.startTime)}
       />
       <RecordDropdown
-        placeholder={
-          record.endTime ? record.endTime.momentFormat('LT') : 'select end time'
+        placeholder={!record.endTime && 'Select end time'}
+        text={
+          record.endTime &&
+          `End time is set at ${record.endTime.momentFormat('LT')}`
         }
+        isDisabled={!!record.endTime}
         isOpen={endOpen}
         date={record.endTime || new Date()}
-        onConfirm={(time: Date) =>
-          setRecord({
-            id: record.id,
-            startTime: record.startTime,
-            endTime: time,
-          })
-        }
+        onConfirm={(time: Date) => saveRecord(TimeType.End, time)}
         onCancel={() => setEndOpen(false)}
         onPressDropdown={() => setEndOpen(!endOpen)}
-        onPressButton={() => saveRecord(TimeType.End, record.endTime)}
       />
       <Button
         title="View Records"

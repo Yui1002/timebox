@@ -130,9 +130,6 @@ class Validator {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
-      if (endTime && this.isValidStartTime(startTime, endTime)) {
-        return ErrMsg.INVALID_START_TIME;
-      }
     } else if (type === TimeType.End) {
       if (!startTime) {
         return ErrMsg.START_TIME_NOT_SELECTED
@@ -140,7 +137,7 @@ class Validator {
       if (!endTime || !this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }
-      if (startTime && !this.isValidEndTime(startTime, endTime!)) {
+      if (!this.isValidEndTime(startTime, endTime!)) {
         return ErrMsg.INVALID_END_TIME;
       }
     }
