@@ -108,7 +108,7 @@ type FormatRequest = {
 }
 
 type Record = {
-  id?: number;
+  id?: number | null;
   startTime: Date | null;
   endTime: Date | null;
 }

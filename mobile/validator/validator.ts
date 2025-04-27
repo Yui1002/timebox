@@ -122,9 +122,10 @@ class Validator {
 
   static validateRecordTime(
     type: TimeType,
-    startTime: Date | string | undefined,
-    endTime: Date | string | undefined,
+    startTime: Date | null,
+    endTime: Date | null,
   ): ErrMsg | null {
+    console.log(type, startTime, endTime)
     if (type === TimeType.Start) {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;

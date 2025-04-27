@@ -802,7 +802,7 @@ export interface SetRecordRq {
      * @type {number}
      * @memberof SetRecordRq
      */
-    'id'?: number;
+    'id'?: number | null;
     /**
      * 
      * @type {string}

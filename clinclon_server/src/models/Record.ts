@@ -29,7 +29,7 @@ class GetRecordByPeriodRq extends BaseRequest {
 @JsonObject("SetRecordRq")
 class SetRecordRq extends BaseRequest {
     @JsonProperty("id", Number)
-    id?: number = 0;
+    id?: number | null = null;
     @JsonProperty("employerEmail", String)
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
