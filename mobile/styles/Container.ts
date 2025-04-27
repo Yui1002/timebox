@@ -170,9 +170,9 @@ export default class ContainerStyle {
   static createDropdownContainer() {
     let container = StyleSheet.create({
       container: {
-        flexDirection: 'row', 
-        width: '100%', 
-        height: 70
+        // flexDirection: 'row', 
+        // width: '100%', 
+        // height: 70
       }
     }).container;
     return StyleSheet.compose(this.createBasicContainerStyle(), container);

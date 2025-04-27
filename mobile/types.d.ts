@@ -113,6 +113,11 @@ type Record = {
   endTime: Date | null;
 }
 
+type DateInput = {
+  from: Date | null,
+  to: Date | null
+}
+
 export {
   UserInfo,
   PersonalInfoProps,
@@ -128,5 +133,6 @@ export {
   SignInProps,
   ForgotPasswordProps,
   ModeSet,
-  Record
+  Record,
+  DateInput
 };

@@ -6,7 +6,16 @@ import DatePicker from 'react-native-date-picker';
 
 interface RecordDropdownProps {
   placeholder?: string;
-  text: string;
+  onPressDropdown: () => void;
+  text?: string;
+  isOpen: boolean;
+  date: Date;
+  onConfirm: (date: Date) => void;
+  onCancel: () => void;
+  isDisabled: boolean;
+  mode: "time" | "date" | "datetime";
+  width?: any;
+  height? : any;
 }
 
 const RecordDropdown = ({
@@ -18,82 +27,35 @@ const RecordDropdown = ({
   onCancel,
   isDisabled,
   text,
-}) => {
+  mode,
+  width = '100%',
+  height = '100%'
+}: RecordDropdownProps) => {
   let dropdown = InputStyle.createDropdownStyle();
+  
 
   return isDisabled ? (
     <View style={styles.boxContainer}>
       <Text>{text}</Text>
     </View>
   ) : (
-    <DropdownContainer>
+    <View>
       <TouchableOpacity
         onPress={onPressDropdown}
-        style={[dropdown, {width: '100%', height: '100%'}]}>
+        style={[dropdown, { width: width, height: height }]}>
         <Text>{placeholder}</Text>
         <Icon name="arrow-drop-down" type="Material" size={36} />
       </TouchableOpacity>
       <DatePicker
         modal
         open={isOpen}
-        mode="time"
+        mode={mode}
         date={date}
         onConfirm={onConfirm}
         onCancel={onCancel}
       />
-    </DropdownContainer>
+    </View>
   );
-  // <DropdownContainer>
-  //   {isDisabled ? (
-  // <View
-  //   style={{
-  //     borderWidth: 1,
-  //     borderColor: '#ccc',
-  //     padding: 10,
-  //     borderRadius: 5,
-  //     marginVertical: 10,
-  //   }}>
-  //   <Text>{`Start Time is set at ${record.startTime.momentFormat(
-  //     'LT',
-  //   )}`}</Text>
-  // </View>
-  //   ) : (
-  // <DropdownContainer>
-  //   <TouchableOpacity
-  //     onPress={onPress}
-  //     style={[dropdown, {width: '100%', height: '100%'}]}>
-  //     <Text>{placeholder}</Text>
-  //     <Icon name="arrow-drop-down" type="Material" size={36} />
-  //   </TouchableOpacity>
-  //   {/* <Button title="Record" onPress={onPressButton} style={regularBtn} /> */}
-  //   <DatePicker
-  //     modal
-  //     open={isOpen}
-  //     mode="time"
-  //     date={date}
-  //     onConfirm={onConfirm}
-  //     onCancel={onCancel}
-  //   />
-  // </DropdownContainer>
-  //   )}
-  // </DropdownContainer>
-  // <DropdownContainer>
-  //   <TouchableOpacity
-  //     onPress={onPress}
-  //     style={[dropdown, {width: '100%', height: '100%'}]}>
-  //     <Text>{placeholder}</Text>
-  //     <Icon name="arrow-drop-down" type="Material" size={36} />
-  //   </TouchableOpacity>
-  //   {/* <Button title="Record" onPress={onPressButton} style={regularBtn} /> */}
-  //   <DatePicker
-  //     modal
-  //     open={isOpen}
-  //     mode="time"
-  //     date={date}
-  //     onConfirm={onConfirm}
-  //     onCancel={onCancel}
-  //   />
-  // </DropdownContainer>
 };
 
 const styles = StyleSheet.create({

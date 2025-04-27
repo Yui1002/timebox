@@ -61,7 +61,7 @@ const Home = (props: any) => {
               <EmployerList
                 key={index}
                 employer={employer}
-                email={email}
+                serviceProviderEmail={email}
                 navigation={props.navigation}
               />
             ))}

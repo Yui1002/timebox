@@ -28,7 +28,7 @@ export default class InputStyle {
     return StyleSheet.compose(this.createBasicInputStyle(), otpInput);
   }
 
-  static createDropdownStyle(width: DimensionValue = '75%', height: DimensionValue = '100%') {
+  static createDropdownStyle() {
     return StyleSheet.create({
       dropdown: {
         flexDirection: 'row',

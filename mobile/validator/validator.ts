@@ -183,13 +183,16 @@ class Validator {
     return null;
   }
 
-  static validateWorkingRecordSelect(from: string, to: string): ErrMsg | null {
+  static validateWorkingRecordSelect(from: Date | null, to: Date | null): ErrMsg | null {
+    if (!from || !to) {
+      return ErrMsg.MISSING_FIELD;
+    }
     if (!this.isValidEndTime(from, to)) {
       return ErrMsg.INVALID_TIME;
     }
     return null;
   }
-
+  
   static validatePeriod(startTime: Date, endTime: Date) {
     if (
       !this.isValidStartTime(startTime, endTime) ||

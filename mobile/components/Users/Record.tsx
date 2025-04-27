@@ -1,18 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {Text, Alert} from 'react-native';
+import {Text, Alert, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {TopContainer, Container, Header, Button} from '../index';
 import {ResultModel, Record as RecordType} from '../../types';
 import {StatusModel, Screen} from '../../enums';
 import Result from '../Common/Result';
-import RecordDropdown from '../RecordDropdown';
 import {getToken} from '../../tokenUtils';
-import {DefaultApiFactory, TimeType} from '../../swagger';
+import {DefaultApiFactory, Employer, TimeType} from '../../swagger';
 import Validator from '../../validator/validator';
+import ReusableDropdown from '../Common/ReusableDropdown';
 
 let api = DefaultApiFactory();
 
-const Record = ({route, navigation}) => {
+interface RecordProps {
+  route: {
+    params: {
+      employer: Employer;
+      serviceProviderEmail: string
+    }
+  };
+  navigation: any;
+}
+
+const Record = ({route, navigation}: RecordProps) => {
   const isFocused = useIsFocused();
   const {employer, serviceProviderEmail} = route.params;
   const {firstName, lastName, email} = employer;
@@ -58,7 +68,6 @@ const Record = ({route, navigation}) => {
         endEpoch,
         await getAuthHeader(),
       );
-      console.log('data', data);
       const record = data.records?.[0] || null;
       setRecord({
         id: record?.id,
@@ -160,31 +169,41 @@ const Record = ({route, navigation}) => {
       <Container>
         <Text>{`Today's date: ${new Date().momentFormat('YYYY/MM/DD')}`}</Text>
       </Container>
-      <RecordDropdown
-        placeholder={!record.startTime && 'Select start time'}
-        text={
-          record.startTime &&
-          `Start time is set at ${record.startTime.momentFormat('LT')}`
+      <ReusableDropdown
+        placeholder={
+          record.startTime
+            ? `Start time is set at ${record.startTime.momentFormat('LT')}`
+            : 'Select start time'
         }
+        boxWidth={'100%'}
+        boxHeight={'16%'}
+        onPressDropdown={() => setStartOpen(!startOpen)}
         isDisabled={!!record.startTime}
+        mode='time'
         isOpen={startOpen}
         date={record.startTime || new Date()}
         onConfirm={(time: Date) => saveRecord(TimeType.Start, time)}
         onCancel={() => setStartOpen(false)}
-        onPressDropdown={() => setStartOpen(!startOpen)}
+        isArrowIconShown={record.startTime == null}
+        style={{ marginVertical: 24}}
       />
-      <RecordDropdown
-        placeholder={!record.endTime && 'Select end time'}
-        text={
-          record.endTime &&
-          `End time is set at ${record.endTime.momentFormat('LT')}`
+      <View />
+      <ReusableDropdown
+        placeholder={
+          record.endTime
+            ? `End time is set at ${record.endTime.momentFormat('LT')}`
+            : 'Select end time'
         }
+        boxWidth={'100%'}
+        boxHeight={'16%'}
+        onPressDropdown={() => setEndOpen(!endOpen)}
         isDisabled={!!record.endTime}
+        mode='time'
         isOpen={endOpen}
         date={record.endTime || new Date()}
         onConfirm={(time: Date) => saveRecord(TimeType.End, time)}
         onCancel={() => setEndOpen(false)}
-        onPressDropdown={() => setEndOpen(!endOpen)}
+        isArrowIconShown={record.endTime == null}
       />
       <Button
         title="View Records"
