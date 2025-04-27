@@ -88,7 +88,7 @@ enum ErrMsg {
   INVALID_RATE = 'Invalid rate',
   INVALID_RATE_TYPE = 'Invalid rate type',
   REQUEST_SEND_ERR = 'Failed to send a request',
-  START_TIME_NOT_SELECTED = 'Start time is not selected',
+  START_TIME_NOT_SELECTED = 'Start time is not selected. Please record start time first.',
   END_TIME_NOT_SELECTED = 'End time is not selected',
   INVALID_START_TIME = 'Start time is invalid',
   INVALID_END_TIME = 'End time is invalid',
@@ -104,7 +104,7 @@ enum ErrMsg {
   FAIL_DELETE_RECORD = 'Failed to delete record',
   SUCCESS_UPDATE_RECORD = 'Updated record time successfully',
   SUCCESS_SET_RECORD = 'Set record time successfully as ',
-  FAIL_CREATE_USER = "Failed to create user"
+  FAIL_CREATE_USER = "Failed to create user",
 }
 
 enum ProgressBar {

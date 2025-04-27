@@ -6,7 +6,7 @@ import DatePicker from 'react-native-date-picker';
 const RecordDropdown = ({
   placeholder,
   onPressDropdown,
-  onPressButton,
+  // onPressButton,
   isOpen,
   date,
   onConfirm,
@@ -18,11 +18,11 @@ const RecordDropdown = ({
     <DropdownContainer>
       <Dropdown
         placeholder={placeholder}
-        width={'70%'}
+        width={'100%'}
         height={'100%'}
         onPress={onPressDropdown}
       />
-      <Button title="Record" onPress={onPressButton} style={regularBtn} />
+      {/* <Button title="Record" onPress={onPressButton} style={regularBtn} /> */}
       <DatePicker
         modal
         open={isOpen}

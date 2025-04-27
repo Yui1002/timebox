@@ -66,18 +66,13 @@ const Record = ({route, navigation}) => {
 
   const getRecord = async () => {
     try {
-      const token = await getToken();
       const {startEpoch, endEpoch} = getTodayStartndEndEpoch();
       const {data} = await api.getRecordByPeriod(
         email,
         serviceProviderEmail,
         startEpoch,
         endEpoch,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        await getAuthHeader(),
       );
       const record = data.records?.[0] || null;
       setRecord({
@@ -103,7 +98,6 @@ const Record = ({route, navigation}) => {
 
     try {
       const epochTime = Math.floor(recordTime!.getTime() / 1000);
-      const token = await getToken();
       const {data} = await api.setRecord(
         {
           employerEmail: email,
@@ -112,11 +106,7 @@ const Record = ({route, navigation}) => {
           type: type,
           ...(type === TimeType.End && {id: record.id}),
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        await getAuthHeader(),
       );
       const recordData = data.records?.[0] || null;
       setRecord({
@@ -133,7 +123,8 @@ const Record = ({route, navigation}) => {
         `${type} time is saved as ${recordTime?.momentFormat('LT')}`,
       );
     } catch (e) {
-      showAlert('Failed to save record. Please try again', '');
+      console.log(e.response.data.message)
+      showAlert(`${e.reponse.data.message}`, '');
     }
   };
 
@@ -148,6 +139,15 @@ const Record = ({route, navigation}) => {
 
   const convertEpochToDate = (epochTime: string): Date => {
     return new Date(Number(epochTime) * 1000);
+  };
+
+  const getAuthHeader = async () => {
+    const token = await getToken();
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
   };
 
   return (
@@ -176,7 +176,7 @@ const Record = ({route, navigation}) => {
         }
         onCancel={() => setStartOpen(false)}
         onPressDropdown={() => setStartOpen(!startOpen)}
-        onPressButton={() => saveRecord(TimeType.Start, record.startTime)}
+        // onPressButton={() => saveRecord(TimeType.Start, record.startTime)}
       />
       <RecordDropdown
         placeholder={

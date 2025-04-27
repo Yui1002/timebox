@@ -68,29 +68,53 @@ class RecordManager implements IRecordManager {
     return recordData;
   }
 
-  async getRecordChanges(recordRq: GetRecordByPeriodRq): Promise<GetRecordChangeRs> {
-    let transactionData = await this._userTransactionManager.getUserTransaction(recordRq);
+  async getRecordChanges(
+    recordRq: GetRecordByPeriodRq
+  ): Promise<GetRecordChangeRs> {
+    let transactionData = await this._userTransactionManager.getUserTransaction(
+      recordRq
+    );
 
     if (!transactionData) {
       throw new ResponseException(null, 400, "no data found");
     }
 
     let transactionId = transactionData.id;
-    return await this._recordRepo.getRecordChanges(transactionId)
+    return await this._recordRepo.getRecordChanges(transactionId);
   }
 
   async setRecord(recordRq: SetRecordRq): Promise<GetRecordRs> {
     let transactionData = await this._userTransactionManager.getUserTransaction(
       recordRq
     );
-    
+
     if (!transactionData) {
       throw new ResponseException(null, 400, "no data found");
     }
 
     let transactionId = transactionData.id;
+    const { startEpoch, endEpoch } = this.getTodayStartAndEndEpoch();
 
-    
+    let existingRecord = await this._recordRepo.getRecordByPeriod(
+      transactionId,
+      startEpoch,
+      endEpoch
+    );
+
+    console.log('existing record is', existingRecord)
+
+    if (
+      (recordRq.type === TimeType.START_TIME &&
+        existingRecord && existingRecord.records[0].epoch_start_time) ||
+      (recordRq.type === TimeType.END_TIME &&
+        existingRecord && existingRecord.records[0].epoch_end_time)
+    ) {
+      throw new ResponseException(
+        null,
+        400,
+        `${recordRq.type} time is already registered`
+      );
+    }
 
     if (recordRq.type === TimeType.START_TIME) {
       return await this._recordRepo.setStartRecord(
@@ -98,10 +122,7 @@ class RecordManager implements IRecordManager {
         recordRq.recordTime
       );
     } else {
-      await this._recordRepo.setEndRecord(
-        recordRq.id,
-        recordRq.recordTime
-      );
+      await this._recordRepo.setEndRecord(recordRq.id, recordRq.recordTime);
     }
   }
 
@@ -121,6 +142,20 @@ class RecordManager implements IRecordManager {
 
   async deleteRecord(recordRq: DeleteRecordRq): Promise<void> {
     await this._recordRepo.deleteRecord(recordRq.recordId);
+  }
+
+  getTodayStartAndEndEpoch(): { startEpoch: number; endEpoch: number } {
+    const now = new Date();
+
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    const startEpoch = Math.floor(startOfDay.getTime() / 1000);
+
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    const endEpoch = Math.floor(endOfDay.getTime() / 1000);
+
+    return { startEpoch, endEpoch };
   }
 }
 

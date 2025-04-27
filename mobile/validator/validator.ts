@@ -125,7 +125,7 @@ class Validator {
     startTime: Date | null,
     endTime: Date | null,
   ): ErrMsg | null {
-    console.log(type, startTime, endTime)
+
     if (type === TimeType.Start) {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
@@ -134,6 +134,9 @@ class Validator {
         return ErrMsg.INVALID_START_TIME;
       }
     } else if (type === TimeType.End) {
+      if (!startTime) {
+        return ErrMsg.START_TIME_NOT_SELECTED
+      }
       if (!endTime || !this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }
