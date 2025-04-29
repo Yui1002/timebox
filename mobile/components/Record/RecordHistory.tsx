@@ -34,7 +34,6 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const enableEditMode = () => {
-    console.log('row selected', rowSelected);
     if (rowSelected) {
       setIsModalVisible(true);
     } else {
@@ -51,8 +50,12 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
         record.id === updatedRecord.id ? updatedRecord : record,
       ),
     );
-    setRowSelected(null);
+    resetSelection();
   };
+
+  const resetSelection = (): void => {
+    setRowSelected(null);
+  }
 
   return (
     <TopContainer>
@@ -99,7 +102,7 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
                 record={record}
                 rowSelected={rowSelected}
                 setRowSelected={setRowSelected}
-                setResult={setResult}
+                resetSelection={resetSelection}
               />
             );
           })
@@ -114,6 +117,7 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
         setRowSelected={setRowSelected}
         setResult={setResult}
         updateRecord={updateRecord}
+        resetSelection={resetSelection}
       />
     </TopContainer>
   );

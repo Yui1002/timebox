@@ -19,6 +19,7 @@ interface EditRecordModalProps {
   setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
   updateRecord: any;
+  resetSelection: () => void;
 }
 
 const EditRecordModal = ({
@@ -28,6 +29,7 @@ const EditRecordModal = ({
   setResult,
   updateRecord,
   setRowSelected,
+  resetSelection
 }: EditRecordModalProps) => {
   const startTime = rowSelected?.epoch_start_time;
   const endTime = rowSelected?.epoch_end_time;
@@ -45,6 +47,13 @@ const EditRecordModal = ({
       setUpdatedEndTime(convertEpochToDate(Number(endTime)));
     }
   }, [rowSelected]);
+
+  useEffect(() => {
+    if (!isModalVisible) {
+        setIsStartDropdownOpen(false);
+        setIsEndDropdownOpen(false)
+    }
+  }, [isModalVisible])
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateWorkingRecordSelect(
@@ -69,7 +78,7 @@ const EditRecordModal = ({
     try {
       await api.updateRecord(
         {
-          recordId: rowSelected.id,
+          recordId: rowSelected!.id,
           startTime: updatedStartTimeInEpoch,
           endTime: updatedEndTimeInEpoch,
         },
@@ -84,7 +93,8 @@ const EditRecordModal = ({
         status: StatusModel.SUCCESS,
         message: 'Successfully updated record',
       });
-      setRowSelected(null)
+      setRowSelected(null);
+      resetSelection();
     } catch (e) {
       setResult({
         status: StatusModel.ERROR,
