@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {Text, ScrollView, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {TextStyle} from '../../styles';
-import {Record, DefaultApiFactory, Employer} from '../../swagger';
+import {Record, Employer} from '../../swagger';
 import {TopContainer, Separator, Button, Result} from '../index';
 import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
 import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
-import {ResultModel, DateInput} from '../../types';
-import {StatusModel, ActionType, ErrMsg, Screen} from '../../enums';
+import {ResultModel} from '../../types';
+import {StatusModel} from '../../enums';
 import TableHeader from './TableHeader';
 import EditRecordModal from './EditRecordModal';
 
@@ -21,7 +21,7 @@ interface RecordHistoryProps {
   navigation: any;
 }
 
-const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
+const RecordHistory = ({route}: RecordHistoryProps) => {
   const {employer, serviceProviderEmail} = route.params;
   const [records, setRecords] = useState<Record[]>([]);
   const [rowSelected, setRowSelected] = useState<Record | null>(null);
@@ -80,15 +80,6 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
               buttonHeight={'80%'}
               buttonColor={COLORS.LIGHT_GREY}
               style={{marginRight: 20}}
-            />
-            <Button
-              title="Delete"
-              onPress={() => {
-                enableActionMode(ActionType.DELETE), deleteAlert();
-              }}
-              buttonWidth={'20%'}
-              buttonHeight={'80%'}
-              buttonColor={COLORS.LIGHT_GREY}
             />
           </View>
         )}
