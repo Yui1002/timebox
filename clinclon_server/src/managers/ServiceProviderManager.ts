@@ -25,6 +25,7 @@ class ServiceProviderManager implements IServiceProviderManager {
         if (!employerData) {
             throw new ResponseException(null, 400, 'no data found');
         }
+        console.log('employer data is ', employerData)
         const { id: employerId, email: employerEmail } = employerData;
         
         let [activeServiceProviders, inactiveServiceProviders] = await Promise.all([
@@ -32,13 +33,21 @@ class ServiceProviderManager implements IServiceProviderManager {
             this._serviceProviderRepo.getInactiveServiceProvider(employerEmail)
         ]);
 
+        console.log('active service providers is', activeServiceProviders)
+        console.log('in active service providers is', inactiveServiceProviders)
+
         let scheduleIds: number[] = [];
-        let serviceProviderData = [...activeServiceProviders.serviceProviders, ...inactiveServiceProviders.serviceProviders];
+        let serviceProviderData = [
+            ...(activeServiceProviders?.serviceProviders || []), 
+            ...(inactiveServiceProviders?.serviceProviders || [])
+        ];
+
         serviceProviderData.forEach((sp) => {
             if (sp.scheduleId && sp.scheduleId !== 0) {
                 scheduleIds.push(sp.scheduleId);
             }
         });
+        
         let finalData: GetServiceProviderRsMini[];
         
         if (scheduleIds.length > 0) {

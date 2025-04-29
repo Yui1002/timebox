@@ -8,6 +8,7 @@ import {DefaultApiFactory, GetServiceProviderRsMini, RequestStatus} from '../../
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
 import {formatData} from '../../helper/formatHelper';
+import { getAuthHeader } from '../../tokenUtils';
 
 let api = DefaultApiFactory();
 
@@ -16,7 +17,7 @@ const ManageServiceProviders = (props: any) => {
   const {email} = useSelector(state => state.userInfo);
   const [serviceProviders, setServiceProviders] =
     useState<GetServiceProviderRsMini[]>();
-  const [isBoxChecked, setIsBoxChecked] = useState(true);
+  const [isBoxChecked, setIsBoxChecked] = useState<boolean>(true);
 
   useEffect(() => {
     if (isFocused) {
@@ -26,7 +27,8 @@ const ManageServiceProviders = (props: any) => {
 
   const getServiceProviders = async () => {
     try {
-      const {data} = await api.getServiceProvider(email);
+      const {data} = await api.getServiceProvider(email, await getAuthHeader());
+      console.log('data is', data)
       setServiceProviders(data);
     } catch (e: any) {
       setServiceProviders([]);
