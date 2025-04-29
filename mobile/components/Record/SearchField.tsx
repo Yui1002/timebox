@@ -1,24 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useSelector} from 'react-redux';
-import {LOCAL_HOST_URL} from '../../config.js';
-import axios from 'axios';
-import moment from 'moment';
-import {useIsFocused} from '@react-navigation/native';
-import {
-  RawEmployer,
-  FormattedEmployer,
-  ResultModel,
-  DateInput,
-} from '../../types';
-import {TopContainer, Title, Button, AlignContainer, Result} from '../index';
-import {DefaultApiFactory, Employer, Record} from '../../swagger';
+import {ResultModel, DateInput} from '../../types';
+import {TopContainer, Title, Button, Result} from '../index';
+import {DefaultApiFactory, Employer} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
-import RecordDropdown from '../RecordDropdown';
 import ReusableDropdown from '../Common/ReusableDropdown';
 import Validator from '../../validator/validator';
-import { getToken } from '../../tokenUtils.js';
+import {getAuthHeader} from '../../tokenUtils';
+import {convertDateToEpoch} from '../../helper/DateUtils';
 
 interface SearchFieldProps {
   employer: Employer;
@@ -29,7 +19,7 @@ interface SearchFieldProps {
 const SearchField = ({
   employer,
   serviceProviderEmail,
-  setRecords
+  setRecords,
 }: SearchFieldProps) => {
   const [fromOpen, setFromOpen] = useState<boolean>(false);
   const [toOpen, setToOpen] = useState(false);
@@ -61,12 +51,12 @@ const SearchField = ({
     const toEpoch = convertDateToEpoch(searchPeriod.to!);
 
     try {
-      const { data } = await api.getRecordByPeriod(
+      const {data} = await api.getRecordByPeriod(
         employer.email,
         serviceProviderEmail,
         fromEpoch,
         toEpoch,
-        await getAuthHeader()
+        await getAuthHeader(),
       );
       setRecords(data.records);
     } catch (e) {
@@ -77,25 +67,8 @@ const SearchField = ({
     }
   };
 
-  const convertEpochToDate = (epochTime: string): Date => {
-    return new Date(Number(epochTime) * 1000);
-  };
-
-  const convertDateToEpoch = (date: Date): number => {
-    return Math.floor(date.getTime() / 1000);
-  } 
-
-  const getAuthHeader = async () => {
-    const token = await getToken();
-    return {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-  };
-
   return (
-    <TopContainer>
+    <View style={{height: '30%'}}>
       {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select period" />
       <View style={styles.rowContainer}>
@@ -150,8 +123,14 @@ const SearchField = ({
           isArrowIconShown={true}
         />
       </View>
-      <Button title="Search" onPress={onSearchPress} />
-    </TopContainer>
+      <Button
+        title="Search"
+        onPress={searchRecord}
+        buttonWidth={'80%'}
+        buttonHeight={'16%'}
+        style={{margin: 'auto', marginVertical: 10}}
+      />
+    </View>
   );
 };
 

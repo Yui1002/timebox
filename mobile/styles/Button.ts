@@ -2,12 +2,12 @@ import {StyleSheet} from 'react-native';
 import {COLORS} from './theme';
 
 export default class ButtonStyle {
-  static createBasicButtonStyle() {
+  static createBasicButtonStyle(width: any, height: any, color: string = COLORS.BLUE) {
     return StyleSheet.create({
       button: {
-        width: 300,
-        height: 34,
-        backgroundColor: COLORS.BLUE,
+        width: width,
+        height: height,
+        backgroundColor: color,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,

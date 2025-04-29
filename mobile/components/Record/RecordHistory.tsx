@@ -12,6 +12,7 @@ import {alert} from '../../helper/Alert';
 import TableHeader from './TableHeader';
 import moment from 'moment';
 import Validator from '../../validator/validator';
+import EditRecordModal from './EditRecordModal';
 let api = DefaultApiFactory();
 
 interface RecordHistoryProps {
@@ -27,9 +28,12 @@ interface RecordHistoryProps {
 const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
   const {employer, serviceProviderEmail} = route.params;
   const [records, setRecords] = useState<Record[]>([]);
-  const [rowSelected, setRowSelected] = useState({
+  const [rowSelected, setRowSelected] = useState<{
+    selectMode: boolean;
+    selectRow: Record | null;
+  }>({
     selectMode: false,
-    selectRow: '',
+    selectRow: null,
   });
   const [editSelected, setEditSelected] = useState({
     editMode: false,
@@ -40,31 +44,38 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
     deleteRow: '',
   });
   let centerText = TextStyle.createCenterTextStyle();
-  const buttonStyle = {
-    width: 60,
-    height: 24,
-    backgroundColor: rowSelected.selectMode ? COLORS.BLUE : COLORS.LIGHT_GREY,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 20,
-  };
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
   const headerContent = ['Date', 'In', 'Out', 'Total'];
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const enableActionMode = async (type: ActionType) => {
-    if (type === ActionType.UPDATE) {
+    if (type === ActionType.EDIT) {
       setEditSelected({
         editMode: true,
         editRow: rowSelected.selectRow,
       });
+      if (editSelected.editMode) {
+        console.log('here');
+        setIsModalVisible(true); // Show the modal
+      }
     } else {
       setDeleteSelected({
         deleteMode: true,
         deleteRow: rowSelected.selectRow,
+      });
+    }
+  };
+
+  const enableEditMode = () => {
+    if (rowSelected) {
+      setIsModalVisible(true);
+    } else {
+      setResult({
+        status: StatusModel.ERROR,
+        message: 'Please select a row to edit',
       });
     }
   };
@@ -85,7 +96,7 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
   const deleteRecord = async () => {
     try {
       await api.deleteRecord({
-        recordId: rowSelected.selectRow.id,
+        recordId: rowSelected.selectRow!.id,
       });
       setResult({
         status: StatusModel.SUCCESS,
@@ -102,59 +113,70 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
-      <ScrollView>
-        <SearchField
-          employer={employer}
-          serviceProviderEmail={serviceProviderEmail}
-          setRecords={setRecords}
-        />
-        {records?.length !== 0 && (
-          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+      <SearchField
+        employer={employer}
+        serviceProviderEmail={serviceProviderEmail}
+        setRecords={setRecords}
+      />
+      <View style={{height: '50%'}}>
+        {records?.length > 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              height: '10%',
+            }}>
             <Button
               title="Edit"
-              style={buttonStyle}
-              onPress={() => enableActionMode(ActionType.UPDATE)}
+              // onPress={() => enableActionMode(ActionType.EDIT)}
+              onPress={enableEditMode}
+              buttonWidth={'20%'}
+              buttonHeight={'80%'}
+              buttonColor={COLORS.LIGHT_GREY}
+              style={{marginRight: 20}}
             />
             <Button
               title="Delete"
-              style={buttonStyle}
               onPress={() => {
                 enableActionMode(ActionType.DELETE), deleteAlert();
               }}
+              buttonWidth={'20%'}
+              buttonHeight={'80%'}
+              buttonColor={COLORS.LIGHT_GREY}
             />
           </View>
         )}
-        <ScrollView>
-          <TableHeader headerContent={headerContent} />
-          <Separator />
-          {records?.length ? (
-            records.map((record: Record, index: number) => {
-              return (
-                <WorkingHistoryList
-                  key={index}
-                  record={record}
-                  rowSelected={rowSelected}
-                  editSelected={editSelected}
-                  setRowSelected={setRowSelected}
-                  setEditSelected={setEditSelected}
-                  setResult={setResult}
-                />
-              );
-            })
-          ) : (
-            <Text style={centerText}>No records matched</Text>
-          )}
-        </ScrollView>
-        <Button
-          title="View changes on record"
-          onPress={() =>
-            navigation.navigate(Screen.RECORD_CHANGE, {
-              employer,
-              serviceProviderEmail,
-            })
-          }
+        <TableHeader headerContent={headerContent} />
+        <Separator />
+        {records?.length ? (
+          records.map((record: Record, index: number) => {
+            console.log('record', record);
+            return (
+              <WorkingHistoryList
+                key={index}
+                record={record}
+                rowSelected={rowSelected}
+                editSelected={editSelected}
+                setRowSelected={setRowSelected}
+                setEditSelected={setEditSelected}
+                setResult={setResult}
+              />
+            );
+          })
+        ) : (
+          <Text style={centerText}>No records matched</Text>
+        )}
+      </View>
+      {rowSelected && (
+        <EditRecordModal
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
+          startTime={rowSelected.selectRow?.epoch_start_time}
+          endTime={rowSelected.selectRow?.epoch_end_time}
+          onConfirmStartTime={date => console.log('New Start Time:', date)}
+          onConfirmEndTime={date => console.log('New End Time:', date)}
         />
-      </ScrollView>
+      )}
     </TopContainer>
   );
 };

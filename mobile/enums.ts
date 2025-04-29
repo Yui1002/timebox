@@ -26,7 +26,7 @@ enum TimeType {
 
 enum ActionType {
   DELETE = 'delete',
-  UPDATE = 'update'
+  EDIT = 'edit'
 }
 
 enum Display {

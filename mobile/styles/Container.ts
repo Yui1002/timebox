@@ -14,6 +14,7 @@ export default class ContainerStyle {
     return StyleSheet.create({
       topContainer: {
         margin: '5%',
+        height: '100%'
       },
     }).topContainer;
   }

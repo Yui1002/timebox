@@ -9,6 +9,8 @@ import {getToken} from '../../tokenUtils';
 import {DefaultApiFactory, Employer, TimeType} from '../../swagger';
 import Validator from '../../validator/validator';
 import ReusableDropdown from '../Common/ReusableDropdown';
+import { getAuthHeader } from '../../tokenUtils';
+import { convertEpochToDate } from '../../helper/DateUtils';
 
 let api = DefaultApiFactory();
 
@@ -72,10 +74,10 @@ const Record = ({route, navigation}: RecordProps) => {
       setRecord({
         id: record?.id,
         startTime: record?.epoch_start_time
-          ? convertEpochToDate(record?.epoch_start_time)
+          ? convertEpochToDate(Number(record?.epoch_start_time))
           : null,
         endTime: record?.epoch_end_time
-          ? convertEpochToDate(record?.epoch_end_time)
+          ? convertEpochToDate(Number(record?.epoch_end_time))
           : null,
       });
     } catch (e) {
@@ -122,10 +124,10 @@ const Record = ({route, navigation}: RecordProps) => {
       setRecord({
         id: recordData?.id || record.id,
         startTime: recordData?.epoch_start_time
-          ? convertEpochToDate(recordData?.epoch_start_time)
+          ? convertEpochToDate(Number(recordData?.epoch_start_time))
           : record.startTime,
         endTime: recordData?.epoch_end_time
-          ? convertEpochToDate(recordData?.epoch_end_time)
+          ? convertEpochToDate(Number(recordData?.epoch_end_time))
           : record.endTime,
       });
       showAlert(
@@ -145,19 +147,6 @@ const Record = ({route, navigation}: RecordProps) => {
         style: 'cancel',
       },
     ]);
-  };
-
-  const convertEpochToDate = (epochTime: string): Date => {
-    return new Date(Number(epochTime) * 1000);
-  };
-
-  const getAuthHeader = async () => {
-    const token = await getToken();
-    return {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
   };
 
   return (
@@ -213,6 +202,9 @@ const Record = ({route, navigation}: RecordProps) => {
             serviceProviderEmail,
           })
         }
+        buttonWidth={'80%'}
+        buttonHeight={'8%'}
+        style={{margin: 'auto', marginVertical: 20}}
       />
     </TopContainer>
   );

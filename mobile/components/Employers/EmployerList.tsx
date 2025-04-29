@@ -32,7 +32,12 @@ const EmployerList = (props: EmployerListProps) => {
         </Text>
         <Text>{email}</Text>
       </ListSubContainer>
-      <Button title="Record" onPress={navigateScreen} style={recordBtn} />
+      <Button
+        title="Record"
+        onPress={navigateScreen}
+        buttonWidth={'25%'}
+        buttonHeight={'100%'}
+      />
     </ListContainer>
   );
 };
