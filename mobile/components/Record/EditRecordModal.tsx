@@ -1,69 +1,164 @@
-import React, {useState} from 'react';
-import {Modal, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
 import ReusableDropdown from '../Common/ReusableDropdown';
-import {convertEpochToDate} from '../../helper/DateUtils';
+import {convertDateToEpoch, convertEpochToDate} from '../../helper/DateUtils';
 import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
+import {DefaultApiFactory, Record} from '../../swagger';
+import {getAuthHeader} from '../../tokenUtils';
+import Validator from '../../validator/validator';
+import {ResultModel} from '../../types';
+import {StatusModel} from '../../enums';
+let api = DefaultApiFactory();
 
 interface EditRecordModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-  startTime: number;
-  endTime: number;
-  onConfirmStartTime: (date: Date) => void;
-  onConfirmEndTime: (date: Date) => void;
+  rowSelected: Record | null;
+  setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
+  setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
+  updateRecord: any;
 }
 
 const EditRecordModal = ({
   isModalVisible,
   setIsModalVisible,
-  startTime,
-  endTime,
-  onConfirmStartTime,
-  onConfirmEndTime,
+  rowSelected,
+  setResult,
+  updateRecord,
+  setRowSelected,
 }: EditRecordModalProps) => {
-  const startTimeDate = convertEpochToDate(startTime);
-  const endTimeDate = convertEpochToDate(endTime);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const startTime = rowSelected?.epoch_start_time;
+  const endTime = rowSelected?.epoch_end_time;
+
+  const [updatedStartTime, setUpdatedStartTime] = useState<Date>(new Date());
+  const [updatedEndTime, setUpdatedEndTime] = useState<Date>(new Date());
+  const [isStartDropdownOpen, setIsStartDropdownOpen] = useState<boolean>(false);
+  const [isEndDropdownOpen, setIsEndDropdownOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (startTime) {
+      setUpdatedStartTime(convertEpochToDate(Number(startTime)));
+    }
+    if (endTime) {
+      setUpdatedEndTime(convertEpochToDate(Number(endTime)));
+    }
+  }, [rowSelected]);
+
+  const validateInput = (): boolean => {
+    const validateErr = Validator.validateWorkingRecordSelect(
+      updatedStartTime,
+      updatedEndTime,
+    );
+    if (validateErr) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: validateErr,
+      });
+    }
+    return validateErr == null;
+  };
+
+  const editRecord = async () => {
+    if (!validateInput()) return;
+
+    const updatedStartTimeInEpoch = convertDateToEpoch(updatedStartTime);
+    const updatedEndTimeInEpoch = convertDateToEpoch(updatedEndTime);
+
+    try {
+      await api.updateRecord(
+        {
+          recordId: rowSelected.id,
+          startTime: updatedStartTimeInEpoch,
+          endTime: updatedEndTimeInEpoch,
+        },
+        await getAuthHeader(),
+      );
+      updateRecord({
+        ...rowSelected,
+        epoch_start_time: updatedStartTimeInEpoch,
+        epoch_end_time: updatedEndTimeInEpoch,
+      });
+      setResult({
+        status: StatusModel.SUCCESS,
+        message: 'Successfully updated record',
+      });
+      setRowSelected(null)
+    } catch (e) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: e.response.data.mmessage,
+      });
+    }
+  };
 
   return (
     <Modal
       visible={isModalVisible}
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       onRequestClose={() => setIsModalVisible(false)}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Edit Record</Text>
-          <ReusableDropdown
-            placeholder="Select Start Time"
-            boxWidth={'100%'}
-            boxHeight={'25%'}
-            onPressDropdown={() => {}}
-            isDisabled={false}
-            mode="time"
-            isOpen={isDropdownOpen}
-            date={startTimeDate || new Date()}
-            onConfirm={onConfirmStartTime}
-            onCancel={() => {
-              setIsDropdownOpen(false);
-            }}
-            isArrowIconShown={true}
-          />
+          <Text>{updatedStartTime.momentFormat('YYYY/MM/DD')}</Text>
+          <View style={{height: '30%'}}>
+            <Text>Start time</Text>
+            <ReusableDropdown
+              placeholder={`${updatedStartTime.momentFormat('LT')}`}
+              boxWidth={'100%'}
+              boxHeight={'70%'}
+              onPressDropdown={() => {
+                setIsStartDropdownOpen(!isStartDropdownOpen);
+              }}
+              isDisabled={false}
+              mode="time"
+              isOpen={isStartDropdownOpen}
+              date={updatedStartTime || new Date()}
+              onConfirm={(time: Date) => setUpdatedStartTime(time)}
+              onCancel={() => {
+                setIsStartDropdownOpen(false);
+              }}
+              isArrowIconShown={true}
+            />
+          </View>
+          <View style={{height: '30%'}}>
+            <Text>End time</Text>
+            <ReusableDropdown
+              placeholder={`${updatedEndTime.momentFormat('LT')}`}
+              boxWidth={'100%'}
+              boxHeight={'70%'}
+              onPressDropdown={() => {
+                setIsEndDropdownOpen(!isEndDropdownOpen);
+              }}
+              isDisabled={false}
+              mode="time"
+              isOpen={isEndDropdownOpen}
+              date={updatedEndTime || new Date()}
+              onConfirm={(time: Date) => setUpdatedEndTime(time)}
+              onCancel={() => {
+                setIsEndDropdownOpen(false);
+              }}
+              isArrowIconShown={true}
+            />
+          </View>
           <AlignContainer>
             <Button
-              title="Save"
-              onPress={() => console.log('save button pressed')}
+              title="Cancel"
+              onPress={() => setIsModalVisible(false)}
               buttonWidth={'48%'}
-              buttonHeight={'25%'}
+              buttonHeight={'45%'}
+              buttonColor={COLORS.LIGHT_GREY}
             />
             <Button
-              title="Cancel"
-              onPress={() => console.log('cancel button pressed')}
+              title="Save"
+              onPress={() => {
+                editRecord();
+                setIsModalVisible(false);
+              }}
               buttonWidth={'48%'}
-              buttonHeight={'25%'}
-              buttonColor={COLORS.LIGHT_GREY}
+              buttonHeight={'45%'}
             />
           </AlignContainer>
         </View>
@@ -85,11 +180,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
+    height: '40%',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
+    height: '8%',
   },
   modalButtons: {
     flexDirection: 'row',

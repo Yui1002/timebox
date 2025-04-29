@@ -74,11 +74,11 @@ class UpdateRecordRequestValidator extends SuperValidator {
         if (!instance.recordId) {
             this.throwError(null, 'Record ID must not be empty')
         }
-        if (!instance.recordTime) {
-            this.throwError(null, 'Record time must not be empty');
+        if (!instance.startTime) {
+            this.throwError(null, 'Start time must not be empty');
         }
-        if (!instance.type) {
-            this.throwError(null, 'Type must not be empty');
+        if (!instance.endTime) {
+            this.throwError(null, 'End time must not be empty');
         }
 
         return instance;

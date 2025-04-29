@@ -9,7 +9,7 @@ interface IRecordController {
     getRecord(rq: GetRecordRq): Promise<GetRecordRs>
     getRecordByPeriod(rq: GetRecordByPeriodRq): Promise<GetRecordRs>;
     setRecord(rq: SetRecordRq): Promise<GetRecordRs>;
-    updateRecord(rq: UpdateRecordRq): Promise<GetRecordRs>;
+    updateRecord(rq: UpdateRecordRq): Promise<void>;
     deleteRecord(rq: DeleteRecordRq): Promise<void>;
 }
 
@@ -53,8 +53,8 @@ export class RecordController extends SuperController implements IRecordControll
     @Put('/')
     @Security(JWT)
     @Validate
-    public async updateRecord(@Body() request: UpdateRecordRq): Promise<GetRecordRs> {
-        return await this._recordManager.updateRecord(request);
+    public async updateRecord(@Body() request: UpdateRecordRq): Promise<void> {
+        await this._recordManager.updateRecord(request);
     }
 
     @Delete('/')

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { GetRecordChangeRs, GetRecordRs } from "../models/Record";
+import { GetRecordChangeRs, GetRecordRs, UpdateRecordRq } from "../models/Record";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
 import Repositories from "./Repositories";
@@ -13,6 +13,7 @@ interface IRecordRepo {
     setEndRecord(userTransactionId: number, endTime: number): Promise<void>;
     updateStartRecord(recordId: number, startTime: number): Promise<GetRecordRs>;
     deleteRecord(recordId: number): Promise<void>
+    updateRecord(recordRq: UpdateRecordRq): Promise<void>;
 }
 
 class RecordRepo extends Repositories implements IRecordRepo  {
@@ -135,6 +136,16 @@ class RecordRepo extends Repositories implements IRecordRepo  {
             await this.queryDB(sql, ['inactive', recordId]);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to delete from db');
+        }
+    }
+
+    async updateRecord(recordRq: UpdateRecordRq): Promise<void> {
+        console.log('recordRq is ', recordRq)
+        try {
+            const sql = "UPDATE time_record SET epoch_start_time = $1, epoch_end_time = $2 WHERE time_record_id = $3;";
+            await this.queryDB(sql, [recordRq.startTime, recordRq.endTime, recordRq.recordId]);
+        } catch (e) {
+            throw new ResponseException(e, 500, 'unable to update data')
         }
     }
 }

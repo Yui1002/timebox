@@ -14,10 +14,10 @@ let api = DefaultApiFactory();
 
 interface WorkingHistoryListProps {
   record: Record;
-  rowSelected: any;
-  editSelected: any;
-  setRowSelected: any;
-  setEditSelected: () => void;
+  rowSelected: Record | null;
+  // editSelected: any;
+  setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>;
+  // setEditSelected: () => void;
   setResult: any;
 }
 
@@ -32,7 +32,7 @@ const style = StyleSheet.create({
 const WorkingHistoryList = ({
   record,
   rowSelected,
-  editSelected,
+  // editSelected,
   setRowSelected,
   setResult,
 }: WorkingHistoryListProps) => {
@@ -48,6 +48,8 @@ const WorkingHistoryList = ({
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+  const [isSelected, setIsSelected] = useState<boolean>(false);
   // const [start, setStart] = useState<Date | undefined>(
   //   startTime ? new Date(startTime) : undefined,
   // );
@@ -67,22 +69,16 @@ const WorkingHistoryList = ({
   // }, [])
 
   const rowStyle = {
-    backgroundColor:
-      JSON.stringify(record) === JSON.stringify(rowSelected.selectRow) &&
-      rowSelected.selectMode
-        ? COLORS.BLUE
-        : COLORS.LIGHT_GREY,
+    backgroundColor: isSelected ? COLORS.BLUE : COLORS.LIGHT_GREY,
   };
 
   const onRowSelect = () => {
-    setRowSelected({
-      selectMode: true,
-      selectRow: record,
-    });
-    if (editSelected.editMode && rowSelected.selectRow === record) {
-      console.log('here')
-      setIsModalVisible(true); // Show the modal
+    if (isSelected) {
+      setRowSelected(null);
+    } else {
+      setRowSelected(record);
     }
+    setIsSelected(!isSelected);
   };
 
   // const validateInput = (type: TimeType): boolean => {

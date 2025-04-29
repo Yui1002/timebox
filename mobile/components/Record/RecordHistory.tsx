@@ -8,12 +8,8 @@ import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
 import {ResultModel, DateInput} from '../../types';
 import {StatusModel, ActionType, ErrMsg, Screen} from '../../enums';
-import {alert} from '../../helper/Alert';
 import TableHeader from './TableHeader';
-import moment from 'moment';
-import Validator from '../../validator/validator';
 import EditRecordModal from './EditRecordModal';
-let api = DefaultApiFactory();
 
 interface RecordHistoryProps {
   route: {
@@ -28,21 +24,7 @@ interface RecordHistoryProps {
 const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
   const {employer, serviceProviderEmail} = route.params;
   const [records, setRecords] = useState<Record[]>([]);
-  const [rowSelected, setRowSelected] = useState<{
-    selectMode: boolean;
-    selectRow: Record | null;
-  }>({
-    selectMode: false,
-    selectRow: null,
-  });
-  const [editSelected, setEditSelected] = useState({
-    editMode: false,
-    editRow: '',
-  });
-  const [deleteSelected, setDeleteSelected] = useState({
-    deleteMode: false,
-    deleteRow: '',
-  });
+  const [rowSelected, setRowSelected] = useState<Record | null>(null);
   let centerText = TextStyle.createCenterTextStyle();
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -51,63 +33,25 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
   const headerContent = ['Date', 'In', 'Out', 'Total'];
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-  const enableActionMode = async (type: ActionType) => {
-    if (type === ActionType.EDIT) {
-      setEditSelected({
-        editMode: true,
-        editRow: rowSelected.selectRow,
-      });
-      if (editSelected.editMode) {
-        console.log('here');
-        setIsModalVisible(true); // Show the modal
-      }
-    } else {
-      setDeleteSelected({
-        deleteMode: true,
-        deleteRow: rowSelected.selectRow,
-      });
-    }
-  };
-
   const enableEditMode = () => {
+    console.log('row selected', rowSelected);
     if (rowSelected) {
       setIsModalVisible(true);
     } else {
       setResult({
         status: StatusModel.ERROR,
-        message: 'Please select a row to edit',
+        message: 'Please select a record to edit',
       });
     }
   };
 
-  const deleteAlert = async () => {
-    const date = moment(rowSelected.selectRow.startTime).format('YYYY/MM/DD');
-
-    alert(
-      `Are you sure you want to delete the record of ${date}?`,
-      '',
-      function () {
-        deleteRecord();
-      },
-      null,
+  const updateRecord = (updatedRecord: Record) => {
+    setRecords(prevRecords =>
+      prevRecords.map(record =>
+        record.id === updatedRecord.id ? updatedRecord : record,
+      ),
     );
-  };
-
-  const deleteRecord = async () => {
-    try {
-      await api.deleteRecord({
-        recordId: rowSelected.selectRow!.id,
-      });
-      setResult({
-        status: StatusModel.SUCCESS,
-        message: ErrMsg.SUCCESS_DELETE_RECORD,
-      });
-    } catch (e) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: ErrMsg.FAIL_DELETE_RECORD,
-      });
-    }
+    setRowSelected(null);
   };
 
   return (
@@ -128,7 +72,6 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
             }}>
             <Button
               title="Edit"
-              // onPress={() => enableActionMode(ActionType.EDIT)}
               onPress={enableEditMode}
               buttonWidth={'20%'}
               buttonHeight={'80%'}
@@ -150,15 +93,12 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
         <Separator />
         {records?.length ? (
           records.map((record: Record, index: number) => {
-            console.log('record', record);
             return (
               <WorkingHistoryList
                 key={index}
                 record={record}
                 rowSelected={rowSelected}
-                editSelected={editSelected}
                 setRowSelected={setRowSelected}
-                setEditSelected={setEditSelected}
                 setResult={setResult}
               />
             );
@@ -167,16 +107,14 @@ const RecordHistory = ({route, navigation}: RecordHistoryProps) => {
           <Text style={centerText}>No records matched</Text>
         )}
       </View>
-      {rowSelected && (
-        <EditRecordModal
-          isModalVisible={isModalVisible}
-          setIsModalVisible={setIsModalVisible}
-          startTime={rowSelected.selectRow?.epoch_start_time}
-          endTime={rowSelected.selectRow?.epoch_end_time}
-          onConfirmStartTime={date => console.log('New Start Time:', date)}
-          onConfirmEndTime={date => console.log('New End Time:', date)}
-        />
-      )}
+      <EditRecordModal
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        rowSelected={rowSelected}
+        setRowSelected={setRowSelected}
+        setResult={setResult}
+        updateRecord={updateRecord}
+      />
     </TopContainer>
   );
 };

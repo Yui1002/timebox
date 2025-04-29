@@ -44,10 +44,10 @@ class SetRecordRq extends BaseRequest {
 class UpdateRecordRq extends BaseRequest {
     @JsonProperty("recordId", Number)
     recordId: number = 0;
-    @JsonProperty("recordTime", Number)
-    recordTime: number = 0;
-    @JsonProperty("type")
-    type: TimeType = TimeType.START_TIME;
+    @JsonProperty("startTime", Number)
+    startTime: number = 0;
+    @JsonProperty("endTime", Number)
+    endTime: number = 0;
 }
 
 @JsonObject("DeleteRecordRq") 

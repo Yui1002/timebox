@@ -17,8 +17,8 @@ interface IRecordManager {
   getRecordByPeriod(record: GetRecordByPeriodRq): Promise<GetRecordRs>;
   getRecordChanges(recordRq: GetRecordByPeriodRq): Promise<GetRecordChangeRs>;
   setRecord(record: SetRecordRq): Promise<GetRecordRs>;
-  updateRecord(record: UpdateRecordRq): Promise<GetRecordRs>;
   deleteRecord(record: DeleteRecordRq): Promise<void>;
+  updateRecord(record: UpdateRecordRq): Promise<void>;
 }
 
 class RecordManager implements IRecordManager {
@@ -101,7 +101,6 @@ class RecordManager implements IRecordManager {
       endEpoch
     );
 
-    console.log('existing record is', existingRecord)
 
     if (
       (recordRq.type === TimeType.START_TIME &&
@@ -126,18 +125,19 @@ class RecordManager implements IRecordManager {
     }
   }
 
-  async updateRecord(recordRq: UpdateRecordRq): Promise<GetRecordRs> {
-    if (recordRq.type === TimeType.START_TIME) {
-      return await this._recordRepo.updateStartRecord(
-        recordRq.recordId,
-        recordRq.recordTime
-      );
-    } else {
-      await this._recordRepo.setEndRecord(
-        recordRq.recordId,
-        recordRq.recordTime
-      );
-    }
+  async updateRecord(recordRq: UpdateRecordRq): Promise<void> {
+    return await this._recordRepo.updateRecord(recordRq);
+    // if (recordRq.type === TimeType.START_TIME) {
+    //   return await this._recordRepo.updateStartRecord(
+    //     recordRq.recordId,
+    //     recordRq.recordTime
+    //   );
+    // } else {
+    //   await this._recordRepo.setEndRecord(
+    //     recordRq.recordId,
+    //     recordRq.recordTime
+    //   );
+    // }
   }
 
   async deleteRecord(recordRq: DeleteRecordRq): Promise<void> {
