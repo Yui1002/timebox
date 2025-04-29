@@ -108,9 +108,14 @@ type FormatRequest = {
 }
 
 type Record = {
-  id?: number;
+  id?: number | null;
   startTime: Date | null;
   endTime: Date | null;
+}
+
+type DateInput = {
+  from: Date | null,
+  to: Date | null
 }
 
 export {
@@ -128,5 +133,6 @@ export {
   SignInProps,
   ForgotPasswordProps,
   ModeSet,
-  Record
+  Record,
+  DateInput
 };

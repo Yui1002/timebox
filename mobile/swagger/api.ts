@@ -802,7 +802,7 @@ export interface SetRecordRq {
      * @type {number}
      * @memberof SetRecordRq
      */
-    'id'?: number;
+    'id'?: number | null;
     /**
      * 
      * @type {string}
@@ -1045,16 +1045,14 @@ export interface UpdateRecordRq {
      * @type {number}
      * @memberof UpdateRecordRq
      */
-    'recordTime'?: number;
+    'startTime'?: number;
     /**
      * 
-     * @type {TimeType}
+     * @type {number}
      * @memberof UpdateRecordRq
      */
-    'type'?: TimeType;
+    'endTime'?: number;
 }
-
-
 /**
  * 
  * @export
@@ -2627,7 +2625,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetRecordRs>> {
+        async updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updateRecord(updateRecordRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateRecord']?.[localVarOperationServerIndex]?.url;
@@ -2924,7 +2922,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): AxiosPromise<GetRecordRs> {
+        updateRecord(updateRecordRq: UpdateRecordRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.updateRecord(updateRecordRq, options).then((request) => request(axios, basePath));
         },
         /**

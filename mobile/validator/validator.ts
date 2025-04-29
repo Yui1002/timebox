@@ -122,21 +122,22 @@ class Validator {
 
   static validateRecordTime(
     type: TimeType,
-    startTime: Date | string | undefined,
-    endTime: Date | string | undefined,
+    startTime: Date | null,
+    endTime: Date | null,
   ): ErrMsg | null {
+
     if (type === TimeType.Start) {
       if (!startTime || !this.isValidDate(startTime)) {
         return ErrMsg.INVALID_START_TIME;
       }
-      if (endTime && this.isValidStartTime(startTime, endTime)) {
-        return ErrMsg.INVALID_START_TIME;
-      }
     } else if (type === TimeType.End) {
+      if (!startTime) {
+        return ErrMsg.START_TIME_NOT_SELECTED
+      }
       if (!endTime || !this.isValidDate(endTime)) {
         return ErrMsg.INVALID_END_TIME;
       }
-      if (startTime && !this.isValidEndTime(startTime, endTime!)) {
+      if (!this.isValidEndTime(startTime, endTime!)) {
         return ErrMsg.INVALID_END_TIME;
       }
     }
@@ -182,13 +183,16 @@ class Validator {
     return null;
   }
 
-  static validateWorkingRecordSelect(from: string, to: string): ErrMsg | null {
+  static validateWorkingRecordSelect(from: Date | null, to: Date | null): ErrMsg | null {
+    if (!from || !to) {
+      return ErrMsg.MISSING_FIELD;
+    }
     if (!this.isValidEndTime(from, to)) {
       return ErrMsg.INVALID_TIME;
     }
     return null;
   }
-
+  
   static validatePeriod(startTime: Date, endTime: Date) {
     if (
       !this.isValidStartTime(startTime, endTime) ||

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { GetRecordChangeRs, GetRecordRs } from "../models/Record";
+import { GetRecordChangeRs, GetRecordRs, UpdateRecordRq } from "../models/Record";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
 import Repositories from "./Repositories";
@@ -10,9 +10,10 @@ interface IRecordRepo {
     getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs>;
     getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs>;
     setStartRecord(userTransactionId: number, startTime: number): Promise<GetRecordRs>;
-    setEndRecord(userTransactionId: number, endTime: number): Promise<GetRecordRs>;
+    setEndRecord(userTransactionId: number, endTime: number): Promise<void>;
     updateStartRecord(recordId: number, startTime: number): Promise<GetRecordRs>;
     deleteRecord(recordId: number): Promise<void>
+    updateRecord(recordRq: UpdateRecordRq): Promise<void>;
 }
 
 class RecordRepo extends Repositories implements IRecordRepo  {
@@ -72,7 +73,6 @@ class RecordRepo extends Repositories implements IRecordRepo  {
     }
 
     async setStartRecord(userTransactionId: number, startTimeEpoch: number): Promise<GetRecordRs> {
-        let now = new Date();
         try {
             const sql = `INSERT INTO time_record (
                             time_record_id, 
@@ -117,17 +117,12 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         }
     }
 
-    async setEndRecord(recordId: number, endTimeEpoch: number): Promise<GetRecordRs> {
+    async setEndRecord(recordId: number, endTimeEpoch: number): Promise<void> {
         try {
             const sql = `UPDATE time_record 
                             SET epoch_end_time = $1 
-                            WHERE time_record_id = $2 
-                            RETURNING time_record_id AS id, epoch_start_time, epoch_end_time;`
-            const data = await this.queryDB(sql, [endTimeEpoch, recordId]);
-            if (data?.rows.length <= 0) {
-                return null;
-            }
-            return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
+                            WHERE time_record_id = $2;`
+            await this.queryDB(sql, [endTimeEpoch, recordId]);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to insert into db');
         }
@@ -141,6 +136,16 @@ class RecordRepo extends Repositories implements IRecordRepo  {
             await this.queryDB(sql, ['inactive', recordId]);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to delete from db');
+        }
+    }
+
+    async updateRecord(recordRq: UpdateRecordRq): Promise<void> {
+        console.log('recordRq is ', recordRq)
+        try {
+            const sql = "UPDATE time_record SET epoch_start_time = $1, epoch_end_time = $2 WHERE time_record_id = $3;";
+            await this.queryDB(sql, [recordRq.startTime, recordRq.endTime, recordRq.recordId]);
+        } catch (e) {
+            throw new ResponseException(e, 500, 'unable to update data')
         }
     }
 }

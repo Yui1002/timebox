@@ -93,7 +93,13 @@ const SignIn = ({navigation}: any) => {
             <ActivityIndicator size="large" color="#000" />
           </View>
         ) : (
-          <Button title="Sign In" onPress={signIn} />
+          <Button
+            title="Sign In"
+            onPress={signIn}
+            buttonWidth={'80%'}
+            buttonHeight={'12%'}
+            style={{ margin: 'auto', marginVertical: 20}}
+          />
         )}
         <Separator />
         <Footer

@@ -1,100 +1,146 @@
 import React, {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {LOCAL_HOST_URL} from '../../config.js';
-import axios from 'axios';
-import moment from 'moment';
-import {useIsFocused} from '@react-navigation/native';
-import {RawEmployer, FormattedEmployer, ResultModel} from '../../types';
-import {
-  TopContainer,
-  Dropdown,
-  Title,
-  DatePickerDropdown,
-  Button,
-  AlignContainer,
-  Result,
-} from '../index';
-import {DefaultApiFactory, Record} from '../../swagger';
+import {StyleSheet, View} from 'react-native';
+import {ResultModel, DateInput} from '../../types';
+import {TopContainer, Title, Button, Result} from '../index';
+import {DefaultApiFactory, Employer} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
+import ReusableDropdown from '../Common/ReusableDropdown';
+import Validator from '../../validator/validator';
+import {getAuthHeader} from '../../tokenUtils';
+import {convertDateToEpoch} from '../../helper/DateUtils';
+
+interface SearchFieldProps {
+  employer: Employer;
+  serviceProviderEmail: string;
+  setRecords: any;
+}
 
 const SearchField = ({
   employer,
   serviceProviderEmail,
-  onPress,
-  setSelectedPeriod,
-  selectedPeriod,
-}) => {
-  const {email} = useSelector(state => state.userInfo);
-  const [fromDropdown, setFromDropDown] = useState(false);
-  const [toDropdown, setToDropDown] = useState(false);
+  setRecords,
+}: SearchFieldProps) => {
+  const [fromOpen, setFromOpen] = useState<boolean>(false);
+  const [toOpen, setToOpen] = useState(false);
+  const [searchPeriod, setSearchPeriod] = useState<DateInput>({
+    from: null,
+    to: null,
+  });
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
 
-  const sortRecords = (recordData: Record[]): Record[] => {
-    if (!recordData || recordData.length) return [];
+  const validateInput = () => {
+    const validateErr = Validator.validateWorkingRecordSelect(
+      searchPeriod.from,
+      searchPeriod.to,
+    );
 
-    return recordData.sort((a, b) => {
-      return moment(a.startTime).diff(moment(b.startTime));
-    });
+    if (validateErr) {
+      setResult({status: StatusModel.ERROR, message: validateErr});
+    }
+    return validateErr == null;
   };
 
-  const onPeriodChange = (type: string, data: Date) => {
-    const selected = moment(data).format('YYYY-MM-DD');
-    type === 'from'
-      ? setSelectedPeriod({
-          from: selected,
-          to: selectedPeriod.to,
-        })
-      : setSelectedPeriod({
-          from: selectedPeriod.from,
-          to: selected,
-        });
+  const searchRecord = async () => {
+    if (!validateInput()) return;
+
+    const fromEpoch = convertDateToEpoch(searchPeriod.from!);
+    const toEpoch = convertDateToEpoch(searchPeriod.to!);
+
+    try {
+      const {data} = await api.getRecordByPeriod(
+        employer.email,
+        serviceProviderEmail,
+        fromEpoch,
+        toEpoch,
+        await getAuthHeader(),
+      );
+      setRecords(data.records);
+    } catch (e) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: e.response.data.message,
+      });
+    }
   };
 
   return (
-    <TopContainer>
+    <View style={{height: '30%'}}>
       {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select period" />
-      <AlignContainer>
-        <Dropdown
-          placeholder={selectedPeriod.from ? selectedPeriod.from : 'From'}
-          onPress={() => setFromDropDown(!fromDropdown)}
-          width={'45%'}
-          height={'100%'}
+      <View style={styles.rowContainer}>
+        <ReusableDropdown
+          placeholder={
+            searchPeriod.from
+              ? `${searchPeriod.from.momentFormat('MM-DD-YYYY')}`
+              : 'From'
+          }
+          boxWidth={'47%'}
+          boxHeight={'50%'}
+          onPressDropdown={() => setFromOpen(!fromOpen)}
+          isDisabled={false}
+          mode="date"
+          isOpen={fromOpen}
+          minimumDate={new Date('2021-01-01')}
+          maximumDate={new Date()}
+          date={searchPeriod.from || new Date()}
+          onConfirm={(date: Date) => {
+            setSearchPeriod({
+              from: date,
+              to: searchPeriod.to,
+            });
+            setFromOpen(false);
+          }}
+          onCancel={() => setFromOpen(false)}
+          isArrowIconShown={true}
         />
-        <Dropdown
-          placeholder={selectedPeriod.to ? selectedPeriod.to : 'To'}
-          onPress={() => setToDropDown(!toDropdown)}
-          width={'45%'}
-          height={'100%'}
+        <ReusableDropdown
+          placeholder={
+            searchPeriod.to
+              ? `${searchPeriod.to.momentFormat('MM-DD-YYYY')}`
+              : 'To'
+          }
+          boxWidth={'47%'}
+          boxHeight={'50%'}
+          onPressDropdown={() => setToOpen(!toOpen)}
+          isDisabled={false}
+          mode="date"
+          isOpen={toOpen}
+          minimumDate={new Date('2021-01-01')}
+          maximumDate={new Date()}
+          date={searchPeriod.to || new Date()}
+          onConfirm={(date: Date) => {
+            setSearchPeriod({
+              from: searchPeriod.from,
+              to: date,
+            });
+            setToOpen(false);
+          }}
+          onCancel={() => setToOpen(false)}
+          isArrowIconShown={true}
         />
-      </AlignContainer>
-      <DatePickerDropdown
-        open={fromDropdown}
-        mode="date"
-        onConfirm={d => onPeriodChange('from', d)}
-        onCancel={() => {
-          setFromDropDown(false);
-        }}
-        minimumDate={new Date('2020-01-01')}
-        maximumDate={new Date()}
+      </View>
+      <Button
+        title="Search"
+        onPress={searchRecord}
+        buttonWidth={'80%'}
+        buttonHeight={'16%'}
+        style={{margin: 'auto', marginVertical: 10}}
       />
-      <DatePickerDropdown
-        open={toDropdown}
-        mode="date"
-        onConfirm={d => onPeriodChange('to', d)}
-        onCancel={() => {
-          setToDropDown(false);
-        }}
-        minimumDate={new Date('2020-01-01')}
-        maximumDate={new Date()}
-      />
-      <Button title="Search" onPress={onPress} />
-    </TopContainer>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  rowContainer: {
+    flexDirection: 'row', // Align items horizontally
+    justifyContent: 'space-between', // Add space between the dropdowns
+    alignItems: 'center', // Align items vertically in the center
+    marginVertical: 10, // Add vertical spacing
+  },
+});
 
 export default SearchField;

@@ -1,191 +1,115 @@
 import React, {useState} from 'react';
-import {Text, ScrollView, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {TextStyle} from '../../styles';
-import {Record, DefaultApiFactory} from '../../swagger';
+import {Record, Employer} from '../../swagger';
 import {TopContainer, Separator, Button, Result} from '../index';
 import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
 import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
 import {ResultModel} from '../../types';
-import {StatusModel, ActionType, ErrMsg, Screen} from '../../enums';
-import {alert} from '../../helper/Alert';
+import {StatusModel} from '../../enums';
 import TableHeader from './TableHeader';
-import moment from 'moment';
-import Validator from '../../validator/validator';
-let api = DefaultApiFactory();
+import EditRecordModal from './EditRecordModal';
 
-const RecordHistory = ({route, navigation}: any) => {
+interface RecordHistoryProps {
+  route: {
+    params: {
+      employer: Employer;
+      serviceProviderEmail: string;
+    };
+  };
+  navigation: any;
+}
+
+const RecordHistory = ({route}: RecordHistoryProps) => {
   const {employer, serviceProviderEmail} = route.params;
   const [records, setRecords] = useState<Record[]>([]);
-  const [rowSelected, setRowSelected] = useState({
-    selectMode: false,
-    selectRow: '',
-  });
-  const [editSelected, setEditSelected] = useState({
-    editMode: false,
-    editRow: '',
-  });
-  const [deleteSelected, setDeleteSelected] = useState({
-    deleteMode: false,
-    deleteRow: '',
-  });
+  const [rowSelected, setRowSelected] = useState<Record | null>(null);
   let centerText = TextStyle.createCenterTextStyle();
-  const buttonStyle = {
-    width: 60,
-    height: 24,
-    backgroundColor: rowSelected.selectMode ? COLORS.BLUE : COLORS.LIGHT_GREY,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 20,
-  };
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
   const headerContent = ['Date', 'In', 'Out', 'Total'];
-  const [selectedPeriod, setSelectedPeriod] = useState({
-    from: '',
-    to: '',
-  });
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-  const enableActionMode = async (type: ActionType) => {
-    if (type === ActionType.UPDATE) {
-      setEditSelected({
-        editMode: true,
-        editRow: rowSelected.selectRow,
-      });
+  const enableEditMode = () => {
+    if (rowSelected) {
+      setIsModalVisible(true);
     } else {
-      setDeleteSelected({
-        deleteMode: true,
-        deleteRow: rowSelected.selectRow,
-      });
-    }
-  };
-
-  const deleteAlert = async () => {
-    const date = moment(rowSelected.selectRow.startTime).format('YYYY/MM/DD');
-
-    alert(
-      `Are you sure you want to delete the record of ${date}?`,
-      '',
-      function () {
-        deleteRecord();
-      },
-      null,
-    );
-  };
-
-  const validateInput = (): boolean => {
-    const validateErr = Validator.validateWorkingRecordSelect(
-      selectedPeriod.from,
-      selectedPeriod.to,
-    );
-    if (validateErr) {
-      setResult({status: StatusModel.ERROR, message: validateErr});
-    }
-
-    return validateErr == null;
-  };
-
-  const searchRecord = async (): Promise<void> => {
-    if (!validateInput()) return;
-
-    try {
-      const fromDate = selectedPeriod.from ? selectedPeriod.from : '2020-01-01';
-      const toDate = selectedPeriod.to
-        ? moment(selectedPeriod.to).endOf('day').format('YYYY-MM-DD HH:mm:ss')
-        : moment().endOf('day').format('YYYY-MM-DD HH:mm:ss');
-      const fromDateInEpoch = moment(fromDate).unix().toString();
-      const toDateInEpoch = moment(toDate).unix().toString();
-
-      const {data} = await api.getRecordByPeriod(
-        employer.email,
-        serviceProviderEmail,
-        fromDateInEpoch,
-        toDateInEpoch,
-      );
-      setRecords(data.records!);
-    } catch (e) {
-      setRecords([]);
-    }
-  };
-
-  const deleteRecord = async () => {
-    try {
-      await api.deleteRecord({
-        recordId: rowSelected.selectRow.id,
-      });
-      setResult({
-        status: StatusModel.SUCCESS,
-        message: ErrMsg.SUCCESS_DELETE_RECORD,
-      });
-    } catch (e) {
       setResult({
         status: StatusModel.ERROR,
-        message: ErrMsg.FAIL_DELETE_RECORD,
+        message: 'Please select a record to edit',
       });
     }
   };
+
+  const updateRecord = (updatedRecord: Record) => {
+    setRecords(prevRecords =>
+      prevRecords.map(record =>
+        record.id === updatedRecord.id ? updatedRecord : record,
+      ),
+    );
+    resetSelection();
+  };
+
+  const resetSelection = (): void => {
+    setRowSelected(null);
+  }
 
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
-      <ScrollView>
-        <SearchField
-          selectedPeriod={selectedPeriod}
-          setSelectedPeriod={setSelectedPeriod}
-          onPress={searchRecord}
-          employer={route.params.employer}
-          serviceProviderEmail={serviceProviderEmail}
-        />
-        {records?.length !== 0 && (
-          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+      <SearchField
+        employer={employer}
+        serviceProviderEmail={serviceProviderEmail}
+        setRecords={setRecords}
+      />
+      <View style={{height: '50%'}}>
+        {records?.length > 0 && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              height: '10%',
+            }}>
             <Button
               title="Edit"
-              style={buttonStyle}
-              onPress={() => enableActionMode(ActionType.UPDATE)}
-            />
-            <Button
-              title="Delete"
-              style={buttonStyle}
-              onPress={() => {
-                enableActionMode(ActionType.DELETE), deleteAlert();
-              }}
+              onPress={enableEditMode}
+              buttonWidth={'20%'}
+              buttonHeight={'80%'}
+              buttonColor={COLORS.LIGHT_GREY}
+              style={{marginRight: 20}}
             />
           </View>
         )}
-        <ScrollView>
-          <TableHeader headerContent={headerContent} />
-          <Separator />
-          {records?.length ? (
-            records.map((record: Record, index: number) => {
-              return (
-                <WorkingHistoryList
-                  key={index}
-                  record={record}
-                  rowSelected={rowSelected}
-                  editSelected={editSelected}
-                  setRowSelected={setRowSelected}
-                  setEditSelected={setEditSelected}
-                  setResult={setResult}
-                />
-              );
-            })
-          ) : (
-            <Text style={centerText}>No records matched</Text>
-          )}
-        </ScrollView>
-        <Button
-          title="View changes on record"
-          onPress={() =>
-            navigation.navigate(Screen.RECORD_CHANGE, {
-              employer,
-              serviceProviderEmail,
-            })
-          }
-        />
-      </ScrollView>
+        <TableHeader headerContent={headerContent} />
+        <Separator />
+        {records?.length ? (
+          records.map((record: Record, index: number) => {
+            return (
+              <WorkingHistoryList
+                key={index}
+                record={record}
+                rowSelected={rowSelected}
+                setRowSelected={setRowSelected}
+                resetSelection={resetSelection}
+              />
+            );
+          })
+        ) : (
+          <Text style={centerText}>No records matched</Text>
+        )}
+      </View>
+      <EditRecordModal
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        rowSelected={rowSelected}
+        setRowSelected={setRowSelected}
+        setResult={setResult}
+        updateRecord={updateRecord}
+        resetSelection={resetSelection}
+      />
     </TopContainer>
   );
 };

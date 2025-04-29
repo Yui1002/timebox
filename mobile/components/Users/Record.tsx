@@ -1,15 +1,31 @@
 import React, {useEffect, useState} from 'react';
+import {Text, Alert, View} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 import {TopContainer, Container, Header, Button} from '../index';
 import {ResultModel, Record as RecordType} from '../../types';
 import {StatusModel, Screen} from '../../enums';
 import Result from '../Common/Result';
-import RecordDropdown from '../RecordDropdown';
 import {getToken} from '../../tokenUtils';
-import {DefaultApiFactory, TimeType} from '../../swagger';
+import {DefaultApiFactory, Employer, TimeType} from '../../swagger';
+import Validator from '../../validator/validator';
+import ReusableDropdown from '../Common/ReusableDropdown';
+import { getAuthHeader } from '../../tokenUtils';
+import { convertEpochToDate } from '../../helper/DateUtils';
 
 let api = DefaultApiFactory();
 
-const Record = ({route, navigation}) => {
+interface RecordProps {
+  route: {
+    params: {
+      employer: Employer;
+      serviceProviderEmail: string
+    }
+  };
+  navigation: any;
+}
+
+const Record = ({route, navigation}: RecordProps) => {
+  const isFocused = useIsFocused();
   const {employer, serviceProviderEmail} = route.params;
   const {firstName, lastName, email} = employer;
   const [startOpen, setStartOpen] = useState<boolean>(false);
@@ -19,13 +35,16 @@ const Record = ({route, navigation}) => {
     message: '',
   });
   const [record, setRecord] = useState<RecordType>({
+    id: null,
     startTime: null,
     endTime: null,
   });
 
   useEffect(() => {
-    getRecord();
-  }, []);
+    if (isFocused) {
+      getRecord();
+    }
+  }, [isFocused]);
 
   const getTodayStartndEndEpoch = () => {
     const now = new Date();
@@ -43,60 +62,91 @@ const Record = ({route, navigation}) => {
 
   const getRecord = async () => {
     try {
-      const token = await getToken();
       const {startEpoch, endEpoch} = getTodayStartndEndEpoch();
       const {data} = await api.getRecordByPeriod(
         email,
         serviceProviderEmail,
         startEpoch,
         endEpoch,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        await getAuthHeader(),
       );
       const record = data.records?.[0] || null;
-      console.log('data is', record);
       setRecord({
+        id: record?.id,
         startTime: record?.epoch_start_time
-          ? new Date(Number(record?.epoch_start_time) * 1000)
+          ? convertEpochToDate(Number(record?.epoch_start_time))
           : null,
         endTime: record?.epoch_end_time
-          ? new Date(Number(record?.epoch_end_time) * 1000)
+          ? convertEpochToDate(Number(record?.epoch_end_time))
           : null,
       });
     } catch (e) {
       setRecord({
+        id: null,
         startTime: null,
         endTime: null,
       });
     }
   };
 
-  const saveRecord = async (type: TimeType, recordTime: Date) => {
+  const validateInput = (type: TimeType, time: Date | null) => {
+    const validateErr = Validator.validateRecordTime(
+      type,
+      type == TimeType.Start ? time : record.startTime,
+      type == TimeType.End ? time : record.endTime,
+    );
+
+    if (validateErr) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: validateErr,
+      });
+    }
+    return validateErr == null;
+  };
+
+  const saveRecord = async (type: TimeType, recordTime: Date | null) => {
+    if (!validateInput(type, recordTime)) return;
+
     try {
-      const epochTime = Math.floor(recordTime.getTime() / 1000);
-      const token = await getToken();
-      await api.setRecord(
+      const epochTime = Math.floor(recordTime!.getTime() / 1000);
+      const {data} = await api.setRecord(
         {
           employerEmail: email,
           serviceProviderEmail: serviceProviderEmail,
           recordTime: epochTime,
           type: type,
+          ...(type === TimeType.End && {id: record.id}),
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        await getAuthHeader(),
+      );
+      const recordData = data.records?.[0] || null;
+      setRecord({
+        id: recordData?.id || record.id,
+        startTime: recordData?.epoch_start_time
+          ? convertEpochToDate(Number(recordData?.epoch_start_time))
+          : record.startTime,
+        endTime: recordData?.epoch_end_time
+          ? convertEpochToDate(Number(recordData?.epoch_end_time))
+          : record.endTime,
+      });
+      showAlert(
+        'Record saved successfully!',
+        `${type} time is saved as ${recordTime?.momentFormat('LT')}`,
       );
     } catch (e) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: e.reponse.data.message || e.status,
-      });
+      console.log(e.response.data.message);
+      showAlert(`${e.reponse.data.message}`, '');
     }
+  };
+
+  const showAlert = (title: string, message: string) => {
+    Alert.alert(title, message, [
+      {
+        text: 'OK',
+        style: 'cancel',
+      },
+    ]);
   };
 
   return (
@@ -105,39 +155,44 @@ const Record = ({route, navigation}) => {
       <Container>
         <Header title={`Employer: ${firstName} ${lastName}`} />
       </Container>
-      <RecordDropdown
+      <Container>
+        <Text>{`Today's date: ${new Date().momentFormat('YYYY/MM/DD')}`}</Text>
+      </Container>
+      <ReusableDropdown
         placeholder={
           record.startTime
-            ? record.startTime.momentFormat('LT')
-            : 'select start time'
+            ? `Start time is set at ${record.startTime.momentFormat('LT')}`
+            : 'Select start time'
         }
+        boxWidth={'100%'}
+        boxHeight={'16%'}
+        onPressDropdown={() => setStartOpen(!startOpen)}
+        isDisabled={!!record.startTime}
+        mode='time'
         isOpen={startOpen}
         date={record.startTime || new Date()}
-        onConfirm={(time: Date) =>
-          setRecord({
-            startTime: time,
-            endTime: record.endTime,
-          })
-        }
+        onConfirm={(time: Date) => saveRecord(TimeType.Start, time)}
         onCancel={() => setStartOpen(false)}
-        onPressDropdown={() => setStartOpen(!startOpen)}
-        onPressButton={() => saveRecord()}
+        isArrowIconShown={record.startTime == null}
+        style={{ marginVertical: 24}}
       />
-      <RecordDropdown
+      <View />
+      <ReusableDropdown
         placeholder={
-          record.endTime ? record.endTime.momentFormat('LT') : 'select end time'
+          record.endTime
+            ? `End time is set at ${record.endTime.momentFormat('LT')}`
+            : 'Select end time'
         }
+        boxWidth={'100%'}
+        boxHeight={'16%'}
+        onPressDropdown={() => setEndOpen(!endOpen)}
+        isDisabled={!!record.endTime}
+        mode='time'
         isOpen={endOpen}
         date={record.endTime || new Date()}
-        onConfirm={(time: Date) =>
-          setRecord({
-            startTime: record.startTime,
-            endTime: time,
-          })
-        }
+        onConfirm={(time: Date) => saveRecord(TimeType.End, time)}
         onCancel={() => setEndOpen(false)}
-        onPressDropdown={() => setEndOpen(!endOpen)}
-        onPressButton={() => null}
+        isArrowIconShown={record.endTime == null}
       />
       <Button
         title="View Records"
@@ -147,6 +202,9 @@ const Record = ({route, navigation}) => {
             serviceProviderEmail,
           })
         }
+        buttonWidth={'80%'}
+        buttonHeight={'8%'}
+        style={{margin: 'auto', marginVertical: 20}}
       />
     </TopContainer>
   );

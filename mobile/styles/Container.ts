@@ -14,6 +14,7 @@ export default class ContainerStyle {
     return StyleSheet.create({
       topContainer: {
         margin: '5%',
+        height: '100%'
       },
     }).topContainer;
   }
@@ -170,9 +171,9 @@ export default class ContainerStyle {
   static createDropdownContainer() {
     let container = StyleSheet.create({
       container: {
-        flexDirection: 'row', 
-        width: '100%', 
-        height: 70
+        // flexDirection: 'row', 
+        // width: '100%', 
+        // height: 70
       }
     }).container;
     return StyleSheet.compose(this.createBasicContainerStyle(), container);

@@ -1,27 +1,35 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleProp} from 'react-native';
-import {ContainerStyle, ButtonStyle, TextStyle} from '../../styles';
-
-let btnContainer = ContainerStyle.createButtonContainerStyle();
-let button = ButtonStyle.createBasicButtonStyle();
-let buttonText = TextStyle.createButtonTextStyle();
+import {Text, TouchableOpacity, ViewStyle} from 'react-native';
+import {ButtonStyle, TextStyle} from '../../styles';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  style?: StyleProp<any>;
-  disabled?: boolean;
+  style?: ViewStyle;
+  buttonWidth: any;
+  buttonHeight: any;
+  buttonColor?: string;
+  buttonTextColor?: string;
 }
 
-const Button = ({title, onPress, style, disabled}: ButtonProps) => {
-  return !style ? (
-    <View style={btnContainer}>
-      <TouchableOpacity style={button} onPress={onPress} disabled={disabled}>
-        <Text style={buttonText}>{title}</Text>
-      </TouchableOpacity>
-    </View>
-  ) : (
-    <TouchableOpacity style={style} onPress={onPress} disabled={disabled}>
+const Button = ({
+  title,
+  onPress,
+  buttonWidth,
+  buttonHeight,
+  buttonColor,
+  buttonTextColor,
+  style,
+}: ButtonProps) => {
+  let button = ButtonStyle.createBasicButtonStyle(
+    buttonWidth,
+    buttonHeight,
+    buttonColor,
+  );
+  let buttonText = TextStyle.createButtonTextStyle(buttonTextColor);
+
+  return (
+    <TouchableOpacity onPress={onPress} style={[button, style]}>
       <Text style={buttonText}>{title}</Text>
     </TouchableOpacity>
   );

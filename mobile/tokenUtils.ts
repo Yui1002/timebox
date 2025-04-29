@@ -19,3 +19,12 @@ export const getToken = async () => {
     console.log('Failed to retrieve token', err);
   }
 };
+
+export const getAuthHeader = async () => {
+  const token = await getToken();
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};

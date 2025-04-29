@@ -31,10 +31,10 @@ export default class TextStyle {
     return StyleSheet.compose(this.createBasicTextStyle(), title);
   }
 
-  static createButtonTextStyle() {
+  static createButtonTextStyle(color: string = COLORS.WHITE) {
     let buttonText = StyleSheet.create({
       buttonText: {
-        color: COLORS.WHITE,
+        color: color,
       },
     }).buttonText;
     return StyleSheet.compose(this.createBasicTextStyle(), buttonText);
