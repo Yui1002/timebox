@@ -5,7 +5,6 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
-import WorkingHistory from './WorkingHistory';
 import HireServiceProvider from './HireServiceProvider';
 import ManageServiceProviders from './ManageServiceProviders';
 import Notification from './Notification';
@@ -40,7 +39,6 @@ const DrawerNav = () => {
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="Hire Service Provider" component={HireServiceProvider} />
       <Drawer.Screen name="Manage Service Provider" component={ManageServiceProviders} />
-      {/* <Drawer.Screen name="My Working Record" component={WorkingHistory} /> */}
       <Drawer.Screen name="Notifications" component={Notification} />
     </Drawer.Navigator>
   );
