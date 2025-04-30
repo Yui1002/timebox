@@ -140,10 +140,13 @@ class RecordRepo extends Repositories implements IRecordRepo  {
     }
 
     async updateRecord(recordRq: UpdateRecordRq): Promise<void> {
-        console.log('recordRq is ', recordRq)
         try {
-            const sql = "UPDATE time_record SET epoch_start_time = $1, epoch_end_time = $2 WHERE time_record_id = $3;";
-            await this.queryDB(sql, [recordRq.startTime, recordRq.endTime, recordRq.recordId]);
+            const sql = `UPDATE time_record SET 
+                            epoch_start_time = $1, 
+                            epoch_end_time = $2, 
+                            update_by = $3 
+                        WHERE time_record_id = $4;`;
+            await this.queryDB(sql, [recordRq.startTime, recordRq.endTime, recordRq.updatedBy, recordRq.recordId]);
         } catch (e) {
             throw new ResponseException(e, 500, 'unable to update data')
         }

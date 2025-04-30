@@ -5,7 +5,7 @@ import {TopContainer, Separator} from '../index';
 import { TextStyle } from '../../styles';
 import SearchField from './SearchField';
 import TableHeader from './TableHeader';
-import RecordChangeList from './RecordChangeList';
+import RecordChangeList from './RecordChangeHistoryList';
 let api = DefaultApiFactory();
 
 const RecordChange = ({route, navigation}: any) => {

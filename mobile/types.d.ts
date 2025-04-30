@@ -15,8 +15,8 @@ type Schedule = {
 };
 
 type ServiceProvider = {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   status: string;
   rate: number;

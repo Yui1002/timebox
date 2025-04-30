@@ -6,18 +6,18 @@ import {AlignContainer} from '../index';
 import {COLORS} from '../../styles/theme';
 import {convertEpochToDate} from '../../helper/DateUtils';
 
-interface WorkingHistoryListProps {
+interface RecordHistoryListProps {
   record: Record;
   rowSelected: Record | null;
   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>;
   resetSelection: () => void;
 }
 
-const WorkingHistoryList = ({
+const RecordHistoryList = ({
   record,
   rowSelected,
   setRowSelected,
-}: WorkingHistoryListProps) => {
+}: RecordHistoryListProps) => {
   const {epoch_start_time, epoch_end_time} = record;
   const date = convertEpochToDate(Number(epoch_start_time)).momentFormat(
     'YYYY/MM/DD',
@@ -59,4 +59,4 @@ const WorkingHistoryList = ({
   );
 };
 
-export default WorkingHistoryList;
+export default RecordHistoryList;

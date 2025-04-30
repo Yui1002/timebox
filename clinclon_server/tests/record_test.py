@@ -7,6 +7,7 @@ from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 from test_utils import db_connection, cursor, BASE_URL
 from test_helper import generate_random_email, generate_random_string, invalid_email
+from user_test import generate_auth_header
 
 @pytest.fixture(scope='module')
 def shared_state():
@@ -78,5 +79,22 @@ def test_get_record_by_date(shared_state):
     for record in record_data["records"]:
         assert record["employerEmail"] == test_employer_email
         assert record["serviceProviderEmail"] == test_service_provider_email
+
+def test_update_record_by_service_provider(cursor):
+    record_data = {
+        "recordId": 84,
+        "startTime": 1745884859,
+        "endTime": 1745920859,
+        "updatedBy": "binsvcatootyxegtro@nbmbb.com" #sp
+    }
+
+    response = requests.put(f"{BASE_URL}/record", json=record_data, headers=generate_auth_header())
+    assert response.status_code == 204
+
+    cursor.execute("SELECT * FROM time_record WHERE time_record_id = %s", (record_data["recordId"],))
+    db_record_date = cursor.fetchone()
+    assert db_record_date["epoch_start_time"] == record_data["startTime"]
+    assert db_record_date["epoch_end_time"] == record_data["endTime"]
+    assert db_record_date["update_by"] == record_data["updatedBy"]
 
 

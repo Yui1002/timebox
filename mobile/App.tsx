@@ -15,7 +15,7 @@ import SignUp from './components/Authentication/SignUp';
 import SignIn from './components/Authentication/SignIn';
 import VerifyOTP from './components/Authentication/VerifyOTP';
 import DrawerNav from './components/Users/DrawerNav';
-import Record from './components/Users/Record';
+import Record from './components/Users/Record'
 import PersonalInfo from './components/Users/StepForms/PersonalInfo';
 import WorkShifts from './components/Users/StepForms/WorkShifts';
 import RegisterWorkShifts from './components/Users/StepForms/RegisterWorkShifts';
@@ -26,9 +26,8 @@ import Profile from './components/Users/Profile/Profile';
 import EditProfile from './components/Users/Profile/EditProfile';
 import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
 import ManageServiceProviders from './components/Users/ManageServiceProviders';
-import ViewWorkingHistory from './components/Users/Profile/ViewWorkingHistory';
 import RecordHistory from './components/Record/RecordHistory';
-import RecordChange from './components/Record/RecordChange';
+import RecordChangeHistory from './components/Record/RecordChangeHistory';
 
 const Stack = createStackNavigator();
 
@@ -157,13 +156,6 @@ function App(): JSX.Element {
             })}
           />
           <Stack.Screen
-            name="ViewWorkingHistory"
-            component={ViewWorkingHistory}
-            options={({navigation}) => ({
-              headerTitle: 'Working History',
-            })}
-          />
-          <Stack.Screen
             name="RecordHistory"
             component={RecordHistory}
             options={({navigation}) => ({
@@ -171,10 +163,10 @@ function App(): JSX.Element {
             })}
           />
           <Stack.Screen
-            name="RecordChange"
-            component={RecordChange}
+            name="RecordChangeHistory"
+            component={RecordChangeHistory}
             options={({navigation}) => ({
-              headerTitle: 'Changes on Record',
+              headerTitle: 'Record Changes',
             })}
           />
         </Stack.Navigator>

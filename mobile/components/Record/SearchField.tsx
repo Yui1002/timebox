@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ResultModel, DateInput} from '../../types';
-import {TopContainer, Title, Button, Result} from '../index';
-import {DefaultApiFactory, Employer} from '../../swagger';
+import {Title, Button, Result} from '../index';
+import {DefaultApiFactory, Employer, Record} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 import ReusableDropdown from '../Common/ReusableDropdown';
@@ -13,7 +13,7 @@ import {convertDateToEpoch} from '../../helper/DateUtils';
 interface SearchFieldProps {
   employer: Employer;
   serviceProviderEmail: string;
-  setRecords: any;
+  setRecords: React.Dispatch<React.SetStateAction<Record[]>>;
 }
 
 const SearchField = ({
@@ -58,7 +58,7 @@ const SearchField = ({
         toEpoch,
         await getAuthHeader(),
       );
-      setRecords(data.records);
+      setRecords(data.records!);
     } catch (e) {
       setResult({
         status: StatusModel.ERROR,

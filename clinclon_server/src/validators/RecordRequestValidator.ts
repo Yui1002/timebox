@@ -80,6 +80,9 @@ class UpdateRecordRequestValidator extends SuperValidator {
         if (!instance.endTime) {
             this.throwError(null, 'End time must not be empty');
         }
+        if (!instance.updatedBy || !instance.updatedBy.length) {
+            this.throwError(null, 'Updated by must not be empty')
+        }
 
         return instance;
     }

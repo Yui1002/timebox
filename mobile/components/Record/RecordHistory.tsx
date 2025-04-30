@@ -3,7 +3,7 @@ import {Text, View} from 'react-native';
 import {TextStyle} from '../../styles';
 import {Record, Employer} from '../../swagger';
 import {TopContainer, Separator, Button, Result} from '../index';
-import WorkingHistoryList from '../ServiceProvider/WorkingHistoryList';
+import RecordHistoryList from './RecordHistoryList';
 import SearchField from './SearchField';
 import {COLORS} from '../../styles/theme';
 import {ResultModel} from '../../types';
@@ -16,13 +16,16 @@ interface RecordHistoryProps {
     params: {
       employer: Employer;
       serviceProviderEmail: string;
+      updatedBy: string
     };
   };
-  navigation: any;
 }
 
-const RecordHistory = ({route}: RecordHistoryProps) => {
-  const {employer, serviceProviderEmail} = route.params;
+const RecordHistory = ({
+  route: {
+    params: {employer, serviceProviderEmail, updatedBy},
+  },
+}: RecordHistoryProps) => {
   const [records, setRecords] = useState<Record[]>([]);
   const [rowSelected, setRowSelected] = useState<Record | null>(null);
   let centerText = TextStyle.createCenterTextStyle();
@@ -55,7 +58,7 @@ const RecordHistory = ({route}: RecordHistoryProps) => {
 
   const resetSelection = (): void => {
     setRowSelected(null);
-  }
+  };
 
   return (
     <TopContainer>
@@ -88,7 +91,7 @@ const RecordHistory = ({route}: RecordHistoryProps) => {
         {records?.length ? (
           records.map((record: Record, index: number) => {
             return (
-              <WorkingHistoryList
+              <RecordHistoryList
                 key={index}
                 record={record}
                 rowSelected={rowSelected}
@@ -109,6 +112,7 @@ const RecordHistory = ({route}: RecordHistoryProps) => {
         setResult={setResult}
         updateRecord={updateRecord}
         resetSelection={resetSelection}
+        updatedBy={updatedBy}
       />
     </TopContainer>
   );
