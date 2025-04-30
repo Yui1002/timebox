@@ -15,6 +15,10 @@ import {Screen} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {UserSchedule} from '../../../swagger';
 
+interface Profile {
+  
+}
+
 const Profile = ({route, navigation}: any) => {
   const {firstName, lastName, email, status, rate, rateType, schedules} =
     route.params.sp;
@@ -22,12 +26,6 @@ const Profile = ({route, navigation}: any) => {
 
   const editProfile = () => {
     navigation.navigate(Screen.EDIT_PROFILE);
-  };
-
-  const viewWorkingHistory = () => {
-    navigation.navigate(Screen.VIEW_WORKING_HISTORY, {
-      spEmail: email,
-    });
   };
 
   let profileText = TextStyle.createProfileTextStyle();
@@ -81,7 +79,16 @@ const Profile = ({route, navigation}: any) => {
             <Text>Not specified</Text>
           )}
         </Container>
-        <Button title="View working history" onPress={viewWorkingHistory} />
+        <Button
+          title="View Record History"
+          onPress={() => navigation.navigate(Screen.RECORD_HISTORY, {
+            employer: userInfo,
+            serviceProviderEmail: email,
+            updatedBy: userInfo.email
+          })}
+          buttonWidth={'100%'}
+          buttonHeight={'10%'}
+        />
       </ScrollView>
     </TopContainer>
   );

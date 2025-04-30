@@ -20,6 +20,7 @@ interface EditRecordModalProps {
   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
   updateRecord: any;
   resetSelection: () => void;
+  updatedBy: string;
 }
 
 const EditRecordModal = ({
@@ -29,7 +30,8 @@ const EditRecordModal = ({
   setResult,
   updateRecord,
   setRowSelected,
-  resetSelection
+  resetSelection,
+  updatedBy
 }: EditRecordModalProps) => {
   const startTime = rowSelected?.epoch_start_time;
   const endTime = rowSelected?.epoch_end_time;
@@ -75,12 +77,15 @@ const EditRecordModal = ({
     const updatedStartTimeInEpoch = convertDateToEpoch(updatedStartTime);
     const updatedEndTimeInEpoch = convertDateToEpoch(updatedEndTime);
 
+    console.log('updated by', updatedBy)
+
     try {
       await api.updateRecord(
         {
           recordId: rowSelected!.id,
           startTime: updatedStartTimeInEpoch,
           endTime: updatedEndTimeInEpoch,
+          updatedBy: updatedBy
         },
         await getAuthHeader(),
       );

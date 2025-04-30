@@ -4,7 +4,8 @@ import ResponseException from "../models/ResponseException";
 import {
   GetServiceProviderRs,
   UpdateServiceProviderRq,
-  GetInactiveServiceProviderRs
+  GetInactiveServiceProviderRs,
+  GetServiceProviderRsMini
 } from "../models/ServiceProvider";
 import { GetUserTransactionRs } from "../models/UserTransaction";
 import { GetUserScheduleRs } from "../models/UserSchedule";
@@ -14,6 +15,7 @@ dotenv.config();
 
 interface IServiceProviderRepo {
   getServiceProvider(employerId: number): Promise<GetServiceProviderRs>;
+  getInactiveServiceProvider(senderEmail: string): Promise<GetServiceProviderRs>;
 }
 
 class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
@@ -45,7 +47,8 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
     }
   } 
 
-  async getInactiveServiceProvider(senderEmail: string) {
+  async getInactiveServiceProvider(senderEmail: string): Promise<GetServiceProviderRs> {
+    console.log('senderEmail is ', senderEmail)
     try {
       const sql = `SELECT DISTINCT 
                     u.user_id AS id,
@@ -60,10 +63,11 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
                   RIGHT JOIN requests r ON u.email_address = r.receiver_email
                   WHERE r.status IN ('PENDING', 'REJECTED') AND r.sender_email = $1;`;
       const data = await this.queryDB(sql, [senderEmail]);
+      console.log('data coming is ', data)
       if (data?.rows.length <= 0) {
         return null;
       }
-      return JSHelperInstance._converter.deserializeObject(data, GetInactiveServiceProviderRs);
+      return JSHelperInstance._converter.deserializeObject(data, GetServiceProviderRs);
     } catch (e: any) {
       throw new ResponseException(e, 500, "unable to get from db");
     }

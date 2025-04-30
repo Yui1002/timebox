@@ -7,14 +7,13 @@ import CheckBox from '@react-native-community/checkbox';
 import {DefaultApiFactory, GetServiceProviderRsMini, RequestStatus} from '../../swagger';
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
-import {formatData} from '../../helper/formatHelper';
-import { getAuthHeader } from '../../tokenUtils';
+import {getAuthHeader} from '../../tokenUtils';
 
 let api = DefaultApiFactory();
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
-  const {email} = useSelector(state => state.userInfo);
+  const employerEmail = useSelector(state => state.userInfo).email;
   const [serviceProviders, setServiceProviders] =
     useState<GetServiceProviderRsMini[]>();
   const [isBoxChecked, setIsBoxChecked] = useState<boolean>(true);
@@ -27,8 +26,10 @@ const ManageServiceProviders = (props: any) => {
 
   const getServiceProviders = async () => {
     try {
-      const {data} = await api.getServiceProvider(email, await getAuthHeader());
-      console.log('data is', data)
+      const {data} = await api.getServiceProvider(
+        employerEmail,
+        await getAuthHeader(),
+      );
       setServiceProviders(data);
     } catch (e: any) {
       setServiceProviders([]);
@@ -38,7 +39,11 @@ const ManageServiceProviders = (props: any) => {
   let checkBox = CheckboxStyle.createBasicCheckboxStyle();
   let text = TextStyle.createBasicTextStyle();
 
-  const filteredServiceProviders = isBoxChecked ? serviceProviders : serviceProviders?.filter(sp => sp.status === 'active' || sp.status === 'approved');
+  const filteredServiceProviders = isBoxChecked
+    ? serviceProviders
+    : serviceProviders?.filter(
+        sp => sp.status === 'active' || sp.status === RequestStatus.Approved,
+      );
 
   return (
     <TopContainer>
@@ -52,7 +57,6 @@ const ManageServiceProviders = (props: any) => {
           animationDuration={0}
           value={isBoxChecked}
           onChange={() => setIsBoxChecked(!isBoxChecked)}
-          // onChange={onSelectChange}
         />
         <Text style={text}>Show not currently employed</Text>
       </CheckBoxContainer>

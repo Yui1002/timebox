@@ -3,7 +3,7 @@ import {Text, TouchableOpacity} from 'react-native';
 import {DefaultApiFactory} from '../../swagger';
 import {AlignContainer, Container} from '../index';
 
-const RecordChangeList = ({record}) => {
+const RecordChangeHistoryList = ({record}) => {
   const {startTime, endTime, updatedBy, changedOn} = record;
 
   return (
@@ -19,4 +19,4 @@ const RecordChangeList = ({record}) => {
   );
 };
 
-export default RecordChangeList;
+export default RecordChangeHistoryList;

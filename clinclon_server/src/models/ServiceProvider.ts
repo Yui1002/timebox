@@ -2,7 +2,7 @@ import {JsonObject, JsonProperty} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
 import { GetUserRs, UserRawDB } from './User';
 import { UserSchedule } from './UserSchedule';
-import { Mode, RateType, RequestStatus } from '../helpers/enum';
+import { Mode, RateType } from '../helpers/enum';
 
 @JsonObject("ServiceProviderRawDB")
 class ServiceProviderRawDB extends BaseRequest {

@@ -48,6 +48,8 @@ class UpdateRecordRq extends BaseRequest {
     startTime: number = 0;
     @JsonProperty("endTime", Number)
     endTime: number = 0;
+    @JsonProperty("updatedBy", String)
+    updatedBy: string = "";
 }
 
 @JsonObject("DeleteRecordRq") 

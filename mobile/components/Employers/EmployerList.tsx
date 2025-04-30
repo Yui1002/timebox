@@ -15,7 +15,6 @@ const EmployerList = (props: EmployerListProps) => {
   const {employer, serviceProviderEmail, navigation} = props;
   const {firstName, lastName, email} = employer;
   let text = TextStyle.createBasicTextStyle();
-  let recordBtn = ButtonStyle.createRecordButtonStyle();
 
   const navigateScreen = (): void => {
     navigation.navigate(Screen.RECORD, {

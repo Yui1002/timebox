@@ -24,7 +24,7 @@ interface RecordProps {
   navigation: any;
 }
 
-const Record = ({route, navigation}: RecordProps) => {
+const Record = ({route, navigation}) => {
   const isFocused = useIsFocused();
   const {employer, serviceProviderEmail} = route.params;
   const {firstName, lastName, email} = employer;
@@ -200,6 +200,7 @@ const Record = ({route, navigation}: RecordProps) => {
           navigation.navigate(Screen.RECORD_HISTORY, {
             employer,
             serviceProviderEmail,
+            updatedBy: serviceProviderEmail
           })
         }
         buttonWidth={'80%'}

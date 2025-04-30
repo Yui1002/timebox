@@ -1052,6 +1052,12 @@ export interface UpdateRecordRq {
      * @memberof UpdateRecordRq
      */
     'endTime'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateRecordRq
+     */
+    'updatedBy'?: string;
 }
 /**
  * 
