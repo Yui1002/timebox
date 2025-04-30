@@ -3,9 +3,7 @@ import {View, Text, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
-import {navigate} from '../../../helper/navigate';
 import {Schedule, ResultModel, RateTypeSet} from '../../../types';
-import {updateServiceProvider} from '../../../redux/actions/updateServiceProviderAction.js';
 import {
   TopContainer,
   Button,
@@ -16,22 +14,22 @@ import {
   Picker,
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
-import {Screen, ErrMsg, RateTypeValue, StatusModel} from '../../../enums';
-import Validator from '../../../validator/validator';
+import {RateTypeValue, StatusModel} from '../../../enums';
 import {DefaultApiFactory, UserStatus} from '../../../swagger';
+import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
+  const {rate, rateType, schedules, status} = route.params;
   const employerData = useSelector(state => state.userInfo);
-  const serviceProviderData = useSelector(state => state.serviceProviderData);
-  const {status, rate, rate_type, schedule} = serviceProviderData;
 
-  const [updatedRate, setUpdatedRate] = useState<string>(rate);
+  const [updatedRate, setUpdatedRate] = useState<number>(rate);
   const [updatedRateType, setUpdatedRateType] =
-    useState<RateTypeValue>(rate_type);
+    useState<RateTypeValue>(rateType);
   const [updatedStatus, setUpdatedStatus] = useState(status);
-  const [updatedSchedule, setUpdatedSchedule] = useState(schedule);
+  const [updatedSchedule, setUpdatedSchedule] = useState<Schedule[]>(schedules);
+
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
   const [rateTypeLabel, setRateTypeLabel] = useState<RateTypeSet[]>([
@@ -46,61 +44,22 @@ const EditProfile = ({route, navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
+  const [itemSelected, setItemSelected] = useState<Schedule | null>(null);
 
-  const deleteDate = (itemToDelete: Schedule) => {
-    const result = serviceProviderData.schedule.map((schedule: Schedule) => {
-      if (JSON.stringify(schedule) === JSON.stringify(itemToDelete)) {
-        schedule.day = null;
-        schedule.startTime = null;
-        schedule.endTime = null;
-      }
-      return schedule;
-    });
-
-    setUpdatedSchedule(result);
-    dispatch(updateServiceProvider(serviceProviderData));
-  };
-
-  const validateInput = (): boolean => {
-    const validateErr = Validator.validateRate(updatedRate, updatedRateType);
-    if (validateErr) {
-      setResult({status: StatusModel.ERROR, message: validateErr});
-    }
-    return validateErr === null;
-  };
-
-  const saveChanges = async () => {
-    if (validateInput()) return;
-
-    try {
-      await api.updateServiceProvider({
-        
-      })
-      // await axios.post(`${LOCAL_HOST_URL}/updateServiceProvider`, {
-      //   employerEmail: employerData.email,
-      //   serviceProviderEmail: serviceProviderData.email,
-      //   rate: updatedRate,
-      //   rateType: updatedRateType,
-      //   status: updatedStatus,
-      //   schedule: updatedSchedule,
-      // });
-      navigate(navigation, Screen.PROFILE, route.params.sp);
-    } catch (e) {
-      setResult({status: StatusModel.ERROR, message: ErrMsg.SAVE_FAIL});
-    }
-  };
-
-  const navigateToSchedule = (schedule: Schedule | null) => {
-    navigate(
-      navigation,
-      Screen.EDIT_WORK_SHIFTS,
-      schedule ? {editSelectedSchedule: schedule} : null,
-    );
-  };
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
+
+  const updateSchedule = (updatedItem: Schedule) => {
+    setUpdatedSchedule(prevSchedules =>
+      prevSchedules.map((schedule: Schedule) =>
+        schedule.day === updatedItem.day ? updatedItem : schedule,
+      ),
+    );
+    setIsModalVisible(false);
+  };
 
   return (
     <TopContainer>
@@ -114,7 +73,8 @@ const EditProfile = ({route, navigation}: any) => {
             <NumberInput
               maxLength={10}
               style={underlineInput}
-              onChangeText={(val: string) => setUpdatedRate(val)}
+              onChangeText={(val: string) => setUpdatedRate(Number(val))}
+              value={updatedRate}
             />
           </View>
           <View style={alignContainer}>
@@ -144,20 +104,26 @@ const EditProfile = ({route, navigation}: any) => {
         <View style={statusOpen ? {zIndex: -1} : null}>
           <Title title="Schedules" />
           {updatedSchedule?.length ? (
-            updatedSchedule.map((s: Schedule, index: number) => {
-              if (s.day && s.startTime && s.endTime) {
+            updatedSchedule.map((schedule: Schedule, index: number) => {
+              const {day, startTime, endTime} = schedule;
+              if (day && startTime && endTime) {
                 return (
                   <View key={index} style={alignTopContainer}>
-                    <Text style={{width: '24%'}}>{s.day}</Text>
+                    <Text style={{width: '24%'}}>{day}</Text>
                     <Text style={{width: '40%'}}>
-                      {s.startTime} ~ {s.endTime}
+                      {startTime} ~ {endTime}
                     </Text>
                     <Text
                       style={styles.delete}
-                      onPress={() => navigateToSchedule(s)}>
+                      onPress={() => {
+                        setIsModalVisible(true);
+                        setItemSelected(schedule);
+                      }}>
                       Edit
                     </Text>
-                    <Text style={styles.delete} onPress={() => deleteDate(s)}>
+                    <Text
+                      style={styles.delete}
+                      onPress={() => console.log('hello')}>
                       Delete
                     </Text>
                   </View>
@@ -169,11 +135,29 @@ const EditProfile = ({route, navigation}: any) => {
           )}
           <Button
             title="Add Schedule"
-            onPress={() => navigateToSchedule(schedule)}
+            onPress={() => console.log('working now')}
+            buttonWidth={'80%'}
+            buttonHeight={'24%'}
+            style={{margin: 'auto', marginVertical: 20}}
           />
         </View>
-        <Button title="Save" onPress={saveChanges} />
+        <Button
+          title="Save"
+          onPress={() => console.log('tired...')}
+          buttonWidth={'80%'}
+          buttonHeight={'12%'}
+          style={{margin: 'auto', marginVertical: 20}}
+        />
       </ScrollView>
+      {isModalVisible && (
+        <EditWorkScheduleModal
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
+          itemSelected={itemSelected!}
+          setResult={setResult}
+          updateSchedule={updateSchedule}
+        />
+      )}
     </TopContainer>
   );
 };

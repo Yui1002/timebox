@@ -7,7 +7,8 @@ import { JWT } from '../config';
 
 interface IUserTransactionController {
     getUserTransaction(rq: GetUserTransactionRq): Promise<GetUserTransactionRs>;
-    setUserTransaction(rq: SetUserTransactionRq): Promise<void>
+    setUserTransaction(rq: SetUserTransactionRq): Promise<void>;
+    updateUserTransaction(rq: )
 }
 
 @Route('userTransaction')
@@ -32,4 +33,6 @@ export class UserTransactionController extends SuperController implements IUserT
     public async setUserTransaction(@Body() rq: SetUserTransactionRq): Promise<void> {
         return await this._userTransactionManager.setUserTransaction(rq);
     }
+
+
 }

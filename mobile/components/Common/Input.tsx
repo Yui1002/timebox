@@ -22,6 +22,7 @@ interface NumberInputProps {
   maxLength: number;
   style: StyleProp<any>;
   onChangeText: (val: string) => void;
+  value: number
 }
 
 const Input = ({
@@ -67,7 +68,7 @@ const PasswordInput = ({
   return <Input {...props} />;
 };
 
-const NumberInput = ({maxLength, style, onChangeText}: NumberInputProps) => {
+const NumberInput = ({maxLength, style, onChangeText, value}: NumberInputProps) => {
   return (
     <TextInput
       style={style}
@@ -75,6 +76,7 @@ const NumberInput = ({maxLength, style, onChangeText}: NumberInputProps) => {
       keyboardType="numeric"
       autoFocus
       onChangeText={onChangeText}
+      value={value}
     />
   );
 };

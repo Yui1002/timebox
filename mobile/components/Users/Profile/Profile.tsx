@@ -25,7 +25,9 @@ const Profile = ({route, navigation}: any) => {
   const userInfo = useSelector(state => state.userInfo);
 
   const editProfile = () => {
-    navigation.navigate(Screen.EDIT_PROFILE);
+    navigation.navigate(Screen.EDIT_PROFILE, {
+      rate, rateType, schedules, status
+    });
   };
 
   let profileText = TextStyle.createProfileTextStyle();

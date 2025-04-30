@@ -24,7 +24,6 @@ import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
 import Profile from './components/Users/Profile/Profile';
 import EditProfile from './components/Users/Profile/EditProfile';
-import EditWorkShifts from './components/Users/Profile/EditWorkShifts';
 import ManageServiceProviders from './components/Users/ManageServiceProviders';
 import RecordHistory from './components/Record/RecordHistory';
 import RecordChangeHistory from './components/Record/RecordChangeHistory';
@@ -136,14 +135,6 @@ function App(): JSX.Element {
             component={EditProfile}
             options={({navigation}) => ({
               headerTitle: 'Edit Profile',
-              gestureEnabled: false,
-            })}
-          />
-          <Stack.Screen
-            name="EditWorkShifts"
-            component={EditWorkShifts}
-            options={({navigation}) => ({
-              headerTitle: 'Edit Work Shifts',
               gestureEnabled: false,
             })}
           />
