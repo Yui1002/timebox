@@ -56,7 +56,8 @@ const ManageServiceProviders = (props: any) => {
         <Header title="Service Providers" />
       </Container>
       {serviceProviders?.length == 0 ? (
-        <Text>You don't have service providers</Text>
+        <Text>You don't have service providers. 
+          Please use the menu to hire or manage service providers</Text>
       ) : (
         <View style={{height: '70%'}}>
           <CheckBoxContainer>

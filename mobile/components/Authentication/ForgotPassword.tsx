@@ -3,9 +3,8 @@ import {ActivityIndicator, View} from 'react-native';
 import {ResultModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger';
-import {Screen, ErrMsg, StatusModel} from '../../enums';
+import {Screen, StatusModel} from '../../enums';
 import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
-import { getToken } from '../../tokenUtils';
 let api = DefaultApiFactory();
 
 const ForgotPassword = ({navigation}: any) => {
@@ -41,14 +40,15 @@ const ForgotPassword = ({navigation}: any) => {
       const isVerified = (await api.verifyEmail(email)).data;
       if (isVerified) {
         await api.setOTP({
-          email, otp: ''
-        })
+          email,
+          otp: '',
+        });
         navigateScreen();
       }
     } catch (e) {
       setResult({
-        status: StatusModel.ERROR, 
-        message: e.response.data.message || e.response.status
+        status: StatusModel.ERROR,
+        message: e.response.data.message || e.response.status,
       });
     } finally {
       setLoading(false);
@@ -69,7 +69,13 @@ const ForgotPassword = ({navigation}: any) => {
           <ActivityIndicator size="large" color="#000" />
         </View>
       ) : (
-        <Button title="Verify Email" onPress={verifyEmail} />
+        <Button
+          title="Verify Email"
+          onPress={verifyEmail}
+          buttonWidth={'80%'}
+          buttonHeight={'6%'}
+          style={{margin: 'auto', marginVertical: 20}}
+        />
       )}
       <Separator />
       <Footer

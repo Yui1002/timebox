@@ -15,7 +15,8 @@ import {
   Header,
 } from '../../index';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
-import {GetUserScheduleRs, UserSchedule} from '../../../swagger';
+import {UserSchedule} from '../../../swagger';
+import {COLORS} from '../../../styles/theme';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -50,8 +51,6 @@ const WorkShifts = ({route, navigation}: any) => {
   };
 
   let centerText = TextStyle.createCenterTextStyle();
-  let backBtn = ButtonStyle.createBackButtonStyle();
-  let continueBtn = ButtonStyle.createContinueButtonStyle();
 
   return (
     <TopContainer>
@@ -69,10 +68,27 @@ const WorkShifts = ({route, navigation}: any) => {
             <Text style={centerText}>No date and time selected</Text>
           )}
         </Container>
-        <Button title="Add Schedule" onPress={navigateToAddSchedule} />
+        <Button
+          title="Add Schedule"
+          onPress={navigateToAddSchedule}
+          buttonWidth={'80%'}
+          buttonHeight={'20%'}
+          style={{margin: 'auto', marginVertical: 20}}
+        />
         <AlignContainer>
-          <Button title="Back" onPress={navigateBack} style={backBtn} />
-          <Button title="Review" onPress={review} style={continueBtn} />
+          <Button
+            title="Back"
+            onPress={navigateBack}
+            buttonWidth={'45%'}
+            buttonHeight={'70%'}
+            buttonColor={COLORS.LIGHT_GREY}
+          />
+          <Button
+            title="Review"
+            onPress={review}
+            buttonWidth={'45%'}
+            buttonHeight={'70%'}
+          />
         </AlignContainer>
       </ScrollView>
     </TopContainer>

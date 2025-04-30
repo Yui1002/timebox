@@ -1,11 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View} from 'react-native';
+import {Text, View, ActivityIndicator} from 'react-native';
 import moment from 'moment';
 import {
   DefaultApiFactory,
   RequestStatus,
-  UpdateRequestRq,
   Mode,
   UserSchedule,
 } from '../../swagger';
@@ -14,7 +13,8 @@ const api = DefaultApiFactory();
 import ScheduleList from '../ServiceProvider/ScheduleList';
 import {ButtonStyle} from '../../styles';
 import {alert, alertError} from '../../helper/Alert';
-import { getToken } from '../../tokenUtils';
+import {getAuthHeader} from '../../tokenUtils';
+import {COLORS} from '../../styles/theme';
 import LoadingButton from '../LoadingButton';
 
 const NotificationList = ({notification, navigation}: any) => {
@@ -48,26 +48,23 @@ const NotificationList = ({notification, navigation}: any) => {
     try {
       setIsLoading(true);
 
-      const token = await getToken();
-
-      await api.updateRequest({
-        senderEmail: email,
-        receiverEmail: user.email,
-        status,
-        rate,
-        rateType,
-        schedules: schedules[0].day == null ? [] : schedules,
-        mode: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0,
-      } as UpdateRequestRq, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      await api.updateRequest(
+        {
+          senderEmail: email,
+          receiverEmail: user.email,
+          status,
+          rate,
+          rateType,
+          schedules: schedules[0].day == null ? [] : schedules,
+          mode: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0,
+        },
+        await getAuthHeader(),
+      );
       alertSuccess(status);
     } catch (e) {
       console.log(e);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -104,13 +101,20 @@ const NotificationList = ({notification, navigation}: any) => {
         <Button
           title="Decline"
           onPress={() => alertConfirm(RequestStatus.Rejected)}
-          style={rejectBtn}
+          buttonWidth={'45%'}
+          buttonHeight={'50%'}
+          buttonColor={COLORS.LIGHT_GREY}
         />
-        <Button
-          title="Accept"
-          onPress={() => alertConfirm(RequestStatus.Approved)}
-          style={acceptBtn}
-        />
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <Button
+            title="Accept"
+            onPress={() => alertConfirm(RequestStatus.Approved)}
+            buttonWidth={'45%'}
+            buttonHeight={'50%'}
+          />
+        )}
       </AlignContainer>
     </View>
   );

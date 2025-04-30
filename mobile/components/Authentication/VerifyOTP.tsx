@@ -22,7 +22,12 @@ let userApi = DefaultApiFactory();
 
 const VerifyOTP = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const { firstName = '', lastName = '', email = '', password = ''} = route.params?.params || route.params;
+  const {
+    firstName = '',
+    lastName = '',
+    email = '',
+    password = '',
+  } = route.params?.params || route.params;
   const isSignUp = route.params?.isSignUp;
   const [otp, setOtp] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
@@ -119,7 +124,13 @@ const VerifyOTP = ({route, navigation}: any) => {
           <ActivityIndicator size="large" color="#000" />
         </View>
       ) : (
-        <Button title="Verify" onPress={verifyOTP} />
+        <Button
+          title="Verify"
+          onPress={verifyOTP}
+          buttonWidth={'80%'}
+          buttonHeight={'6%'}
+          style={{margin: 'auto', marginVertical: 20}}
+        />
       )}
       <Separator />
       <Footer

@@ -10,6 +10,7 @@ import {Screen, StatusModel} from '../../../enums';
 import {ButtonStyle} from '../../../styles';
 import DaySelection from '../../DaySelection';
 import TimePicker from '../../TimePicker';
+import { COLORS } from '../../../styles/theme';
 
 const RegisterWorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -79,9 +80,16 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         <Button
           title="Cancel"
           onPress={() => navigation.goBack()}
-          style={backBtn}
+          buttonWidth={'45%'}
+          buttonHeight={'30%'}
+          buttonColor={COLORS.LIGHT_GREY}
         />
-        <Button title="Continue" onPress={add} style={continuBtn} />
+        <Button
+          title="Continue"
+          onPress={add}
+          buttonWidth={'45%'}
+          buttonHeight={'30%'}
+        />
       </AlignContainer>
     </TopContainer>
   );

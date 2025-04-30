@@ -5,7 +5,6 @@ import {TopContainer, Container, Header, Button} from '../index';
 import {ResultModel, Record as RecordType} from '../../types';
 import {StatusModel, Screen} from '../../enums';
 import Result from '../Common/Result';
-import {getToken} from '../../tokenUtils';
 import {DefaultApiFactory, Employer, TimeType} from '../../swagger';
 import Validator from '../../validator/validator';
 import ReusableDropdown from '../Common/ReusableDropdown';
