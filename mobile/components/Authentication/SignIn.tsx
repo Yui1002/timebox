@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, ActivityIndicator, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {GetUserRs, SignInUserRq} from '../../swagger';
@@ -9,7 +9,7 @@ import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
 import {Footer, Button, Result, Separator, Input, TopContainer} from '../index';
 import TimeboxApiInjector from '../../helper/DefaultApi.ts'; // Adjust the import path as necessary
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 let userApi = new TimeboxApiInjector().getDefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
