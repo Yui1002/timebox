@@ -8,7 +8,7 @@ export const storeToken = async (token: string): Promise<void> => {
   }
 };
 
-export const getToken = async () => {
+export const getToken = async (): Promise<string | null | undefined> => {
   try {
     const token = await Keychain.getGenericPassword();
     if (token) {
@@ -19,6 +19,15 @@ export const getToken = async () => {
     console.log('Failed to retrieve token', err);
   }
 };
+
+export const removeToken = async (): Promise<void> => {
+  try {
+    await Keychain.resetGenericPassword();
+    console.log('Token removed successfully');
+  } catch (err) {
+    console.log('Failed to remove token', err);
+  }
+}
 
 export const getAuthHeader = async () => {
   const token = await getToken();
