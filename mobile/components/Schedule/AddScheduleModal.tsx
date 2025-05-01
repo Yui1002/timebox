@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
-import { DateDropdown } from '../Common/CustomDropdown';
+import {DateDropdown, Dropdown} from '../Common/CustomDropdown';
 import {convertDateToEpoch, convertEpochToDate} from '../../helper/DateUtils';
 import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
@@ -15,24 +15,38 @@ let api = DefaultApiFactory();
 interface AddScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-//   rowSelected: Record | null;
-//   setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
-//   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
-//   updateRecord: any;
-//   resetSelection: () => void;
-//   updatedBy: string;
+  //   rowSelected: Record | null;
+  //   setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
+  //   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
+  //   updateRecord: any;
+  //   resetSelection: () => void;
+  //   updatedBy: string;
 }
 
 const AddScheduleModal = ({
   isModalVisible,
   setIsModalVisible,
-//   rowSelected,
+}: //   rowSelected,
 //   setResult,
 //   updateRecord,
 //   setRowSelected,
 //   resetSelection,
 //   updatedBy
-}: AddScheduleModalProps) => {
+AddScheduleModalProps) => {
+  const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
+  const [isStartTimeDropdownOpen, setIsStartTimeDropdownOpen] = useState(false);
+  const [isEndTimeDropdownOpen, setIsEndTimeDropdownOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<string>('');
+  const [items, setItems] = useState([
+    {label: 'Monday', value: 'Monday'},
+    {label: 'Tuesday', value: 'Tuesday'},
+    {label: 'Wednesday', value: 'Wednesday'},
+    {label: 'Thursday', value: 'Thursday'},
+    {label: 'Saturday', value: 'Saturday'},
+    {label: 'Sunday', value: 'Sunday'},
+  ]);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
 
   return (
     <Modal
@@ -43,23 +57,33 @@ const AddScheduleModal = ({
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Add Schedule</Text>
-
+          <View style={{height: '30%'}}>
+            <Text>Day</Text>
+            <Dropdown
+              isOpen={isDayDropdownOpen}
+              value={selectedDay}
+              items={items}
+              setOpen={() => setIsDayDropdownOpen(!isDayDropdownOpen)}
+              setValue={(day: string) => setSelectedDay(day)}
+              setItems={setItems}
+            />
+          </View>
           <View style={{height: '30%'}}>
             <Text>Start time</Text>
             <DateDropdown
-              placeholder={`${updatedStartTime.momentFormat('LT')}`}
+              placeholder={startTime ? startTime.momentFormat('LT') : 'Select start time'}
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
-                setIsStartDropdownOpen(!isStartDropdownOpen);
+                setIsStartTimeDropdownOpen(!isStartTimeDropdownOpen);
               }}
               isDisabled={false}
               mode="time"
-              isOpen={isStartDropdownOpen}
-              date={updatedStartTime || new Date()}
-              onConfirm={(time: Date) => setUpdatedStartTime(time)}
+              isOpen={isStartTimeDropdownOpen}
+              date={startTime || new Date()}
+              onConfirm={(time: Date) => setStartTime(time)}
               onCancel={() => {
-                setIsStartDropdownOpen(false);
+                setIsStartTimeDropdownOpen(false);
               }}
               isArrowIconShown={true}
             />
@@ -67,19 +91,19 @@ const AddScheduleModal = ({
           <View style={{height: '30%'}}>
             <Text>End time</Text>
             <DateDropdown
-              placeholder={`${updatedEndTime.momentFormat('LT')}`}
+              placeholder={endTime ? endTime.momentFormat('LT') : 'Select end time'}
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
-                setIsEndDropdownOpen(!isEndDropdownOpen);
+                setIsEndTimeDropdownOpen(!isEndTimeDropdownOpen);
               }}
               isDisabled={false}
               mode="time"
-              isOpen={isEndDropdownOpen}
-              date={updatedEndTime || new Date()}
-              onConfirm={(time: Date) => setUpdatedEndTime(time)}
+              isOpen={isEndTimeDropdownOpen}
+              date={endTime || new Date()}
+              onConfirm={(time: Date) => setEndTime(time)}
               onCancel={() => {
-                setIsEndDropdownOpen(false);
+                setIsEndTimeDropdownOpen(false);
               }}
               isArrowIconShown={true}
             />
@@ -93,9 +117,9 @@ const AddScheduleModal = ({
               buttonColor={COLORS.LIGHT_GREY}
             />
             <Button
-              title="Save"
+              title="Add"
               onPress={() => {
-                editRecord();
+
                 setIsModalVisible(false);
               }}
               buttonWidth={'48%'}

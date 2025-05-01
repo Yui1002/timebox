@@ -33,7 +33,7 @@ interface DateDropdownProps {
 }
 
 interface DropdownProps {
-  open: boolean;
+  isOpen: boolean;
   value: string;
   items: any[];
   setOpen: () => void;
@@ -83,7 +83,7 @@ const DateDropdown = ({
 };
 
 const Dropdown = ({
-  open,
+  isOpen,
   value,
   items,
   setOpen,
@@ -92,7 +92,7 @@ const Dropdown = ({
 }: DropdownProps) => {
   return (
     <DropDownPicker
-      open={open}
+      open={isOpen}
       value={value}
       items={items}
       setOpen={setOpen}

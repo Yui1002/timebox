@@ -9,7 +9,6 @@ import {
   Button,
   Section,
   NumberInput,
-  Picker,
   Header,
   Result,
   TopContainer,
@@ -31,6 +30,7 @@ import {
   StatusModel,
 } from '../../../enums';
 import {COLORS} from '../../../styles/theme';
+import { Dropdown } from '../../Common/CustomDropdown'
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -116,8 +116,8 @@ const PersonalInfo = ({route, navigation}: any) => {
           </View>
           <View style={alignContainer}>
             <Title title="Rate Type" />
-            <Picker
-              open={open}
+            <Dropdown
+              isOpen={open}
               value={rateType}
               items={items}
               setOpen={() => setOpen(!open)}
@@ -128,8 +128,8 @@ const PersonalInfo = ({route, navigation}: any) => {
         </AlignContainer>
         <View style={[container, {zIndex: open ? -1 : 1}]}>
           <Title title="Allow the service provider to modify record time?" />
-          <Picker
-            open={modeOpen}
+          <Dropdown
+            isOpen={modeOpen}
             value={mode}
             items={modeItems}
             setOpen={() => setModeOpen(!modeOpen)}

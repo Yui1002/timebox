@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, ScrollView, Alert} from 'react-native';
+import {View, Text, ScrollView, Alert, TouchableOpacity} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
@@ -11,12 +11,15 @@ import {
   Title,
   Result,
   NumberInput,
-  Picker,
+  Icon,
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
 import {RateTypeValue, Screen, StatusModel} from '../../../enums';
 import {DefaultApiFactory, UserStatus} from '../../../swagger';
 import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
+import {Dropdown} from '../../Common/CustomDropdown';
+import {COLORS} from '../../../styles/theme';
+import AddScheduleModal from '../../Schedule/AddScheduleModal';
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
@@ -88,7 +91,7 @@ const EditProfile = ({route, navigation}: any) => {
           },
         },
       ],
-      { cancelable: true }
+      {cancelable: true},
     );
   };
 
@@ -110,8 +113,8 @@ const EditProfile = ({route, navigation}: any) => {
           </View>
           <View style={alignContainer}>
             <Title title="Rate Type" />
-            <Picker
-              open={rateTypeOpen}
+            <Dropdown
+              isOpen={rateTypeOpen}
               value={updatedRateType}
               items={rateTypeLabel}
               setOpen={() => setRateTypeOpen(!rateTypeOpen)}
@@ -133,7 +136,30 @@ const EditProfile = ({route, navigation}: any) => {
           />
         </View>
         <View style={statusOpen ? {zIndex: -1} : null}>
-          <Title title="Schedules" />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Title title="Schedules" />
+            <TouchableOpacity
+              onPress={() => setIsModalVisible(true)}
+              style={{
+                marginLeft: 10,
+                backgroundColor: COLORS.BLUE,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 2,
+                paddingVertical: 4,
+                borderRadius: 20,
+                paddingHorizontal: 12,
+              }}>
+              <Icon
+                name="add"
+                type="Material"
+                size={24}
+                color={COLORS.WHITE}
+                onPress={() => setIsModalVisible(true)}
+              />
+              <Text style={{color: COLORS.WHITE}}>Add</Text>
+            </TouchableOpacity>
+          </View>
           {updatedSchedule?.length ? (
             updatedSchedule.map((schedule: Schedule, index: number) => {
               const {day, startTime, endTime} = schedule;
@@ -164,13 +190,6 @@ const EditProfile = ({route, navigation}: any) => {
           ) : (
             <Text>Not specified</Text>
           )}
-          <Button
-            title="Add Schedule"
-            onPress={() => navigation.navigate(Screen.SELECT_WORK_SCHEDULE)}
-            buttonWidth={'80%'}
-            buttonHeight={'24%'}
-            style={{margin: 'auto', marginVertical: 20}}
-          />
         </View>
         <Button
           title="Save"
@@ -180,15 +199,10 @@ const EditProfile = ({route, navigation}: any) => {
           style={{margin: 'auto', marginVertical: 20}}
         />
       </ScrollView>
-      {isModalVisible && (
-        <EditWorkScheduleModal
-          isModalVisible={isModalVisible}
-          setIsModalVisible={setIsModalVisible}
-          itemSelected={itemSelected!}
-          setResult={setResult}
-          updateSchedule={updateSchedule}
-        />
-      )}
+      <AddScheduleModal
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+      />
     </TopContainer>
   );
 };
