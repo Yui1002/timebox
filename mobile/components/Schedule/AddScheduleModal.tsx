@@ -32,6 +32,16 @@ const AddScheduleModal = ({
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
 
+  useEffect(() => {
+    if (!isModalVisible) {
+        setIsStartTimeDropdownOpen(false);
+        setIsEndTimeDropdownOpen(false)
+        setSelectedDay('');
+        setStartTime(null);
+        setEndTime(null);
+    }
+  }, [isModalVisible])
+
   const handleAdd = () => {
     if (!selectedDay || !startTime || !endTime) {
       alert('Please select a day, start time, and end time.');
