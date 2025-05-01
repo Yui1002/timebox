@@ -14,7 +14,7 @@ import {
   Picker,
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
-import {RateTypeValue, StatusModel} from '../../../enums';
+import {RateTypeValue, Screen, StatusModel} from '../../../enums';
 import {DefaultApiFactory, UserStatus} from '../../../swagger';
 import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 let api = DefaultApiFactory();
@@ -166,7 +166,7 @@ const EditProfile = ({route, navigation}: any) => {
           )}
           <Button
             title="Add Schedule"
-            onPress={() => console.log('working now')}
+            onPress={() => navigation.navigate(Screen.SELECT_WORK_SCHEDULE)}
             buttonWidth={'80%'}
             buttonHeight={'24%'}
             style={{margin: 'auto', marginVertical: 20}}

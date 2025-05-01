@@ -12,7 +12,7 @@ import DaySelection from '../../DaySelection';
 import TimePicker from '../../TimePicker';
 import { COLORS } from '../../../styles/theme';
 
-const RegisterWorkShifts = ({route, navigation}: any) => {
+const RegisterWorkSchedule = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
   const workShifts = useSelector(state => state.workShifts);
@@ -51,9 +51,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     dispatch(addShift(value));
     navigation.navigate(Screen.WORK_SHIFTS, params);
   };
-
-  let continuBtn = ButtonStyle.createContinueButtonStyle();
-  let backBtn = ButtonStyle.createBackButtonStyle();
 
   return (
     <TopContainer>
@@ -95,4 +92,4 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
   );
 };
 
-export default RegisterWorkShifts;
+export default RegisterWorkSchedule;

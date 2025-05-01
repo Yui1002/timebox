@@ -18,7 +18,7 @@ import DrawerNav from './components/Users/DrawerNav';
 import Record from './components/Users/Record'
 import PersonalInfo from './components/Users/StepForms/PersonalInfo';
 import WorkShifts from './components/Users/StepForms/WorkShifts';
-import RegisterWorkShifts from './components/Users/StepForms/RegisterWorkShifts';
+import RegisterWorkSchedule from './components/Users/StepForms/RegisterWorkSchedule';
 import Review from './components/Users/StepForms/Review';
 import ForgotPassword from './components/Authentication/ForgotPassword';
 import ResetPassword from './components/Authentication/ResetPassword';
@@ -27,6 +27,7 @@ import EditProfile from './components/Users/Profile/EditProfile';
 import ManageServiceProviders from './components/Users/ManageServiceProviders';
 import RecordHistory from './components/Record/RecordHistory';
 import RecordChangeHistory from './components/Record/RecordChangeHistory';
+import SelectWorkSchedule from './components/Schedule/SelectWorkSchedule';
 
 const Stack = createStackNavigator();
 
@@ -96,8 +97,8 @@ function App(): JSX.Element {
             })}
           />
           <Stack.Screen
-            name="RegisterWorkShifts"
-            component={RegisterWorkShifts}
+            name="RegisterWorkSchedule"
+            component={RegisterWorkSchedule}
             options={({navigation}) => ({
               headerTitle: '',
               gestureEnabled: false,
@@ -158,6 +159,13 @@ function App(): JSX.Element {
             component={RecordChangeHistory}
             options={({navigation}) => ({
               headerTitle: 'Record Changes',
+            })}
+          />
+          <Stack.Screen
+            name="SelectWorkSchedule"
+            component={SelectWorkSchedule}
+            options={({navigation}) => ({
+              headerTitle: 'Select Work Schedule',
             })}
           />
         </Stack.Navigator>

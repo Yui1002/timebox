@@ -43,7 +43,7 @@ const WorkShifts = ({route, navigation}: any) => {
   };
 
   const navigateToAddSchedule = () => {
-    navigation.navigate(Screen.REGISTER_WORK_SHIFTS, params);
+    navigation.navigate(Screen.REGISTER_WORK_SCHEDULE, params);
   };
 
   const navigateBack = () => {

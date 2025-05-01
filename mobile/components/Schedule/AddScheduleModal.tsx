@@ -1,53 +1,38 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
-import {Button, AlignContainer} from '../index';
 import { DateDropdown } from '../Common/CustomDropdown';
-import {DefaultApiFactory, UserSchedule} from '../../swagger';
-import {ResultModel, Schedule} from '../../types';
+import {convertDateToEpoch, convertEpochToDate} from '../../helper/DateUtils';
+import Button from '../Common/Button';
+import {AlignContainer} from '../Common/Container';
+import {DefaultApiFactory, Record} from '../../swagger';
+import {getAuthHeader} from '../../tokenUtils';
+import Validator from '../../validator/validator';
+import {ResultModel} from '../../types';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 
-interface EditWorkScheduleModalProps {
+interface AddScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-  itemSelected: Schedule;
-  setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
-  updateSchedule: (updatedItem: Schedule) => void;
+//   rowSelected: Record | null;
+//   setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
+//   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
+//   updateRecord: any;
+//   resetSelection: () => void;
+//   updatedBy: string;
 }
 
-const EditWorkScheduleModal = ({
+const AddScheduleModal = ({
   isModalVisible,
   setIsModalVisible,
-  itemSelected,
-  setResult,
-  updateSchedule
-}: EditWorkScheduleModalProps) => {
-  const [isStartDropdownOpen, setIsStartDropdownOpen] =
-    useState<boolean>(false);
-  const [isEndDropdownOpen, setIsEndDropdownOpen] = useState<boolean>(false);
-
-  const [updatedStartTime, setUpdatedStartTime] = useState<string>(
-    itemSelected.startTime!,
-  );
-  const [updatedEndTime, setUpdatedEndTime] = useState<string>(
-    itemSelected.endTime!,
-  );
-
-  const validateInput = (): boolean => {
-    return true;
-  };
-
-  const saveChanges = async () => {
-    if (!validateInput()) return;
-
-    const updatedItem = {
-      ...itemSelected,
-      startTime: updatedStartTime,
-      endTime: updatedEndTime
-    }
-    updateSchedule(updatedItem);
-  };
+//   rowSelected,
+//   setResult,
+//   updateRecord,
+//   setRowSelected,
+//   resetSelection,
+//   updatedBy
+}: AddScheduleModalProps) => {
 
   return (
     <Modal
@@ -57,12 +42,12 @@ const EditWorkScheduleModal = ({
       onRequestClose={() => setIsModalVisible(false)}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Edit Work Schedule</Text>
-          <Text>{itemSelected.day}</Text>
+          <Text style={styles.modalTitle}>Add Schedule</Text>
+
           <View style={{height: '30%'}}>
             <Text>Start time</Text>
             <DateDropdown
-              placeholder={`${updatedStartTime}`}
+              placeholder={`${updatedStartTime.momentFormat('LT')}`}
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
@@ -71,10 +56,8 @@ const EditWorkScheduleModal = ({
               isDisabled={false}
               mode="time"
               isOpen={isStartDropdownOpen}
-              date={new Date()}
-              onConfirm={(time: Date) =>
-                setUpdatedStartTime(time.momentFormat('LT'))
-              }
+              date={updatedStartTime || new Date()}
+              onConfirm={(time: Date) => setUpdatedStartTime(time)}
               onCancel={() => {
                 setIsStartDropdownOpen(false);
               }}
@@ -84,7 +67,7 @@ const EditWorkScheduleModal = ({
           <View style={{height: '30%'}}>
             <Text>End time</Text>
             <DateDropdown
-              placeholder={`${updatedEndTime}`}
+              placeholder={`${updatedEndTime.momentFormat('LT')}`}
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
@@ -93,10 +76,8 @@ const EditWorkScheduleModal = ({
               isDisabled={false}
               mode="time"
               isOpen={isEndDropdownOpen}
-              date={new Date()}
-              onConfirm={(time: Date) =>
-                setUpdatedEndTime(time.momentFormat('LT'))
-              }
+              date={updatedEndTime || new Date()}
+              onConfirm={(time: Date) => setUpdatedEndTime(time)}
               onCancel={() => {
                 setIsEndDropdownOpen(false);
               }}
@@ -113,7 +94,10 @@ const EditWorkScheduleModal = ({
             />
             <Button
               title="Save"
-              onPress={() => saveChanges()}
+              onPress={() => {
+                editRecord();
+                setIsModalVisible(false);
+              }}
               buttonWidth={'48%'}
               buttonHeight={'45%'}
             />
@@ -171,4 +155,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditWorkScheduleModal;
+export default AddScheduleModal;

@@ -1,10 +1,17 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, ViewStyle} from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+} from 'react-native';
 import {Icon} from '../index';
 import {COLORS} from '../../styles/theme';
 
-interface ReusableDropdownProps {
+interface DateDropdownProps {
   // dropdown box
   placeholder: string;
   boxWidth: any;
@@ -25,7 +32,16 @@ interface ReusableDropdownProps {
   style?: ViewStyle;
 }
 
-const ReusableDropdown = ({
+interface DropdownProps {
+  open: boolean;
+  value: string;
+  items: any[];
+  setOpen: () => void;
+  setValue: React.Dispatch<React.SetStateAction<any>>;
+  setItems: any;
+}
+
+const DateDropdown = ({
   placeholder,
   boxWidth,
   boxHeight,
@@ -40,7 +56,7 @@ const ReusableDropdown = ({
   onCancel,
   isArrowIconShown,
   style,
-}: ReusableDropdownProps) => {
+}: DateDropdownProps) => {
   return (
     <View style={[{width: boxWidth, height: boxHeight}, style]}>
       <TouchableOpacity
@@ -66,6 +82,27 @@ const ReusableDropdown = ({
   );
 };
 
+const Dropdown = ({
+  open,
+  value,
+  items,
+  setOpen,
+  setValue,
+  setItems,
+}: DropdownProps) => {
+  return (
+    <DropDownPicker
+      open={open}
+      value={value}
+      items={items}
+      setOpen={setOpen}
+      setValue={setValue}
+      setItems={setItems}
+      listMode="SCROLLVIEW"
+    />
+  );
+};
+
 const styles = StyleSheet.create({
   dropdown: {
     width: '100%',
@@ -80,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReusableDropdown;
+export {DateDropdown, Dropdown};
