@@ -2,17 +2,14 @@ import React, {useState} from 'react';
 import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
 import {Button, AlignContainer} from '../index';
-import { DateDropdown } from '../Common/CustomDropdown';
-import {DefaultApiFactory, UserSchedule} from '../../swagger';
-import {ResultModel, Schedule} from '../../types';
-import {StatusModel} from '../../enums';
-let api = DefaultApiFactory();
+import {DateDropdown} from '../Common/CustomDropdown';
+import {Schedule} from '../../types';
+import Validator from '../../validator/validator';
 
 interface EditWorkScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
   itemSelected: Schedule;
-  setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
   updateSchedule: (updatedItem: Schedule) => void;
 }
 
@@ -20,8 +17,7 @@ const EditWorkScheduleModal = ({
   isModalVisible,
   setIsModalVisible,
   itemSelected,
-  setResult,
-  updateSchedule
+  updateSchedule,
 }: EditWorkScheduleModalProps) => {
   const [isStartDropdownOpen, setIsStartDropdownOpen] =
     useState<boolean>(false);
@@ -34,18 +30,27 @@ const EditWorkScheduleModal = ({
     itemSelected.endTime!,
   );
 
-  const validateInput = (): boolean => {
-    return true;
-  };
-
   const saveChanges = async () => {
-    if (!validateInput()) return;
+    if (!updatedStartTime || !updatedEndTime) {
+      alert('Please select a start time and end time.');
+      return;
+    }
+
+    const validateErr = Validator.isValidSchedule(
+      updatedStartTime,
+      updatedEndTime,
+    );
+
+    if (!validateErr) {
+      alert(`End time must be after start time`);
+      return;
+    }
 
     const updatedItem = {
       ...itemSelected,
       startTime: updatedStartTime,
-      endTime: updatedEndTime
-    }
+      endTime: updatedEndTime,
+    };
     updateSchedule(updatedItem);
   };
 
@@ -127,7 +132,7 @@ const EditWorkScheduleModal = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },

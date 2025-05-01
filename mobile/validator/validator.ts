@@ -49,6 +49,13 @@ class Validator {
     return moment(date).isValid();
   }
 
+  static isValidSchedule(start: string, end: string) {
+    const momentStart = moment(start, 'h:mm A')
+    const momentEnd = moment(end, 'h:mm A')
+
+    return momentStart.isBefore(momentEnd);
+  }
+
   static isValidDuration(startTime: Date, endTime: Date) {
     let diff = moment(endTime, 'h:mm A').diff(
       moment(startTime, 'h:mm A'),

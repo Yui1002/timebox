@@ -56,7 +56,8 @@ const EditProfile = ({route, navigation}: any) => {
   });
   const [itemSelected, setItemSelected] = useState<Schedule | null>(null);
 
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
 
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
@@ -64,7 +65,16 @@ const EditProfile = ({route, navigation}: any) => {
 
   const addSchedule = (newSchedule: Schedule) => {
     setUpdatedSchedule(prevSchedules => [...prevSchedules, newSchedule]);
-    setIsModalVisible(false);
+    setIsAddModalVisible(false);
+  };
+
+  const updateSchedule = (updatedItem: Schedule) => {
+    setUpdatedSchedule(prevSchedules =>
+      prevSchedules.map(schedule =>
+        schedule.day === updatedItem.day ? updatedItem : schedule,
+      ),
+    );
+    setIsEditModalVisible(false);
   };
 
   const deleteSchedule = (schedule: Schedule) => {
@@ -135,7 +145,7 @@ const EditProfile = ({route, navigation}: any) => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Title title="Schedules" />
             <TouchableOpacity
-              onPress={() => setIsModalVisible(true)}
+              onPress={() => setIsAddModalVisible(true)}
               style={{
                 marginLeft: 10,
                 backgroundColor: COLORS.BLUE,
@@ -151,7 +161,7 @@ const EditProfile = ({route, navigation}: any) => {
                 type="Material"
                 size={24}
                 color={COLORS.WHITE}
-                onPress={() => setIsModalVisible(true)}
+                onPress={() => setIsAddModalVisible(true)}
               />
               <Text style={{color: COLORS.WHITE}}>Add</Text>
             </TouchableOpacity>
@@ -169,7 +179,7 @@ const EditProfile = ({route, navigation}: any) => {
                     <Text
                       style={styles.delete}
                       onPress={() => {
-                        setIsModalVisible(true);
+                        setIsEditModalVisible(true);
                         setItemSelected(schedule);
                       }}>
                       Edit
@@ -196,10 +206,19 @@ const EditProfile = ({route, navigation}: any) => {
         />
       </ScrollView>
       <AddScheduleModal
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
+        isModalVisible={isAddModalVisible}
+        setIsModalVisible={setIsAddModalVisible}
         addSchedule={addSchedule}
+        existingSchedules={updatedSchedule}
       />
+      {isEditModalVisible && itemSelected && (
+        <EditWorkScheduleModal
+          isModalVisible={isEditModalVisible}
+          setIsModalVisible={setIsEditModalVisible}
+          itemSelected={itemSelected!}
+          updateSchedule={updateSchedule}
+        />
+      )}
     </TopContainer>
   );
 };

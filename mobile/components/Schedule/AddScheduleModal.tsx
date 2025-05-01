@@ -5,17 +5,20 @@ import {DateDropdown, Dropdown} from '../Common/CustomDropdown';
 import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
 import {Schedule} from '../../types';
+import Validator from '../../validator/validator';
 
 interface AddScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
   addSchedule: (schedule: Schedule) => void;
+  existingSchedules: Schedule[];
 }
 
 const AddScheduleModal = ({
   isModalVisible,
   setIsModalVisible,
   addSchedule,
+  existingSchedules,
 }: AddScheduleModalProps) => {
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
   const [isStartTimeDropdownOpen, setIsStartTimeDropdownOpen] = useState(false);
@@ -34,18 +37,37 @@ const AddScheduleModal = ({
 
   useEffect(() => {
     if (!isModalVisible) {
-        setIsStartTimeDropdownOpen(false);
-        setIsEndTimeDropdownOpen(false)
-        setSelectedDay('');
-        setStartTime(null);
-        setEndTime(null);
+      setIsStartTimeDropdownOpen(false);
+      setIsEndTimeDropdownOpen(false);
+      setSelectedDay('');
+      setStartTime(null);
+      setEndTime(null);
     }
-  }, [isModalVisible])
+  }, [isModalVisible]);
 
   const handleAdd = () => {
     if (!selectedDay || !startTime || !endTime) {
       alert('Please select a day, start time, and end time.');
       return;
+    }
+
+    const isDuplicate = existingSchedules.some(
+      schedule => schedule.day === selectedDay,
+    );
+
+    if (isDuplicate) {
+      alert(`The schedule for ${selectedDay} is already registered.`);
+      return;
+    }
+
+    const validateErr = Validator.validateWorkingRecordSelect(
+      startTime,
+      endTime,
+    );
+
+    if (validateErr) {
+        alert(`End time must be after start time`);
+        return;
     }
 
     addSchedule({
