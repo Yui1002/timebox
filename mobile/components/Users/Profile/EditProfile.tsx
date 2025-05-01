@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
@@ -20,6 +20,7 @@ import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
+  console.log('route params is', route.params);
   const dispatch = useDispatch();
   const {rate, rateType, schedules, status} = route.params;
   const employerData = useSelector(state => state.userInfo);
@@ -37,8 +38,14 @@ const EditProfile = ({route, navigation}: any) => {
     {label: RateTypeValue.DAILY, value: RateTypeValue.DAILY},
   ]);
   const [statusLabel, setStatusLabel] = useState([
-    {label: UserStatus.Active, value: UserStatus.Active},
-    {label: UserStatus.Inactive, value: UserStatus.Inactive},
+    {
+      label: UserStatus.Active.toLowerCase(),
+      value: UserStatus.Active.toLowerCase(),
+    },
+    {
+      label: UserStatus.Inactive.toLowerCase(),
+      value: UserStatus.Inactive.toLowerCase(),
+    },
   ]);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -59,6 +66,30 @@ const EditProfile = ({route, navigation}: any) => {
       ),
     );
     setIsModalVisible(false);
+  };
+
+  const deleteSchedule = (schedule: Schedule) => {
+    const {day, startTime, endTime} = schedule;
+    Alert.alert(
+      'Confirm Deletion',
+      `Are you sure you want to delete the schedule for ${day} ${startTime}~${endTime}?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            setUpdatedSchedule(prevSchedules =>
+              prevSchedules.filter(schedule => schedule.day !== day),
+            );
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
@@ -123,7 +154,7 @@ const EditProfile = ({route, navigation}: any) => {
                     </Text>
                     <Text
                       style={styles.delete}
-                      onPress={() => console.log('hello')}>
+                      onPress={() => deleteSchedule(schedule)}>
                       Delete
                     </Text>
                   </View>
