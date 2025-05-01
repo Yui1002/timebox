@@ -23,7 +23,6 @@ import AddScheduleModal from '../../Schedule/AddScheduleModal';
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
-  console.log('route params is', route.params);
   const dispatch = useDispatch();
   const {rate, rateType, schedules, status} = route.params;
   const employerData = useSelector(state => state.userInfo);
@@ -64,7 +63,7 @@ const EditProfile = ({route, navigation}: any) => {
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
   const addSchedule = (newSchedule: Schedule) => {
-    setUpdatedSchedule(prevSchedules => [...prevSchedules, newSchedule]);
+    setUpdatedSchedule(prevSchedules => sortSchedules([...prevSchedules, newSchedule]));
     setIsAddModalVisible(false);
   };
 
@@ -98,6 +97,22 @@ const EditProfile = ({route, navigation}: any) => {
         },
       ],
       {cancelable: true},
+    );
+  };
+
+  const sortSchedules = (schedules: Schedule[]): Schedule[] => {
+    const dayOrder = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    return schedules.sort(
+      (a: Schedule, b: Schedule) =>
+        dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
     );
   };
 
