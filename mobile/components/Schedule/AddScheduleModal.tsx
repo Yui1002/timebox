@@ -2,37 +2,21 @@ import React, {useEffect, useState} from 'react';
 import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
 import {DateDropdown, Dropdown} from '../Common/CustomDropdown';
-import {convertDateToEpoch, convertEpochToDate} from '../../helper/DateUtils';
 import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
-import {DefaultApiFactory, Record} from '../../swagger';
-import {getAuthHeader} from '../../tokenUtils';
-import Validator from '../../validator/validator';
-import {ResultModel} from '../../types';
-import {StatusModel} from '../../enums';
-let api = DefaultApiFactory();
+import {Schedule} from '../../types';
 
 interface AddScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-  //   rowSelected: Record | null;
-  //   setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
-  //   setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
-  //   updateRecord: any;
-  //   resetSelection: () => void;
-  //   updatedBy: string;
+  addSchedule: (schedule: Schedule) => void;
 }
 
 const AddScheduleModal = ({
   isModalVisible,
   setIsModalVisible,
-}: //   rowSelected,
-//   setResult,
-//   updateRecord,
-//   setRowSelected,
-//   resetSelection,
-//   updatedBy
-AddScheduleModalProps) => {
+  addSchedule,
+}: AddScheduleModalProps) => {
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false);
   const [isStartTimeDropdownOpen, setIsStartTimeDropdownOpen] = useState(false);
   const [isEndTimeDropdownOpen, setIsEndTimeDropdownOpen] = useState(false);
@@ -48,6 +32,19 @@ AddScheduleModalProps) => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
 
+  const handleAdd = () => {
+    if (!selectedDay || !startTime || !endTime) {
+      alert('Please select a day, start time, and end time.');
+      return;
+    }
+
+    addSchedule({
+      day: selectedDay,
+      startTime: startTime.momentFormat('LT'),
+      endTime: endTime.momentFormat('LT'),
+    });
+  };
+
   return (
     <Modal
       visible={isModalVisible}
@@ -57,7 +54,11 @@ AddScheduleModalProps) => {
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Add Schedule</Text>
-          <View style={{height: '30%'}}>
+          <View
+            style={[
+              styles.dropdownContainer,
+              isDayDropdownOpen && {zIndex: 2},
+            ]}>
             <Text>Day</Text>
             <Dropdown
               isOpen={isDayDropdownOpen}
@@ -68,10 +69,16 @@ AddScheduleModalProps) => {
               setItems={setItems}
             />
           </View>
-          <View style={{height: '30%'}}>
+          <View
+            style={[
+              styles.dropdownContainer,
+              isStartTimeDropdownOpen && {zIndex: 2},
+            ]}>
             <Text>Start time</Text>
             <DateDropdown
-              placeholder={startTime ? startTime.momentFormat('LT') : 'Select start time'}
+              placeholder={
+                startTime ? startTime.momentFormat('LT') : 'Select start time'
+              }
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
@@ -88,10 +95,16 @@ AddScheduleModalProps) => {
               isArrowIconShown={true}
             />
           </View>
-          <View style={{height: '30%'}}>
+          <View
+            style={[
+              styles.dropdownContainer,
+              isEndTimeDropdownOpen && {zIndex: 2},
+            ]}>
             <Text>End time</Text>
             <DateDropdown
-              placeholder={endTime ? endTime.momentFormat('LT') : 'Select end time'}
+              placeholder={
+                endTime ? endTime.momentFormat('LT') : 'Select end time'
+              }
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
@@ -118,10 +131,7 @@ AddScheduleModalProps) => {
             />
             <Button
               title="Add"
-              onPress={() => {
-
-                setIsModalVisible(false);
-              }}
+              onPress={handleAdd}
               buttonWidth={'48%'}
               buttonHeight={'45%'}
             />
@@ -145,13 +155,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
-    height: '40%',
+    height: '50%',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
     height: '8%',
+  },
+  dropdownContainer: {
+    width: '100%',
+    marginBottom: 10,
+    zIndex: 1, // Default zIndex
+    height: '22%',
   },
   modalButtons: {
     flexDirection: 'row',

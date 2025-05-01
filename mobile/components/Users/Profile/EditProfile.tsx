@@ -62,12 +62,8 @@ const EditProfile = ({route, navigation}: any) => {
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
-  const updateSchedule = (updatedItem: Schedule) => {
-    setUpdatedSchedule(prevSchedules =>
-      prevSchedules.map((schedule: Schedule) =>
-        schedule.day === updatedItem.day ? updatedItem : schedule,
-      ),
-    );
+  const addSchedule = (newSchedule: Schedule) => {
+    setUpdatedSchedule(prevSchedules => [...prevSchedules, newSchedule]);
     setIsModalVisible(false);
   };
 
@@ -202,6 +198,7 @@ const EditProfile = ({route, navigation}: any) => {
       <AddScheduleModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
+        addSchedule={addSchedule}
       />
     </TopContainer>
   );
