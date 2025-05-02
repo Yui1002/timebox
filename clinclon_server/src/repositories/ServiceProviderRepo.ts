@@ -16,10 +16,10 @@ dotenv.config();
 interface IServiceProviderRepo {
   getServiceProvider(employerId: number): Promise<GetServiceProviderRs>;
   getInactiveServiceProvider(senderEmail: string): Promise<GetServiceProviderRs>;
+  updateUserTransaction(fieldsToUpdate: Partial<UpdateServiceProviderRq>, transactionId: number): Promise<void>;
 }
 
 class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
-
 
   public async getServiceProvider(employerId: number): Promise<GetServiceProviderRs> {
     try {
@@ -48,7 +48,6 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
   } 
 
   async getInactiveServiceProvider(senderEmail: string): Promise<GetServiceProviderRs> {
-    console.log('senderEmail is ', senderEmail)
     try {
       const sql = `SELECT DISTINCT 
                     u.user_id AS id,
@@ -63,7 +62,6 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
                   RIGHT JOIN requests r ON u.email_address = r.receiver_email
                   WHERE r.status IN ('PENDING', 'REJECTED') AND r.sender_email = $1;`;
       const data = await this.queryDB(sql, [senderEmail]);
-      console.log('data coming is ', data)
       if (data?.rows.length <= 0) {
         return null;
       }
@@ -92,20 +90,27 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
   }
 
   public async updateUserTransaction(
-    serviceProvider: UpdateServiceProviderRq,
+    fieldsToUpdate: Partial<UpdateServiceProviderRq>,
     transactionId: number
   ): Promise<void> {
     try {
-      const sql =
-        "UPDATE user_transaction SET rate = $1, rate_type = $2, update_date = CURRENT_TIMESTAMP WHERE user_transaction_id = $3";
-      await this.queryDB(sql, [
-        serviceProvider.rate,
-        serviceProvider.rateType,
-        transactionId,
-      ]);
+      const sql = this.buildUpdateQuery(fieldsToUpdate, "user_transaction", "user_transaction_id");
+      await this.queryDB(sql, [...Object.values(fieldsToUpdate), transactionId]);
     } catch (e) {
       throw new ResponseException(e, 500, "unable to update db");
     }
+  }
+
+  private buildUpdateQuery(fields: Partial<UpdateServiceProviderRq>, tableName: string, idColumn: string): string {
+    const columns = Object.keys(fields);
+    if (columns.length === 0) {
+      throw new ResponseException(null, 500, 'No fields to update');
+    }
+
+    const setClause = columns.map((col, index) => `${col} = $${index+1}`).join(", ");
+    const finalClause = `${setClause}, update_date = CURRENT_TIMESTAMP`
+
+    return `UPDATE ${tableName} SET ${finalClause} WHERE ${idColumn} = $${columns.length+1}`;
   }
 
   public async getSchedule(scheduleId: number): Promise<GetUserScheduleRs> {

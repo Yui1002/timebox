@@ -7,7 +7,7 @@ import { JWT } from '../config';
 
 interface IUserTransactionController {
     getUserTransaction(rq: GetUserTransactionRq): Promise<GetUserTransactionRs>;
-    setUserTransaction(rq: SetUserTransactionRq): Promise<void>
+    setUserTransaction(rq: SetUserTransactionRq): Promise<void>;
 }
 
 @Route('userTransaction')

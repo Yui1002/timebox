@@ -1142,13 +1142,56 @@ export interface UpdateServiceProviderRq {
     'rateType'?: RateType;
     /**
      * 
-     * @type {Array<UserSchedule>}
+     * @type {string}
      * @memberof UpdateServiceProviderRq
      */
-    'schedule'?: Array<UserSchedule>;
+    'status'?: string;
+    /**
+     * 
+     * @type {Array<UpdateUserScheduleRq>}
+     * @memberof UpdateServiceProviderRq
+     */
+    'schedule'?: Array<UpdateUserScheduleRq>;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateServiceProviderRq
+     */
+    'updateBy'?: string;
 }
 
 
+/**
+ * 
+ * @export
+ * @interface UpdateUserScheduleRq
+ */
+export interface UpdateUserScheduleRq {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateUserScheduleRq
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserScheduleRq
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserScheduleRq
+     */
+    'startTime'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserScheduleRq
+     */
+    'endTime'?: string;
+}
 /**
  * 
  * @export
@@ -1172,13 +1215,13 @@ export interface UserSchedule {
      * @type {string}
      * @memberof UserSchedule
      */
-    'startTime'?: string;
+    'start_time'?: string;
     /**
      * 
      * @type {string}
      * @memberof UserSchedule
      */
-    'endTime'?: string;
+    'end_time'?: string;
 }
 /**
  * 

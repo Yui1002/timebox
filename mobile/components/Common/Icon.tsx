@@ -9,15 +9,16 @@ interface IconProps {
   type: 'MaterialCommunity' | 'Material';
   size: number;
   style?: StyleProp<any>;
+  color?: string;
   onPress?: () => void;
 }
 
-const Icon = ({name, type, size, style, onPress}: IconProps) => {
+const Icon = ({name, type, size, style, color = COLORS.BLACK, onPress}: IconProps) => {
   return type === 'MaterialCommunity' ? (
     <MaterialCommunityIcons
       name={name}
       size={size}
-      color={COLORS.BLACK}
+      color={color}
       style={style}
       onPress={onPress}
     />
@@ -25,7 +26,7 @@ const Icon = ({name, type, size, style, onPress}: IconProps) => {
     <MaterialIcons
       name={name}
       size={size}
-      color={COLORS.BLACK}
+      color={color}
       style={style}
       onPress={onPress}
     />

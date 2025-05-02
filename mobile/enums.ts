@@ -61,13 +61,14 @@ enum Screen {
   PERSONAL_INFO = 'PersonalInfo',
   WORK_SHIFTS = 'WorkShifts',
   REVIEW = 'Review',
-  REGISTER_WORK_SHIFTS = 'RegisterWorkShifts',
+  REGISTER_WORK_SCHEDULE = 'RegisterWorkSchedule',
   PROFILE = 'Profile',
   EDIT_WORK_SHIFTS = 'EditWorkShifts',
   EDIT_PROFILE = 'EditProfile',
   VIEW_WORKING_HISTORY = 'ViewWorkingHistory',
   RECORD_HISTORY = 'RecordHistory',
-  RECORD_CHANGE = 'RecordChange'
+  RECORD_CHANGE = 'RecordChange',
+  SELECT_WORK_SCHEDULE = 'SelectWorkSchedule'
 }
 
 enum ErrMsg {

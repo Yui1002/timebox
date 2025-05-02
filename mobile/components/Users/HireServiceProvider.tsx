@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {Text, ActivityIndicator} from 'react-native';
 import {alert} from '../../helper/Alert';
@@ -14,7 +14,7 @@ let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
   const userInfo = useSelector(state => state.userInfo);
-  const [searchInput, setSearchInput] = useState<string>('intjexdicbbisxbhrj@nbmbb.com');
+  const [searchInput, setSearchInput] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
@@ -95,11 +95,18 @@ const HireServiceProvider = (props: any) => {
         title="Email"
         secureTextEntry={false}
         onChangeText={val => setSearchInput(val)}
+        value={searchInput}
       />
       {loading ? (
         <ActivityIndicator size="large" color="#000" />
       ) : (
-        <Button title="Continue" onPress={searchEmail} />
+        <Button
+          title="Continue"
+          onPress={searchEmail}
+          buttonWidth={'80%'}
+          buttonHeight={'6%'}
+          style={{margin: 'auto', marginVertical: 20}}
+        />
       )}
     </TopContainer>
   );

@@ -1,5 +1,17 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
+import { JsonCustomConvert, JsonConverter } from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
+
+// @JsonConverter
+// class TimeConverter implements JsonCustomConvert<string> {
+//     serialize(data: string): any {
+//         return data;
+//     }
+
+//     deserialize(data: any): string {
+//         return data;
+//     }
+// }
 
 @JsonObject("GetUserScheduleRq") 
 class GetUserScheduleRq extends BaseRequest {
@@ -16,9 +28,9 @@ class UserSchedule {
     @JsonProperty("day", String)
     day: string = "";
     @JsonProperty("start_time", String)
-    startTime: string = "";
+    start_time: string = "";
     @JsonProperty("end_time", String)
-    endTime: string = "";
+    end_time: string = "";
 }
 
 @JsonObject("GetUserScheduleRs")
@@ -37,4 +49,16 @@ class SetUserScheduleRq extends BaseRequest {
     schedules: UserSchedule[] = [];
 }
 
-export { GetUserScheduleRq, GetUserScheduleRs, SetUserScheduleRq, UserSchedule };
+@JsonObject("UpdateUserScheduleRq")
+class UpdateUserScheduleRq extends BaseRequest {
+    @JsonProperty("user_schedule_id", Number, true)
+    id?: number;
+    @JsonProperty("day", String, true)
+    day?: string;
+    @JsonProperty("start_time", String, true)
+    startTime?: string;
+    @JsonProperty("end_time", String, true)
+    endTime?: string;
+}
+
+export { GetUserScheduleRq, GetUserScheduleRs, SetUserScheduleRq, UserSchedule, UpdateUserScheduleRq };

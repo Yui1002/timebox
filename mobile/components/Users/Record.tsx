@@ -5,10 +5,9 @@ import {TopContainer, Container, Header, Button} from '../index';
 import {ResultModel, Record as RecordType} from '../../types';
 import {StatusModel, Screen} from '../../enums';
 import Result from '../Common/Result';
-import {getToken} from '../../tokenUtils';
 import {DefaultApiFactory, Employer, TimeType} from '../../swagger';
 import Validator from '../../validator/validator';
-import ReusableDropdown from '../Common/ReusableDropdown';
+import { DateDropdown } from '../Common/CustomDropdown'
 import { getAuthHeader } from '../../tokenUtils';
 import { convertEpochToDate } from '../../helper/DateUtils';
 
@@ -158,7 +157,7 @@ const Record = ({route, navigation}) => {
       <Container>
         <Text>{`Today's date: ${new Date().momentFormat('YYYY/MM/DD')}`}</Text>
       </Container>
-      <ReusableDropdown
+      <DateDropdown
         placeholder={
           record.startTime
             ? `Start time is set at ${record.startTime.momentFormat('LT')}`
@@ -177,7 +176,7 @@ const Record = ({route, navigation}) => {
         style={{ marginVertical: 24}}
       />
       <View />
-      <ReusableDropdown
+      <DateDropdown
         placeholder={
           record.endTime
             ? `End time is set at ${record.endTime.momentFormat('LT')}`

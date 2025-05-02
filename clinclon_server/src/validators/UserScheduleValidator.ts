@@ -1,7 +1,7 @@
 import SuperValidator from "./SuperValidator";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import {isEmail} from "validator";
-import { GetUserScheduleRq, SetUserScheduleRq, UserSchedule } from "../models/UserSchedule";
+import { GetUserScheduleRq, SetUserScheduleRq, UpdateUserScheduleRq, UserSchedule } from "../models/UserSchedule";
 
 class GetUserScheduleRequestValidator extends SuperValidator {
     constructor() {
@@ -38,4 +38,35 @@ class SetUserScheduleRequestValidator extends SuperValidator {
     }
 }
 
-export {GetUserScheduleRequestValidator, SetUserScheduleRequestValidator};
+class UpdateUserScheduleRequestValidator extends SuperValidator {
+    constructor() {
+        super(new UpdateUserScheduleRq());
+    }
+
+    validateAndConvertRequest(request: any): UpdateUserScheduleRq | null {
+        this.checkRequestEmpty(request);
+
+        let instance = JSHelperInstance._converter.deserializeObject(request, UpdateUserScheduleRq);
+
+        if (instance.id && typeof instance.id !== 'number') {
+            this.throwError('Id must be a number');
+        }
+
+        if (instance.day && typeof instance.day !== 'string') {
+            this.throwError('Day must be a string');
+        }
+
+        if (instance.startTime && typeof instance.startTime !== 'string') {
+            this.throwError('Start time must be a string');
+        }
+
+        if (instance.endTime && typeof instance.endTime !== 'string') {
+            this.throwError('End time must be a string');
+        }
+
+        return instance;
+
+    }
+}
+
+export {GetUserScheduleRequestValidator, SetUserScheduleRequestValidator, UpdateUserScheduleRequestValidator};

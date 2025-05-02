@@ -9,7 +9,6 @@ import {
   Button,
   Section,
   NumberInput,
-  Picker,
   Header,
   Result,
   TopContainer,
@@ -30,6 +29,8 @@ import {
   Mode,
   StatusModel,
 } from '../../../enums';
+import {COLORS} from '../../../styles/theme';
+import { Dropdown } from '../../Common/CustomDropdown'
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -55,7 +56,7 @@ const PersonalInfo = ({route, navigation}: any) => {
 
   const validateInput = () => {
     const validateErr = Validator.validateRate(rate, rateType);
-    
+
     if (validateErr) {
       setResult({status: StatusModel.ERROR, message: validateErr});
     }
@@ -83,8 +84,6 @@ const PersonalInfo = ({route, navigation}: any) => {
 
   let container = ContainerStyle.createBasicContainerStyle();
   let alignContainer = ContainerStyle.createAlignContainer();
-  let continuBtn = ButtonStyle.createContinueButtonStyle();
-  let backBtn = ButtonStyle.createBackButtonStyle();
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
   return (
@@ -117,8 +116,8 @@ const PersonalInfo = ({route, navigation}: any) => {
           </View>
           <View style={alignContainer}>
             <Title title="Rate Type" />
-            <Picker
-              open={open}
+            <Dropdown
+              isOpen={open}
               value={rateType}
               items={items}
               setOpen={() => setOpen(!open)}
@@ -129,8 +128,8 @@ const PersonalInfo = ({route, navigation}: any) => {
         </AlignContainer>
         <View style={[container, {zIndex: open ? -1 : 1}]}>
           <Title title="Allow the service provider to modify record time?" />
-          <Picker
-            open={modeOpen}
+          <Dropdown
+            isOpen={modeOpen}
             value={mode}
             items={modeItems}
             setOpen={() => setModeOpen(!modeOpen)}
@@ -138,10 +137,21 @@ const PersonalInfo = ({route, navigation}: any) => {
             setItems={setModeItems}
           />
         </View>
-        <View style={{marginVertical: 20}}/>
+        <View style={{marginVertical: 20}} />
         <AlignContainer>
-          <Button title="Back" onPress={goBack} style={backBtn} />
-          <Button title="Continue" onPress={proceed} style={continuBtn} />
+          <Button
+            title="Back"
+            onPress={goBack}
+            buttonWidth={'45%'}
+            buttonHeight={'40%'}
+            buttonColor={COLORS.LIGHT_GREY}
+          />
+          <Button
+            title="Continue"
+            onPress={proceed}
+            buttonWidth={'45%'}
+            buttonHeight={'40%'}
+          />
         </AlignContainer>
       </ScrollView>
     </TopContainer>

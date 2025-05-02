@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import ResponseException from "../models/ResponseException";
 import Repositories from "./Repositories";
-import { GetUserScheduleRs, SetUserScheduleRq, UserSchedule } from "../models/UserSchedule";
+import { GetUserScheduleRs, SetUserScheduleRq, UpdateUserScheduleRq, UserSchedule } from "../models/UserSchedule";
 dotenv.config();
 
 
@@ -10,6 +10,7 @@ interface IUserScheduleRepo {
     getUserSchedule(transactionId: number): Promise<GetUserScheduleRs>;
     getUserScheduleById(ids: number[]): Promise<GetUserScheduleRs>;
     setUserSchedule(userScheduleRq: UserSchedule, serviceProviderId: number, transactionId: number): Promise<void>;
+    updateUserSchedule(fieldsToUpdate: Partial<UpdateUserScheduleRq>, scheduleId: number): Promise<void>
 }
 
 class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
@@ -47,11 +48,19 @@ class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
 
     async setUserSchedule(userScheduleRq: UserSchedule, serviceProviderId: number, transactionId: number): Promise<void> {
         try {
-            const sql = "INSERT INTO user_schedule (user_schedule_id, day, start_time, end_time, service_provider_id, user_transaction_id) VALUES (DEFAULT, $1, $2, $3, $4, $5);";
+            const sql = `INSERT INTO user_schedule (
+                            user_schedule_id, 
+                            day, 
+                            start_time, 
+                            end_time, 
+                            service_provider_id, 
+                            user_transaction_id
+                        ) VALUES 
+                         (DEFAULT, $1, $2, $3, $4, $5);`;
             await this.queryDB(sql, [
                 userScheduleRq.day,
-                userScheduleRq.startTime,
-                userScheduleRq.endTime,
+                userScheduleRq.start_time,
+                userScheduleRq.end_time,
                 serviceProviderId,
                 transactionId
             ]);
@@ -60,6 +69,25 @@ class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
         }
     }
 
+    async updateUserSchedule(fieldsToUpdate: Partial<UpdateUserScheduleRq>, scheduleId: number): Promise<void> {
+        try {
+            const sql = this.buildUpdateQuery(fieldsToUpdate, "user_schedule", "user_schedule_id");
+            await this.queryDB(sql, [...Object.values(fieldsToUpdate), scheduleId])
+        } catch (e) {
+            throw new ResponseException(e, 500, 'unable to update the data');
+        }
+    }
+
+    private buildUpdateQuery(fields: Partial<UserSchedule>, tableName: string, idColumn: string): string {
+        const columns = Object.keys(fields);
+        
+        if (columns.length === 0) {
+            throw new ResponseException(null, 500, 'No fields to update')
+        }
+
+        const setClause = columns.map((col, index) => `${col} = $${index+1}`).join(", ");
+        return `UPDATE ${tableName} SET ${setClause} WHERE ${idColumn} = $${columns.length+1}`;
+    }
 } 
 
 export default UserScheduleRepo;

@@ -5,7 +5,7 @@ import {Title, Button, Result} from '../index';
 import {DefaultApiFactory, Employer, Record} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
-import ReusableDropdown from '../Common/ReusableDropdown';
+import { DateDropdown } from '../Common/CustomDropdown'
 import Validator from '../../validator/validator';
 import {getAuthHeader} from '../../tokenUtils';
 import {convertDateToEpoch} from '../../helper/DateUtils';
@@ -72,7 +72,7 @@ const SearchField = ({
       {result.status && <Result status={result.status} msg={result.message} />}
       <Title title="Select period" />
       <View style={styles.rowContainer}>
-        <ReusableDropdown
+        <DateDropdown
           placeholder={
             searchPeriod.from
               ? `${searchPeriod.from.momentFormat('MM-DD-YYYY')}`
@@ -97,7 +97,7 @@ const SearchField = ({
           onCancel={() => setFromOpen(false)}
           isArrowIconShown={true}
         />
-        <ReusableDropdown
+        <DateDropdown
           placeholder={
             searchPeriod.to
               ? `${searchPeriod.to.momentFormat('MM-DD-YYYY')}`

@@ -3,7 +3,7 @@ import Button from './Common/Button';
 import Error from './Common/Error';
 import Separator from './Common/Separator';
 import {Input, PasswordInput, NumberInput} from './Common/Input';
-import {Dropdown, DatePickerDropdown, Picker} from './Common/Dropdown';
+import {Dropdown, DateDropdown} from './Common/CustomDropdown';
 import {Section, Header, Title, Center} from './Common/Text';
 import {
   TopContainer,
@@ -31,10 +31,9 @@ export {
   Input,
   PasswordInput,
   NumberInput,
-  Dropdown,
-  DatePickerDropdown,
+  DateDropdown,
   Section,
-  Picker,
+  Dropdown,
   Header,
   TopContainer,
   Container,

@@ -13,11 +13,7 @@ import {
 } from '../../index';
 import {Screen} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
-import {UserSchedule} from '../../../swagger';
-
-interface Profile {
-  
-}
+import { Schedule } from '../../../types';
 
 const Profile = ({route, navigation}: any) => {
   const {firstName, lastName, email, status, rate, rateType, schedules} =
@@ -25,7 +21,9 @@ const Profile = ({route, navigation}: any) => {
   const userInfo = useSelector(state => state.userInfo);
 
   const editProfile = () => {
-    navigation.navigate(Screen.EDIT_PROFILE);
+    navigation.navigate(Screen.EDIT_PROFILE, {
+      email, rate, rateType, schedules, status
+    });
   };
 
   let profileText = TextStyle.createProfileTextStyle();
@@ -72,7 +70,7 @@ const Profile = ({route, navigation}: any) => {
         <Container>
           <Title title="Working schedules" />
           {schedules?.length ? (
-            schedules?.map((s: UserSchedule, index: number) => (
+            schedules?.map((s: Schedule, index: number) => (
               <ScheduleList key={index} w={s} showDeleteLink={false} />
             ))
           ) : (

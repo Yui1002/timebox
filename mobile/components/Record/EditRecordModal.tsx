@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
-import ReusableDropdown from '../Common/ReusableDropdown';
+import { DateDropdown } from '../Common/CustomDropdown';
 import {convertDateToEpoch, convertEpochToDate} from '../../helper/DateUtils';
 import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
@@ -77,8 +77,6 @@ const EditRecordModal = ({
     const updatedStartTimeInEpoch = convertDateToEpoch(updatedStartTime);
     const updatedEndTimeInEpoch = convertDateToEpoch(updatedEndTime);
 
-    console.log('updated by', updatedBy)
-
     try {
       await api.updateRecord(
         {
@@ -120,7 +118,7 @@ const EditRecordModal = ({
           <Text>{updatedStartTime.momentFormat('YYYY/MM/DD')}</Text>
           <View style={{height: '30%'}}>
             <Text>Start time</Text>
-            <ReusableDropdown
+            <DateDropdown
               placeholder={`${updatedStartTime.momentFormat('LT')}`}
               boxWidth={'100%'}
               boxHeight={'70%'}
@@ -140,7 +138,7 @@ const EditRecordModal = ({
           </View>
           <View style={{height: '30%'}}>
             <Text>End time</Text>
-            <ReusableDropdown
+            <DateDropdown
               placeholder={`${updatedEndTime.momentFormat('LT')}`}
               boxWidth={'100%'}
               boxHeight={'70%'}

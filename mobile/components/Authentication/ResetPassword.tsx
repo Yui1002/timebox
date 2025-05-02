@@ -5,7 +5,6 @@ import {ResultModel} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory, ResetPasswordRq} from '../../swagger';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
-import { getToken } from '../../tokenUtils';
 let api = DefaultApiFactory();
 
 const ResetPassword = ({route, navigation}: any) => {

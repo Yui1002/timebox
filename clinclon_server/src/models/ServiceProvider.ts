@@ -1,7 +1,7 @@
-import {JsonObject, JsonProperty} from 'json2typescript';
+import {JsonObject, JsonProperty, PropertyConvertingMode} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
 import { GetUserRs, UserRawDB } from './User';
-import { UserSchedule } from './UserSchedule';
+import { UpdateUserScheduleRq, UserSchedule } from './UserSchedule';
 import { Mode, RateType } from '../helpers/enum';
 
 @JsonObject("ServiceProviderRawDB")
@@ -69,12 +69,16 @@ class UpdateServiceProviderRq extends BaseRequest {
     employerEmail: string = "";
     @JsonProperty("serviceProviderEmail", String)
     serviceProviderEmail: string = '';
-    @JsonProperty('rate', Number)
-    rate: number = 0;
-    @JsonProperty('rateType', String)
-    rateType: RateType = RateType.HOURLY;
-    @JsonProperty('schedule', [UserSchedule])
-    schedule: UserSchedule[] = [];
+    @JsonProperty('rate', Number, true)
+    rate?: number;
+    @JsonProperty('rate_type', String, true)
+    rateType?: RateType;
+    @JsonProperty('status', String, true)
+    status?: string;
+    @JsonProperty('schedule', [UpdateUserScheduleRq], true)
+    schedule?: UpdateUserScheduleRq[];
+    @JsonProperty('update_by', String)
+    updateBy: string = '';
 }
 
 @JsonObject("GetServiceProviderRs")

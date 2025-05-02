@@ -13,7 +13,7 @@ import { GetRequestsValidator, GetRequestByEmailValidator, SetRequestValidator, 
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from "./validators/ServiceProviderRequestValidator";
 import { GetUserTransactionRequestValidator, SetUserTransactionRequestValidator } from "./validators/UserTransactionRequestValidator";
 import swaggerUi from "swagger-ui-express";
-import { GetUserScheduleRequestValidator, SetUserScheduleRequestValidator } from "./validators/UserScheduleValidator";
+import { GetUserScheduleRequestValidator, SetUserScheduleRequestValidator, UpdateUserScheduleRequestValidator } from "./validators/UserScheduleValidator";
 dotenv.config();
 
 app.use(express.json());
@@ -67,6 +67,6 @@ function initializeValidator() {
       new SetUserTransactionRequestValidator(),
       new GetUserScheduleRequestValidator(),
       new SetUserScheduleRequestValidator(),
-      
+      new UpdateUserScheduleRequestValidator(),
   ])
 }

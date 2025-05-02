@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, ActivityIndicator, View} from 'react-native';
 import {useDispatch} from 'react-redux';
-import {GetUserRs, SignInUserRq} from '../../swagger';
+import {useIsFocused} from '@react-navigation/native';
 import {signInUser} from '../../redux/actions/signInAction.js';
+import {GetUserRs} from '../../swagger';
 import {storeToken} from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
 import {Footer, Button, Result, Separator, Input, TopContainer} from '../index';
-import TimeboxApiInjector from '../../helper/DefaultApi.ts'; // Adjust the import path as necessary
-import {useIsFocused} from '@react-navigation/native';
+import TimeboxApiInjector from '../../helper/DefaultApi.ts';
 let userApi = new TimeboxApiInjector().getDefaultApiFactory();
 
 const SignIn = ({navigation}: any) => {
@@ -44,10 +44,7 @@ const SignIn = ({navigation}: any) => {
     setLoading(true);
 
     try {
-      const {data} = await userApi.signInUser({
-        email,
-        password,
-      } as SignInUserRq);
+      const {data} = await userApi.signInUser({ email, password });
       await storeToken(data.token);
       clearInput();
       dispatchUser(data.user);

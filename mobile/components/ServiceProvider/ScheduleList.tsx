@@ -1,8 +1,9 @@
 import React from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import {TextStyle} from '../../styles';
-import {UserSchedule} from '../../swagger';
 import {AlignContainer} from '../index';
+import { Schedule } from '../../types';
+import { UserSchedule } from '../../swagger';
 
 interface ScheduleListProps {
   w: UserSchedule;
@@ -11,7 +12,7 @@ interface ScheduleListProps {
 }
 
 const ScheduleList = ({w, showDeleteLink, onDelete}: ScheduleListProps) => {
-  const {day, startTime, endTime}: UserSchedule = w;
+  const {day, start_time, end_time}: UserSchedule = w;
 
   let dayText = TextStyle.createCustomWidthTextStyle('30%');
   let timeText = TextStyle.createCustomWidthTextStyle('50%');
@@ -21,7 +22,7 @@ const ScheduleList = ({w, showDeleteLink, onDelete}: ScheduleListProps) => {
     <AlignContainer>
       <Text style={dayText}>{day}</Text>
       <Text style={timeText}>
-        {startTime} ~ {endTime}
+        {start_time} ~ {end_time}
       </Text>
       {showDeleteLink && (
         <TouchableOpacity onPress={onDelete}>

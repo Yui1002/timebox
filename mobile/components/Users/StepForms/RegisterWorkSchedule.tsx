@@ -10,8 +10,9 @@ import {Screen, StatusModel} from '../../../enums';
 import {ButtonStyle} from '../../../styles';
 import DaySelection from '../../DaySelection';
 import TimePicker from '../../TimePicker';
+import { COLORS } from '../../../styles/theme';
 
-const RegisterWorkShifts = ({route, navigation}: any) => {
+const RegisterWorkSchedule = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
   const workShifts = useSelector(state => state.workShifts);
@@ -51,9 +52,6 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
     navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
-  let continuBtn = ButtonStyle.createContinueButtonStyle();
-  let backBtn = ButtonStyle.createBackButtonStyle();
-
   return (
     <TopContainer>
       {result.status && <Result status={result.status} msg={result.message} />}
@@ -79,12 +77,19 @@ const RegisterWorkShifts = ({route, navigation}: any) => {
         <Button
           title="Cancel"
           onPress={() => navigation.goBack()}
-          style={backBtn}
+          buttonWidth={'45%'}
+          buttonHeight={'30%'}
+          buttonColor={COLORS.LIGHT_GREY}
         />
-        <Button title="Continue" onPress={add} style={continuBtn} />
+        <Button
+          title="Continue"
+          onPress={add}
+          buttonWidth={'45%'}
+          buttonHeight={'30%'}
+        />
       </AlignContainer>
     </TopContainer>
   );
 };
 
-export default RegisterWorkShifts;
+export default RegisterWorkSchedule;

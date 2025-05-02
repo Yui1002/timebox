@@ -36,7 +36,6 @@ const Notification = (props: any) => {
           },
         },
       );
-      console.log('data', data)
       const formatted = formatData(data);
       setRequests(formatted);
     } catch (e) {

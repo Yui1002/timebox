@@ -52,8 +52,7 @@ const Home = (props: any) => {
         <Title title="My Employers" />
         {employers?.length == 0 ? (
           <Text>
-            You currently don't have service providers. Please use the menu to
-            hire or manage service providers
+            You currently don't have employers.
           </Text>
         ) : (
           <ScrollView>
