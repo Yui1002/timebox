@@ -1158,6 +1158,91 @@ export interface UpdateRequestRq {
 /**
  * 
  * @export
+<<<<<<< HEAD
+=======
+ * @interface UpdateServiceProviderRq
+ */
+export interface UpdateServiceProviderRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateServiceProviderRq
+     */
+    'employerEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateServiceProviderRq
+     */
+    'serviceProviderEmail'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateServiceProviderRq
+     */
+    'rate'?: number;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof UpdateServiceProviderRq
+     */
+    'rate_type'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateServiceProviderRq
+     */
+    'status'?: string;
+    /**
+     * 
+     * @type {Array<UpdateUserScheduleRq>}
+     * @memberof UpdateServiceProviderRq
+     */
+    'schedule'?: Array<UpdateUserScheduleRq>;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateServiceProviderRq
+     */
+    'update_by'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface UpdateUserScheduleRq
+ */
+export interface UpdateUserScheduleRq {
+    /**
+     * 
+     * @type {number}
+     * @memberof UpdateUserScheduleRq
+     */
+    'user_schedule_id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserScheduleRq
+     */
+    'day'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserScheduleRq
+     */
+    'start_time'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UpdateUserScheduleRq
+     */
+    'end_time'?: string;
+}
+/**
+ * 
+ * @export
+>>>>>>> c691609 (save current work)
  * @interface UserSchedule
  */
 export interface UserSchedule {
@@ -1178,13 +1263,13 @@ export interface UserSchedule {
      * @type {string}
      * @memberof UserSchedule
      */
-    'startTime'?: string;
+    'start_time'?: string;
     /**
      * 
      * @type {string}
      * @memberof UserSchedule
      */
-    'endTime'?: string;
+    'end_time'?: string;
 }
 /**
  * 

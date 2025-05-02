@@ -15,13 +15,21 @@ import {
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
 import {RateTypeValue, Screen, StatusModel} from '../../../enums';
+<<<<<<< HEAD
 import {DefaultApiFactory, UpdateServiceProviderRq, UserStatus} from '../../../swagger';
+=======
+import {DefaultApiFactory, UpdateServiceProviderRq, UpdateUserScheduleRq, UserSchedule, UserStatus} from '../../../swagger';
+>>>>>>> c691609 (save current work)
 import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 import {Dropdown} from '../../Common/CustomDropdown';
 import {COLORS} from '../../../styles/theme';
 import AddScheduleModal from '../../Schedule/AddScheduleModal';
 import Validator from '../../../validator/validator';
 import { getAuthHeader } from '../../../tokenUtils'
+<<<<<<< HEAD
+=======
+import _ from 'lodash';
+>>>>>>> c691609 (save current work)
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
@@ -33,7 +41,7 @@ const EditProfile = ({route, navigation}: any) => {
   const [updatedRateType, setUpdatedRateType] =
     useState<RateTypeValue>(rateType);
   const [updatedStatus, setUpdatedStatus] = useState(status);
-  const [updatedSchedule, setUpdatedSchedule] = useState<Schedule[]>(schedules);
+  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(_.cloneDeep(schedules));
 
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -55,7 +63,7 @@ const EditProfile = ({route, navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
-  const [itemSelected, setItemSelected] = useState<Schedule | null>(null);
+  const [itemSelected, setItemSelected] = useState<UserSchedule | null>(null);
 
   const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
@@ -64,12 +72,20 @@ const EditProfile = ({route, navigation}: any) => {
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
+<<<<<<< HEAD
   const addSchedule = (newSchedule: Schedule) => {
+=======
+  const addSchedule = (newSchedule: UserSchedule) => {
+>>>>>>> c691609 (save current work)
     setUpdatedSchedule(prevSchedules => sortSchedules([...prevSchedules, newSchedule]));
     setIsAddModalVisible(false);
   };
 
+<<<<<<< HEAD
   const updateSchedule = (updatedItem: Schedule) => {
+=======
+  const updateSchedule = (updatedItem: UserSchedule) => {
+>>>>>>> c691609 (save current work)
     setUpdatedSchedule(prevSchedules =>
       prevSchedules.map(schedule =>
         schedule.day === updatedItem.day ? updatedItem : schedule,
@@ -78,11 +94,11 @@ const EditProfile = ({route, navigation}: any) => {
     setIsEditModalVisible(false);
   };
 
-  const deleteSchedule = (schedule: Schedule) => {
-    const {day, startTime, endTime} = schedule;
+  const deleteSchedule = (schedule: UserSchedule) => {
+    const {day, start_time, end_time} = schedule;
     Alert.alert(
       'Confirm Deletion',
-      `Are you sure you want to delete the schedule for ${day} ${startTime}~${endTime}?`,
+      `Are you sure you want to delete the schedule for ${day} ${start_time}~${end_time}?`,
       [
         {
           text: 'Cancel',
@@ -102,7 +118,11 @@ const EditProfile = ({route, navigation}: any) => {
     );
   };
 
+<<<<<<< HEAD
   const sortSchedules = (schedules: Schedule[]): Schedule[] => {
+=======
+  const sortSchedules = (schedules: UserSchedule[]): UserSchedule[] => {
+>>>>>>> c691609 (save current work)
     const dayOrder = [
       'Monday',
       'Tuesday',
@@ -113,10 +133,38 @@ const EditProfile = ({route, navigation}: any) => {
       'Sunday',
     ];
     return schedules.sort(
+<<<<<<< HEAD
       (a: Schedule, b: Schedule) =>
         dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
     );
   };
+=======
+      (a: UserSchedule , b: UserSchedule) =>
+        dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
+    );
+  };
+  const getChangedSchedules = (originalSchedules: UserSchedule[], updatedSchedules: UserSchedule[]): Partial<Schedule>[] => {
+    return updatedSchedules
+      .map(updated => {
+        const original = originalSchedules.find(o => o.id === updated.id);
+        if (!original) {
+          return updated;
+        }
+  
+        const changes: Partial<UpdateUserScheduleRq> = { user_schedule_id: updated.id };
+  
+        if (updated.start_time !== original.start_time) {
+          changes.start_time = updated.start_time;
+        }
+        if (updated.end_time !== original.end_time) {
+          changes.end_time = updated.end_time;
+        }
+
+        return Object.keys(changes).length > 1 ? changes : null;
+      })
+      .filter(Boolean) as Partial<UpdateUserScheduleRq>[];
+  };
+>>>>>>> c691609 (save current work)
 
   const validateInput = () => {
     const validateErr = Validator.validateRate(updatedRate.toString(), updatedRateType);
@@ -137,13 +185,24 @@ const EditProfile = ({route, navigation}: any) => {
       changedData.rate = updatedRate
     }
     if (updatedRateType !== rateType) {
+<<<<<<< HEAD
       changedData.rateType = updatedRateType;
+=======
+      changedData.rate_type = updatedRateType;
+>>>>>>> c691609 (save current work)
     }
     if (updatedStatus !== status) {
       changedData.status = updatedStatus;
     }
+<<<<<<< HEAD
     if (JSON.stringify(updatedSchedule) !== JSON.stringify(schedules)) {
       changedData.schedule;
+=======
+
+    const changedSchedules = getChangedSchedules(schedules, updatedSchedule);
+    if (changedSchedules.length > 0) {
+      changedData.schedule = changedSchedules
+>>>>>>> c691609 (save current work)
     }
 
     return changedData;
@@ -153,6 +212,10 @@ const EditProfile = ({route, navigation}: any) => {
     if (!validateInput()) return;
 
     const changedData = getChangedData();
+<<<<<<< HEAD
+=======
+    console.log('changed data is ', changedData)
+>>>>>>> c691609 (save current work)
 
     if (Object.keys(changedData).length === 0) {
       setResult({
@@ -162,18 +225,28 @@ const EditProfile = ({route, navigation}: any) => {
       return;
     }
 
+<<<<<<< HEAD
     // api 
+=======
+>>>>>>> c691609 (save current work)
     try {
        await api.updateServiceProvider({
         employerEmail: employerData.email,
         serviceProviderEmail: email,
         ...changedData,
+<<<<<<< HEAD
        } as UpdateServiceProviderRq, await getAuthHeader())
     } catch (err) {
       console.log('error is ', err.response.data)
     }
 
 
+=======
+       }, await getAuthHeader())
+    } catch (err) {
+      console.log('error is ', err.response.data)
+    }
+>>>>>>> c691609 (save current work)
   }
 
   return (
@@ -242,14 +315,14 @@ const EditProfile = ({route, navigation}: any) => {
             </TouchableOpacity>
           </View>
           {updatedSchedule?.length ? (
-            updatedSchedule.map((schedule: Schedule, index: number) => {
-              const {day, startTime, endTime} = schedule;
-              if (day && startTime && endTime) {
+            updatedSchedule.map((schedule: UserSchedule, index: number) => {
+              const {day, start_time, end_time} = schedule;
+              if (day && start_time && end_time) {
                 return (
                   <View key={index} style={alignTopContainer}>
                     <Text style={{width: '24%'}}>{day}</Text>
                     <Text style={{width: '40%'}}>
-                      {startTime} ~ {endTime}
+                      {start_time} ~ {end_time}
                     </Text>
                     <Text
                       style={styles.delete}
@@ -272,7 +345,7 @@ const EditProfile = ({route, navigation}: any) => {
             <Text>Not specified</Text>
           )}
         </View>
-        <Button
+        <Button 
           title="Save"
           onPress={saveProfile}
           buttonWidth={'80%'}

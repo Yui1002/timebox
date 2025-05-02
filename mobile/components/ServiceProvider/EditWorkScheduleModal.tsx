@@ -5,12 +5,21 @@ import {Button, AlignContainer} from '../index';
 import {DateDropdown} from '../Common/CustomDropdown';
 import {Schedule} from '../../types';
 import Validator from '../../validator/validator';
+<<<<<<< HEAD
+=======
+import { UserSchedule } from '../../swagger';
+>>>>>>> c691609 (save current work)
 
 interface EditWorkScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
+<<<<<<< HEAD
   itemSelected: Schedule;
   updateSchedule: (updatedItem: Schedule) => void;
+=======
+  itemSelected: UserSchedule;
+  updateSchedule: (updatedItem: UserSchedule) => void;
+>>>>>>> c691609 (save current work)
 }
 
 const EditWorkScheduleModal = ({
@@ -24,10 +33,10 @@ const EditWorkScheduleModal = ({
   const [isEndDropdownOpen, setIsEndDropdownOpen] = useState<boolean>(false);
 
   const [updatedStartTime, setUpdatedStartTime] = useState<string>(
-    itemSelected.startTime!,
+    itemSelected.start_time!,
   );
   const [updatedEndTime, setUpdatedEndTime] = useState<string>(
-    itemSelected.endTime!,
+    itemSelected.end_time!,
   );
 
   const saveChanges = async () => {

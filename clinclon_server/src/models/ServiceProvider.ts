@@ -1,7 +1,7 @@
 import {JsonObject, JsonProperty, PropertyConvertingMode} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
 import { GetUserRs, UserRawDB } from './User';
-import { UserSchedule } from './UserSchedule';
+import { UpdateUserScheduleRq, UserSchedule } from './UserSchedule';
 import { Mode, RateType } from '../helpers/enum';
 
 @JsonObject("ServiceProviderRawDB")
@@ -75,8 +75,8 @@ class UpdateServiceProviderRq extends BaseRequest {
     rate_type?: RateType;
     @JsonProperty('status', String, true)
     status?: string;
-    @JsonProperty('schedule', [UserSchedule], true)
-    schedule?: UserSchedule[];
+    @JsonProperty('schedule', [UpdateUserScheduleRq], true)
+    schedule?: UpdateUserScheduleRq[];
     @JsonProperty('update_by', String)
     update_by: string = '';
 }

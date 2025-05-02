@@ -21,7 +21,6 @@ interface IServiceProviderRepo {
 
 class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
 
-
   public async getServiceProvider(employerId: number): Promise<GetServiceProviderRs> {
     try {
       const sql = `SELECT 
