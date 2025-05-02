@@ -15,21 +15,14 @@ import {
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
 import {RateTypeValue, Screen, StatusModel} from '../../../enums';
-<<<<<<< HEAD
-import {DefaultApiFactory, UpdateServiceProviderRq, UserStatus} from '../../../swagger';
-=======
 import {DefaultApiFactory, UpdateServiceProviderRq, UpdateUserScheduleRq, UserSchedule, UserStatus} from '../../../swagger';
->>>>>>> c691609 (save current work)
 import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 import {Dropdown} from '../../Common/CustomDropdown';
 import {COLORS} from '../../../styles/theme';
 import AddScheduleModal from '../../Schedule/AddScheduleModal';
 import Validator from '../../../validator/validator';
 import { getAuthHeader } from '../../../tokenUtils'
-<<<<<<< HEAD
-=======
 import _ from 'lodash';
->>>>>>> c691609 (save current work)
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
@@ -72,23 +65,15 @@ const EditProfile = ({route, navigation}: any) => {
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
-<<<<<<< HEAD
   const addSchedule = (newSchedule: Schedule) => {
-=======
-  const addSchedule = (newSchedule: UserSchedule) => {
->>>>>>> c691609 (save current work)
     setUpdatedSchedule(prevSchedules => sortSchedules([...prevSchedules, newSchedule]));
     setIsAddModalVisible(false);
   };
 
-<<<<<<< HEAD
-  const updateSchedule = (updatedItem: Schedule) => {
-=======
   const updateSchedule = (updatedItem: UserSchedule) => {
->>>>>>> c691609 (save current work)
     setUpdatedSchedule(prevSchedules =>
       prevSchedules.map(schedule =>
-        schedule.day === updatedItem.day ? updatedItem : schedule,
+        schedule.id === updatedItem.id ? updatedItem : schedule,
       ),
     );
     setIsEditModalVisible(false);
@@ -118,11 +103,7 @@ const EditProfile = ({route, navigation}: any) => {
     );
   };
 
-<<<<<<< HEAD
-  const sortSchedules = (schedules: Schedule[]): Schedule[] => {
-=======
   const sortSchedules = (schedules: UserSchedule[]): UserSchedule[] => {
->>>>>>> c691609 (save current work)
     const dayOrder = [
       'Monday',
       'Tuesday',
@@ -133,38 +114,10 @@ const EditProfile = ({route, navigation}: any) => {
       'Sunday',
     ];
     return schedules.sort(
-<<<<<<< HEAD
-      (a: Schedule, b: Schedule) =>
+      (a: UserSchedule, b: UserSchedule) =>
         dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
     );
   };
-=======
-      (a: UserSchedule , b: UserSchedule) =>
-        dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
-    );
-  };
-  const getChangedSchedules = (originalSchedules: UserSchedule[], updatedSchedules: UserSchedule[]): Partial<Schedule>[] => {
-    return updatedSchedules
-      .map(updated => {
-        const original = originalSchedules.find(o => o.id === updated.id);
-        if (!original) {
-          return updated;
-        }
-  
-        const changes: Partial<UpdateUserScheduleRq> = { user_schedule_id: updated.id };
-  
-        if (updated.start_time !== original.start_time) {
-          changes.start_time = updated.start_time;
-        }
-        if (updated.end_time !== original.end_time) {
-          changes.end_time = updated.end_time;
-        }
-
-        return Object.keys(changes).length > 1 ? changes : null;
-      })
-      .filter(Boolean) as Partial<UpdateUserScheduleRq>[];
-  };
->>>>>>> c691609 (save current work)
 
   const validateInput = () => {
     const validateErr = Validator.validateRate(updatedRate.toString(), updatedRateType);
@@ -178,6 +131,30 @@ const EditProfile = ({route, navigation}: any) => {
     return validateErr == null;
   }
 
+  const getChangedSchedules = (
+    originalSchedules: UserSchedule[],
+    updatedSchedules: UserSchedule[]
+  ): Partial<UserSchedule>[] => {
+    return updatedSchedules
+      .map(updated => {
+        const original = originalSchedules.find(o => o.id === updated.id);
+        if (!original) return null; // New schedule
+  
+        const changes: Partial<UserSchedule> = { id: updated.id };
+  
+        if (updated.start_time !== original.start_time) {
+          changes.start_time = updated.start_time;
+        }
+        if (updated.end_time !== original.end_time) {
+          changes.end_time = updated.end_time;
+        }
+  
+        // Return only if there are changes
+        return Object.keys(changes).length > 1 ? changes : null;
+      })
+      .filter(Boolean) as Partial<UserSchedule>[]; // Filter out null values
+  };
+
   const getChangedData = () => {
     const changedData: Partial<UpdateServiceProviderRq> = {};
 
@@ -185,24 +162,15 @@ const EditProfile = ({route, navigation}: any) => {
       changedData.rate = updatedRate
     }
     if (updatedRateType !== rateType) {
-<<<<<<< HEAD
       changedData.rateType = updatedRateType;
-=======
-      changedData.rate_type = updatedRateType;
->>>>>>> c691609 (save current work)
     }
     if (updatedStatus !== status) {
       changedData.status = updatedStatus;
     }
-<<<<<<< HEAD
-    if (JSON.stringify(updatedSchedule) !== JSON.stringify(schedules)) {
-      changedData.schedule;
-=======
 
-    const changedSchedules = getChangedSchedules(schedules, updatedSchedule);
-    if (changedSchedules.length > 0) {
-      changedData.schedule = changedSchedules
->>>>>>> c691609 (save current work)
+    const chagnedSchedules = getChangedSchedules(schedules, updatedSchedule)
+    if (chagnedSchedules.length > 0) {
+      changedData.schedule = chagnedSchedules;
     }
 
     return changedData;
@@ -212,10 +180,6 @@ const EditProfile = ({route, navigation}: any) => {
     if (!validateInput()) return;
 
     const changedData = getChangedData();
-<<<<<<< HEAD
-=======
-    console.log('changed data is ', changedData)
->>>>>>> c691609 (save current work)
 
     if (Object.keys(changedData).length === 0) {
       setResult({
@@ -225,28 +189,17 @@ const EditProfile = ({route, navigation}: any) => {
       return;
     }
 
-<<<<<<< HEAD
-    // api 
-=======
->>>>>>> c691609 (save current work)
     try {
        await api.updateServiceProvider({
         employerEmail: employerData.email,
         serviceProviderEmail: email,
         ...changedData,
-<<<<<<< HEAD
-       } as UpdateServiceProviderRq, await getAuthHeader())
-    } catch (err) {
-      console.log('error is ', err.response.data)
-    }
-
-
-=======
        }, await getAuthHeader())
     } catch (err) {
       console.log('error is ', err.response.data)
     }
->>>>>>> c691609 (save current work)
+
+
   }
 
   return (

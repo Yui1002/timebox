@@ -39,7 +39,7 @@ class UpdateServiceProviderRequestValidator extends SuperValidator {
         }
 
         if (instance.hasOwnProperty('rate_type')) {
-            if (instance.rate_type !== RateType.HOURLY && instance.rate_type !== RateType.DAILY) {
+            if (instance.rateType !== RateType.HOURLY && instance.rateType !== RateType.DAILY) {
                 this.throwError("Rate type must be hourly or daily");
             }
         }

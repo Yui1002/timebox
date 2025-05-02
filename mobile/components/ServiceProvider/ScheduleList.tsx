@@ -1,8 +1,9 @@
 import React from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import {TextStyle} from '../../styles';
-import {UserSchedule} from '../../swagger';
 import {AlignContainer} from '../index';
+import { Schedule } from '../../types';
+import { UserSchedule } from '../../swagger';
 
 interface ScheduleListProps {
   w: UserSchedule;

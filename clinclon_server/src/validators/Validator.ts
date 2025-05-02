@@ -39,7 +39,6 @@ class Validator {
 
     validateBody(request: any, instanceName: string): any {
         let selectedValidators = this._validators.filter(x => x.getType().getInstanceName() === instanceName);
-        console.log('selected validator is ', selectedValidators)
         if (selectedValidators.length != 1) {
             throw new ResponseException(null, 500, "Unable to parse validators");
         }

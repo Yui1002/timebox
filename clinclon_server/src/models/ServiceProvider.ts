@@ -72,13 +72,13 @@ class UpdateServiceProviderRq extends BaseRequest {
     @JsonProperty('rate', Number, true)
     rate?: number;
     @JsonProperty('rate_type', String, true)
-    rate_type?: RateType;
+    rateType?: RateType;
     @JsonProperty('status', String, true)
     status?: string;
     @JsonProperty('schedule', [UpdateUserScheduleRq], true)
     schedule?: UpdateUserScheduleRq[];
     @JsonProperty('update_by', String)
-    update_by: string = '';
+    updateBy: string = '';
 }
 
 @JsonObject("GetServiceProviderRs")

@@ -6,21 +6,13 @@ import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
 import {Schedule} from '../../types';
 import Validator from '../../validator/validator';
-<<<<<<< HEAD
-=======
 import { UserSchedule } from '../../swagger';
->>>>>>> c691609 (save current work)
 
 interface AddScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-<<<<<<< HEAD
   addSchedule: (schedule: Schedule) => void;
-  existingSchedules: Schedule[];
-=======
-  addSchedule: (schedule: UserSchedule) => void;
   existingSchedules: UserSchedule[];
->>>>>>> c691609 (save current work)
 }
 
 const AddScheduleModal = ({
@@ -81,13 +73,8 @@ const AddScheduleModal = ({
 
     addSchedule({
       day: selectedDay,
-<<<<<<< HEAD
       startTime: startTime.momentFormat('LT'),
       endTime: endTime.momentFormat('LT'),
-=======
-      start_time: startTime.momentFormat('LT'),
-      end_time: endTime.momentFormat('LT'),
->>>>>>> c691609 (save current work)
     });
   };
 

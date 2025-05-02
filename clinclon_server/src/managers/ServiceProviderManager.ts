@@ -78,10 +78,6 @@ class ServiceProviderManager implements IServiceProviderManager {
     }
     
     async updateServiceProvider(serviceProviderRq: Partial<UpdateServiceProviderRq>): Promise<void> {
-<<<<<<< HEAD
-=======
-        console.log('serviceProviderRq is ', serviceProviderRq)
->>>>>>> c691609 (save current work)
         let [employerData, serviceProviderData] = await Promise.all(
             [this._userRepo.getUser(serviceProviderRq.employerEmail), 
             this._userRepo.getUser(serviceProviderRq.serviceProviderEmail)]);
@@ -100,11 +96,6 @@ class ServiceProviderManager implements IServiceProviderManager {
 
         let transactionId = transactionData.id;
 
-<<<<<<< HEAD
-        const { employerEmail, serviceProviderEmail, schedule, ...changedFields } = serviceProviderRq; 
-        await this._serviceProviderRepo.updateUserTransaction(changedFields, transactionId);
-    }    
-=======
         const { employerEmail, serviceProviderEmail, schedule, ...changedFields } = serviceProviderRq;
         
         await this._serviceProviderRepo.updateUserTransaction(changedFields, transactionId);
@@ -113,8 +104,8 @@ class ServiceProviderManager implements IServiceProviderManager {
             for (const sched of schedule) {
                 if (this.isUpdateUserScheduleRq(sched)) {
                     // Update existing schedule
-                    const { user_schedule_id, ...changedScheduleFields } = sched;
-                    await this._userScheduleRepo.updateUserSchedule(changedScheduleFields, user_schedule_id);
+                    const { id, ...changedScheduleFields } = sched;
+                    await this._userScheduleRepo.updateUserSchedule(changedScheduleFields, id);
                 } else {
                     // Insert new schedule
                     await this._userScheduleRepo.setUserSchedule(sched as UserSchedule, serviceProviderId, transactionId);
@@ -124,9 +115,8 @@ class ServiceProviderManager implements IServiceProviderManager {
     }   
     
     private isUpdateUserScheduleRq(schedule: any): schedule is UpdateUserScheduleRq {
-        return (schedule as UpdateUserScheduleRq).user_schedule_id !== undefined;
+        return (schedule as UpdateUserScheduleRq).id !== undefined;
     }
->>>>>>> c691609 (save current work)
 }
 
 export default ServiceProviderManager;
