@@ -34,7 +34,6 @@ const ManageServiceProviders = (props: any) => {
         employerEmail,
         await getAuthHeader(),
       );
-      console.log('data', data)
       setServiceProviders(data);
     } catch (e: any) {
       setServiceProviders([]);

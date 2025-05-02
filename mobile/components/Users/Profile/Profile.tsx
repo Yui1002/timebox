@@ -15,10 +15,6 @@ import {Screen} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {UserSchedule} from '../../../swagger';
 
-interface Profile {
-  
-}
-
 const Profile = ({route, navigation}: any) => {
   const {firstName, lastName, email, status, rate, rateType, schedules} =
     route.params.sp;
@@ -26,7 +22,7 @@ const Profile = ({route, navigation}: any) => {
 
   const editProfile = () => {
     navigation.navigate(Screen.EDIT_PROFILE, {
-      rate, rateType, schedules, status
+      email, rate, rateType, schedules, status
     });
   };
 

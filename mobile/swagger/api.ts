@@ -569,6 +569,51 @@ export type Mode = typeof Mode[keyof typeof Mode];
 
 
 /**
+ * Make all properties in T optional
+ * @export
+ * @interface PartialUpdateServiceProviderRq
+ */
+export interface PartialUpdateServiceProviderRq {
+    /**
+     * 
+     * @type {string}
+     * @memberof PartialUpdateServiceProviderRq
+     */
+    'employerEmail'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PartialUpdateServiceProviderRq
+     */
+    'serviceProviderEmail'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PartialUpdateServiceProviderRq
+     */
+    'rate'?: number;
+    /**
+     * 
+     * @type {RateType}
+     * @memberof PartialUpdateServiceProviderRq
+     */
+    'rateType'?: RateType;
+    /**
+     * 
+     * @type {string}
+     * @memberof PartialUpdateServiceProviderRq
+     */
+    'status'?: string;
+    /**
+     * 
+     * @type {Array<UserSchedule>}
+     * @memberof PartialUpdateServiceProviderRq
+     */
+    'schedule'?: Array<UserSchedule>;
+}
+
+
+/**
  * 
  * @export
  * @enum {string}
@@ -1107,45 +1152,6 @@ export interface UpdateRequestRq {
      * @memberof UpdateRequestRq
      */
     'mode'?: Mode;
-}
-
-
-/**
- * 
- * @export
- * @interface UpdateServiceProviderRq
- */
-export interface UpdateServiceProviderRq {
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateServiceProviderRq
-     */
-    'employerEmail'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateServiceProviderRq
-     */
-    'serviceProviderEmail'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof UpdateServiceProviderRq
-     */
-    'rate'?: number;
-    /**
-     * 
-     * @type {RateType}
-     * @memberof UpdateServiceProviderRq
-     */
-    'rateType'?: RateType;
-    /**
-     * 
-     * @type {Array<UserSchedule>}
-     * @memberof UpdateServiceProviderRq
-     */
-    'schedule'?: Array<UserSchedule>;
 }
 
 
@@ -2211,13 +2217,13 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {UpdateServiceProviderRq} updateServiceProviderRq 
+         * @param {PartialUpdateServiceProviderRq} partialUpdateServiceProviderRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateServiceProvider: async (updateServiceProviderRq: UpdateServiceProviderRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'updateServiceProviderRq' is not null or undefined
-            assertParamExists('updateServiceProvider', 'updateServiceProviderRq', updateServiceProviderRq)
+        updateServiceProvider: async (partialUpdateServiceProviderRq: PartialUpdateServiceProviderRq, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'partialUpdateServiceProviderRq' is not null or undefined
+            assertParamExists('updateServiceProvider', 'partialUpdateServiceProviderRq', partialUpdateServiceProviderRq)
             const localVarPath = `/serviceProvider`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2240,7 +2246,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(updateServiceProviderRq, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(partialUpdateServiceProviderRq, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2651,12 +2657,12 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {UpdateServiceProviderRq} updateServiceProviderRq 
+         * @param {PartialUpdateServiceProviderRq} partialUpdateServiceProviderRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateServiceProvider(updateServiceProviderRq: UpdateServiceProviderRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateServiceProvider(updateServiceProviderRq, options);
+        async updateServiceProvider(partialUpdateServiceProviderRq: PartialUpdateServiceProviderRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateServiceProvider(partialUpdateServiceProviderRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateServiceProvider']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -2942,12 +2948,12 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @param {UpdateServiceProviderRq} updateServiceProviderRq 
+         * @param {PartialUpdateServiceProviderRq} partialUpdateServiceProviderRq 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateServiceProvider(updateServiceProviderRq: UpdateServiceProviderRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.updateServiceProvider(updateServiceProviderRq, options).then((request) => request(axios, basePath));
+        updateServiceProvider(partialUpdateServiceProviderRq: PartialUpdateServiceProviderRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.updateServiceProvider(partialUpdateServiceProviderRq, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3276,13 +3282,13 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 
-     * @param {UpdateServiceProviderRq} updateServiceProviderRq 
+     * @param {PartialUpdateServiceProviderRq} partialUpdateServiceProviderRq 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public updateServiceProvider(updateServiceProviderRq: UpdateServiceProviderRq, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).updateServiceProvider(updateServiceProviderRq, options).then((request) => request(this.axios, this.basePath));
+    public updateServiceProvider(partialUpdateServiceProviderRq: PartialUpdateServiceProviderRq, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).updateServiceProvider(partialUpdateServiceProviderRq, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

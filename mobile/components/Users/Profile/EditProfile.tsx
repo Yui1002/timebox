@@ -15,16 +15,18 @@ import {
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
 import {RateTypeValue, Screen, StatusModel} from '../../../enums';
-import {DefaultApiFactory, UserStatus} from '../../../swagger';
+import {DefaultApiFactory, UpdateServiceProviderRq, UserStatus} from '../../../swagger';
 import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 import {Dropdown} from '../../Common/CustomDropdown';
 import {COLORS} from '../../../styles/theme';
 import AddScheduleModal from '../../Schedule/AddScheduleModal';
+import Validator from '../../../validator/validator';
+import { getAuthHeader } from '../../../tokenUtils'
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
   const dispatch = useDispatch();
-  const {rate, rateType, schedules, status} = route.params;
+  const {email, rate, rateType, schedules, status} = route.params; // initial values 
   const employerData = useSelector(state => state.userInfo);
 
   const [updatedRate, setUpdatedRate] = useState<number>(rate);
@@ -115,6 +117,64 @@ const EditProfile = ({route, navigation}: any) => {
         dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
     );
   };
+
+  const validateInput = () => {
+    const validateErr = Validator.validateRate(updatedRate.toString(), updatedRateType);
+
+    if (validateErr) {
+      setResult({
+        status: StatusModel.ERROR,
+        message: validateErr
+      });
+    }
+    return validateErr == null;
+  }
+
+  const getChangedData = () => {
+    const changedData: Partial<UpdateServiceProviderRq> = {};
+
+    if (updatedRate !== rate) {
+      changedData.rate = updatedRate
+    }
+    if (updatedRateType !== rateType) {
+      changedData.rateType = updatedRateType;
+    }
+    if (updatedStatus !== status) {
+      changedData.status = updatedStatus;
+    }
+    if (JSON.stringify(updatedSchedule) !== JSON.stringify(schedules)) {
+      changedData.schedule;
+    }
+
+    return changedData;
+  }
+
+  const saveProfile = async() => {
+    if (!validateInput()) return;
+
+    const changedData = getChangedData();
+
+    if (Object.keys(changedData).length === 0) {
+      setResult({
+        status: StatusModel.INFO,
+        message: "No changes to save"
+      });
+      return;
+    }
+
+    // api 
+    try {
+       await api.updateServiceProvider({
+        employerEmail: employerData.email,
+        serviceProviderEmail: email,
+        ...changedData,
+       } as UpdateServiceProviderRq, await getAuthHeader())
+    } catch (err) {
+      console.log('error is ', err.response.data)
+    }
+
+
+  }
 
   return (
     <TopContainer>
@@ -214,7 +274,7 @@ const EditProfile = ({route, navigation}: any) => {
         </View>
         <Button
           title="Save"
-          onPress={() => console.log('tired...')}
+          onPress={saveProfile}
           buttonWidth={'80%'}
           buttonHeight={'12%'}
           style={{margin: 'auto', marginVertical: 20}}
