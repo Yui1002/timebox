@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Text, Linking, ScrollView} from 'react-native';
 import {TextStyle, IconStyle} from '../../../styles';
 import {useSelector} from 'react-redux';
@@ -13,16 +13,16 @@ import {
 } from '../../index';
 import {Screen} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
-import { Schedule } from '../../../types';
+import {UserSchedule} from '../../../swagger';
 
 const Profile = ({route, navigation}: any) => {
   const {firstName, lastName, email, status, rate, rateType, schedules} =
     route.params.sp;
-  const userInfo = useSelector(state => state.userInfo);
+  const userInfo = useSelector((state: any) => state.userInfo);
 
   const editProfile = () => {
     navigation.navigate(Screen.EDIT_PROFILE, {
-      email, rate, rateType, schedules, status
+      firstName, lastName, email, rate, rateType, schedules, status
     });
   };
 
@@ -70,7 +70,7 @@ const Profile = ({route, navigation}: any) => {
         <Container>
           <Title title="Working schedules" />
           {schedules?.length ? (
-            schedules?.map((s: Schedule, index: number) => (
+            schedules?.map((s: UserSchedule, index: number) => (
               <ScheduleList key={index} w={s} showDeleteLink={false} />
             ))
           ) : (

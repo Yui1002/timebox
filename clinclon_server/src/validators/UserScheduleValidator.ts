@@ -56,11 +56,11 @@ class UpdateUserScheduleRequestValidator extends SuperValidator {
             this.throwError('Day must be a string');
         }
 
-        if (instance.startTime && typeof instance.startTime !== 'string') {
+        if (instance.start_time && typeof instance.start_time !== 'string') {
             this.throwError('Start time must be a string');
         }
 
-        if (instance.endTime && typeof instance.endTime !== 'string') {
+        if (instance.end_time && typeof instance.end_time !== 'string') {
             this.throwError('End time must be a string');
         }
 

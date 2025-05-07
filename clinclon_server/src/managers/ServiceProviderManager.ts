@@ -102,7 +102,11 @@ class ServiceProviderManager implements IServiceProviderManager {
 
         if (schedule && schedule.length > 0) {
             for (const sched of schedule) {
-                if (this.isUpdateUserScheduleRq(sched)) {
+
+        
+                if (this.isDeleteSchedule(sched)) {
+                    await this._userScheduleRepo.deleteUserSchedule(sched.id);
+                } else if (this.isUpdateUserScheduleRq(sched)) {
                     // Update existing schedule
                     const { id, ...changedScheduleFields } = sched;
                     await this._userScheduleRepo.updateUserSchedule(changedScheduleFields, id);
@@ -113,6 +117,10 @@ class ServiceProviderManager implements IServiceProviderManager {
             }
         }
     }   
+
+    private isDeleteSchedule(schedule: UpdateUserScheduleRq): boolean {
+        return schedule.id !== undefined && !schedule.day && !schedule.start_time && !schedule.end_time;
+    }
     
     private isUpdateUserScheduleRq(schedule: any): schedule is UpdateUserScheduleRq {
         return (schedule as UpdateUserScheduleRq).id !== undefined;

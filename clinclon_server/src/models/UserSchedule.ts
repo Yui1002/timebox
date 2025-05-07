@@ -56,9 +56,9 @@ class UpdateUserScheduleRq extends BaseRequest {
     @JsonProperty("day", String, true)
     day?: string;
     @JsonProperty("start_time", String, true)
-    startTime?: string;
+    start_time?: string;
     @JsonProperty("end_time", String, true)
-    endTime?: string;
+    end_time?: string;
 }
 
 export { GetUserScheduleRq, GetUserScheduleRs, SetUserScheduleRq, UserSchedule, UpdateUserScheduleRq };

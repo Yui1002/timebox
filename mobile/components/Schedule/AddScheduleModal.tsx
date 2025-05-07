@@ -11,7 +11,7 @@ import { UserSchedule } from '../../swagger';
 interface AddScheduleModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-  addSchedule: (schedule: Schedule) => void;
+  addSchedule: (schedule: UserSchedule) => void;
   existingSchedules: UserSchedule[];
 }
 
@@ -30,6 +30,7 @@ const AddScheduleModal = ({
     {label: 'Tuesday', value: 'Tuesday'},
     {label: 'Wednesday', value: 'Wednesday'},
     {label: 'Thursday', value: 'Thursday'},
+    {label: 'Friday', value: 'Friday'},
     {label: 'Saturday', value: 'Saturday'},
     {label: 'Sunday', value: 'Sunday'},
   ]);
@@ -73,8 +74,8 @@ const AddScheduleModal = ({
 
     addSchedule({
       day: selectedDay,
-      startTime: startTime.momentFormat('LT'),
-      endTime: endTime.momentFormat('LT'),
+      start_time: startTime.momentFormat('LT'),
+      end_time: endTime.momentFormat('LT'),
     });
   };
 
@@ -90,7 +91,7 @@ const AddScheduleModal = ({
           <View
             style={[
               styles.dropdownContainer,
-              isDayDropdownOpen && {zIndex: 2},
+              isDayDropdownOpen && {zIndex: 3},
             ]}>
             <Text>Day</Text>
             <Dropdown
@@ -105,7 +106,8 @@ const AddScheduleModal = ({
           <View
             style={[
               styles.dropdownContainer,
-              isStartTimeDropdownOpen && {zIndex: 2},
+              isStartTimeDropdownOpen ? {zIndex: 2} : {zIndex: 1},
+              // isStartTimeDropdownOpen && {zIndex: 2},
             ]}>
             <Text>Start time</Text>
             <DateDropdown
@@ -131,7 +133,8 @@ const AddScheduleModal = ({
           <View
             style={[
               styles.dropdownContainer,
-              isEndTimeDropdownOpen && {zIndex: 2},
+              isEndTimeDropdownOpen ? {zIndex: 2} : {zIndex: 1},
+              // isEndTimeDropdownOpen && {zIndex: 2},
             ]}>
             <Text>End time</Text>
             <DateDropdown
