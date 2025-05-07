@@ -10,7 +10,8 @@ interface IUserScheduleRepo {
     getUserSchedule(transactionId: number): Promise<GetUserScheduleRs>;
     getUserScheduleById(ids: number[]): Promise<GetUserScheduleRs>;
     setUserSchedule(userScheduleRq: UserSchedule, serviceProviderId: number, transactionId: number): Promise<void>;
-    updateUserSchedule(fieldsToUpdate: Partial<UpdateUserScheduleRq>, scheduleId: number): Promise<void>
+    updateUserSchedule(fieldsToUpdate: Partial<UpdateUserScheduleRq>, scheduleId: number): Promise<void>;
+    deleteUserSchedule(id: number): Promise<void>;
 }
 
 class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
@@ -87,6 +88,15 @@ class UserScheduleRepo extends Repositories implements IUserScheduleRepo {
 
         const setClause = columns.map((col, index) => `${col} = $${index+1}`).join(", ");
         return `UPDATE ${tableName} SET ${setClause} WHERE ${idColumn} = $${columns.length+1}`;
+    }
+
+    async deleteUserSchedule(id: number): Promise<void> {
+        try {
+            const sql = `DELETE FROM user_schedule WHERE user_schedule_id = $1;`;
+            await this.queryDB(sql, [id]);
+        } catch (e) {
+            throw new ResponseException(e, 500, 'unable to delete the data');
+        }
     }
 } 
 

@@ -68,6 +68,8 @@ const EditProfile = ({route, navigation}: any) => {
   const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
 
+  const [deletedSchedules, setDeletedSchedules] = useState<UserSchedule[]>([]);
+
   let alignTopContainer = ContainerStyle.createAlignTopContainer();
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
@@ -89,7 +91,7 @@ const EditProfile = ({route, navigation}: any) => {
   };
 
   const deleteSchedule = (schedule: UserSchedule) => {
-    const {day, start_time, end_time} = schedule;
+    const {id, day, start_time, end_time} = schedule;
     Alert.alert(
       'Confirm Deletion',
       `Are you sure you want to delete the schedule for ${day} ${start_time}~${end_time}?`,
@@ -102,8 +104,12 @@ const EditProfile = ({route, navigation}: any) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
+            if (id) {
+              setDeletedSchedules(prev => [...prev, {id, day}]);
+            }
             setUpdatedSchedule(prevSchedules =>
-              prevSchedules.filter(schedule => schedule.day !== day),
+              // prevSchedules.filter(schedule => schedule.day !== day),
+              prevSchedules.filter(schedule => schedule.id !== id),
             );
           },
         },
@@ -187,6 +193,13 @@ const EditProfile = ({route, navigation}: any) => {
     }
 
     const chagnedSchedules = getChangedSchedules(schedules, updatedSchedule);
+
+    if (deletedSchedules.length > 0) {
+      const deletedScheduleData = deletedSchedules.map(schedule => ({
+        id: schedule.id,
+      }));
+      chagnedSchedules.push(...deletedScheduleData);
+    }
 
     if (chagnedSchedules.length > 0) {
       changedData.schedule = chagnedSchedules;
