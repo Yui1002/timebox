@@ -10,11 +10,11 @@ import {
 import {TopContainer} from '../index';
 import NotificationList from './NotificationList';
 import {formatData} from '../../helper/formatHelper';
-import {getToken} from '../../tokenUtils';
+import {getAuthHeader} from '../../tokenUtils';
 const api = DefaultApiFactory();
 
 const Notification = (props: any) => {
-  const userInfo = useSelector(state => state.userInfo);
+  const userInfo = useSelector((state: any) => state.userInfo);
   const [requests, setRequests] = useState<GetRequestRsMini[]>([]);
   const isFocused = useIsFocused();
 
@@ -26,16 +26,12 @@ const Notification = (props: any) => {
 
   const getRequests = async () => {
     try {
-      const token = await getToken();
       const {data} = await api.getRequestsByStatus(
         userInfo.email,
         RequestStatus.Pending,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        await getAuthHeader()
       );
+      console.log('data is ', data)
       const formatted = formatData(data);
       setRequests(formatted);
     } catch (e) {

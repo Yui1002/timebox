@@ -1,7 +1,7 @@
 import {Days} from '../enums';
 import {GetRequestRsMini, GetServiceProviderRsMini, UserSchedule} from '../swagger';
 
-export const formatData = (data: GetServiceProviderRsMini[] | GetRequestRsMini[]): GetServiceProviderRsMini[] | GetRequestRsMini[] => {
+export const formatData = (data: any): GetServiceProviderRsMini[] | GetRequestRsMini[] => {
   let result: GetServiceProviderRsMini[] | GetServiceProviderRsMini = [];
   
   for (let i = 0; i < data.length; i++) {
@@ -10,8 +10,8 @@ export const formatData = (data: GetServiceProviderRsMini[] | GetRequestRsMini[]
 
     let schedule: UserSchedule = {
       day: data[i].day,
-      startTime: data[i].startTime,
-      endTime: data[i].endTime,
+      start_time: data[i].start_time,
+      end_time: data[i].end_time,
     };
 
     if (!doesEmailExist) {

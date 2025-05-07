@@ -27,10 +27,10 @@ class RequestRawDB extends BaseRequest {
     day: string = "";
 
     @JsonProperty("start_time", String)
-    startTime: string = "";
+    start_time: string = "";
 
     @JsonProperty("end_time", String)
-    endTime: string = "";
+    end_time: string = "";
     @JsonProperty("allow_edit")
     allowEdit: Mode = Mode.False;
 }
@@ -51,10 +51,10 @@ class GetRequestRsMini {
     day: string = "";
 
     @JsonProperty("start_time", String)
-    startTime: string = "";
+    start_time: string = "";
 
     @JsonProperty("end_time", String)
-    endTime: string = "";
+    end_time: string = "";
     @JsonProperty("allow_edit")
     allowEdit: Mode = Mode.False;
     @JsonProperty("schedules")
@@ -69,8 +69,8 @@ class GetRequestRsMini {
         this.rate = requestResult.rate;
         this.rateType = requestResult.rateType;
         this.day = requestResult.day;
-        this.startTime = requestResult.startTime;
-        this.endTime = requestResult.endTime;
+        this.start_time = requestResult.start_time;
+        this.end_time = requestResult.end_time;
         this.allowEdit = requestResult.allowEdit;
         this.schedules = [];
         this.requestDate = requestResult.requestDate;

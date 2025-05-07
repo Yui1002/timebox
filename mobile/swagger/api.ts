@@ -328,13 +328,13 @@ export interface GetRequestRsMini {
      * @type {string}
      * @memberof GetRequestRsMini
      */
-    'startTime'?: string;
+    'start_time'?: string;
     /**
      * 
      * @type {string}
      * @memberof GetRequestRsMini
      */
-    'endTime'?: string;
+    'end_time'?: string;
     /**
      * 
      * @type {Mode}
@@ -709,13 +709,13 @@ export interface RequestRawDB {
      * @type {string}
      * @memberof RequestRawDB
      */
-    'startTime'?: string;
+    'start_time'?: string;
     /**
      * 
      * @type {string}
      * @memberof RequestRawDB
      */
-    'endTime'?: string;
+    'end_time'?: string;
     /**
      * 
      * @type {Mode}
