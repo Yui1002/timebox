@@ -8,6 +8,7 @@ import {
   DefaultApiFactory,
   GetServiceProviderRsMini,
   RequestStatus,
+  UserSchedule,
 } from '../../swagger';
 import {TopContainer, Container, Header, CheckBoxContainer} from '../index';
 import ServiceProviderList from '../ServiceProvider/ServiceProviderList';
@@ -28,13 +29,36 @@ const ManageServiceProviders = (props: any) => {
     }
   }, [isFocused]);
 
+  const sortSchedules = (schedules: UserSchedule[]): UserSchedule[] => {
+    const dayOrder = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    return schedules.sort(
+      (a: UserSchedule, b: UserSchedule) =>
+        dayOrder.indexOf(a.day!) - dayOrder.indexOf(b.day!),
+    );
+  };
+
   const getServiceProviders = async () => {
     try {
       const {data} = await api.getServiceProvider(
         employerEmail,
         await getAuthHeader(),
       );
-      setServiceProviders(data);
+
+      const sortedData = data.map(
+        (serviceProvider: GetServiceProviderRsMini) => ({
+          ...serviceProvider,
+          schedules: sortSchedules(serviceProvider.schedules),
+        }),
+      );
+      setServiceProviders(sortedData);
     } catch (e: any) {
       setServiceProviders([]);
     }
@@ -55,7 +79,10 @@ const ManageServiceProviders = (props: any) => {
         <Header title="Service Providers" />
       </Container>
       {serviceProviders?.length == 0 ? (
-        <Text>You don't have service providers. Please use the menu to hire or manage service providers</Text>
+        <Text>
+          You don't have service providers. Please use the menu to hire or
+          manage service providers
+        </Text>
       ) : (
         <View style={{height: '70%'}}>
           <CheckBoxContainer>
