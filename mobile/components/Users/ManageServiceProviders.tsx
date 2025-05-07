@@ -17,7 +17,7 @@ let api = DefaultApiFactory();
 
 const ManageServiceProviders = (props: any) => {
   const isFocused = useIsFocused();
-  const employerEmail = useSelector(state => state.userInfo).email;
+  const employerEmail = useSelector((state: any) => state.userInfo).email;
   const [serviceProviders, setServiceProviders] =
     useState<GetServiceProviderRsMini[]>();
   const [isBoxChecked, setIsBoxChecked] = useState<boolean>(true);
@@ -55,8 +55,7 @@ const ManageServiceProviders = (props: any) => {
         <Header title="Service Providers" />
       </Container>
       {serviceProviders?.length == 0 ? (
-        <Text>You don't have service providers. 
-          Please use the menu to hire or manage service providers</Text>
+        <Text>You don't have service providers. Please use the menu to hire or manage service providers</Text>
       ) : (
         <View style={{height: '70%'}}>
           <CheckBoxContainer>

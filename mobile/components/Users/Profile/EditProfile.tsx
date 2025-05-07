@@ -1,9 +1,9 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useState} from 'react';
 import {View, Text, ScrollView, Alert, TouchableOpacity} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
-import {Schedule, ResultModel, RateTypeSet} from '../../../types';
+import {ResultModel, RateTypeSet} from '../../../types';
 import {
   TopContainer,
   Button,
@@ -15,26 +15,33 @@ import {
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
 import {RateTypeValue, Screen, StatusModel} from '../../../enums';
-import {DefaultApiFactory, UpdateServiceProviderRq, UpdateUserScheduleRq, UserSchedule, UserStatus} from '../../../swagger';
+import {
+  DefaultApiFactory,
+  UpdateServiceProviderRq,
+  UserSchedule,
+  UserStatus,
+} from '../../../swagger';
 import EditWorkScheduleModal from '../../ServiceProvider/EditWorkScheduleModal';
 import {Dropdown} from '../../Common/CustomDropdown';
 import {COLORS} from '../../../styles/theme';
 import AddScheduleModal from '../../Schedule/AddScheduleModal';
 import Validator from '../../../validator/validator';
-import { getAuthHeader } from '../../../tokenUtils'
+import {getAuthHeader} from '../../../tokenUtils';
 import _ from 'lodash';
 let api = DefaultApiFactory();
 
 const EditProfile = ({route, navigation}: any) => {
-  const dispatch = useDispatch();
-  const {email, rate, rateType, schedules, status} = route.params; // initial values 
-  const employerData = useSelector(state => state.userInfo);
+  const {firstName, lastName, email, rate, rateType, schedules, status} =
+    route.params; // initial values
+  const employerData = useSelector((state: any) => state.userInfo);
 
   const [updatedRate, setUpdatedRate] = useState<number>(rate);
   const [updatedRateType, setUpdatedRateType] =
     useState<RateTypeValue>(rateType);
   const [updatedStatus, setUpdatedStatus] = useState(status);
-  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(_.cloneDeep(schedules));
+  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(
+    _.cloneDeep(schedules),
+  );
 
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -65,8 +72,10 @@ const EditProfile = ({route, navigation}: any) => {
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
-  const addSchedule = (newSchedule: Schedule) => {
-    setUpdatedSchedule(prevSchedules => sortSchedules([...prevSchedules, newSchedule]));
+  const addSchedule = (newSchedule: UserSchedule) => {
+    setUpdatedSchedule(prevSchedules =>
+      sortSchedules([...prevSchedules, newSchedule]),
+    );
     setIsAddModalVisible(false);
   };
 
@@ -120,35 +129,44 @@ const EditProfile = ({route, navigation}: any) => {
   };
 
   const validateInput = () => {
-    const validateErr = Validator.validateRate(updatedRate.toString(), updatedRateType);
+    const validateErr = Validator.validateRate(
+      updatedRate.toString(),
+      updatedRateType,
+    );
 
     if (validateErr) {
       setResult({
         status: StatusModel.ERROR,
-        message: validateErr
+        message: validateErr,
       });
     }
     return validateErr == null;
-  }
+  };
 
   const getChangedSchedules = (
     originalSchedules: UserSchedule[],
-    updatedSchedules: UserSchedule[]
+    updatedSchedules: UserSchedule[],
   ): Partial<UserSchedule>[] => {
     return updatedSchedules
       .map(updated => {
         const original = originalSchedules.find(o => o.id === updated.id);
-        if (!original) return null; // New schedule
-  
-        const changes: Partial<UserSchedule> = { id: updated.id };
-  
+        if (!original) {
+          return {
+            day: updated.day,
+            start_time: updated.start_time,
+            end_time: updated.end_time,
+          };
+        }
+
+        const changes: Partial<UserSchedule> = {id: updated.id};
+
         if (updated.start_time !== original.start_time) {
           changes.start_time = updated.start_time;
         }
         if (updated.end_time !== original.end_time) {
           changes.end_time = updated.end_time;
         }
-  
+
         // Return only if there are changes
         return Object.keys(changes).length > 1 ? changes : null;
       })
@@ -159,7 +177,7 @@ const EditProfile = ({route, navigation}: any) => {
     const changedData: Partial<UpdateServiceProviderRq> = {};
 
     if (updatedRate !== rate) {
-      changedData.rate = updatedRate
+      changedData.rate = updatedRate;
     }
     if (updatedRateType !== rateType) {
       changedData.rateType = updatedRateType;
@@ -168,39 +186,53 @@ const EditProfile = ({route, navigation}: any) => {
       changedData.status = updatedStatus;
     }
 
-    const chagnedSchedules = getChangedSchedules(schedules, updatedSchedule)
+    const chagnedSchedules = getChangedSchedules(schedules, updatedSchedule);
+
     if (chagnedSchedules.length > 0) {
       changedData.schedule = chagnedSchedules;
     }
 
     return changedData;
-  }
+  };
 
-  const saveProfile = async() => {
+  const saveProfile = async () => {
     if (!validateInput()) return;
 
     const changedData = getChangedData();
 
-    if (Object.keys(changedData).length === 0) {
-      setResult({
-        status: StatusModel.INFO,
-        message: "No changes to save"
-      });
-      return;
-    }
+    console.log('changed data is ', changedData);
+
+    if (Object.keys(changedData).length === 0) return;
 
     try {
-       await api.updateServiceProvider({
-        employerEmail: employerData.email,
-        serviceProviderEmail: email,
-        ...changedData,
-       }, await getAuthHeader())
+      await api.updateServiceProvider(
+        {
+          employerEmail: employerData.email,
+          serviceProviderEmail: email,
+          ...changedData,
+          update_by: employerData.email,
+        },
+        await getAuthHeader(),
+      );
+      setResult({
+        status: StatusModel.SUCCESS,
+        message: 'Successfully updated the profile!',
+      });
+      navigation.navigate(Screen.PROFILE, {
+        sp: {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          status: updatedStatus,
+          rate: updatedRate,
+          rateType: updatedRateType,
+          schedules: updatedSchedule,
+        },
+      });
     } catch (err) {
-      console.log('error is ', err.response.data)
+      console.log('error is ', err.response.data);
     }
-
-
-  }
+  };
 
   return (
     <TopContainer>
@@ -298,7 +330,7 @@ const EditProfile = ({route, navigation}: any) => {
             <Text>Not specified</Text>
           )}
         </View>
-        <Button 
+        <Button
           title="Save"
           onPress={saveProfile}
           buttonWidth={'80%'}

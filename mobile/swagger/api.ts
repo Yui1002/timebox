@@ -1157,7 +1157,7 @@ export interface UpdateServiceProviderRq {
      * @type {string}
      * @memberof UpdateServiceProviderRq
      */
-    'updateBy'?: string;
+    'update_by'?: string;
 }
 
 
@@ -1184,13 +1184,13 @@ export interface UpdateUserScheduleRq {
      * @type {string}
      * @memberof UpdateUserScheduleRq
      */
-    'startTime'?: string;
+    'start_time'?: string;
     /**
      * 
      * @type {string}
      * @memberof UpdateUserScheduleRq
      */
-    'endTime'?: string;
+    'end_time'?: string;
 }
 /**
  * 

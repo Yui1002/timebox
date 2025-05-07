@@ -134,7 +134,6 @@ const Record = ({route, navigation}) => {
         `${type} time is saved as ${recordTime?.momentFormat('LT')}`,
       );
     } catch (e) {
-      console.log(e.response.data.message);
       showAlert(`${e.reponse.data.message}`, '');
     }
   };
