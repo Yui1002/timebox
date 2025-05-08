@@ -95,6 +95,7 @@ type WorkShiftsProps = {
     email: string,
     rate: string,
     rateType: RateTypeValue.HOURLY | RateTypeValue.DAILY,
+    isEnabled: boolean
 }
 
 type ForgotPasswordProps = {

@@ -31,7 +31,6 @@ const Notification = (props: any) => {
         RequestStatus.Pending,
         await getAuthHeader()
       );
-      console.log('data is ', data)
       const formatted = formatData(data);
       setRequests(formatted);
     } catch (e) {

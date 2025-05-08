@@ -1,21 +1,27 @@
-export const addShift = data => {
+export const addShift = (shift) => {
   return {
-    type: 'ADD',
-    payload: data,
+    type: 'ADD_SHIFT',
+    payload: shift,
   };
 };
 
-export const deleteShift = data => {
+export const updateShift = (shift) => {
   return {
-    type: 'DELETE',
-    payload: data,
-  };
-};
+    type: 'UPDATE_SHIFT',
+    payload: shift
+  }
+}
 
-export const resetShift = data => {
+export const deleteShift = (day) => {
   return {
-    type: 'RESET',
-    payload: data,
+    type: 'DELETE_SHIFT',
+    payload: day,
+  }
+}
+
+export const resetShifts = () => {
+  return {
+    type: 'RESET_SHIFTS',
   }
 }
 

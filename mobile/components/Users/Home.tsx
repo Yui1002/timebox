@@ -17,7 +17,7 @@ import {getToken} from '../../tokenUtils';
 let employerApi = DefaultApiFactory();
 
 const Home = (props: any) => {
-  const user: UserInfo = useSelector(state => state.userInfo);
+  const user: UserInfo = useSelector((state: any) => state.userInfo);
   const {firstName, email} = user;
   const [employers, setEmployers] = useState<Employer[]>();
   const isFocused: boolean = useIsFocused();

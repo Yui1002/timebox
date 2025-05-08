@@ -3,7 +3,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Text, ScrollView} from 'react-native';
 import {ButtonStyle, TextStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
-import {deleteShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps, Schedule} from '../../../types';
 import {alert} from '../../../helper/Alert';
 import {Screen, ProgressBar as Bar} from '../../../enums';
@@ -17,18 +16,15 @@ import {
 import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {UserSchedule} from '../../../swagger';
 import {COLORS} from '../../../styles/theme';
+import {deleteShift} from '../../../redux/actions/workShiftsAction';
 
 const WorkShifts = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
-  const workShifts = useSelector(state => state.workShifts);
-
-  const deleteDate = (day: Schedule) => {
-    dispatch(deleteShift(day));
-  };
+  const workShifts = useSelector((state: any) => state.workShifts);
 
   const review = () => {
-    if (workShifts.workShifts.length < 1) {
+    if (workShifts.length < 1) {
       alert(
         'No assigned schedules. Do you want to proceed?',
         '',
@@ -40,6 +36,10 @@ const WorkShifts = ({route, navigation}: any) => {
     } else {
       navigation.navigate(Screen.REVIEW, params);
     }
+  };
+
+  const handleDelete = (day: string) => {
+    dispatch(deleteShift(day));
   };
 
   const navigateToAddSchedule = () => {
@@ -60,9 +60,16 @@ const WorkShifts = ({route, navigation}: any) => {
           <Header title="Work Schedules" />
         </Container>
         <Container>
-          {workShifts.workShifts.length > 0 ? (
-            workShifts.workShifts.map((w: UserSchedule, index: number) => {
-              return <ScheduleList key={index} w={w} showDeleteLink={false} />;
+          {workShifts.length > 0 ? (
+            workShifts.map((schedule: UserSchedule, index: number) => {
+              return (
+                <ScheduleList
+                  key={index}
+                  schedule={schedule}
+                  showDeleteLink={true}
+                  onDelete={() => handleDelete(schedule.day!)}
+                />
+              );
             })
           ) : (
             <Text style={centerText}>No date and time selected</Text>

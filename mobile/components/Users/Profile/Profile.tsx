@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {Text, Linking, ScrollView} from 'react-native';
 import {TextStyle, IconStyle} from '../../../styles';
 import {useSelector} from 'react-redux';
@@ -13,7 +13,7 @@ import {
 } from '../../index';
 import {Screen} from '../../../enums';
 import ScheduleList from '../../ServiceProvider/ScheduleList';
-import {UserSchedule} from '../../../swagger';
+import {RequestStatus, UserSchedule} from '../../../swagger';
 
 const Profile = ({route, navigation}: any) => {
   const {firstName, lastName, email, status, rate, rateType, schedules} =
@@ -22,7 +22,13 @@ const Profile = ({route, navigation}: any) => {
 
   const editProfile = () => {
     navigation.navigate(Screen.EDIT_PROFILE, {
-      firstName, lastName, email, rate, rateType, schedules, status
+      firstName,
+      lastName,
+      email,
+      rate,
+      rateType,
+      schedules,
+      status,
     });
   };
 
@@ -46,22 +52,25 @@ const Profile = ({route, navigation}: any) => {
           </Text>
           <Text style={centerText}>{email}</Text>
         </Container>
-        <AlignContainer>
-          <Icon
-            name="edit"
-            size={30}
-            type="Material"
-            onPress={editProfile}
-            style={icon2}
-          />
-          <Icon
-            name="message-processing-outline"
-            size={30}
-            type="MaterialCommunity"
-            style={icon2}
-            onPress={() => Linking.openURL(`mailto:${userInfo.email}`)}
-          />
-        </AlignContainer>
+        {status === 'active' && (
+          <AlignContainer>
+            <Icon
+              name="edit"
+              size={30}
+              type="Material"
+              onPress={editProfile}
+              style={icon2}
+            />
+            <Icon
+              name="message-processing-outline"
+              size={30}
+              type="MaterialCommunity"
+              style={icon2}
+              onPress={() => Linking.openURL(`mailto:${userInfo.email}`)}
+            />
+          </AlignContainer>
+        )}
+
         <Section title="Status" text={status} isAlign={false} />
         <Section
           title="Rate"
@@ -70,23 +79,31 @@ const Profile = ({route, navigation}: any) => {
         <Container>
           <Title title="Working schedules" />
           {schedules?.length ? (
-            schedules?.map((s: UserSchedule, index: number) => (
-              <ScheduleList key={index} w={s} showDeleteLink={false} />
+            schedules?.map((schedule: UserSchedule, index: number) => (
+              <ScheduleList
+                key={index}
+                schedule={schedule}
+                showDeleteLink={false}
+              />
             ))
           ) : (
             <Text>Not specified</Text>
           )}
         </Container>
-        <Button
-          title="View Record History"
-          onPress={() => navigation.navigate(Screen.RECORD_HISTORY, {
-            employer: userInfo,
-            serviceProviderEmail: email,
-            updatedBy: userInfo.email
-          })}
-          buttonWidth={'100%'}
-          buttonHeight={'10%'}
-        />
+        {status === RequestStatus.Approved || status === 'active' && (
+          <Button
+            title="View Record History"
+            onPress={() =>
+              navigation.navigate(Screen.RECORD_HISTORY, {
+                employer: userInfo,
+                serviceProviderEmail: email,
+                updatedBy: userInfo.email,
+              })
+            }
+            buttonWidth={'100%'}
+            buttonHeight={'10%'}
+          />
+        )}
       </ScrollView>
     </TopContainer>
   );
