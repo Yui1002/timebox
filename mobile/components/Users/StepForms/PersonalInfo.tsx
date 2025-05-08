@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {View, ScrollView} from 'react-native';
 import {ContainerStyle, ButtonStyle, InputStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
-import {resetShift} from '../../../redux/actions/workShiftsAction';
+import {resetShifts} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
 import {
   Button,
@@ -78,7 +78,7 @@ const PersonalInfo = ({route, navigation}: any) => {
   };
 
   const goBack = () => {
-    dispatch(resetShift(workShifts.workShifts));
+    dispatch(resetShifts());
     navigation.goBack();
   };
 

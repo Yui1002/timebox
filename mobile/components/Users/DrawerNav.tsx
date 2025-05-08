@@ -11,7 +11,7 @@ import Notification from './Notification';
 import Home from './Home';
 import {useDispatch} from 'react-redux';
 import {signOutUser} from '../../redux/actions/signInAction';
-import {resetShift} from '../../redux/actions/workShiftsAction';
+import {resetShifts} from '../../redux/actions/workShiftsAction';
 import { removeToken } from '../../tokenUtils';
 
 const CustomDrawerContent = (props: any) => {
@@ -25,7 +25,7 @@ const CustomDrawerContent = (props: any) => {
           removeToken();
           props.navigation.navigate('SignIn');
           dispatch(signOutUser());
-          dispatch(resetShift());
+          dispatch(resetShifts());
         }}
       />
     </DrawerContentScrollView>

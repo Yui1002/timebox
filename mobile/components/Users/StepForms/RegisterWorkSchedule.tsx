@@ -1,21 +1,21 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {addShift} from '../../../redux/actions/workShiftsAction';
+import {addShift, updateShift} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps} from '../../../types';
 import {ResultModel} from '../../../types';
 import {TopContainer, Button, AlignContainer, Title, Result} from '../../index';
 import {UserSchedule} from '../../../swagger';
 import Validator from '../../../validator/validator';
 import {Screen, StatusModel} from '../../../enums';
-import {ButtonStyle} from '../../../styles';
 import DaySelection from '../../DaySelection';
 import TimePicker from '../../TimePicker';
 import { COLORS } from '../../../styles/theme';
+import { View } from 'react-native';
 
 const RegisterWorkSchedule = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
-  const workShifts = useSelector(state => state.workShifts);
+  const workShifts = useSelector((state: any) => state.workShifts);
   const [startOpen, setStartOpen] = useState<boolean>(false);
   const [endOpen, setEndOpen] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<Date>(new Date());
@@ -28,7 +28,7 @@ const RegisterWorkSchedule = ({route, navigation}: any) => {
 
   const validateInput = () => {
     const validateErr = Validator.validateWorkShifts(
-      workShifts.workShifts,
+      workShifts,
       selectedDay,
       startTime!,
       endTime!,
@@ -39,16 +39,25 @@ const RegisterWorkSchedule = ({route, navigation}: any) => {
     return validateErr === null;
   };
 
+  const checkDuplicate = () => {
+    return workShifts.find((shift: UserSchedule) => shift.day === selectedDay);
+  }
+
   const add = () => {
     if (!validateInput()) return;
 
     const value: UserSchedule = {
       day: selectedDay,
-      startTime: startTime?.momentFormat('LT'),
-      endTime: endTime?.momentFormat('LT'),
+      start_time: startTime?.momentFormat('LT'),
+      end_time: endTime?.momentFormat('LT'),
     };
 
-    dispatch(addShift(value));
+    if (checkDuplicate()) {
+      dispatch(updateShift(value));
+    } else {
+      dispatch(addShift(value));
+    }
+
     navigation.navigate(Screen.WORK_SHIFTS, params);
   };
 
@@ -73,6 +82,7 @@ const RegisterWorkSchedule = ({route, navigation}: any) => {
           setIsOpen={setEndOpen}
         />
       </AlignContainer>
+      <View style={{marginVertical: 10}}/>
       <AlignContainer>
         <Button
           title="Cancel"

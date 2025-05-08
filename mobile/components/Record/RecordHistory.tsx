@@ -16,14 +16,15 @@ interface RecordHistoryProps {
     params: {
       employer: Employer;
       serviceProviderEmail: string;
-      updatedBy: string
+      updatedBy: string;
+      mode: number
     };
   };
 }
 
 const RecordHistory = ({
   route: {
-    params: {employer, serviceProviderEmail, updatedBy},
+    params: {employer, serviceProviderEmail, updatedBy, mode},
   },
 }: RecordHistoryProps) => {
   const [records, setRecords] = useState<Record[]>([]);
@@ -69,7 +70,7 @@ const RecordHistory = ({
         setRecords={setRecords}
       />
       <View style={{height: '50%'}}>
-        {records?.length > 0 && (
+        {records?.length > 0 && mode > 0 && (
           <View
             style={{
               flexDirection: 'row',

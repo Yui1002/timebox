@@ -16,7 +16,7 @@ const SignIn = ({navigation}: any) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
-  const [email, setEmail] = useState<string>('idjuuubngssxkdiirs@ytnhy.com');
+  const [email, setEmail] = useState<string>('qoacfsjvfedubwsnep@nbmbb.com');
   const [password, setPassword] = useState<string>('Gorilla123!');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,

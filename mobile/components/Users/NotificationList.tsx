@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {Text, View, ActivityIndicator} from 'react-native';
+import {Text, View, ActivityIndicator, StyleSheet} from 'react-native';
 import moment from 'moment';
 import {
   DefaultApiFactory,
@@ -11,14 +11,12 @@ import {
 import {AlignContainer, Button} from '../index';
 const api = DefaultApiFactory();
 import ScheduleList from '../ServiceProvider/ScheduleList';
-import {ButtonStyle} from '../../styles';
 import {alert, alertError} from '../../helper/Alert';
 import {getAuthHeader} from '../../tokenUtils';
 import {COLORS} from '../../styles/theme';
-import LoadingButton from '../LoadingButton';
 
 const NotificationList = ({notification, navigation}: any) => {
-  const user = useSelector(state => state.userInfo);
+  const user = useSelector((state: any) => state.userInfo);
   const {
     firstName,
     lastName,
@@ -29,13 +27,18 @@ const NotificationList = ({notification, navigation}: any) => {
     schedules,
     allowEdit,
   } = notification;
-  let acceptBtn = ButtonStyle.createContinueButtonStyle();
-  let rejectBtn = ButtonStyle.createBackButtonStyle();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const alertConfirm = (status: RequestStatus) => {
+    let text = '';
+    if (status === RequestStatus.Approved) {
+      text = 'approve'
+    } else if (status === RequestStatus.Rejected) {
+      text = 'reject'
+    };
+
     alert(
-      `Do you want to ${status.toLowerCase()} \n ${firstName} ${lastName}'s request?`,
+      `Do you want to ${text} \n ${firstName} ${lastName}'s request?`,
       '',
       function () {
         updateRequest(status);
@@ -79,25 +82,44 @@ const NotificationList = ({notification, navigation}: any) => {
   };
 
   return (
-    <View>
-      <Text>{`Request from ${firstName} ${lastName}`}</Text>
-      <Text>{`${moment(requestDate).format('YYYY/MM/DD h:mm')}`}</Text>
-      <Text>
-        {`Pay: ${
-          rate && rateType ? `$${rate} / ${rateType}` : `Not specified`
-        }`}
-      </Text>
-      <View>
-        <Text>Schedules:</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text
+          style={
+            styles.requestText
+          }>{`Request from ${firstName} ${lastName}`}</Text>
+      </View>
+      <View style={styles.request}>
+        <Text style={styles.requestDate}>{`${moment(requestDate).format(
+          'YYYY/MM/DD h:mm',
+        )}`}</Text>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          Pay:{' '}
+          <Text style={styles.payText}>
+            {rate && rateType ? `$${rate} / ${rateType}` : `Not specified`}
+          </Text>
+        </Text>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Schedules:</Text>
         {schedules[0].day !== null ? (
-          schedules.map((s: UserSchedule, index: number) => (
-            <ScheduleList w={s} key={index} showDeleteLink={false} />
+          schedules.map((schedule: UserSchedule, index: number) => (
+            <Text style={styles.scheduleItem} key={index}>
+              <ScheduleList
+                schedule={schedule}
+                key={index}
+                showDeleteLink={false}
+              />
+            </Text>
           ))
         ) : (
-          <Text>Not specified</Text>
+          <Text style={styles.scheduleItem}>Not specified</Text>
         )}
       </View>
-      <AlignContainer>
+
+      <View style={styles.buttonContainer}>
         <Button
           title="Decline"
           onPress={() => alertConfirm(RequestStatus.Rejected)}
@@ -115,9 +137,55 @@ const NotificationList = ({notification, navigation}: any) => {
             buttonHeight={'50%'}
           />
         )}
-      </AlignContainer>
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  requestText: {
+    fontSize: 18,
+  },
+  request: {
+    display: 'flex',
+    alignItems: 'flex-end',
+  },
+  requestDate: {
+    fontSize: 14,
+    color: '#787878',
+  },
+  section: {
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  payText: {
+    fontSize: 14,
+    fontWeight: 'normal'
+  },
+  scheduleItem: {
+    fontSize: 14,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+});
 
 export default NotificationList;

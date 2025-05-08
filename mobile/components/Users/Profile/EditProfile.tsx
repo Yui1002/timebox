@@ -213,8 +213,6 @@ const EditProfile = ({route, navigation}: any) => {
 
     const changedData = getChangedData();
 
-    console.log('changed data is ', changedData);
-
     if (Object.keys(changedData).length === 0) return;
 
     try {

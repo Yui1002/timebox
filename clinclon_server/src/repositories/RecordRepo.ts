@@ -10,7 +10,7 @@ interface IRecordRepo {
     getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs>;
     getRecordChanges(userTransactionId: number): Promise<GetRecordChangeRs>;
     setStartRecord(userTransactionId: number, startTime: number): Promise<GetRecordRs>;
-    setEndRecord(userTransactionId: number, endTime: number): Promise<void>;
+    setEndRecord(userTransactionId: number, endTime: number): Promise<GetRecordRs>;
     updateStartRecord(recordId: number, startTime: number): Promise<GetRecordRs>;
     deleteRecord(recordId: number): Promise<void>
     updateRecord(recordRq: UpdateRecordRq): Promise<void>;
@@ -117,12 +117,17 @@ class RecordRepo extends Repositories implements IRecordRepo  {
         }
     }
 
-    async setEndRecord(recordId: number, endTimeEpoch: number): Promise<void> {
+    async setEndRecord(recordId: number, endTimeEpoch: number): Promise<GetRecordRs> {
         try {
             const sql = `UPDATE time_record 
                             SET epoch_end_time = $1 
-                            WHERE time_record_id = $2;`
-            await this.queryDB(sql, [endTimeEpoch, recordId]);
+                            WHERE time_record_id = $2 
+                            RETURNING time_record_id AS id, epoch_start_time, epoch_end_time;`
+            const data = await this.queryDB(sql, [endTimeEpoch, recordId]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to insert into db');
         }

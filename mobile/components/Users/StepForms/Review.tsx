@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import {Text, ScrollView} from 'react-native';
+import {ScrollView} from 'react-native';
 import ProgressBar from './ProgressBar';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
-import {resetShift} from '../../../redux/actions/workShiftsAction';
+import {resetShifts} from '../../../redux/actions/workShiftsAction';
 import {WorkShiftsProps} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import {DefaultApiFactory, SetRequestRq, Mode} from '../../../swagger';
+import {DefaultApiFactory, Mode} from '../../../swagger';
 import {ResultModel} from '../../../types';
 import {
   Header,
@@ -16,7 +16,7 @@ import {
   Container,
 } from '../../index';
 import {Screen, ProgressBar as Bar, StatusModel} from '../../../enums';
-import {getToken} from '../../../tokenUtils';
+import {getAuthHeader} from '../../../tokenUtils';
 import InfoSection from '../../InfoSection';
 import LoadingButton from '../../LoadingButton';
 import WorkShiftsSection from '../../WorkShiftsSection';
@@ -27,8 +27,8 @@ const Review = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
   const {firstName, lastName, email, rate, rateType, isEnabled} = params;
-  const userInfo = useSelector(state => state.userInfo);
-  const workShifts = useSelector(state => state.workShifts).workShifts;
+  const userInfo = useSelector((state: any) => state.userInfo);
+  const workShifts = useSelector((state: any) => state.workShifts);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
@@ -44,24 +44,20 @@ const Review = ({route, navigation}: any) => {
   };
 
   const confirmServiceProvider = async () => {
-    const params: SetRequestRq = {
-      senderEmail: userInfo.email,
-      receiverEmail: email,
-      rate: Number(rate),
-      rateType: rateType,
-      schedules: workShifts,
-      mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
-    };
-
-    const token = await getToken();
     setLoading(true);
 
     try {
-      await api.setRequest(params, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await api.setRequest(
+        {
+          senderEmail: userInfo.email,
+          receiverEmail: email,
+          rate: Number(rate),
+          rateType: rateType,
+          schedules: workShifts,
+          mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
         },
-      });
+        await getAuthHeader(),
+      );
       clearInput();
       showSuccess();
     } catch (e: any) {
@@ -85,7 +81,7 @@ const Review = ({route, navigation}: any) => {
   };
 
   const clearInput = (): void => {
-    dispatch(resetShift(workShifts.workShifts));
+    dispatch(resetShifts());
     setResult({status: StatusModel.NULL, message: ''});
   };
 

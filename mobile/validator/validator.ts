@@ -171,10 +171,6 @@ class Validator {
       return ErrMsg.DAY_EMPTY;
     }
 
-    if (shifts && shifts.some((shift: any) => shift['day'] === day)) {
-      return ErrMsg.DUPLICATE_DAY;
-    }
-
     if (!this.isValidStartTime(startTime, endTime)) {
       return ErrMsg.INVALID_START_TIME;
     }

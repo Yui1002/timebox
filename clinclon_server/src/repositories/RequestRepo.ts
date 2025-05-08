@@ -115,8 +115,14 @@ class RequestRepo extends Repositories implements IRequestRepo {
                             request_rate_type, 
                             request_schedule_day, 
                             request_schedule_start_time, 
-                            request_schedule_end_time, request_mode) 
-                        VALUES (DEFAULT, $1, $2, $3, CURRENT_TIMESTAMP, $4, $5, $6, $7, $8, $9);`;
+                            request_schedule_end_time, 
+                            request_mode
+                        ) VALUES (
+                            DEFAULT, 
+                            $1, $2, $3, 
+                            CURRENT_TIMESTAMP, 
+                            $4, $5, $6, $7, $8, $9
+                        );`;
             await this.queryDB(sql, [requestRq.senderEmail, requestRq.receiverEmail, RequestStatus.PENDING, requestRq.rate, requestRq.rateType, schedule?.day, schedule?.start_time, schedule?.end_time, requestRq.mode]);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to insert into db');

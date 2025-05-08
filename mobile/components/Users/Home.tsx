@@ -17,7 +17,7 @@ import {getToken} from '../../tokenUtils';
 let employerApi = DefaultApiFactory();
 
 const Home = (props: any) => {
-  const user: UserInfo = useSelector(state => state.userInfo);
+  const user: UserInfo = useSelector((state: any) => state.userInfo);
   const {firstName, email} = user;
   const [employers, setEmployers] = useState<Employer[]>();
   const isFocused: boolean = useIsFocused();
@@ -49,9 +49,9 @@ const Home = (props: any) => {
         <Header title={`Hi ${firstName}!`} />
       </CenterContainer>
       <Container>
-        <Title title="My Employers" />
+        <Title title="Employers" />
         {employers?.length == 0 ? (
-          <Text>
+          <Text style={{marginVertical: 10}}>
             You currently don't have employers.
           </Text>
         ) : (

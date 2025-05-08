@@ -121,7 +121,7 @@ class RecordManager implements IRecordManager {
         recordRq.recordTime
       );
     } else {
-      await this._recordRepo.setEndRecord(recordRq.id, recordRq.recordTime);
+      return await this._recordRepo.setEndRecord(recordRq.id, recordRq.recordTime);
     }
   }
 

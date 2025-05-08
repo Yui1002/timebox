@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {Text, ActivityIndicator} from 'react-native';
-import {alert} from '../../helper/Alert';
+import {alert as Alert} from '../../helper/Alert';
 import {navigate} from '../../helper/navigate';
 import {Button, Container, Input, Result, TopContainer} from '../index';
 import {DefaultApiFactory, GetUserRs} from '../../swagger';
@@ -13,7 +13,7 @@ import {getToken} from '../../tokenUtils';
 let api = DefaultApiFactory();
 
 const HireServiceProvider = (props: any) => {
-  const userInfo = useSelector(state => state.userInfo);
+  const userInfo = useSelector((state: any) => state.userInfo);
   const [searchInput, setSearchInput] = useState<string>('');
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -53,17 +53,14 @@ const HireServiceProvider = (props: any) => {
       });
       showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
-      setResult({
-        status: StatusModel.ERROR,
-        message: e.response.data.message,
-      });
+      alert(e.response.data.message)
     } finally {
       setLoading(false);
     }
   };
 
   const showConfirmMsg = ({firstName, lastName, email}: GetUserRs) => {
-    alert(
+    Alert(
       `Do you want to hire ${firstName} ${lastName} as a service provider?`,
       '',
       function () {
