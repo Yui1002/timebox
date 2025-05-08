@@ -158,7 +158,7 @@ class RequestManager implements IRequestManager {
       throw new ResponseException(
         null,
         400,
-        "This user you have requested does not exist on this app."
+        "This email address was not found. The person you are trying to request as a service provider must be a registered user of the app."
       );
     }
 

@@ -83,7 +83,7 @@ enum ErrMsg {
   OTP_SEND_ERR = 'Failed to send otp',
   OTP_SEND_SUCCESS = 'OTP successfully sent!', 
   INVALID_OTP = 'Verification code has to be 6 digit',
-  OTP_VERIFICATION_ERR = 'OTP does not correct',
+  OTP_VERIFICATION_ERR = 'OTP is not correct',
   DUPLICATE_REQUEST = 'Duplicate request',
   INVALID_REQUEST = 'Invalid request',
   INVALID_RATE = 'Invalid rate',

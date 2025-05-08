@@ -58,7 +58,6 @@ export class RequestController extends SuperController implements IRequestContro
     @Security(JWT)
     @Validate
     public async setRequest(@Body() rq: SetRequestRq): Promise<void> {
-        console.log('rq is ', rq)
         await this._requestManager.setRequest(rq);
     }
 

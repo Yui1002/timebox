@@ -113,10 +113,14 @@ const SearchField = ({
           maximumDate={new Date()}
           date={searchPeriod.to || new Date()}
           onConfirm={(date: Date) => {
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
             setSearchPeriod({
               from: searchPeriod.from,
-              to: date,
+              to: endOfDay
             });
+
             setToOpen(false);
           }}
           onCancel={() => setToOpen(false)}

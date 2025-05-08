@@ -5,23 +5,13 @@ import {TopContainer, Container, Header, Button} from '../index';
 import {ResultModel, Record as RecordType} from '../../types';
 import {StatusModel, Screen} from '../../enums';
 import Result from '../Common/Result';
-import {DefaultApiFactory, Employer, TimeType} from '../../swagger';
+import {DefaultApiFactory, TimeType} from '../../swagger';
 import Validator from '../../validator/validator';
 import { DateDropdown } from '../Common/CustomDropdown'
 import { getAuthHeader } from '../../tokenUtils';
 import { convertEpochToDate } from '../../helper/DateUtils';
 
 let api = DefaultApiFactory();
-
-interface RecordProps {
-  route: {
-    params: {
-      employer: Employer;
-      serviceProviderEmail: string
-    }
-  };
-  navigation: any;
-}
 
 const Record = ({route, navigation}) => {
   const isFocused = useIsFocused();
@@ -120,6 +110,7 @@ const Record = ({route, navigation}) => {
         await getAuthHeader(),
       );
       const recordData = data.records?.[0] || null;
+
       setRecord({
         id: recordData?.id || record.id,
         startTime: recordData?.epoch_start_time
@@ -198,7 +189,8 @@ const Record = ({route, navigation}) => {
           navigation.navigate(Screen.RECORD_HISTORY, {
             employer,
             serviceProviderEmail,
-            updatedBy: serviceProviderEmail
+            updatedBy: serviceProviderEmail,
+            mode: employer.mode
           })
         }
         buttonWidth={'80%'}

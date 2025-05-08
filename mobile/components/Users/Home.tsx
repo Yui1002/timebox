@@ -49,9 +49,9 @@ const Home = (props: any) => {
         <Header title={`Hi ${firstName}!`} />
       </CenterContainer>
       <Container>
-        <Title title="My Employers" />
+        <Title title="Employers" />
         {employers?.length == 0 ? (
-          <Text>
+          <Text style={{marginVertical: 10}}>
             You currently don't have employers.
           </Text>
         ) : (

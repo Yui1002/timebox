@@ -30,8 +30,15 @@ const NotificationList = ({notification, navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const alertConfirm = (status: RequestStatus) => {
+    let text = '';
+    if (status === RequestStatus.Approved) {
+      text = 'approve'
+    } else if (status === RequestStatus.Rejected) {
+      text = 'reject'
+    };
+
     alert(
-      `Do you want to ${status.toLowerCase()} \n ${firstName} ${lastName}'s request?`,
+      `Do you want to ${text} \n ${firstName} ${lastName}'s request?`,
       '',
       function () {
         updateRequest(status);

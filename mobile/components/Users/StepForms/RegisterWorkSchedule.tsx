@@ -10,6 +10,7 @@ import {Screen, StatusModel} from '../../../enums';
 import DaySelection from '../../DaySelection';
 import TimePicker from '../../TimePicker';
 import { COLORS } from '../../../styles/theme';
+import { View } from 'react-native';
 
 const RegisterWorkSchedule = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -81,6 +82,7 @@ const RegisterWorkSchedule = ({route, navigation}: any) => {
           setIsOpen={setEndOpen}
         />
       </AlignContainer>
+      <View style={{marginVertical: 10}}/>
       <AlignContainer>
         <Button
           title="Cancel"
