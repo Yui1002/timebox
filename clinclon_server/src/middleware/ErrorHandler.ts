@@ -3,7 +3,6 @@ import ResponseException from "../models/ResponseException";
 import { JsonWebTokenError } from "jsonwebtoken";
 
 const ErrorHandler = (err: any, req: any, res: any, next: any) => {
-    console.log('req in error handler is ', req.body)
     if (err instanceof ResponseException) {
         const {message, code, errorObj} = err;
         res.status(code).json({
