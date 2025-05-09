@@ -5,12 +5,13 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "dependencies": {
-    "@openapitools/openapi-generator-cli": "^2.15.3",
     "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-cookies/cookies": "^6.2.1",
@@ -20,7 +21,6 @@
     "@react-navigation/stack": "^6.4.0",
     "@rnx-kit/metro-config": "^1.3.15",
     "@rnx-kit/metro-resolver-symlinks": "^0.1.36",
-    "@testing-library/react-native": "^12.7.2",
     "@types/react-redux": "^7.1.33",
     "@types/validator": "^13.12.0",
     "axios": "^1.7.2",
@@ -41,13 +41,13 @@
     "react-native-vector-icons": "^10.1.0",
     "react-redux": "^9.1.2",
     "redux": "^5.0.1",
-    "ts-jest": "^29.2.5",
     "validator": "^13.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.24.7",
+    "@openapitools/openapi-generator-cli": "^2.20.0",
     "@react-native/babel-preset": "0.74.85",
     "@react-native/eslint-config": "0.74.85",
     "@react-native/metro-config": "0.74.85",
@@ -65,6 +65,6 @@
     "typescript": "5.0.4"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22.14.0"
   }
 }
