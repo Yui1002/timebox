@@ -1,0 +1,11 @@
+{
+    "typescriptAxios": {
+      "useSingleRequestParameter": true,
+      "withSeparateModelsAndApi": true,
+      "apiPackage": "api",
+      "modelPackage": "models",
+      "additionalProperties": {
+        "basePath": "https://api.yuidayal.com"
+      }
+    }
+  }

@@ -4,8 +4,8 @@
     "description": "",
     "main": "dist/src/index.js",
     "scripts": {
-        "start": "tsc && nodemon ./src/index.js",
-        "test_build": "tsc",
+        "start": "node dist/src/index.js",
+        "build": "tsc",
         "test_prebuild": "tslint -c tslint.json",
         "test_prestart": "npm run build",
         "swagger-gen": "tsoa spec",
@@ -39,7 +39,8 @@
         "reflect-metadata": "^0.2.2",
         "swagger-ui-express": "^5.0.1",
         "uuid": "^9.0.0",
-        "validator": "^13.12.0"
+        "validator": "^13.12.0",
+        "tsoa": "^6.6.0"
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.0",
@@ -54,7 +55,6 @@
         "nodemon": "^3.1.10",
         "ts-jest": "^29.3.2",
         "tslint": "^5.20.1",
-        "tsoa": "^6.6.0",
         "typescript": "^5.8.3"
     }
 }

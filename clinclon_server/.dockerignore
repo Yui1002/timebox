@@ -1,0 +1,13 @@
+node_modules/
+tests/
+*.log
+*.env.local
+*.env.development
+*.env.test
+.git/
+coverage/
+.pytest_cache/
+jest.config.js 
+tslint.json
+dist/swagger.json
+dist/dist/swagger.json
