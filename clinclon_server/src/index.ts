@@ -36,9 +36,13 @@ RegisterRoutes(app);
 
 
 app.use(ErrorHandler);
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+})
 
 
-app.listen(port, function () {
+app.listen(port, '0.0.0.0', function () {
   console.log("Listening on port", this.address().port);
 });
 

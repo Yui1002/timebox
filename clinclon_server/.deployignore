@@ -17,9 +17,6 @@ coverage/
 .git/
 .gitignore
 
-# Build artifacts (if you're uploading source code and compiling on the server)
-dist/
-
 # Logs
 logs/
 *.log
