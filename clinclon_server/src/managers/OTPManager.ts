@@ -3,6 +3,7 @@ import { GetOTPRq, GetOTPRs, SetOTPRq } from "../models/OTP";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
 import nodemailer from "nodemailer";
+import axios from "axios";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
