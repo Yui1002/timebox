@@ -2,17 +2,10 @@ import OTPRepo from "../repositories/OTPRepo";
 import { GetOTPRq, GetOTPRs, SetOTPRq } from "../models/OTP";
 import ResponseException from "../models/ResponseException";
 import dotenv from 'dotenv';
-import nodemailer from "nodemailer";
-import axios from "axios";
+import sgMail from '@sendgrid/mail';
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 interface IOTPManager {
     getOTP(rq: GetOTPRq): Promise<GetOTPRs>;
@@ -71,17 +64,19 @@ class OTPManager implements IOTPManager {
     }
 
     async sendOTPViaMail(otpRq: SetOTPRq): Promise<void> {
-        const mailOptions = {
-            from: process.env.MAIL_USER,
+        const msg = {
             to: otpRq.email,
+            from: process.env.SENDGRID_SENDER,
             subject: "Sending One Time Password",
-            text: `Enter the following code when prompted: ${otpRq.otp}. It will be expired in 10 minutes.`
-        };
-        let mail = await transporter.sendMail(mailOptions);
-        if (!mail) {
-            throw new ResponseException(null, 500, "failed to send an email");
+            text: `Enter the following code when prompted: ${otpRq.otp}. It will be expired in 10 minutes.`,
+            html: '<strong>This is a test email sent from your DigitalOcean app!</strong>',
         }
-        transporter.close();
+
+        try {
+            await sgMail.send(msg);
+        } catch (error) {
+            throw new ResponseException(null, 500, 'failed to send an OTP email')
+        }
     }
 }
 

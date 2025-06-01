@@ -12,7 +12,7 @@ import {
 } from "../models/Request";
 import ResponseException from "../models/ResponseException";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";
 import { RequestStatus, UserStatus } from "../helpers/enum";
 import UserTransactionRepo from "../repositories/UserTransactionRepo";
@@ -20,16 +20,9 @@ import UserTransactionManager from "./UserTransactionManager";
 import UserScheduleManager from "./UserScheduleManager";
 import { SetUserTransactionRq } from "../models/UserTransaction";
 import { SetUserScheduleRq } from "../models/UserSchedule";
-
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 interface IRequestManager {
   getRequests(requestRq: GetRequestRq): Promise<GetRequestRs>;
@@ -108,18 +101,18 @@ class RequestManager implements IRequestManager {
       throw new ResponseException(null, 400, "no data found");
     }
 
-    const mailOptions = {
-      from: requestRq.senderEmail,
+    const msg = {
       to: requestRq.receiverEmail,
-      subject: `${sender.first_name} ${sender.last_name} requested you as a service provider`,
+      from: process.env.SENDGRID_SENDER,
+      subject: `Action Needed: Service Request from ${sender.first_name} ${sender.last_name}`,
       text: `${sender.first_name} ${sender.last_name} has requested you as a service provider. Please sign in and visit your notifications page to view the request details and choose to accept or decline.`,
     };
 
-    let mail = await transporter.sendMail(mailOptions);
-    if (!mail) {
-      throw new ResponseException(null, 500, "failed to send an email");
+    try {
+      await sgMail.send(msg);
+    } catch (error) {
+      throw new ResponseException(null, 500, "failed to send an request");
     }
-    transporter.close();
   }
 
   async updateRequest(requestRq: UpdateRequestRq): Promise<void> {
