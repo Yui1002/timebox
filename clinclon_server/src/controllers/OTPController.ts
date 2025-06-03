@@ -7,10 +7,8 @@ import {
     Post,
     Queries,
     Route,
-    Security
   } from "tsoa";
 import Validate from '../validators/CustomValidator';
-import { JWT } from '../config';
 
 interface IOTPController {
     getOTP(rq: GetOTPRq): Promise<GetOTPRs>;

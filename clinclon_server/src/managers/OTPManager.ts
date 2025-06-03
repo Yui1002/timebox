@@ -73,6 +73,7 @@ class OTPManager implements IOTPManager {
     try {
       await sgMail.send(msg);
     } catch (error) {
+        console.log('error is', error.response?.body?.errors || error)
       throw new ResponseException(null, 500, "failed to send an OTP email");
     }
   }
