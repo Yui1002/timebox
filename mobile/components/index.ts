@@ -1,6 +1,6 @@
 import Footer from './Common/Footer';
 import Button from './Common/Button';
-import Error from './Common/Error';
+// import Error from './Common/Error';
 import Separator from './Common/Separator';
 import {Input, PasswordInput, NumberInput} from './Common/Input';
 import {Dropdown, DateDropdown} from './Common/CustomDropdown';
@@ -26,7 +26,7 @@ import "./../helper/DateExtension"
 export {
   Footer,
   Button,
-  Error,
+  // Error,
   Separator,
   Input,
   PasswordInput,
