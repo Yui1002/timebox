@@ -18,7 +18,7 @@ dotenv.config();
 
 interface IUserManager {
   getUser(rq: GetUserRq): Promise<GetUserRs>;
-  setUser(userRq: SetUserRq): Promise<void>;
+  setUser(userRq: SetUserRq): Promise<{ token: string; user: GetUserRs }>;
   signInUser(userRq: SignInUserRq): Promise<{ token: string; user: GetUserRs }>;
   resetPassword(passwordRq: ResetPasswordRq): Promise<void>;
 }
@@ -40,9 +40,20 @@ class UserManager implements IUserManager {
     return new GetUserRs(userDB);
   }
 
-  async setUser(userRq: SetUserRq): Promise<void> {
+  async setUser(userRq: SetUserRq): Promise<{ token: string; user: GetUserRs }> {
     userRq.password = await this.hashPassword(userRq.password);
     await this._userRepo.setUser(userRq);
+
+    let user = await this._userRepo.getUser(userRq.email);
+
+    if (!user) {
+      throw new ResponseException(null, 400, 'User not found');
+    }
+
+    return {
+      token: this.generateJsonWebToken(user),
+      user: new GetUserRs(user),
+    }  
   }
 
   async signInUser(

@@ -878,6 +878,25 @@ export interface SetRequestRq {
 /**
  * 
  * @export
+ * @interface SetUser200Response
+ */
+export interface SetUser200Response {
+    /**
+     * 
+     * @type {GetUserRs}
+     * @memberof SetUser200Response
+     */
+    'user': GetUserRs;
+    /**
+     * 
+     * @type {string}
+     * @memberof SetUser200Response
+     */
+    'token': string;
+}
+/**
+ * 
+ * @export
  * @interface SetUserRq
  */
 export interface SetUserRq {
@@ -976,25 +995,6 @@ export interface SetUserTransactionRq {
 }
 
 
-/**
- * 
- * @export
- * @interface SignInUser200Response
- */
-export interface SignInUser200Response {
-    /**
-     * 
-     * @type {GetUserRs}
-     * @memberof SignInUser200Response
-     */
-    'user': GetUserRs;
-    /**
-     * 
-     * @type {string}
-     * @memberof SignInUser200Response
-     */
-    'token': string;
-}
 /**
  * 
  * @export
@@ -2626,7 +2626,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SetUser200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.setUser(setUserRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.setUser']?.[localVarOperationServerIndex]?.url;
@@ -2650,7 +2650,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SignInUser200Response>> {
+        async signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SetUser200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.signInUser(signInUserRq, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.signInUser']?.[localVarOperationServerIndex]?.url;
@@ -2935,7 +2935,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        setUser(setUserRq: SetUserRq, options?: RawAxiosRequestConfig): AxiosPromise<SetUser200Response> {
             return localVarFp.setUser(setUserRq, options).then((request) => request(axios, basePath));
         },
         /**
@@ -2953,7 +2953,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): AxiosPromise<SignInUser200Response> {
+        signInUser(signInUserRq: SignInUserRq, options?: RawAxiosRequestConfig): AxiosPromise<SetUser200Response> {
             return localVarFp.signInUser(signInUserRq, options).then((request) => request(axios, basePath));
         },
         /**

@@ -54,6 +54,7 @@ const SignUp = ({navigation}: any) => {
         isSignUp: true,
       });
     } catch (err) {
+      console.log('error', err)
       setResult({
         status: StatusModel.ERROR,
         message: err.response.data.message,

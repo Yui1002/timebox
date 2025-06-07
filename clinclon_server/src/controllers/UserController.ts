@@ -7,7 +7,7 @@ import { JWT } from "../config";
 
 interface IUserController {
     getUser(rq: GetUserRq): Promise<GetUserRs>;
-    setUser(request: SetUserRq): Promise<void>;
+    setUser(request: SetUserRq): Promise<{token: string, user: GetUserRs}>;
     signInUser(request: SignInUserRq): Promise<{token: string, user: GetUserRs}>;
     resetPassword(request: ResetPasswordRq): Promise<void>;
     signUpUser(request: SetUserRq): Promise<void>;
@@ -32,8 +32,8 @@ export class UserController extends SuperController implements IUserController {
 
     @Post()
     @Validate
-    public async setUser(@Body() rq: SetUserRq): Promise<void> {
-        await this._userManager.setUser(rq);
+    public async setUser(@Body() rq: SetUserRq): Promise<{token: string, user: GetUserRs}> {
+        return await this._userManager.setUser(rq);
     }
 
     @Post('/signIn')

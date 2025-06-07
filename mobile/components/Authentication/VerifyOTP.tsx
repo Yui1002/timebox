@@ -17,6 +17,7 @@ import {ResultModel} from '../../types';
 import {DefaultApiFactory, SetOTPRq, SetUserRq} from '../../swagger';
 import {ErrMsg, Screen, StatusModel} from '../../enums';
 import Validator from '../../validator/validator';
+import { storeToken } from '../../tokenUtils';
 let otpApi = DefaultApiFactory();
 let userApi = DefaultApiFactory();
 
@@ -94,10 +95,11 @@ const VerifyOTP = ({route, navigation}: any) => {
   const setUser = async () => {
     const params = {firstName, lastName, email, password} as SetUserRq;
     try {
-      await userApi.setUser(params);
+      const {data} = await userApi.setUser(params);
+      await storeToken(data.token);
+      
       dispatch(signInUser({firstName, lastName, email}));
     } catch (e) {
-      console.log(e);
       setResult({
         status: StatusModel.ERROR,
         message: ErrMsg.FAIL_CREATE_USER,
@@ -117,6 +119,7 @@ const VerifyOTP = ({route, navigation}: any) => {
           maxLength={6}
           style={otpInput}
           onChangeText={val => setOtp(val)}
+          value={Number(otp)}
         />
       </CenterContainer>
       {loading ? (
