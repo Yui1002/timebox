@@ -57,7 +57,7 @@ const SignUp = ({navigation}: any) => {
       console.log('error', err.message)
       setResult({
         status: StatusModel.ERROR,
-        message: err.response?.data?.message || "Something is wrong. Please try again.",
+        message: err.response?.data?.message || "Something is wrong. Please try again",
       });
     } finally {
       setLoading(false);
