@@ -54,10 +54,10 @@ const SignUp = ({navigation}: any) => {
         isSignUp: true,
       });
     } catch (err) {
-      console.log('error', err)
+      console.log('error', err.message)
       setResult({
         status: StatusModel.ERROR,
-        message: err.response.data.message,
+        message: err.response?.data?.message || "Something is wrong. Please try again.",
       });
     } finally {
       setLoading(false);

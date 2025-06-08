@@ -7,7 +7,7 @@ import {
     SignInUserRq,
   } from '../swagger';
 
-const basePath = "http://localhost:3000";
+const basePath = "https://clocklyapp.com";
 
 class TimeboxApiInjector {
     constructor() {
