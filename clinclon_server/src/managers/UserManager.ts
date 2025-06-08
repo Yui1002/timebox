@@ -53,7 +53,7 @@ class UserManager implements IUserManager {
     return {
       token: this.generateJsonWebToken(user),
       user: new GetUserRs(user),
-    }  
+    }
   }
 
   async signInUser(
