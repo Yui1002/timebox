@@ -8,12 +8,11 @@ import {
   Mode,
   UserSchedule,
 } from '../../swagger';
-import {AlignContainer, Button} from '../index';
+import {Button} from '../index';
 const api = DefaultApiFactory();
 import ScheduleList from '../ServiceProvider/ScheduleList';
 import {alert, alertError} from '../../helper/Alert';
 import {getAuthHeader} from '../../tokenUtils';
-import {COLORS} from '../../styles/theme';
 
 const NotificationList = ({notification, navigation}: any) => {
   const user = useSelector((state: any) => state.userInfo);
@@ -125,7 +124,8 @@ const NotificationList = ({notification, navigation}: any) => {
           onPress={() => alertConfirm(RequestStatus.Rejected)}
           buttonWidth={'45%'}
           buttonHeight={'50%'}
-          buttonColor={COLORS.LIGHT_GREY}
+          buttonColor={'#EF4444'}
+          buttonTextColor={'#FFFFFF'}
         />
         {isLoading ? (
           <ActivityIndicator size="large" color="#0000ff" />
@@ -135,6 +135,8 @@ const NotificationList = ({notification, navigation}: any) => {
             onPress={() => alertConfirm(RequestStatus.Approved)}
             buttonWidth={'45%'}
             buttonHeight={'50%'}
+            buttonColor='#10B981'
+            buttonTextColor='#FFFFFF'
           />
         )}
       </View>

@@ -1,5 +1,4 @@
 import React from 'react';
-import {ButtonStyle} from '../styles';
 import {ActivityIndicator} from 'react-native';
 import {AlignContainer, Button} from './index';
 
@@ -18,16 +17,25 @@ const LoadingButton = ({
   backTitle = 'Back',
   confirmTitle = 'Confirm',
 }: LoadingButtonProps) => {
-  let backBtn = ButtonStyle.createBackButtonStyle();
-  let continueBtn = ButtonStyle.createContinueButtonStyle();
 
   return (
     <AlignContainer>
-      <Button title={backTitle} onPress={onBack} style={backBtn} />
+      <Button
+        title={backTitle}
+        onPress={onBack}
+        buttonWidth={'45%'}
+        buttonHeight={'50%'}
+        buttonColor='#6B7280'
+      />
       {isLoading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
-        <Button title={confirmTitle} onPress={onConfirm} style={continueBtn} />
+        <Button
+          title={confirmTitle}
+          onPress={onConfirm}
+          buttonWidth={'45%'}
+          buttonHeight={'50%'}
+        />
       )}
     </AlignContainer>
   );

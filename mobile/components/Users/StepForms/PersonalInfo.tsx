@@ -52,7 +52,6 @@ const PersonalInfo = ({route, navigation}: any) => {
     status: StatusModel.NULL,
     message: '',
   });
-  const workShifts = useSelector(state => state.workShifts);
 
   const validateInput = () => {
     const validateErr = Validator.validateRate(rate, rateType);
@@ -72,6 +71,7 @@ const PersonalInfo = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
+      isEnabled: mode
     };
 
     navigation.navigate(Screen.WORK_SHIFTS, props);
@@ -112,6 +112,7 @@ const PersonalInfo = ({route, navigation}: any) => {
               maxLength={10}
               style={underlineInput}
               onChangeText={(val: string) => setRate(val)}
+              value={Number(rate)}
             />
           </View>
           <View style={alignContainer}>
