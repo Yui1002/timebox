@@ -47,7 +47,9 @@ const SignUp = ({navigation}: any) => {
 
     setLoading(true);
     try {
-      const params = {firstName, lastName, email, password};
+      const normalizedEmail = Validator.normalizeEmail(email);
+      const params = {firstName, lastName, email: normalizedEmail, password};
+
       await userApi.signUpUser(params);
       navigation.navigate(Screen.VERIFY_OTP, {
         params: params,

@@ -3,22 +3,33 @@ import {
   isFloat,
   isEmpty,
   isStrongPassword,
-  isDate,
-  isCurrency,
+  normalizeEmail
 } from 'validator';
-import moment from 'moment';
+import moment, { normalizeUnits } from 'moment';
 import {PASSWORD_RULES} from '../config.js';
 import {SignUpProps} from '../types';
 import {ErrMsg, RateTypeValue} from '../enums';
 import {TimeType} from '../swagger';
 
 class Validator {
+
+  static normalizeEmail(email: string) {
+    const normalizedEmail = normalizeEmail(email, {
+      gmail_remove_dots: true,
+      all_lowercase: true,
+      gmail_remove_subaddress: false
+    });
+
+    return normalizedEmail || email;
+  }
+
   static isNotEmpty(name: string): boolean {
     return !isEmpty(name);
   }
 
   static isValidEmail(email: string): boolean {
-    return isEmail(email);
+    const normalizedEmail = this.normalizeEmail(email);
+    return normalizedEmail ? isEmail(normalizedEmail) : false;
   }
 
   static isValidPassword(password: string): boolean {
