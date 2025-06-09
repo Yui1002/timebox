@@ -8,7 +8,7 @@ import {DefaultApiFactory, GetUserRs} from '../../swagger';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
-import {getToken} from '../../tokenUtils';
+import {getAuthHeader} from '../../tokenUtils';
 
 let api = DefaultApiFactory();
 
@@ -29,7 +29,9 @@ const HireServiceProvider = (props: any) => {
       });
       return false;
     }
-    if (searchInput === userInfo.email) {
+
+    const normalizedEmail = Validator.normalizeEmail(searchInput);
+    if (normalizedEmail === userInfo.email) {
       setResult({
         status: StatusModel.ERROR,
         message: "You can't use your email address",
@@ -41,19 +43,18 @@ const HireServiceProvider = (props: any) => {
 
   const searchEmail = async () => {
     if (!validateInput()) return;
-
-    const token = await getToken();
     setLoading(true);
 
     try {
-      const {data} = await api.isRequestValid(userInfo.email, searchInput, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const normalizedEmail = Validator.normalizeEmail(searchInput);
+      const {data} = await api.isRequestValid(
+        userInfo.email,
+        normalizedEmail,
+        await getAuthHeader(),
+      );
       showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
-      alert(e.response.data.message)
+      alert(e.response.data.message);
     } finally {
       setLoading(false);
     }

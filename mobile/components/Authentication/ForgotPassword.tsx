@@ -3,7 +3,7 @@ import {ActivityIndicator, View} from 'react-native';
 import {ResultModel, ForgotPasswordProps} from '../../types';
 import Validator from '../../validator/validator';
 import {DefaultApiFactory} from '../../swagger';
-import {Screen, StatusModel} from '../../enums';
+import {Screen, StatusModel, ErrMsg} from '../../enums';
 import {Footer, Button, Separator, Input, TopContainer, Result} from '../index';
 let api = DefaultApiFactory();
 
@@ -16,16 +16,17 @@ const ForgotPassword = ({navigation}: any) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const validateEmail = (): boolean => {
-    const validateErr = Validator.validateEmail(email);
-    if (validateErr) {
-      setResult({status: StatusModel.ERROR, message: validateErr});
+    const isValidEmail = Validator.isValidEmail(email);
+    if (!isValidEmail) {
+      setResult({status: StatusModel.ERROR, message: ErrMsg.INVALID_EMAIL});
     }
-    return validateErr == null;
+    return isValidEmail;
   };
 
   const navigateScreen = () => {
+    const normalizedEmail = Validator.normalizeEmail(email);
     const params: ForgotPasswordProps = {
-      email: email,
+      email: normalizedEmail,
       isSignUp: false,
     };
 
@@ -37,10 +38,11 @@ const ForgotPassword = ({navigation}: any) => {
 
     setLoading(true);
     try {
-      const isVerified = (await api.verifyEmail(email)).data;
+      const normalizedEmail = Validator.normalizeEmail(email);
+      const isVerified = (await api.verifyEmail(normalizedEmail)).data;
       if (isVerified) {
         await api.setOTP({
-          email,
+          email: normalizedEmail,
           otp: '',
         });
         navigateScreen();

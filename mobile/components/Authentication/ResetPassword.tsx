@@ -40,8 +40,8 @@ const ResetPassword = ({route, navigation}: any) => {
       navigation.navigate(Screen.SIGN_IN);
     } catch (e) {
       setResult({
-        status: StatusModel.ERROR, 
-        message: e.reponse.data.message
+        status: StatusModel.ERROR,
+        message: e.reponse.data.message,
       });
     } finally {
       setLoading(false);
@@ -68,7 +68,13 @@ const ResetPassword = ({route, navigation}: any) => {
           <ActivityIndicator size="large" color="#000" />
         </View>
       ) : (
-        <Button title="Reset Password" onPress={resetPassword} />
+        <Button
+          title="Reset Password"
+          onPress={resetPassword}
+          buttonWidth={'80%'}
+          buttonHeight={'5%'}
+          style={{margin: 'auto', marginVertical: 20}}
+        />
       )}
       <Separator />
       <Footer
