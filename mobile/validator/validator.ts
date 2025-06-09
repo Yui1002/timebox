@@ -13,7 +13,7 @@ import {TimeType} from '../swagger';
 
 class Validator {
 
-  static normalizeEmail(email: string) {
+  static normalizeEmail(email: string) : string{
     const normalizedEmail = normalizeEmail(email, {
       gmail_remove_dots: true,
       all_lowercase: true,
@@ -113,13 +113,6 @@ class Validator {
       return ErrMsg.INVALID_PASSWORD;
     }
 
-    return null;
-  }
-
-  static validateEmail(email: string): ErrMsg | null {
-    if (!this.isValidEmail(email)) {
-      return ErrMsg.INVALID_EMAIL;
-    }
     return null;
   }
 
