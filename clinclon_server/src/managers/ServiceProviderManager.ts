@@ -29,7 +29,7 @@ class ServiceProviderManager implements IServiceProviderManager {
         if (!employerData) {
             throw new ResponseException(null, 400, 'no data found');
         }
-        const { id: employerId, email: employerEmail } = employerData;
+        const { id: employerId, email_address: employerEmail } = employerData;
         
         let [activeServiceProviders, inactiveServiceProviders] = await Promise.all([
             this._serviceProviderRepo.getServiceProvider(employerId),
