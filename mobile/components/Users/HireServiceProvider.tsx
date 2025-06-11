@@ -38,6 +38,7 @@ const HireServiceProvider = (props: any) => {
       });
       return false;
     }
+
     return true;
   };
 
@@ -54,6 +55,7 @@ const HireServiceProvider = (props: any) => {
       );
       showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
+      console.log('error is ', e.response.data)
       alert(e.response.data.message);
     } finally {
       setLoading(false);

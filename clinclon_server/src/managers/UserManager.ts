@@ -110,7 +110,7 @@ class UserManager implements IUserManager {
 
   generateJsonWebToken(user: UserRawDB) {
     return jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email_address },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );

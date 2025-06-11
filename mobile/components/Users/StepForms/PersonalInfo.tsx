@@ -1,7 +1,13 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, ScrollView} from 'react-native';
-import {ContainerStyle, ButtonStyle, InputStyle} from '../../../styles';
+import {
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+} from 'react-native';
+import {ContainerStyle, InputStyle} from '../../../styles';
 import ProgressBar from './ProgressBar';
 import {resetShifts} from '../../../redux/actions/workShiftsAction';
 import Validator from '../../../validator/validator';
@@ -30,7 +36,7 @@ import {
   StatusModel,
 } from '../../../enums';
 import {COLORS} from '../../../styles/theme';
-import { Dropdown } from '../../Common/CustomDropdown'
+import {Dropdown} from '../../Common/CustomDropdown';
 
 const PersonalInfo = ({route, navigation}: any) => {
   const dispatch = useDispatch();
@@ -71,7 +77,7 @@ const PersonalInfo = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
-      isEnabled: mode
+      isEnabled: mode,
     };
 
     navigation.navigate(Screen.WORK_SHIFTS, props);
@@ -86,75 +92,91 @@ const PersonalInfo = ({route, navigation}: any) => {
   let alignContainer = ContainerStyle.createAlignContainer();
   let underlineInput = InputStyle.createUnderlineInputStyle();
 
+  const {width: screenWidth} = Dimensions.get('window');
+  const isTablet = screenWidth >= 768;
+
   return (
     <TopContainer>
-      <ProgressBar title={Bar.INFORMATION} isFocused={true} />
-      {result.status && <Result status={result.status} msg={result.message} />}
-      <ScrollView>
-        <Header title="User Information" />
-        <AlignContainer>
-          <Section
-            title="First Name"
-            text={firstName ? firstName : 'Not specified'}
-            isAlign={true}
-          />
-          <Section
-            title="Last Name"
-            text={lastName ? lastName : 'Not specified'}
-            isAlign={true}
-          />
-        </AlignContainer>
-        <Section title="Email Address" text={email} />
-        <AlignContainer>
-          <View style={alignContainer}>
-            <Title title="Rate ($)" />
-            <NumberInput
-              maxLength={10}
-              style={underlineInput}
-              onChangeText={(val: string) => setRate(val)}
-              value={Number(rate)}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={
+          Platform.OS === 'ios' ? (isTablet ? 0 : 64) : 0
+        }>
+        <ProgressBar title={Bar.INFORMATION} isFocused={true} />
+        {result.status && (
+          <Result status={result.status} msg={result.message} />
+        )}
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 120,
+          }}>
+          <Header title="User Information" />
+          <AlignContainer>
+            <Section
+              title="First Name"
+              text={firstName ? firstName : 'Not specified'}
+              isAlign={true}
             />
-          </View>
-          <View style={alignContainer}>
-            <Title title="Rate Type" />
+            <Section
+              title="Last Name"
+              text={lastName ? lastName : 'Not specified'}
+              isAlign={true}
+            />
+          </AlignContainer>
+          <Section title="Email Address" text={email} />
+          <AlignContainer>
+            <View style={alignContainer}>
+              <Title title="Rate ($)" />
+              <NumberInput
+                maxLength={10}
+                style={underlineInput}
+                onChangeText={(val: string) => setRate(val)}
+                value={Number(rate)}
+              />
+            </View>
+            <View style={alignContainer}>
+              <Title title="Rate Type" />
+              <Dropdown
+                isOpen={open}
+                value={rateType}
+                items={items}
+                setOpen={() => setOpen(!open)}
+                setValue={setRateType}
+                setItems={setItems}
+              />
+            </View>
+          </AlignContainer>
+          <View style={[container, {zIndex: open ? -1 : 1}]}>
+            <Title title="Allow the service provider to modify record time?" />
             <Dropdown
-              isOpen={open}
-              value={rateType}
-              items={items}
-              setOpen={() => setOpen(!open)}
-              setValue={setRateType}
-              setItems={setItems}
+              isOpen={modeOpen}
+              value={mode}
+              items={modeItems}
+              setOpen={() => setModeOpen(!modeOpen)}
+              setValue={setMode}
+              setItems={setModeItems}
             />
           </View>
-        </AlignContainer>
-        <View style={[container, {zIndex: open ? -1 : 1}]}>
-          <Title title="Allow the service provider to modify record time?" />
-          <Dropdown
-            isOpen={modeOpen}
-            value={mode}
-            items={modeItems}
-            setOpen={() => setModeOpen(!modeOpen)}
-            setValue={setMode}
-            setItems={setModeItems}
-          />
-        </View>
-        <View style={{marginVertical: 20}} />
-        <AlignContainer>
-          <Button
-            title="Back"
-            onPress={goBack}
-            buttonWidth={'45%'}
-            buttonHeight={'40%'}
-            buttonColor={COLORS.LIGHT_GREY}
-          />
-          <Button
-            title="Continue"
-            onPress={proceed}
-            buttonWidth={'45%'}
-            buttonHeight={'40%'}
-          />
-        </AlignContainer>
-      </ScrollView>
+          <View style={{flex: 1, minHeight: 50}} />
+          <AlignContainer>
+            <Button
+              title="Back"
+              onPress={goBack}
+              buttonWidth={'45%'}
+              buttonHeight={'40%'}
+              buttonColor={COLORS.LIGHT_GREY}
+            />
+            <Button
+              title="Continue"
+              onPress={proceed}
+              buttonWidth={'45%'}
+              buttonHeight={'40%'}
+            />
+          </AlignContainer>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </TopContainer>
   );
 };

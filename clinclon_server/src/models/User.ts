@@ -14,7 +14,7 @@ class UserRawDB extends BaseRequest {
   last_name: string = "";
 
   @JsonProperty("email_address", String)
-  email: string = "";
+  email_address: string = "";
   @JsonProperty("password", String)
   password: string = "";
 
@@ -40,7 +40,7 @@ class GetUserRs {
   constructor(userResult: UserRawDB) {
     this.firstName = userResult.first_name;
     this.lastName = userResult.last_name;
-    this.email = userResult.email;
+    this.email = userResult.email_address;
   }
 }
 
