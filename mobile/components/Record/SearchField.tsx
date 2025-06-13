@@ -8,7 +8,6 @@ let api = DefaultApiFactory();
 import { DateDropdown } from '../Common/CustomDropdown'
 import Validator from '../../validator/validator';
 import {getAuthHeader} from '../../tokenUtils';
-import {convertDateToEpoch} from '../../helper/DateUtils';
 
 interface SearchFieldProps {
   employer: Employer;
@@ -47,15 +46,20 @@ const SearchField = ({
   const searchRecord = async () => {
     if (!validateInput()) return;
 
-    const fromEpoch = convertDateToEpoch(searchPeriod.from!);
-    const toEpoch = convertDateToEpoch(searchPeriod.to!);
+    const start = new Date(searchPeriod.from!)
+    start.setHours(0,0.0,0);
+    const startEpoch = Math.floor(start.getTime() / 1000);
+
+    const end = new Date(searchPeriod.to!)
+    end.setHours(23,59,59,999);
+    const endEpoch = Math.floor(end.getTime() / 1000);
 
     try {
       const {data} = await api.getRecordByPeriod(
         employer.email,
         serviceProviderEmail,
-        fromEpoch,
-        toEpoch,
+        startEpoch,
+        endEpoch,
         await getAuthHeader(),
       );
       setRecords(data.records!);
@@ -113,16 +117,23 @@ const SearchField = ({
           maximumDate={new Date()}
           date={searchPeriod.to || new Date()}
           onConfirm={(date: Date) => {
-            const endOfDay = new Date(date);
-            endOfDay.setHours(23, 59, 59, 999);
-
             setSearchPeriod({
               from: searchPeriod.from,
-              to: endOfDay
+              to: date
             });
-
             setToOpen(false);
           }}
+          // onConfirm={(date: Date) => {
+          //   const endOfDay = new Date(date);
+          //   endOfDay.setHours(23, 59, 59, 999);
+
+          //   setSearchPeriod({
+          //     from: searchPeriod.from,
+          //     to: endOfDay
+          //   });
+
+          //   setToOpen(false);
+          // }}
           onCancel={() => setToOpen(false)}
           isArrowIconShown={true}
         />
