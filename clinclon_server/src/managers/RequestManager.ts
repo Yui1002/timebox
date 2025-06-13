@@ -74,6 +74,7 @@ class RequestManager implements IRequestManager {
     requestRq: GetRequestByStatusRq
   ): Promise<GetRequestRsMini[]> {
     let requestDB = await this._requestRepo.getRequestsByStatus(requestRq);
+    console.log('request DB is', requestDB)
     if (!requestDB) {
       throw new ResponseException(null, 400, "no data found");
     }
