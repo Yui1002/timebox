@@ -14,6 +14,6 @@ export const getEndOfDay = (date: Date = new Date()): Date => {
     return moment(date).endOf('day').toDate();
 }
 
-export const getPrevDay = (daysAgo: number): string => {
-    return moment().subtract(daysAgo, 'days').format('MM-DD-YYYY');
+export const getPrevDay = (daysAgo: number): Moment => {
+    return moment().subtract(daysAgo, 'days');
 }

@@ -20,7 +20,7 @@ const RecordHistoryList = ({
 }: RecordHistoryListProps) => {
   const {epoch_start_time, epoch_end_time} = record;
   const date = convertEpochToDate(Number(epoch_start_time)).momentFormat(
-    'YYYY/MM/DD',
+    'MM-DD-YYYY',
   );
   const startTime = convertEpochToDate(Number(epoch_start_time));
   const endTime = convertEpochToDate(Number(epoch_end_time));

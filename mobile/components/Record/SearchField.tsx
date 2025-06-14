@@ -24,8 +24,8 @@ const SearchField = ({
   const [fromOpen, setFromOpen] = useState<boolean>(false);
   const [toOpen, setToOpen] = useState(false);
   const [searchPeriod, setSearchPeriod] = useState<DateInput>({
-    from: null,
-    to: null,
+    from: getPrevDay(15).toDate(),
+    to: getPrevDay(0).toDate()
   });
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -64,11 +64,16 @@ const SearchField = ({
         await getAuthHeader(),
       );
       setRecords(data.records!);
+      setResult({
+        status: StatusModel.NULL,
+        message: '',
+      });
     } catch (e) {
       setResult({
         status: StatusModel.ERROR,
         message: e.response.data.message,
       });
+      setRecords([]);
     }
   };
 
@@ -81,7 +86,7 @@ const SearchField = ({
           placeholder={
             searchPeriod.from
               ? `${searchPeriod.from.momentFormat('MM-DD-YYYY')}`
-              : `${getPrevDay(15)}`
+              : `${getPrevDay(15).format('MM-DD-YYYY')}`
           }
           boxWidth={'47%'}
           boxHeight={'50%'}
@@ -106,7 +111,7 @@ const SearchField = ({
           placeholder={
             searchPeriod.to
               ? `${searchPeriod.to.momentFormat('MM-DD-YYYY')}`
-              : `${getPrevDay(0)}`
+              : `${getPrevDay(0).format('MM-DD-YYYY')}`
           }
           boxWidth={'47%'}
           boxHeight={'50%'}
