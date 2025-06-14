@@ -8,6 +8,7 @@ let api = DefaultApiFactory();
 import { DateDropdown } from '../Common/CustomDropdown'
 import Validator from '../../validator/validator';
 import {getAuthHeader} from '../../tokenUtils';
+import { getPrevDay } from '../../helper/momentHelper';
 
 interface SearchFieldProps {
   employer: Employer;
@@ -80,7 +81,7 @@ const SearchField = ({
           placeholder={
             searchPeriod.from
               ? `${searchPeriod.from.momentFormat('MM-DD-YYYY')}`
-              : 'From'
+              : `${getPrevDay(15)}`
           }
           boxWidth={'47%'}
           boxHeight={'50%'}
@@ -105,7 +106,7 @@ const SearchField = ({
           placeholder={
             searchPeriod.to
               ? `${searchPeriod.to.momentFormat('MM-DD-YYYY')}`
-              : 'To'
+              : `${getPrevDay(0)}`
           }
           boxWidth={'47%'}
           boxHeight={'50%'}
