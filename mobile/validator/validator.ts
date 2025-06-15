@@ -190,10 +190,7 @@ class Validator {
     return null;
   }
 
-  static validateWorkingRecordSelect(from: Date | null, to: Date | null): ErrMsg | null {
-    if (!from || !to) {
-      return ErrMsg.MISSING_FIELD;
-    }
+  static validateWorkingRecordSelect(from: Date, to: Date): ErrMsg | null {
     if (!this.isValidEndTime(from, to)) {
       return ErrMsg.INVALID_TIME;
     }

@@ -115,8 +115,8 @@ type Record = {
 }
 
 type DateInput = {
-  from: Date | null,
-  to: Date | null
+  from: Date,
+  to: Date
 }
 
 export {

@@ -2,12 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ResultModel, DateInput} from '../../types';
 import {Title, Button, Result} from '../index';
-import {DefaultApiFactory, Employer, Record} from '../../swagger';
+import {DefaultApiFactory, Employer, Record, GetRecordRs} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
-import { DateDropdown } from '../Common/CustomDropdown'
+import {DateDropdown} from '../Common/CustomDropdown';
 import Validator from '../../validator/validator';
 import {getAuthHeader} from '../../tokenUtils';
+import {getPrevDay} from '../../helper/momentHelper';
 
 interface SearchFieldProps {
   employer: Employer;
@@ -23,8 +24,8 @@ const SearchField = ({
   const [fromOpen, setFromOpen] = useState<boolean>(false);
   const [toOpen, setToOpen] = useState(false);
   const [searchPeriod, setSearchPeriod] = useState<DateInput>({
-    from: null,
-    to: null,
+    from: getPrevDay(15).toDate(),
+    to: getPrevDay(0).toDate(),
   });
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -46,12 +47,12 @@ const SearchField = ({
   const searchRecord = async () => {
     if (!validateInput()) return;
 
-    const start = new Date(searchPeriod.from!)
-    start.setHours(0,0.0,0);
+    const start = new Date(searchPeriod.from!);
+    start.setHours(0, 0.0, 0);
     const startEpoch = Math.floor(start.getTime() / 1000);
 
-    const end = new Date(searchPeriod.to!)
-    end.setHours(23,59,59,999);
+    const end = new Date(searchPeriod.to!);
+    end.setHours(23, 59, 59, 999);
     const endEpoch = Math.floor(end.getTime() / 1000);
 
     try {
@@ -62,13 +63,25 @@ const SearchField = ({
         endEpoch,
         await getAuthHeader(),
       );
-      setRecords(data.records!);
+      setRecords(sortRecordsInDecendingOrder(data.records!));
+      setResult({
+        status: StatusModel.NULL,
+        message: '',
+      });
     } catch (e) {
       setResult({
         status: StatusModel.ERROR,
         message: e.response.data.message,
       });
+      setRecords([]);
     }
+  };
+
+  const sortRecordsInDecendingOrder = (data: Record[]): Record[] => {
+    return data.sort(
+      (a: Record, b: Record) =>
+        Number(b.epoch_start_time) - Number(a.epoch_start_time),
+    );
   };
 
   return (
@@ -80,7 +93,7 @@ const SearchField = ({
           placeholder={
             searchPeriod.from
               ? `${searchPeriod.from.momentFormat('MM-DD-YYYY')}`
-              : 'From'
+              : `${getPrevDay(15).format('MM-DD-YYYY')}`
           }
           boxWidth={'47%'}
           boxHeight={'50%'}
@@ -105,7 +118,7 @@ const SearchField = ({
           placeholder={
             searchPeriod.to
               ? `${searchPeriod.to.momentFormat('MM-DD-YYYY')}`
-              : 'To'
+              : `${getPrevDay(0).format('MM-DD-YYYY')}`
           }
           boxWidth={'47%'}
           boxHeight={'50%'}
@@ -119,7 +132,7 @@ const SearchField = ({
           onConfirm={(date: Date) => {
             setSearchPeriod({
               from: searchPeriod.from,
-              to: date
+              to: date,
             });
             setToOpen(false);
           }}

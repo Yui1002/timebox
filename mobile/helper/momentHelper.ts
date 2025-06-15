@@ -13,3 +13,7 @@ export const getBeginningOfDay = (date: Date = new Date()): Date => {
 export const getEndOfDay = (date: Date = new Date()): Date => {
     return moment(date).endOf('day').toDate();
 }
+
+export const getPrevDay = (daysAgo: number): Moment => {
+    return moment().subtract(daysAgo, 'days');
+}
