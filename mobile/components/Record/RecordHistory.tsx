@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {TextStyle} from '../../styles';
 import {Record, Employer} from '../../swagger';
 import {TopContainer, Separator, Button, Result} from '../index';
