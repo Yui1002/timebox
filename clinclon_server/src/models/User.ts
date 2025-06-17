@@ -66,6 +66,12 @@ class ResetPasswordRq extends BaseUserRequest {
   newPassword: string = "";
 }
 
+@JsonObject("RefreshTokenRq")
+class RefreshTokenRq {
+  @JsonProperty('refreshToken', String)
+  refreshToken: string = ""
+} 
+
 export {
   GetUserRq,
   GetUserRs,
@@ -73,4 +79,5 @@ export {
   SignInUserRq,
   ResetPasswordRq,
   UserRawDB,
+  RefreshTokenRq
 };

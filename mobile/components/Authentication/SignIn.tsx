@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import {GetUserRs} from '../../swagger';
-import {storeToken} from '../../tokenUtils';
+import {storeToken, isTokenExpired} from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
@@ -23,12 +23,24 @@ const SignIn = ({navigation}: any) => {
     message: '',
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true)
 
   useEffect(() => {
     if (!isFocused) {
       clearInput();
     }
   }, [isFocused]);
+
+  const checkExistingAuth = async () => {
+    setCheckingAuth(true);
+
+    try {
+      const isTokenValid = await isTokenExpired();
+      if (isTokenValid)
+    } catch (error) {
+      console.log('Auth check failed: ', error);
+    }
+  }
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignIn(email, password);

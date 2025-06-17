@@ -8,6 +8,7 @@ dotenv.config();
 
 interface IUserRepo {
     getUser(email: string): Promise<UserRawDB>;
+    getUserById(id: number): Promise<UserRawDB>;
     setUser(userRq: SetUserRq): Promise<void>;
     resetPassword(passwordRq: ResetPasswordRq): Promise<void>;
     setTempUser(userRq: SetUserRq): Promise<void>;
@@ -19,6 +20,19 @@ class UserRepo extends Repositories implements IUserRepo {
         try {
             const sql = "SELECT user_id AS id, first_name, last_name, email_address, password, status FROM users WHERE email_address = $1;";
             const data = await this.queryDB(sql, [email]);
+            if (data?.rows.length <= 0) {
+                return null;
+            }
+            return JSHelperInstance._converter.deserializeObject(data?.rows[0], UserRawDB);
+        } catch (e) {
+            throw new ResponseException(e, 500, "unable to get from db");
+        }
+    }
+
+    async getUserById(id: number): Promise<UserRawDB> {
+        try {
+            const sql = "SELECT user_id AS id, first_name, last_name, email_address, password, status FROM users WHERE user_id = $1;";
+            const data = await this.queryDB(sql, [id]);
             if (data?.rows.length <= 0) {
                 return null;
             }
