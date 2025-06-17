@@ -7,14 +7,6 @@ interface TokenData {
   issuedAt: number;
 }
 
-// export const storeToken = async (token: string): Promise<void> => {
-//   try {
-//     await Keychain.setGenericPassword('authToken', token);
-//   } catch (err) {
-//     console.log('Failed to store token');
-//   }
-// };
-
 export const storeToken = async (
   accessToken: string,
   refreshToken: string,
@@ -37,18 +29,6 @@ export const storeToken = async (
     console.log('Error string tokens: ', error);
   }
 };
-
-// export const getToken = async (): Promise<string | null | undefined> => {
-//   try {
-//     const token = await Keychain.getGenericPassword();
-//     if (token) {
-//       return token.password;
-//     }
-//     return null;
-//   } catch (err) {
-//     console.log('Failed to retrieve token', err);
-//   }
-// };
 
 export const getToken = async (): Promise<TokenData | null> => {
   try {

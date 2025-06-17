@@ -17,7 +17,6 @@ import OTPManager from "./OTPManager";
 import { TokenResponse, RefreshTokenResponse } from "../interfaces/Token";
 dotenv.config();
 
-
 interface IUserManager {
   getUser(rq: GetUserRq): Promise<GetUserRs>;
   setUser(userRq: SetUserRq): Promise<TokenResponse>;
