@@ -14,7 +14,7 @@ import {
   Icon,
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
-import {Mode, RateTypeValue, Screen, StatusModel} from '../../../enums';
+import {AllowEdit, RateTypeValue, Screen, StatusModel} from '../../../enums';
 import {
   DefaultApiFactory,
   UpdateServiceProviderRq,
@@ -30,28 +30,17 @@ import {getAuthHeader} from '../../../tokenUtils';
 import _ from 'lodash';
 let api = DefaultApiFactory();
 
+
 const EditProfile = ({route, navigation}: any) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    rate,
-    rateType,
-    schedules,
-    status,
-    allowEdit,
-  } = route.params; // initial values
+  const { firstName, lastName, email, rate, rateType, schedules, status, allowEdit } = route.params;
   const employerData = useSelector((state: any) => state.userInfo);
 
   const [updatedRate, setUpdatedRate] = useState<number>(rate);
-  const [updatedRateType, setUpdatedRateType] =
-    useState<RateTypeValue>(rateType);
+  const [updatedRateType, setUpdatedRateType] = useState<RateTypeValue>(rateType);
   const [updatedStatus, setUpdatedStatus] = useState(status);
-  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(
-    _.cloneDeep(schedules),
-  );
+  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(_.cloneDeep(schedules));
+  const [updatedAllowEdit, setUpdatedAllowEdit] = useState<AllowEdit>(allowEdit);
   const [modeOpen, setModeOpen] = useState<boolean>(false);
-  const [mode, setMode] = useState<Mode>(allowEdit === 0 ? Mode.NO : Mode.YES);
 
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -70,8 +59,8 @@ const EditProfile = ({route, navigation}: any) => {
     },
   ]);
   const [modeItems, setModeItems] = useState<ModeSet[]>([
-    {label: Mode.YES, value: Mode.YES},
-    {label: Mode.NO, value: Mode.NO},
+    {label: 'Yes', value: AllowEdit.True},
+    {label: 'No', value: AllowEdit.False},
   ]);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -204,6 +193,9 @@ const EditProfile = ({route, navigation}: any) => {
     if (updatedStatus !== status) {
       changedData.status = updatedStatus;
     }
+    if (updatedAllowEdit !== allowEdit) {
+      changedData.allow_edit = updatedAllowEdit;
+    }
 
     const chagnedSchedules = getChangedSchedules(schedules, updatedSchedule);
 
@@ -243,6 +235,7 @@ const EditProfile = ({route, navigation}: any) => {
         message: 'Successfully updated the profile!',
       });
       navigation.navigate(Screen.PROFILE, {
+        refresh: true,
         sp: {
           firstName: firstName,
           lastName: lastName,
@@ -251,6 +244,7 @@ const EditProfile = ({route, navigation}: any) => {
           rate: updatedRate,
           rateType: updatedRateType,
           schedules: updatedSchedule,
+          allowEdit: updatedAllowEdit
         },
       });
     } catch (err) {
@@ -375,10 +369,11 @@ const EditProfile = ({route, navigation}: any) => {
           <Title title="Allow service provider to modify record time" />
           <Dropdown
             isOpen={modeOpen}
-            value={mode}
+            value={updatedAllowEdit}
             items={modeItems}
             setOpen={() => setModeOpen(!modeOpen)}
-            setValue={setMode}
+            // setValue={(value: AllowEdit) => setUpdatedAllowEdit(value)}
+            setValue={(value: AllowEdit) => setUpdatedAllowEdit(value)}
             setItems={setModeItems}
           />
         </View>

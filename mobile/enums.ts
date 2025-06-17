@@ -43,10 +43,9 @@ enum RateTypeValue {
   HOURLY = 'hourly',
   DAILY = 'daily'
 }
-
-enum Mode {
-  YES = 'Yes',
-  NO = 'No'
+enum AllowEdit {
+  False = 0,
+  True = 1
 }
 
 enum Screen {
@@ -119,4 +118,4 @@ enum MomentFormat {
   DATETIME = 'MM/DD LT',
 }
 
-export { StatusModel, Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, Mode, MomentFormat, ActionType }
+export { StatusModel, Days, TimeType, PromiseType, RateTypeValue, Screen, ErrMsg, Display, ProgressBar, Parameters, AllowEdit, MomentFormat, ActionType }

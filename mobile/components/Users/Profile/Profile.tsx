@@ -16,16 +16,7 @@ import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {RequestStatus, UserSchedule} from '../../../swagger';
 
 const Profile = ({route, navigation}: any) => {
-  const {
-    firstName,
-    lastName,
-    email,
-    status,
-    rate,
-    rateType,
-    schedules,
-    allowEdit,
-  } = route.params.sp;
+  const { firstName, lastName, email, status, rate, rateType, schedules, allowEdit } = route.params.sp;
   const userInfo = useSelector((state: any) => state.userInfo);
 
   const editProfile = () => {

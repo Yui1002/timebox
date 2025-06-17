@@ -1,6 +1,6 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
-import { Mode, RateType, UserStatus } from '../helpers/enum';
+import { AllowEdit, RateType, UserStatus } from '../helpers/enum';
 
 @JsonObject("GetUserTransactionRq")
 class GetUserTransactionRq extends BaseRequest {
@@ -20,8 +20,8 @@ class GetUserTransactionRs {
     rateType: string = 'hourly';
     @JsonProperty("status")
     status: UserStatus = UserStatus.ACTIVE;
-    @JsonProperty("mode")
-    mode: Mode = Mode.True;
+    @JsonProperty("allow_edit")
+    allowEdit: AllowEdit = AllowEdit.True;
 }
 
 @JsonObject("SetUserTransactionRq")
@@ -36,9 +36,8 @@ class SetUserTransactionRq extends BaseRequest {
     serviceProviderEmail: string = '';
     @JsonProperty("status")
     status: UserStatus = UserStatus.ACTIVE;
-    @JsonProperty("mode")
-    mode: Mode = Mode.True;
-
+    @JsonProperty("allowEdit")
+    allowEdit: AllowEdit = AllowEdit.False;
 }
 
 @JsonObject("UpdateUserTransactionRq")

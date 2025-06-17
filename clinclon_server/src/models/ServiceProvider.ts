@@ -2,7 +2,7 @@ import {JsonObject, JsonProperty, PropertyConvertingMode} from 'json2typescript'
 import {BaseRequest} from './BaseRequest';
 import { GetUserRs, UserRawDB } from './User';
 import { UpdateUserScheduleRq, UserSchedule } from './UserSchedule';
-import { Mode, RateType } from '../helpers/enum';
+import { AllowEdit, RateType } from '../helpers/enum';
 
 @JsonObject("ServiceProviderRawDB")
 class ServiceProviderRawDB extends BaseRequest {
@@ -23,7 +23,7 @@ class ServiceProviderRawDB extends BaseRequest {
     @JsonProperty("schedule_id", Number, true)
     scheduleId?: number = 0;
     @JsonProperty("allow_edit")
-    allowEdit: Mode = Mode.False;
+    allow_edit: AllowEdit = AllowEdit.False;
 }
 
 @JsonObject("GetServiceProviderRsMini")  
@@ -41,7 +41,7 @@ class GetServiceProviderRsMini {
     @JsonProperty("rateType")
     rateType: RateType = RateType.HOURLY;
     @JsonProperty("allow_edit")
-    allowEdit: Mode = Mode.False;
+    allowEdit: AllowEdit = AllowEdit.False;
     @JsonProperty("schedules")
     schedules: UserSchedule[]
 
@@ -52,7 +52,7 @@ class GetServiceProviderRsMini {
         this.status = serviceProviderResult.status;
         this.rate = serviceProviderResult.rate;
         this.rateType = serviceProviderResult.rateType;
-        this.allowEdit = serviceProviderResult.allowEdit
+        this.allowEdit = serviceProviderResult.allow_edit
         this.schedules = []
     }
 }
@@ -77,6 +77,8 @@ class UpdateServiceProviderRq extends BaseRequest {
     status?: string;
     @JsonProperty('schedule', [UpdateUserScheduleRq], true)
     schedule?: UpdateUserScheduleRq[];
+    @JsonProperty('allow_edit', Number, true)
+    allow_edit?: AllowEdit;
     @JsonProperty('update_by', String)
     update_by: string = '';
 }

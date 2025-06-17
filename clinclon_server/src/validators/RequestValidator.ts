@@ -2,7 +2,7 @@ import SuperValidator from "./SuperValidator";
 import { GetRequestRq, GetRequestByEmailRq, SetRequestRq, UpdateRequestRq, GetRequestByStatusRq } from "../models/Request";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import {isEmail, isFloat, isEmpty} from "validator";
-import { RateType, Mode } from "../helpers/enum";
+import { RateType, AllowEdit } from "../helpers/enum";
 
 class GetRequestsValidator extends SuperValidator {
     constructor() {
@@ -81,8 +81,8 @@ class SetRequestValidator extends SuperValidator {
         if (!instance.hasOwnProperty('rateType') || instance.rateType === RateType.UNSPECIFIED) {
             this.throwError(null, "Rate type is invalid");
         }
-        if (!instance.hasOwnProperty('mode') || (instance.mode !== Mode.True && instance.mode !== Mode.False)) {
-            this.throwError(null, "Mode is invalid");
+        if (!instance.hasOwnProperty('allowEdit')) {
+            this.throwError(null, "Allow Edit is invalid");
         } 
 
         return instance;

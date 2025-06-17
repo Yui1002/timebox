@@ -18,7 +18,7 @@ class EmployerRepo extends Repositories implements IEmployerRepo {
                             u.first_name, 
                             u.last_name, 
                             u.email_address, 
-                            ut.mode 
+                            ut.allow_edit 
                         FROM users u
                         INNER JOIN user_transaction ut ON ut.employer_user_id = u.user_id
                         WHERE ut.service_provider_id = $1;`

@@ -1,4 +1,4 @@
-import {RateTypeValue, Mode, StatusModel} from './enums';
+import {RateTypeValue, AllowEdit, StatusModel} from './enums';
 import { UserSchedule } from './swagger';
 
 type UserInfo = {
@@ -29,7 +29,7 @@ type RawEmployer = {
   firstName: string;
   lastName: string;
   email: string;
-  mode: number;
+  allowEdit: number;
 };
 
 type FormattedEmployer = {
@@ -65,8 +65,8 @@ type RateTypeSet = {
 };
 
 type ModeSet = {
-  label: Mode.YES | Mode.NO;
-  value: Mode.YES | Mode.NO;
+  label: string;
+  value: AllowEdit;
 };
 
 type SignUpProps = {
@@ -94,8 +94,8 @@ type WorkShiftsProps = {
     lastName: string,
     email: string,
     rate: string,
-    rateType: RateTypeValue.HOURLY | RateTypeValue.DAILY,
-    isEnabled: Mode
+    rateType: RateTypeValue,
+    allowEdit: AllowEdit
 }
 
 type ForgotPasswordProps = {

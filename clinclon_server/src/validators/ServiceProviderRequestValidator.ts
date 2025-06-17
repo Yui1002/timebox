@@ -2,7 +2,7 @@ import SuperValidator from "./SuperValidator";
 import { GetServiceProviderRq, UpdateServiceProviderRq } from "../models/ServiceProvider";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import {isEmail} from 'validator';
-import { RateType } from "../helpers/enum";
+import { AllowEdit, RateType } from "../helpers/enum";
 
 class GetServiceProviderRequestValidator extends SuperValidator {
     constructor() {
@@ -47,6 +47,12 @@ class UpdateServiceProviderRequestValidator extends SuperValidator {
         if (instance.hasOwnProperty('schedule')) {
             if (instance.schedule.length < 1) {
                 this.throwError("Schedule field must be more than 1 schedule")
+            }
+        }
+
+        if (instance.hasOwnProperty('allow_edit')) {
+            if (instance.allow_edit !== AllowEdit.False && instance.allow_edit !== AllowEdit.True) {
+                this.throwError("Allow Edit field must be 0 (No) or 1 (Yes)")
             }
         }
 

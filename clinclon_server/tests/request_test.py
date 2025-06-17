@@ -42,7 +42,7 @@ def generate_random_schedule():
 
     return [schedule_1, schedule_2]
 
-def create_request_data(senderEmail=None, receiverEmail=None, rate=None, rateType=None, schedule=None, mode=None):
+def create_request_data(senderEmail=None, receiverEmail=None, rate=None, rateType=None, schedule=None, allow_edit=None):
     valid_users = get_valid_users()
 
     if senderEmail is None or receiverEmail is None:
@@ -53,8 +53,8 @@ def create_request_data(senderEmail=None, receiverEmail=None, rate=None, rateTyp
         rateType = 'hourly'
     if schedule is None:
         schedule = generate_random_schedule()
-    if mode is None:
-        mode = 0
+    if allow_edit is None:
+        allow_edit = 0
 
     return {
         "senderEmail": senderEmail,
@@ -62,7 +62,7 @@ def create_request_data(senderEmail=None, receiverEmail=None, rate=None, rateTyp
         "rate": rate,
         "rateType": rateType,
         "schedules": schedule,
-        "mode": mode
+        "allow_edit": allow_edit
     }
 
 def test_get_request_by_email(shared_state):

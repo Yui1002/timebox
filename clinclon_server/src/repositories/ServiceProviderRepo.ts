@@ -31,7 +31,7 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
                     u.status,
                     ut.rate,
                     ut.rate_type,
-                    ut.mode AS allow_edit,
+                    ut.allow_edit,
                     us.user_schedule_id AS schedule_id
                   FROM users u
                   INNER JOIN user_transaction ut ON u.user_id = ut.service_provider_id
@@ -74,7 +74,7 @@ class ServiceProviderRepo extends Repositories implements IServiceProviderRepo {
   public async getTransaction(employerId: number, serviceProviderId: number) {
     try {
       const sql =
-        "SELECT user_transaction_id AS id, rate, rate_type, status, mode FROM user_transaction WHERE employer_user_id = $1 AND service_provider_id = $2;";
+        "SELECT user_transaction_id AS id, rate, rate_type, status, allow_edit FROM user_transaction WHERE employer_user_id = $1 AND service_provider_id = $2;";
       const data = await this.queryDB(sql, [employerId, serviceProviderId]);
       if (data?.rows.length <= 0) {
         return null;

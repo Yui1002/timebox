@@ -74,7 +74,6 @@ class RequestManager implements IRequestManager {
     requestRq: GetRequestByStatusRq
   ): Promise<GetRequestRsMini[]> {
     let requestDB = await this._requestRepo.getRequestsByStatus(requestRq);
-    console.log('request DB is', requestDB)
     if (!requestDB) {
       throw new ResponseException(null, 400, "no data found");
     }
@@ -127,7 +126,7 @@ class RequestManager implements IRequestManager {
           employerEmail: requestRq.senderEmail,
           serviceProviderEmail: requestRq.receiverEmail,
           status: UserStatus.ACTIVE,
-          mode: requestRq.mode,
+          allowEdit: requestRq.allowEdit,
         } as SetUserTransactionRq),
         await this._userScheduleManager.setUserSchedule({
           employerEmail: requestRq.senderEmail,

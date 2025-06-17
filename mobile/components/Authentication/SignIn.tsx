@@ -50,7 +50,6 @@ const SignIn = ({navigation}: any) => {
       dispatchUser(data.user);
       navigation.navigate(Screen.DRAWER_NAV);
     } catch (e: any) {
-      console.log(e.message)
       setResult({status: StatusModel.ERROR, message: ErrMsg.SIGNIN_ERROR});
     } finally {
       setLoading(false);

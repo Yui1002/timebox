@@ -2,7 +2,7 @@ import SuperValidator from "./SuperValidator";
 import { GetUserTransactionRq, SetUserTransactionRq } from "../models/UserTransaction";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
 import {isEmail} from 'validator';
-import { Mode } from "../helpers/enum";
+import { AllowEdit } from "../helpers/enum";
 
 class GetUserTransactionRequestValidator extends SuperValidator {
     constructor() {
@@ -39,8 +39,8 @@ class SetUserTransactionRequestValidator extends SuperValidator {
         if (!instance.rateType) {
             this.throwError(null, 'Rate type is invalid')
         }
-        if (instance.mode !== Mode.True && instance.mode !== Mode.False) {
-            this.throwError(null, 'Mode is invalid');
+        if (instance.allowEdit !== AllowEdit.True && instance.allowEdit !== AllowEdit.False) {
+            this.throwError(null, 'Allow Edit is invalid');
         }
 
         return instance;
