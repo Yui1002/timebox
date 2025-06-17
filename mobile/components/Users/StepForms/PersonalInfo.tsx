@@ -32,7 +32,7 @@ import {
   RateTypeValue,
   Screen,
   ProgressBar as Bar,
-  Mode,
+  AllowEdit,
   StatusModel,
 } from '../../../enums';
 import {COLORS} from '../../../styles/theme';
@@ -48,12 +48,12 @@ const PersonalInfo = ({route, navigation}: any) => {
     {label: RateTypeValue.DAILY, value: RateTypeValue.DAILY},
   ]);
   const [modeItems, setModeItems] = useState<ModeSet[]>([
-    {label: Mode.YES, value: Mode.YES},
-    {label: Mode.NO, value: Mode.NO},
+    {label: 'Yes', value: AllowEdit.True},
+    {label: 'No', value: AllowEdit.False},
   ]);
   const [rate, setRate] = useState<string>('');
   const [rateType, setRateType] = useState<RateTypeValue>(RateTypeValue.HOURLY);
-  const [mode, setMode] = useState<Mode>(Mode.NO);
+  const [allowEdit, setAllowEdit] = useState<AllowEdit>(AllowEdit.False);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
@@ -77,7 +77,7 @@ const PersonalInfo = ({route, navigation}: any) => {
       email,
       rate,
       rateType,
-      isEnabled: mode,
+      allowEdit: allowEdit,
     };
 
     navigation.navigate(Screen.WORK_SHIFTS, props);
@@ -152,10 +152,10 @@ const PersonalInfo = ({route, navigation}: any) => {
             <Title title="Allow the service provider to modify record time?" />
             <Dropdown
               isOpen={modeOpen}
-              value={mode}
+              value={allowEdit}
               items={modeItems}
               setOpen={() => setModeOpen(!modeOpen)}
-              setValue={setMode}
+              setValue={(value: AllowEdit) => setAllowEdit(value)}
               setItems={setModeItems}
             />
           </View>

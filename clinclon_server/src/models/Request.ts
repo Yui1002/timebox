@@ -1,6 +1,6 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
-import { RateType, RequestStatus, Mode } from '../helpers/enum';
+import { RateType, RequestStatus, AllowEdit } from '../helpers/enum';
 import { UserSchedule } from './UserSchedule';
 
 @JsonObject("RequestRawDB")
@@ -32,7 +32,7 @@ class RequestRawDB extends BaseRequest {
     @JsonProperty("end_time", String)
     end_time: string = "";
     @JsonProperty("allow_edit")
-    allowEdit: Mode = Mode.False;
+    allow_edit: AllowEdit = AllowEdit.False;
 }
 
 @JsonObject("GetRequestRsMini")  
@@ -56,7 +56,7 @@ class GetRequestRsMini {
     @JsonProperty("end_time", String)
     end_time: string = "";
     @JsonProperty("allow_edit")
-    allowEdit: Mode = Mode.False;
+    allowEdit: AllowEdit = AllowEdit.False;
     @JsonProperty("schedules")
     schedules?: any;
     @JsonProperty("requestDate", Date)
@@ -71,7 +71,7 @@ class GetRequestRsMini {
         this.day = requestResult.day;
         this.start_time = requestResult.start_time;
         this.end_time = requestResult.end_time;
-        this.allowEdit = requestResult.allowEdit;
+        this.allowEdit = requestResult.allow_edit;
         this.schedules = [];
         this.requestDate = requestResult.requestDate;
     }
@@ -112,8 +112,8 @@ class SetRequestRq extends BaseRequest {
     rateType: RateType = RateType.UNSPECIFIED;
     @JsonProperty('schedules')
     schedules: UserSchedule[] = []
-    @JsonProperty("mode")
-    mode: Mode = Mode.False;
+    @JsonProperty("allowEdit")
+    allowEdit: AllowEdit = AllowEdit.False;
 }
 
 
@@ -131,8 +131,8 @@ class UpdateRequestRq extends BaseRequest {
     rateType?: RateType = RateType.HOURLY;
     @JsonProperty("schedules")
     schedules?: UserSchedule[] = [];
-    @JsonProperty("mode")
-    mode: Mode = Mode.False;
+    @JsonProperty("allowEdit")
+    allowEdit: AllowEdit = AllowEdit.False;
 }
 
 @JsonObject("Request")
@@ -170,7 +170,7 @@ class Request {
     schedules?: UserSchedule[] = []
 
     @JsonProperty("allow_edit")
-    allowEdit: Mode = Mode.False;
+    allowEdit: AllowEdit = AllowEdit.False;
     @JsonProperty("request_date", Date)
     requestDate: Date = new Date();
 }

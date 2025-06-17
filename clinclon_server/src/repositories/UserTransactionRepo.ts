@@ -28,14 +28,14 @@ class UserTransactionRepo extends Repositories implements IUserTransactionRepo {
 
     async setUserTransaction(userTransactionRq: SetUserTransactionRq, employerId: number, serviceProviderId: number): Promise<void> {
         try {
-            const sql = "INSERT INTO user_transaction (user_transaction_id, rate, rate_type, status, update_date, update_by, employer_user_id, service_provider_id, mode) VALUES (DEFAULT, $1, $2, DEFAULT, CURRENT_TIMESTAMP, $3, $4, $5, $6);";
+            const sql = "INSERT INTO user_transaction (user_transaction_id, rate, rate_type, status, update_date, update_by, employer_user_id, service_provider_id, allow_edit) VALUES (DEFAULT, $1, $2, DEFAULT, CURRENT_TIMESTAMP, $3, $4, $5, $6);";
             await this.queryDB(sql, [
                 userTransactionRq.rate, 
                 userTransactionRq.rateType,
                 userTransactionRq.employerEmail,
                 employerId,
                 serviceProviderId,
-                userTransactionRq.mode
+                userTransactionRq.allowEdit
             ]);
         } catch (e) {
             throw new ResponseException(e, 500, "unable to get from db");

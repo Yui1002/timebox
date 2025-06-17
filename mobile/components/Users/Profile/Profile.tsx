@@ -16,8 +16,7 @@ import ScheduleList from '../../ServiceProvider/ScheduleList';
 import {RequestStatus, UserSchedule} from '../../../swagger';
 
 const Profile = ({route, navigation}: any) => {
-  const {firstName, lastName, email, status, rate, rateType, schedules} =
-    route.params.sp;
+  const { firstName, lastName, email, status, rate, rateType, schedules, allowEdit } = route.params.sp;
   const userInfo = useSelector((state: any) => state.userInfo);
 
   const editProfile = () => {
@@ -29,6 +28,7 @@ const Profile = ({route, navigation}: any) => {
       rateType,
       schedules,
       status,
+      allowEdit,
     });
   };
 
@@ -90,20 +90,26 @@ const Profile = ({route, navigation}: any) => {
             <Text>Not specified</Text>
           )}
         </Container>
-        {status === RequestStatus.Approved || status === 'active' && (
-          <Button
-            title="View Record History"
-            onPress={() =>
-              navigation.navigate(Screen.RECORD_HISTORY, {
-                employer: userInfo,
-                serviceProviderEmail: email,
-                updatedBy: userInfo.email,
-              })
-            }
-            buttonWidth={'100%'}
-            buttonHeight={'10%'}
-          />
-        )}
+        <Section
+          title="Allow service provider to edit record time"
+          text={allowEdit === 0 ? 'No' : 'Yes'}
+          isAlign={false}
+        />
+        {status === RequestStatus.Approved ||
+          (status === 'active' && (
+            <Button
+              title="View Record History"
+              onPress={() =>
+                navigation.navigate(Screen.RECORD_HISTORY, {
+                  employer: userInfo,
+                  serviceProviderEmail: email,
+                  updatedBy: userInfo.email,
+                })
+              }
+              buttonWidth={'100%'}
+              buttonHeight={'10%'}
+            />
+          ))}
       </ScrollView>
     </TopContainer>
   );

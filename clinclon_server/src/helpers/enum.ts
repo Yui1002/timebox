@@ -15,11 +15,10 @@ enum RateType {
   UNSPECIFIED = undefined,
 }
 
-//AMIT NOTE: What is mode?
-enum Mode {
+enum AllowEdit {
   False = 0,
   True = 1
 }
 
 
-export { RequestStatus, UserStatus, RateType, Mode };
+export { RequestStatus, UserStatus, RateType, AllowEdit };

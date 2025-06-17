@@ -3,7 +3,7 @@ import {View, Text, ScrollView, Alert, TouchableOpacity} from 'react-native';
 import {useSelector} from 'react-redux';
 import {styles} from '../../../styles/editProfileStyles.js';
 import DropdownPicker from 'react-native-dropdown-picker';
-import {ResultModel, RateTypeSet} from '../../../types';
+import {ResultModel, RateTypeSet, ModeSet} from '../../../types';
 import {
   TopContainer,
   Button,
@@ -14,7 +14,7 @@ import {
   Icon,
 } from '../../index';
 import {ContainerStyle, InputStyle} from '../../../styles';
-import {RateTypeValue, Screen, StatusModel} from '../../../enums';
+import {AllowEdit, RateTypeValue, Screen, StatusModel} from '../../../enums';
 import {
   DefaultApiFactory,
   UpdateServiceProviderRq,
@@ -30,18 +30,17 @@ import {getAuthHeader} from '../../../tokenUtils';
 import _ from 'lodash';
 let api = DefaultApiFactory();
 
+
 const EditProfile = ({route, navigation}: any) => {
-  const {firstName, lastName, email, rate, rateType, schedules, status} =
-    route.params; // initial values
+  const { firstName, lastName, email, rate, rateType, schedules, status, allowEdit } = route.params;
   const employerData = useSelector((state: any) => state.userInfo);
 
   const [updatedRate, setUpdatedRate] = useState<number>(rate);
-  const [updatedRateType, setUpdatedRateType] =
-    useState<RateTypeValue>(rateType);
+  const [updatedRateType, setUpdatedRateType] = useState<RateTypeValue>(rateType);
   const [updatedStatus, setUpdatedStatus] = useState(status);
-  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(
-    _.cloneDeep(schedules),
-  );
+  const [updatedSchedule, setUpdatedSchedule] = useState<UserSchedule[]>(_.cloneDeep(schedules));
+  const [updatedAllowEdit, setUpdatedAllowEdit] = useState<AllowEdit>(allowEdit);
+  const [modeOpen, setModeOpen] = useState<boolean>(false);
 
   const [rateTypeOpen, setRateTypeOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
@@ -58,6 +57,10 @@ const EditProfile = ({route, navigation}: any) => {
       label: UserStatus.Inactive.toLowerCase(),
       value: UserStatus.Inactive.toLowerCase(),
     },
+  ]);
+  const [modeItems, setModeItems] = useState<ModeSet[]>([
+    {label: 'Yes', value: AllowEdit.True},
+    {label: 'No', value: AllowEdit.False},
   ]);
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
@@ -108,7 +111,6 @@ const EditProfile = ({route, navigation}: any) => {
               setDeletedSchedules(prev => [...prev, {id, day}]);
             }
             setUpdatedSchedule(prevSchedules =>
-              // prevSchedules.filter(schedule => schedule.day !== day),
               prevSchedules.filter(schedule => schedule.id !== id),
             );
           },
@@ -191,6 +193,9 @@ const EditProfile = ({route, navigation}: any) => {
     if (updatedStatus !== status) {
       changedData.status = updatedStatus;
     }
+    if (updatedAllowEdit !== allowEdit) {
+      changedData.allow_edit = updatedAllowEdit;
+    }
 
     const chagnedSchedules = getChangedSchedules(schedules, updatedSchedule);
 
@@ -230,6 +235,7 @@ const EditProfile = ({route, navigation}: any) => {
         message: 'Successfully updated the profile!',
       });
       navigation.navigate(Screen.PROFILE, {
+        refresh: true,
         sp: {
           firstName: firstName,
           lastName: lastName,
@@ -238,6 +244,7 @@ const EditProfile = ({route, navigation}: any) => {
           rate: updatedRate,
           rateType: updatedRateType,
           schedules: updatedSchedule,
+          allowEdit: updatedAllowEdit
         },
       });
     } catch (err) {
@@ -247,7 +254,9 @@ const EditProfile = ({route, navigation}: any) => {
 
   return (
     <TopContainer>
-      <ScrollView>
+      <ScrollView
+        contentContainerStyle={{paddingBottom: 100}}
+        keyboardShouldPersistTaps="handled">
         {result.status && (
           <Result status={result.status} msg={result.message} />
         )}
@@ -273,7 +282,14 @@ const EditProfile = ({route, navigation}: any) => {
             />
           </View>
         </AlignContainer>
-        <View style={alignContainer}>
+        <View
+          style={[
+            alignContainer,
+            {
+              zIndex: statusOpen ? 1000 : 1,
+              marginBottom: statusOpen ? 120 : 20,
+            },
+          ]}>
           <Title title="Status" />
           <DropdownPicker
             open={statusOpen}
@@ -285,7 +301,12 @@ const EditProfile = ({route, navigation}: any) => {
             listMode="SCROLLVIEW"
           />
         </View>
-        <View style={statusOpen ? {zIndex: -1} : null}>
+        <View
+          style={[
+            {marginBottom: 20},
+            statusOpen && {zIndex: -1},
+            modeOpen && {zIndex: -1},
+          ]}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Title title="Schedules" />
             <TouchableOpacity
@@ -340,6 +361,21 @@ const EditProfile = ({route, navigation}: any) => {
           ) : (
             <Text>Not specified</Text>
           )}
+        </View>
+        <View
+          style={[
+            {zIndex: modeOpen ? 1000 : 1, marginBottom: modeOpen ? 140 : 20},
+          ]}>
+          <Title title="Allow service provider to modify record time" />
+          <Dropdown
+            isOpen={modeOpen}
+            value={updatedAllowEdit}
+            items={modeItems}
+            setOpen={() => setModeOpen(!modeOpen)}
+            // setValue={(value: AllowEdit) => setUpdatedAllowEdit(value)}
+            setValue={(value: AllowEdit) => setUpdatedAllowEdit(value)}
+            setItems={setModeItems}
+          />
         </View>
         <Button
           title="Save"

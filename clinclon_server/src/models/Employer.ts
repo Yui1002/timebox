@@ -1,6 +1,6 @@
 import {JsonObject, JsonProperty} from 'json2typescript';
 import {BaseRequest} from './BaseRequest';
-import { Mode } from '../helpers/enum';
+import { AllowEdit } from '../helpers/enum';
 
 @JsonObject("GetEmployerRq")
 class GetEmployerRq extends BaseRequest  {
@@ -18,8 +18,8 @@ class Employer {
 
     @JsonProperty("email_address", String)
     email: string = "";
-    @JsonProperty("mode")
-    mode: Mode = Mode.True;  
+    @JsonProperty("allow_edit")
+    allowEdit: AllowEdit = AllowEdit.True;  
 }
 
 @JsonObject("GetEmployerRs") 

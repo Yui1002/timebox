@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
 import {ScrollView} from 'react-native';
 import ProgressBar from './ProgressBar';
-import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {resetShifts} from '../../../redux/actions/workShiftsAction';
-import {WorkShiftsProps} from '../../../types';
+import {WorkShiftsProps, ResultModel} from '../../../types';
 import {alertError} from '../../../helper/Alert';
-import {DefaultApiFactory, Mode} from '../../../swagger';
-import {ResultModel} from '../../../types';
+import {DefaultApiFactory} from '../../../swagger';
 import {
   Header,
   Result,
@@ -26,7 +24,7 @@ let api = DefaultApiFactory();
 const Review = ({route, navigation}: any) => {
   const dispatch = useDispatch();
   const params: WorkShiftsProps = route.params;
-  const {firstName, lastName, email, rate, rateType, isEnabled} = params;
+  const {firstName, lastName, email, rate, rateType, allowEdit} = params;
   const userInfo = useSelector((state: any) => state.userInfo);
   const workShifts = useSelector((state: any) => state.workShifts);
   const [result, setResult] = useState<ResultModel>({
@@ -54,7 +52,7 @@ const Review = ({route, navigation}: any) => {
           rate: Number(rate),
           rateType: rateType,
           schedules: workShifts,
-          mode: isEnabled ? Mode.NUMBER_1 : Mode.NUMBER_0,
+          allowEdit: allowEdit,
         },
         await getAuthHeader(),
       );
@@ -112,7 +110,7 @@ const Review = ({route, navigation}: any) => {
         <Container>
           <InfoSection
             title="Allow service provider to edit record time"
-            text={isEnabled ? 'Yes' : 'No'}
+            text={allowEdit ? 'Yes' : 'No'}
           />
         </Container>
         <LoadingButton
