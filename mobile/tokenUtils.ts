@@ -108,10 +108,20 @@ export const shouldRefreshToken = async (): Promise<boolean> => {
 }
 
 export const getAuthHeader = async () => {
-  const token = await getToken();
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  try {
+    const tokenData = await getToken();
+    if (!tokenData || !tokenData.accessToken) {
+      return null;
+    }
+
+    return {
+      headers: {
+        Authorization: `Bearer ${tokenData.accessToken}`,
+      },
+    };
+  } catch (error) {
+    console.log('Error getting auth header: ', error)
+    return null;
+  }
+  
 };

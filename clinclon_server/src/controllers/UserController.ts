@@ -1,4 +1,4 @@
-import { Body, Get, Post, Route, Queries, Security } from "tsoa";
+import { Body, Get, Post, Route, Queries, Security, Query } from "tsoa";
 import UserManager from '../managers/UserManager';
 import SuperController from './SuperController';
 import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq, RefreshTokenRq } from '../models/User';
