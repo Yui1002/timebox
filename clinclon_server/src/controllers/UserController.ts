@@ -1,13 +1,14 @@
 import { Body, Get, Post, Route, Queries, Security, Query } from "tsoa";
 import UserManager from '../managers/UserManager';
 import SuperController from './SuperController';
-import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq, RefreshTokenRq } from '../models/User';
+import { GetUserRq, GetUserRs, SetUserRq, SignInUserRq, ResetPasswordRq, RefreshTokenRq, GetUserByIdRq } from '../models/User';
 import Validate from "../validators/CustomValidator";
 import { JWT } from "../config";
 import { TokenResponse, RefreshTokenResponse } from "../interfaces/Token";
 
 interface IUserController {
     getUser(rq: GetUserRq): Promise<GetUserRs>;
+    getUserById(rq: GetUserByIdRq): Promise<GetUserRs>
     setUser(request: SetUserRq): Promise<TokenResponse>;
     signInUser(request: SignInUserRq): Promise<TokenResponse>;
     refreshToken(request: RefreshTokenRq): Promise<RefreshTokenResponse>;
@@ -29,6 +30,13 @@ export class UserController extends SuperController implements IUserController {
     @Validate
     public async getUser(@Queries() rq: GetUserRq): Promise<GetUserRs> {
         return await this._userManager.getUser(rq);
+    }
+
+    @Get('/id')
+    @Security(JWT)
+    @Validate
+    public async getUserById(@Queries() rq: GetUserByIdRq): Promise<GetUserRs> {
+        return await this._userManager.getUserById(rq);
     }
 
     @Post()

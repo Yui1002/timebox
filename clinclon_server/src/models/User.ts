@@ -28,8 +28,16 @@ class GetUserRq extends BaseRequest {
   email: string = "";
 }
 
+@JsonObject("GetUserByIdRq")
+class GetUserByIdRq extends BaseRequest {
+  @JsonProperty("id", String)
+  id: string = "";
+}
+
 @JsonObject("GetUserRs")
 class GetUserRs {
+  @JsonProperty("id", Number, true)
+  id?: number;
   @JsonProperty("firstName", String)
   firstName: string;
   @JsonProperty("lastName", String)
@@ -38,6 +46,7 @@ class GetUserRs {
   email: string;
 
   constructor(userResult: UserRawDB) {
+    this.id = userResult.id;
     this.firstName = userResult.first_name;
     this.lastName = userResult.last_name;
     this.email = userResult.email_address;
@@ -74,6 +83,7 @@ class RefreshTokenRq {
 
 export {
   GetUserRq,
+  GetUserByIdRq,
   GetUserRs,
   SetUserRq,
   SignInUserRq,

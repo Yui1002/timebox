@@ -45,14 +45,15 @@ const SignIn = ({navigation}: any) => {
       const isExpired = await isTokenExpired();
       if (!isExpired) {
         const token = await getValidAccessToken();
-        if (token) {
-          // dispatchUser()
+        if (token?.accessToken) {
+          const {data} = await userApi.getUserById(token.id.toString());
+          dispatchUser(data)
           navigation.navigate(Screen.DRAWER_NAV);
           return;
         }
       }
     } catch (error) {
-      console.log('Auth check failed: ', error);
+      console.log('Auth check failed: ', error.response.data);
     }
     setCheckingAuth(false);
   };
@@ -73,7 +74,7 @@ const SignIn = ({navigation}: any) => {
     try {
       const {data} = await userApi.signInUser({email, password});
 
-      await storeToken(data.accessToken, data.refreshToken, data.expiresIn);
+      await storeToken(data.user.id!, data.accessToken, data.refreshToken, data.expiresIn);
 
       clearInput();
       dispatchUser(data.user);

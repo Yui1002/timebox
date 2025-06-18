@@ -5,6 +5,7 @@ import moment from 'moment';
 import {
   DefaultApiFactory,
   RequestStatus,
+  Mode,
   UserSchedule,
 } from '../../swagger';
 import {Button} from '../index';
@@ -12,7 +13,6 @@ const api = DefaultApiFactory();
 import ScheduleList from '../ServiceProvider/ScheduleList';
 import {alert, alertError} from '../../helper/Alert';
 import {getAuthHeader} from '../../tokenUtils';
-import { AllowEdit } from '../../enums';
 
 const NotificationList = ({notification, navigation}: any) => {
   const user = useSelector((state: any) => state.userInfo);
@@ -58,13 +58,13 @@ const NotificationList = ({notification, navigation}: any) => {
           rate,
           rateType,
           schedules: schedules[0].day == null ? [] : schedules,
-          allowEdit: allowEdit ? AllowEdit.True : AllowEdit.False,
+          allowEdit: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0,
         },
         await getAuthHeader(),
       );
       alertSuccess(status);
     } catch (e) {
-      console.log(e.response.data);
+      console.log(e);
     } finally {
       setIsLoading(false);
     }

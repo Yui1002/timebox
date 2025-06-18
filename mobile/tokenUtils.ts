@@ -1,6 +1,7 @@
 import * as Keychain from 'react-native-keychain';
 
 interface TokenData {
+  id: number;
   accessToken: string;
   refreshToken: string;
   expiresAt: number;
@@ -8,12 +9,14 @@ interface TokenData {
 }
 
 export const storeToken = async (
+  id: number,
   accessToken: string,
   refreshToken: string,
   expiresIn: number = 3600,
 ): Promise<void> => {
   const now = Date.now();
   const tokenData: TokenData = {
+    id,
     accessToken,
     refreshToken,
     expiresAt: now + expiresIn * 1000,
@@ -58,7 +61,7 @@ export const removeToken = async (): Promise<void> => {
   }
 };
 
-export const getValidAccessToken = async (): Promise<string | null> => {
+export const getValidAccessToken = async (): Promise<{id: number, accessToken: string} | null> => {
   try {
     const tokenData = await getToken();
     if (!tokenData) return null;
@@ -67,7 +70,7 @@ export const getValidAccessToken = async (): Promise<string | null> => {
       return null;
     }
 
-    return tokenData.accessToken;
+    return {id: tokenData.id, accessToken: tokenData.accessToken};
   } catch (error) {
     console.log('Error getting valid access token: ', error);
     return null;
@@ -121,7 +124,5 @@ export const getAuthHeader = async () => {
     };
   } catch (error) {
     console.log('Error getting auth header: ', error)
-    return null;
   }
-  
 };

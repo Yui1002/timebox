@@ -7,6 +7,7 @@ import {
   ResetPasswordRq,
   UserRawDB,
   RefreshTokenRq,
+  GetUserByIdRq,
 } from "../models/User";
 import ResponseException from "../models/ResponseException";
 import bcrypt from "bcrypt";
@@ -19,6 +20,7 @@ dotenv.config();
 
 interface IUserManager {
   getUser(rq: GetUserRq): Promise<GetUserRs>;
+  getUserById(rq: GetUserByIdRq): Promise<GetUserRs>
   setUser(userRq: SetUserRq): Promise<TokenResponse>;
   signInUser(userRq: SignInUserRq): Promise<TokenResponse>;
   refreshToken(refreshToken: RefreshTokenRq): Promise<RefreshTokenResponse>;
@@ -36,6 +38,14 @@ class UserManager implements IUserManager {
 
   async getUser(rq: GetUserRq): Promise<GetUserRs> {
     let userDB = await this._userRepo.getUser(rq.email);
+    if (!userDB) {
+      throw new ResponseException(null, 400, "data not found");
+    }
+    return new GetUserRs(userDB);
+  }
+
+  async getUserById(rq: GetUserByIdRq): Promise<GetUserRs> {
+    let userDB = await this._userRepo.getUserById(rq.id);
     if (!userDB) {
       throw new ResponseException(null, 400, "data not found");
     }
@@ -141,13 +151,13 @@ class UserManager implements IUserManager {
 
   generateTokens(user: UserRawDB): {accessToken: string, refreshToken: string} {
     const accessToken = jwt.sign(
-      { id: user.id, email: user.email_address },
+      { id: user.id },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     const refreshToken = jwt.sign(
-      { id: user.id, email: user.email_address },
+      { id: user.id },
       process.env.JWT_REFRESH_SECRET,
       { expiresIn: "30d" }
     );
