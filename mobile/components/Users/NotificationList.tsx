@@ -5,7 +5,7 @@ import moment from 'moment';
 import {
   DefaultApiFactory,
   RequestStatus,
-  Mode,
+  AllowEdit,
   UserSchedule,
 } from '../../swagger';
 import {Button} from '../index';
@@ -49,6 +49,8 @@ const NotificationList = ({notification, navigation}: any) => {
   const updateRequest = async (status: RequestStatus) => {
     try {
       setIsLoading(true);
+      const header = await getAuthHeader();
+      if (!header) return null;
 
       await api.updateRequest(
         {
@@ -58,9 +60,9 @@ const NotificationList = ({notification, navigation}: any) => {
           rate,
           rateType,
           schedules: schedules[0].day == null ? [] : schedules,
-          allowEdit: allowEdit ? Mode.NUMBER_1 : Mode.NUMBER_0,
+          allowEdit: allowEdit ? AllowEdit.NUMBER_1 : AllowEdit.NUMBER_0,
         },
-        await getAuthHeader(),
+        header,
       );
       alertSuccess(status);
     } catch (e) {

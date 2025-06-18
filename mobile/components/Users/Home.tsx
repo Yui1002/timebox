@@ -12,7 +12,7 @@ import EmployerList from '../Employers/EmployerList';
 import {useIsFocused} from '@react-navigation/native';
 import {DefaultApiFactory, Employer} from '../../swagger';
 import {UserInfo} from '../../types';
-import {getToken} from '../../tokenUtils';
+import {getAuthHeader, getToken} from '../../tokenUtils';
 
 let employerApi = DefaultApiFactory();
 
@@ -28,15 +28,12 @@ const Home = (props: any) => {
     }
   }, [isFocused]);
 
-  const getEmployers = async (): Promise<void> => {
+  const getEmployers = async () => {
     try {
-      const token = await getToken();
+      const header = await getAuthHeader();
+      if (!header) return null;
 
-      let {data} = await employerApi.getEmployer(email, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      let {data} = await employerApi.getEmployer(email, header);
       setEmployers(data.employers);
     } catch (e) {
       setEmployers([]);

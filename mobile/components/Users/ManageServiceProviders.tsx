@@ -47,9 +47,12 @@ const ManageServiceProviders = (props: any) => {
 
   const getServiceProviders = async () => {
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       const {data} = await api.getServiceProvider(
         employerEmail,
-        await getAuthHeader(),
+        header,
       );
 
       const sortedData = data.map(
