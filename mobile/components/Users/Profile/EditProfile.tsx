@@ -221,6 +221,9 @@ const EditProfile = ({route, navigation}: any) => {
     if (Object.keys(changedData).length === 0) return;
 
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       await api.updateServiceProvider(
         {
           employerEmail: employerData.email,
@@ -228,7 +231,7 @@ const EditProfile = ({route, navigation}: any) => {
           ...changedData,
           update_by: employerData.email,
         },
-        await getAuthHeader(),
+        header,
       );
       setResult({
         status: StatusModel.SUCCESS,

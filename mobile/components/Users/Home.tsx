@@ -12,7 +12,7 @@ import EmployerList from '../Employers/EmployerList';
 import {useIsFocused} from '@react-navigation/native';
 import {DefaultApiFactory, Employer} from '../../swagger';
 import {UserInfo} from '../../types';
-import {getAuthHeader, getToken} from '../../tokenUtils';
+import {getAuthHeader} from '../../tokenUtils';
 
 let employerApi = DefaultApiFactory();
 

@@ -54,14 +54,17 @@ export const getToken = async (): Promise<TokenData | null> => {
 export const removeToken = async (): Promise<void> => {
   try {
     await Keychain.resetGenericPassword({
-      service: 'Clockly App'
+      service: 'Clockly App',
     });
   } catch (err) {
     console.log('Failed to remove token', err);
   }
 };
 
-export const getValidAccessToken = async (): Promise<{id: number, accessToken: string} | null> => {
+export const getValidAccessToken = async (): Promise<{
+  id: number;
+  accessToken: string;
+} | null> => {
   try {
     const tokenData = await getToken();
     if (!tokenData) return null;
@@ -75,7 +78,7 @@ export const getValidAccessToken = async (): Promise<{id: number, accessToken: s
     console.log('Error getting valid access token: ', error);
     return null;
   }
-}
+};
 
 export const getFreshToken = async (): Promise<string | null> => {
   try {
@@ -85,7 +88,7 @@ export const getFreshToken = async (): Promise<string | null> => {
     console.log('Error getting refresh token: ', error);
     return null;
   }
-}
+};
 
 export const isTokenExpired = async (): Promise<boolean> => {
   try {
@@ -96,21 +99,23 @@ export const isTokenExpired = async (): Promise<boolean> => {
   } catch (error) {
     return true;
   }
-}
+};
 
 export const shouldRefreshToken = async (): Promise<boolean> => {
   try {
     const tokenData = await getToken();
     if (!tokenData) return false;
 
-    const fiveMinutesFromNow = Date.now() + (5 * 60 * 1000);
+    const fiveMinutesFromNow = Date.now() + 5 * 60 * 1000;
     return tokenData.expiresAt < fiveMinutesFromNow;
   } catch (error) {
     return false;
   }
-}
+};
 
-export const getAuthHeader = async () => {
+export const getAuthHeader = async (): Promise<{
+  headers: {Authorization: string};
+} | null> => {
   try {
     const tokenData = await getToken();
     if (!tokenData || !tokenData.accessToken) {
@@ -123,6 +128,7 @@ export const getAuthHeader = async () => {
       },
     };
   } catch (error) {
-    console.log('Error getting auth header: ', error)
+    console.log('Error getting auth header: ', error);
+    return null;
   }
 };

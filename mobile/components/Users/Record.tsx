@@ -51,13 +51,16 @@ const Record = ({route, navigation}) => {
 
   const getRecord = async () => {
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       const {startEpoch, endEpoch} = getTodayStartndEndEpoch();
       const {data} = await api.getRecordByPeriod(
         email,
         serviceProviderEmail,
         startEpoch,
         endEpoch,
-        await getAuthHeader(),
+        header,
       );
       const record = data.records?.[0] || null;
       setRecord({
@@ -98,6 +101,9 @@ const Record = ({route, navigation}) => {
     if (!validateInput(type, recordTime)) return;
 
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       const epochTime = Math.floor(recordTime!.getTime() / 1000);
       const {data} = await api.setRecord(
         {
@@ -107,7 +113,7 @@ const Record = ({route, navigation}) => {
           type: type,
           ...(type === TimeType.End && {id: record.id}),
         },
-        await getAuthHeader(),
+        header,
       );
       const recordData = data.records?.[0] || null;
 

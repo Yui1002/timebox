@@ -78,6 +78,9 @@ const EditRecordModal = ({
     const updatedEndTimeInEpoch = convertDateToEpoch(updatedEndTime);
 
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       await api.updateRecord(
         {
           recordId: rowSelected!.id,
@@ -85,7 +88,7 @@ const EditRecordModal = ({
           endTime: updatedEndTimeInEpoch,
           updatedBy: updatedBy
         },
-        await getAuthHeader(),
+        header,
       );
       updateRecord({
         ...rowSelected,

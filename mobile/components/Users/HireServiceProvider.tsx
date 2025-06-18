@@ -47,11 +47,14 @@ const HireServiceProvider = (props: any) => {
     setLoading(true);
 
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       const normalizedEmail = Validator.normalizeEmail(searchInput);
       const {data} = await api.isRequestValid(
         userInfo.email,
         normalizedEmail,
-        await getAuthHeader(),
+        header,
       );
       showConfirmMsg(data.serviceProviderUser!);
     } catch (e) {
