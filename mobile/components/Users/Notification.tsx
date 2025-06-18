@@ -26,10 +26,13 @@ const Notification = (props: any) => {
 
   const getRequests = async () => {
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       const {data} = await api.getRequestsByStatus(
         userInfo.email,
         RequestStatus.Pending,
-        await getAuthHeader()
+        header
       );
       const formatted = formatData(data);
       setRequests(formatted);

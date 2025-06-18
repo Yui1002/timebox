@@ -1283,6 +1283,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.7.0)
+  - TouchID (4.4.1):
+    - React
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1351,6 +1353,7 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - TouchID (from `../node_modules/react-native-touch-id`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1491,6 +1494,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  TouchID:
+    :path: "../node_modules/react-native-touch-id"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1565,6 +1570,7 @@ SPEC CHECKSUMS:
   RNReanimated: 308bcd09703f16e26367dfd0c2bba43fc296aa47
   RNScreens: fd2722bcc59f36a629205af8cc7b48e4bc0d09f5
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
+  TouchID: ba4c656d849cceabc2e4eef722dea5e55959ecf4
   Yoga: eed50599a85bd9f6882a9938d118aed6a397db9c
 
 PODFILE CHECKSUM: f1e98cb1ea22bef977ed966606591993b3dc97e9

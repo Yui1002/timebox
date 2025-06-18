@@ -9,7 +9,7 @@ import {UserTransactionController} from "../controllers/UserTransactionControlle
 import {RequestController} from "../controllers/RequestController";
 
 import { GetServiceProviderRequestValidator, UpdateServiceProviderRequestValidator } from '../validators/ServiceProviderRequestValidator';
-import { GetUserRequestValidator, SetUserRequestValidator, SignInUserRequestValidator, ResetPasswordRequestValidator } from "../validators/UserRequestValidator";
+import { GetUserRequestValidator, SetUserRequestValidator, SignInUserRequestValidator, ResetPasswordRequestValidator, GetUserByIdRequestValidator } from "../validators/UserRequestValidator";
 import { GetOTPRequestValidator, SetOTPRequestValidator } from "../validators/OTPRequestValidator";
 import { GetEmployerRequestValidator } from "../validators/EmployerRequestValidator";
 import { GetRecordRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator } from "../validators/RecordRequestValidator";
@@ -46,6 +46,7 @@ class Routes implements IRoutes  {
         this._validator = Validator.Instance;
         this._validator.addValidators([
             new GetUserRequestValidator(),
+            new GetUserByIdRequestValidator(),
             new SetUserRequestValidator(),
             new SignInUserRequestValidator(),
             new ResetPasswordRequestValidator(),
@@ -68,6 +69,7 @@ class Routes implements IRoutes  {
 
     applyRouting(app: any) {
         app.post('/getUser', this._userController.getUser.bind(this._userController));
+        app.get('/getUserById', this._userController.getUserById.bind(this._userController));
         app.post('/setUser', this._userController.setUser.bind(this._userController));
         app.post('/signInUser', this._userController.signInUser.bind(this._userController));
         app.post('/resetPassword', this._userController.resetPassword.bind(this._userController));

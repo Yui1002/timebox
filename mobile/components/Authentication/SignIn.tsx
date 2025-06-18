@@ -4,7 +4,12 @@ import {useDispatch} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import {signInUser} from '../../redux/actions/signInAction.js';
 import {GetUserRs} from '../../swagger';
-import {storeToken} from '../../tokenUtils';
+import {
+  storeToken,
+  isTokenExpired,
+  getValidAccessToken,
+  removeToken,
+} from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {Screen, ErrMsg, StatusModel} from '../../enums';
@@ -23,12 +28,35 @@ const SignIn = ({navigation}: any) => {
     message: '',
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isFocused) {
       clearInput();
+    } else {
+      checkExistingAuth();
     }
   }, [isFocused]);
+
+  const checkExistingAuth = async () => {
+    setCheckingAuth(true);
+
+    try {
+      const isExpired = await isTokenExpired();
+      if (!isExpired) {
+        const token = await getValidAccessToken();
+        if (token?.accessToken) {
+          const {data} = await userApi.getUserById(token.id.toString());
+          dispatchUser(data)
+          navigation.navigate(Screen.DRAWER_NAV);
+          return;
+        }
+      }
+    } catch (error) {
+      console.log('Auth check failed: ', error.response.data);
+    }
+    setCheckingAuth(false);
+  };
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateSignIn(email, password);
@@ -44,8 +72,10 @@ const SignIn = ({navigation}: any) => {
     setLoading(true);
 
     try {
-      const {data} = await userApi.signInUser({ email, password });
-      await storeToken(data.token);
+      const {data} = await userApi.signInUser({email, password});
+
+      await storeToken(data.user.id!, data.accessToken, data.refreshToken, data.expiresIn);
+
       clearInput();
       dispatchUser(data.user);
       navigation.navigate(Screen.DRAWER_NAV);
@@ -66,6 +96,16 @@ const SignIn = ({navigation}: any) => {
     const {firstName, lastName, email} = data;
     dispatch(signInUser({firstName, lastName, email}));
   };
+
+  if (checkingAuth) {
+    return (
+      <TopContainer>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size="large" color="#000" />
+        </View>
+      </TopContainer>
+    );
+  }
 
   return (
     <TopContainer>
@@ -95,7 +135,7 @@ const SignIn = ({navigation}: any) => {
             onPress={signIn}
             buttonWidth={'80%'}
             buttonHeight={'12%'}
-            style={{ margin: 'auto', marginVertical: 20}}
+            style={{margin: 'auto', marginVertical: 20}}
           />
         )}
         <Separator />

@@ -56,12 +56,15 @@ const SearchField = ({
     const endEpoch = Math.floor(end.getTime() / 1000);
 
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       const {data} = await api.getRecordByPeriod(
         employer.email,
         serviceProviderEmail,
         startEpoch,
         endEpoch,
-        await getAuthHeader(),
+        header,
       );
       setRecords(sortRecordsInDecendingOrder(data.records!));
       setResult({

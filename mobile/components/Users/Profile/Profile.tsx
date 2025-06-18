@@ -104,6 +104,7 @@ const Profile = ({route, navigation}: any) => {
                   employer: userInfo,
                   serviceProviderEmail: email,
                   updatedBy: userInfo.email,
+                  allowEdit: allowEdit
                 })
               }
               buttonWidth={'100%'}

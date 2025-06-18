@@ -1,7 +1,7 @@
 import SuperValidator from "./SuperValidator";
-import { GetUserRq, SetUserRq, SignInUserRq, ResetPasswordRq } from "../models/User";
+import { GetUserRq, SetUserRq, SignInUserRq, ResetPasswordRq, GetUserByIdRq } from "../models/User";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
-import {isEmail, isEmpty, isStrongPassword} from "validator";
+import {isEmail, isStrongPassword} from "validator";
 import { PASSWORD_RULES } from '../config'
 
 class GetUserRequestValidator extends SuperValidator {
@@ -15,6 +15,23 @@ class GetUserRequestValidator extends SuperValidator {
 
         if (!isEmail(instance.email)) {
             this.throwError(null, 'Email is invalid')
+        }
+
+        return instance;
+    }
+}
+
+class GetUserByIdRequestValidator extends SuperValidator {
+    constructor() {
+        super(new GetUserByIdRq());
+    }
+
+    validateAndConvertRequest(request: any): GetUserByIdRq | null {
+        this.checkRequestEmpty(request);
+        let instance = JSHelperInstance._converter.deserializeObject(request, GetUserByIdRq);
+
+        if (!request.id || request.id.length <= 0) {
+            this.throwError(null, 'ID is invalid')
         }
 
         return instance;
@@ -86,4 +103,4 @@ class ResetPasswordRequestValidator extends SuperValidator {
 
 
 
-export {GetUserRequestValidator, SetUserRequestValidator, SignInUserRequestValidator, ResetPasswordRequestValidator};
+export {GetUserRequestValidator, GetUserByIdRequestValidator, SetUserRequestValidator, SignInUserRequestValidator, ResetPasswordRequestValidator};

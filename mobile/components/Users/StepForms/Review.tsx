@@ -45,6 +45,9 @@ const Review = ({route, navigation}: any) => {
     setLoading(true);
 
     try {
+      const header = await getAuthHeader();
+      if (!header) return null;
+
       await api.setRequest(
         {
           senderEmail: userInfo.email,
@@ -54,7 +57,7 @@ const Review = ({route, navigation}: any) => {
           schedules: workShifts,
           allowEdit: allowEdit,
         },
-        await getAuthHeader(),
+        header,
       );
       clearInput();
       showSuccess();

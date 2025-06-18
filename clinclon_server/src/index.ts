@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import ErrorHandler from "./middleware/ErrorHandler";
 import { RegisterRoutes } from "../dist/routes"
 import Validator from "./validators/Validator";
-import { GetUserRequestValidator, ResetPasswordRequestValidator, SetUserRequestValidator, SignInUserRequestValidator } from "./validators/UserRequestValidator";
+import { GetUserByIdRequestValidator, GetUserRequestValidator, ResetPasswordRequestValidator, SetUserRequestValidator, SignInUserRequestValidator } from "./validators/UserRequestValidator";
 import { GetOTPRequestValidator, SetOTPRequestValidator } from "./validators/OTPRequestValidator";
 import { GetEmployerRequestValidator } from "./validators/EmployerRequestValidator";
 import { GetRecordRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator, DeleteRecordRequestValidator } from "./validators/RecordRequestValidator";
@@ -49,6 +49,7 @@ app.listen(port, '0.0.0.0', function () {
 function initializeValidator() {
   Validator.Instance.addValidators([
       new GetUserRequestValidator(),
+      new GetUserByIdRequestValidator(),
       new SetUserRequestValidator(),
       new SignInUserRequestValidator(),
       new ResetPasswordRequestValidator(),
