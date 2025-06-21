@@ -26,7 +26,6 @@ export const storeToken = async (
   try {
     await Keychain.setGenericPassword('authToken', JSON.stringify(tokenData), {
       service: 'Clockly App',
-      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
     });
   } catch (error) {
     console.log('Error string tokens: ', error);
