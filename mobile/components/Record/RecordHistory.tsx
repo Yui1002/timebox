@@ -34,7 +34,7 @@ const RecordHistory = ({
     status: StatusModel.NULL,
     message: '',
   });
-  const headerContent = ['Date', 'In', 'Out', 'Total'];
+  const headerContent = ['Date', 'In', 'Out', 'Total', 'Salary'];
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const enableEditMode = () => {
