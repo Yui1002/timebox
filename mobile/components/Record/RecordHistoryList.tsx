@@ -2,10 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {getDiff} from '../../helper/momentHelper';
 import {Record} from '../../swagger';
-import {AlignContainer} from '../index';
 import {COLORS} from '../../styles/theme';
 import {convertEpochToDate} from '../../helper/DateUtils';
-import { recordHistoryStyles } from './TableHeader';
+import {recordHistoryStyles} from './TableHeader';
 
 interface RecordHistoryListProps {
   record: Record;
@@ -21,7 +20,7 @@ const RecordHistoryList = ({
 }: RecordHistoryListProps) => {
   const {epoch_start_time, epoch_end_time} = record;
   const date = convertEpochToDate(Number(epoch_start_time)).momentFormat(
-    'MM-DD-YYYY',
+    'MM/DD',
   );
   const startTime = convertEpochToDate(Number(epoch_start_time));
   const endTime = convertEpochToDate(Number(epoch_end_time));
@@ -37,7 +36,7 @@ const RecordHistoryList = ({
     if (!rowSelected) {
       setIsSelected(false);
     }
-  }, [rowSelected])
+  }, [rowSelected]);
 
   const onRowSelect = () => {
     if (isSelected) {
@@ -55,13 +54,19 @@ const RecordHistoryList = ({
           <Text style={recordHistoryStyles.tableText}>{date}</Text>
         </View>
         <View style={recordHistoryStyles.timeColumn}>
-          <Text style={recordHistoryStyles.tableText}>{startTime ? startTime.momentFormat('LT') : 'N/A'}</Text>
+          <Text style={recordHistoryStyles.tableText}>
+            {startTime ? startTime.momentFormat('LT') : 'N/A'}
+          </Text>
         </View>
         <View style={recordHistoryStyles.timeColumn}>
-          <Text style={recordHistoryStyles.tableText}>{endTime ? endTime.momentFormat('LT') : 'N/A'}</Text>
+          <Text style={recordHistoryStyles.tableText}>
+            {endTime ? endTime.momentFormat('LT') : 'N/A'}
+          </Text>
         </View>
         <View style={recordHistoryStyles.totalColumn}>
-          <Text style={recordHistoryStyles.tableText}>{total ? `${total}h` : 'N/A'}</Text>
+          <Text style={recordHistoryStyles.tableText}>
+            {total ? `${total}h` : 'N/A'}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
