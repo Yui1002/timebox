@@ -3,7 +3,10 @@ import moment, { Moment } from 'moment';
 export const getDiff = (start: Date | undefined, end: Date | undefined): number | null => {
     if (!start || !end) return null;
 
-    return moment(end).diff(start, 'hours');
+    const diffInMinutes = moment(end).diff(start, 'minutes');
+    const hours = diffInMinutes / 60;
+
+    return Math.round(hours * 10) / 10;
 }
 
 export const getBeginningOfDay = (date: Date = new Date()): Date => {

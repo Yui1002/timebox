@@ -8,6 +8,27 @@ interface TokenData {
   issuedAt: number;
 }
 
+// Add this temporary function at the top
+export const forceResetKeychain = async (): Promise<void> => {
+  try {
+    console.log('🗑️ Force clearing all keychain data...');
+    
+    // Clear with all possible service names you might have used
+    await Keychain.resetGenericPassword({ service: 'Clockly App' });
+    await Keychain.resetGenericPassword({ service: 'Clinclon App' }); // In case you had this
+    await Keychain.resetGenericPassword(); // Default service
+    
+    // Clear internet credentials too (just in case)
+    await Keychain.resetInternetCredentials({service: 'Clockly App'});
+    
+    console.log('✅ Keychain cleared successfully');
+  } catch (error) {
+    console.log('Error clearing keychain:', error);
+  }
+};
+
+// ...rest of your existing code...
+
 export const storeToken = async (
   id: number,
   accessToken: string,
@@ -26,7 +47,6 @@ export const storeToken = async (
   try {
     await Keychain.setGenericPassword('authToken', JSON.stringify(tokenData), {
       service: 'Clockly App',
-      accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
     });
   } catch (error) {
     console.log('Error string tokens: ', error);
@@ -132,3 +152,4 @@ export const getAuthHeader = async (): Promise<{
     return null;
   }
 };
+

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, ActivityIndicator, View} from 'react-native';
+import {ScrollView, ActivityIndicator, View, TouchableOpacity, Text} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {useIsFocused} from '@react-navigation/native';
 import {signInUser} from '../../redux/actions/signInAction.js';
@@ -9,6 +9,7 @@ import {
   isTokenExpired,
   getValidAccessToken,
   removeToken,
+  forceResetKeychain
 } from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
@@ -54,6 +55,10 @@ const SignIn = ({navigation}: any) => {
       }
     } catch (error) {
       console.log('Auth check failed: ', error.response.data);
+      if (error?.message?.includes('UserCancel') || error?.message?.includes('AuthenticationFailed')) {
+        console.log('🔧 Biometric error detected, clearing keychain...');
+        await forceResetKeychain();
+      }
     }
     setCheckingAuth(false);
   };
@@ -85,6 +90,7 @@ const SignIn = ({navigation}: any) => {
       setLoading(false);
     }
   };
+
 
   const clearInput = (): void => {
     setEmail('');

@@ -35,18 +35,22 @@ class RecordRepo extends Repositories implements IRecordRepo  {
     async getRecordByPeriod(userTransactionId: number, from: number, to: number): Promise<GetRecordRs> {
         try {
             const sql = `SELECT 
-                            time_record_id AS id, 
-                            epoch_start_time, 
-                            epoch_end_time 
-                        FROM time_record
+                            tr.time_record_id AS id, 
+                            tr.epoch_start_time, 
+                            tr.epoch_end_time,
+                            ut.rate,
+                            ut.rate_type
+                        FROM time_record tr
+                        INNER JOIN user_transaction ut
+                        ON tr.id_user_transaction = ut.user_transaction_id
                         WHERE 
                             (
-                                (epoch_start_time >= $1 AND epoch_end_time < $2) OR 
-                                (epoch_start_time >= $1 AND epoch_end_time IS NULL) OR
-                                (epoch_start_time IS NULL AND epoch_end_time < $2)
+                                (tr.epoch_start_time >= $1 AND tr.epoch_end_time < $2) OR 
+                                (tr.epoch_start_time >= $1 AND tr.epoch_end_time IS NULL) OR
+                                (tr.epoch_start_time IS NULL AND tr.epoch_end_time < $2)
                             )
-                            AND id_user_transaction = $3 
-                            AND status = 'active';`
+                            AND tr.id_user_transaction = $3 
+                            AND tr.status = 'active'`
             const data = await this.queryDB(sql, [from, to, userTransactionId]);
             if (data?.rows.length <= 0) {
                 return null;

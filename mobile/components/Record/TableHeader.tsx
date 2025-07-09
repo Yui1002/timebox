@@ -8,18 +8,11 @@ interface TableHeaderProps {
 const TableHeader = (props: TableHeaderProps) => {
   return (
     <View style={recordHistoryStyles.headerContainer}>
-      <View style={recordHistoryStyles.dateColumn}>
-        <Text style={recordHistoryStyles.tableText}>Date</Text>
-      </View>
-      <View style={recordHistoryStyles.timeColumn}>
-        <Text style={recordHistoryStyles.tableText}>In</Text>
-      </View>
-      <View style={recordHistoryStyles.timeColumn}>
-        <Text style={recordHistoryStyles.tableText}>Out</Text>
-      </View>
-      <View style={recordHistoryStyles.totalColumn}>
-        <Text style={recordHistoryStyles.tableText}>Total</Text>
-      </View>
+      {props.headerContent.map((content, index) => (
+        <View style={recordHistoryStyles.column} key={index}>
+          <Text style={recordHistoryStyles.tableText}>{content}</Text>
+        </View>
+      ))}
     </View>
   );
 };
@@ -30,21 +23,13 @@ export const recordHistoryStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  dateColumn: {
-    flex: 5,
-    alignItems: 'flex-start',
-  },
-  timeColumn: {
-    flex: 4,
-    alignItems: 'flex-start',
-  },
-  totalColumn: {
-    flex: 2,
+  column: {
+    flex: 3,
     alignItems: 'flex-start',
   },
   tableText: {
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default TableHeader;

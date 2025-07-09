@@ -66,6 +66,10 @@ class Record {
     epoch_start_time: string | null = '';
     @JsonProperty("epoch_end_time", String)
     epoch_end_time: string | null = '';
+    @JsonProperty("rate", String)
+    rate: string = '';
+    @JsonProperty("rate_type", String)
+    rate_type: string = "";
 }
 
 @JsonObject("RecordChange")

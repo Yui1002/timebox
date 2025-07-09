@@ -17,7 +17,7 @@ interface RecordHistoryProps {
       employer: Employer;
       serviceProviderEmail: string;
       updatedBy: string;
-      allowEdit: number
+      allowEdit: number;
     };
   };
 }
@@ -28,13 +28,15 @@ const RecordHistory = ({
   },
 }: RecordHistoryProps) => {
   const [records, setRecords] = useState<Record[]>([]);
+  const [totalHours, setTotalHours] = useState<number>(0);
+  const [totalSalary, setTotalSalary] = useState<number>(0)
   const [rowSelected, setRowSelected] = useState<Record | null>(null);
   let centerText = TextStyle.createCenterTextStyle();
   const [result, setResult] = useState<ResultModel>({
     status: StatusModel.NULL,
     message: '',
   });
-  const headerContent = ['Date', 'In', 'Out', 'Total'];
+  const headerContent = ['Date', 'In', 'Out', 'Total', 'Salary'];
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const enableEditMode = () => {
@@ -68,25 +70,27 @@ const RecordHistory = ({
         employer={employer}
         serviceProviderEmail={serviceProviderEmail}
         setRecords={setRecords}
+        setTotalHours={setTotalHours}
+        setTotalSalary={setTotalSalary}
       />
-      <View style={{height: '50%'}}>
-        {records?.length > 0 && allowEdit > 0 && (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              height: '10%',
-            }}>
-            <Button
-              title="Edit"
-              onPress={enableEditMode}
-              buttonWidth={'20%'}
-              buttonHeight={'80%'}
-              buttonColor={COLORS.LIGHT_GREY}
-              style={{marginRight: 20}}
-            />
-          </View>
-        )}
+      {records?.length > 0 && allowEdit > 0 && (
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            height: '4%',
+          }}>
+          <Button
+            title="Edit"
+            onPress={enableEditMode}
+            buttonWidth={'20%'}
+            buttonHeight={'80%'}
+            buttonColor={COLORS.LIGHT_GREY}
+            style={{marginRight: 20}}
+          />
+        </View>
+      )}
+      <View style={{maxHeight: '60%', marginBottom: 20}}>
         <TableHeader headerContent={headerContent} />
         <Separator />
         {records?.length ? (
@@ -103,6 +107,17 @@ const RecordHistory = ({
           })
         ) : (
           <Text style={centerText}>No records matched</Text>
+        )}
+        {records?.length > 0 && <Separator />}
+        {records?.length > 0 && (
+          <View>
+            <View>
+              <Text>{`${totalHours}h`}</Text>
+            </View>
+            <View>
+              <Text>{`$${totalSalary.toFixed(2)}`}</Text>
+            </View>
+          </View>
         )}
       </View>
       <EditRecordModal

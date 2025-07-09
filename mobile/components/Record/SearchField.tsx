@@ -2,24 +2,29 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ResultModel, DateInput} from '../../types';
 import {Title, Button, Result} from '../index';
-import {DefaultApiFactory, Employer, Record, GetRecordRs} from '../../swagger';
+import {DefaultApiFactory, Employer, RateType, Record} from '../../swagger';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 import {DateDropdown} from '../Common/CustomDropdown';
 import Validator from '../../validator/validator';
 import {getAuthHeader} from '../../tokenUtils';
-import {getPrevDay} from '../../helper/momentHelper';
+import {getDiff, getPrevDay} from '../../helper/momentHelper';
+import { convertEpochToDate } from '../../helper/DateUtils';
 
 interface SearchFieldProps {
   employer: Employer;
   serviceProviderEmail: string;
   setRecords: React.Dispatch<React.SetStateAction<Record[]>>;
+  setTotalHours: React.Dispatch<React.SetStateAction<number>>;
+  setTotalSalary: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const SearchField = ({
   employer,
   serviceProviderEmail,
   setRecords,
+  setTotalHours,
+  setTotalSalary
 }: SearchFieldProps) => {
   const [fromOpen, setFromOpen] = useState<boolean>(false);
   const [toOpen, setToOpen] = useState(false);
@@ -67,6 +72,8 @@ const SearchField = ({
         header,
       );
       setRecords(sortRecordsInDecendingOrder(data.records!));
+      setTotalHours(getTotalHours(data.records!))
+      setTotalSalary(getTotalSalary(data.records!))
       setResult({
         status: StatusModel.NULL,
         message: '',
@@ -86,6 +93,31 @@ const SearchField = ({
         Number(b.epoch_start_time) - Number(a.epoch_start_time),
     );
   };
+
+  const getTotalHours = (records: Record[]): number => {
+    return records.reduce((total, record) => {
+      if (record.epoch_start_time && record.epoch_end_time) {
+        const startTime = convertEpochToDate(Number(record.epoch_start_time))
+        const endTime = convertEpochToDate(Number(record.epoch_end_time))
+        const hours = getDiff(startTime, endTime) || 0;
+        return total + hours;
+      }
+      return total;
+    }, 0)
+  }
+
+  const getTotalSalary = (records: Record[]): number => {
+    return records.reduce((total, record) => {
+      if (record.epoch_start_time && record.epoch_end_time && record.rate && record.rate_type) {
+        const startTime = convertEpochToDate(Number(record.epoch_start_time))
+        const endTime = convertEpochToDate(Number(record.epoch_end_time))
+        const hours = getDiff(startTime, endTime) || 0;
+        const salary = (record.rate_type === RateType.Hourly) ? record.rate * hours : record.rate
+        return total + salary;
+      }
+      return total;
+    }, 0)
+  }
 
   return (
     <View style={{height: '30%'}}>
