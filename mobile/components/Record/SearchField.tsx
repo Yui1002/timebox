@@ -112,8 +112,8 @@ const SearchField = ({
         const startTime = convertEpochToDate(Number(record.epoch_start_time))
         const endTime = convertEpochToDate(Number(record.epoch_end_time))
         const hours = getDiff(startTime, endTime) || 0;
-        const salary = (record.rate_type === RateType.Hourly) ? record.rate * hours : record.rate
-        return total + salary;
+        const salary = (record.rate_type === RateType.Hourly) ? Number(record.rate) * hours : record.rate
+        return total + Number(salary);
       }
       return total;
     }, 0)

@@ -25,7 +25,7 @@ const RecordHistoryList = ({
   const startTime = convertEpochToDate(Number(epoch_start_time));
   const endTime = convertEpochToDate(Number(epoch_end_time));
   const total = getDiff(startTime, endTime);
-  const salary = (rate_type === RateType.Hourly) ? total! * rate! : rate;
+  const salary = (rate_type === RateType.Hourly) ? total! * Number(rate)! : rate;
 
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
@@ -71,7 +71,7 @@ const RecordHistoryList = ({
         </View>
         <View style={recordHistoryStyles.column}>
           <Text style={recordHistoryStyles.tableText}>
-            {`$${salary?.toFixed(2)}`}
+            {`$${Number(salary)?.toFixed(2)}`}
           </Text>
         </View>
       </View>
