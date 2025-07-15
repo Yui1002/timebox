@@ -37,6 +37,10 @@ const SearchField = ({
     message: '',
   });
 
+  useEffect(() => {
+    searchRecord();
+  }, [])
+
   const validateInput = () => {
     const validateErr = Validator.validateWorkingRecordSelect(
       searchPeriod.from,
@@ -171,17 +175,6 @@ const SearchField = ({
             });
             setToOpen(false);
           }}
-          // onConfirm={(date: Date) => {
-          //   const endOfDay = new Date(date);
-          //   endOfDay.setHours(23, 59, 59, 999);
-
-          //   setSearchPeriod({
-          //     from: searchPeriod.from,
-          //     to: endOfDay
-          //   });
-
-          //   setToOpen(false);
-          // }}
           onCancel={() => setToOpen(false)}
           isArrowIconShown={true}
         />
