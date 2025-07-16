@@ -196,7 +196,7 @@ const Record = ({route, navigation}) => {
             employer,
             serviceProviderEmail,
             updatedBy: serviceProviderEmail,
-            mode: employer.mode
+            allowEdit: employer.allowEdit
           })
         }
         buttonWidth={'80%'}

@@ -110,14 +110,16 @@ const RecordHistory = ({
         )}
         {records?.length > 0 && <Separator />}
         {records?.length > 0 && (
-          <View>
-            <View>
-              <Text>{`${totalHours}h`}</Text>
-            </View>
-            <View>
-              <Text>{`$${totalSalary.toFixed(2)}`}</Text>
-            </View>
+          <View style={styles.totalContainer}>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Total:</Text>
+            <Text style={styles.totalValue}>{`${totalHours}h`}</Text>
           </View>
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Salary:</Text>
+            <Text style={styles.totalValue}>{`$${totalSalary.toFixed(2)}`}</Text>
+          </View>
+        </View>
         )}
       </View>
       <EditRecordModal
@@ -133,5 +135,34 @@ const RecordHistory = ({
     </TopContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  totalContainer: {
+    alignItems: 'flex-end',
+    paddingRight: 20,      
+    paddingVertical: 10,
+    borderTopColor: '#dee2e6',
+  },
+  totalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+    minWidth: 150,         
+  },
+  totalLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#495057',
+    marginRight: 10,
+    minWidth: 50,         
+  },
+  totalValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#212529',
+    textAlign: 'right',
+    flex: 1,          
+  },
+});
 
 export default RecordHistory;

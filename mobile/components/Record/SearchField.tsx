@@ -37,6 +37,10 @@ const SearchField = ({
     message: '',
   });
 
+  useEffect(() => {
+    searchRecord();
+  }, [])
+
   const validateInput = () => {
     const validateErr = Validator.validateWorkingRecordSelect(
       searchPeriod.from,
@@ -112,8 +116,8 @@ const SearchField = ({
         const startTime = convertEpochToDate(Number(record.epoch_start_time))
         const endTime = convertEpochToDate(Number(record.epoch_end_time))
         const hours = getDiff(startTime, endTime) || 0;
-        const salary = (record.rate_type === RateType.Hourly) ? record.rate * hours : record.rate
-        return total + salary;
+        const salary = (record.rate_type === RateType.Hourly) ? Number(record.rate) * hours : record.rate
+        return total + Number(salary);
       }
       return total;
     }, 0)
@@ -171,17 +175,6 @@ const SearchField = ({
             });
             setToOpen(false);
           }}
-          // onConfirm={(date: Date) => {
-          //   const endOfDay = new Date(date);
-          //   endOfDay.setHours(23, 59, 59, 999);
-
-          //   setSearchPeriod({
-          //     from: searchPeriod.from,
-          //     to: endOfDay
-          //   });
-
-          //   setToOpen(false);
-          // }}
           onCancel={() => setToOpen(false)}
           isArrowIconShown={true}
         />

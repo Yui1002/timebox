@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {getDiff} from '../../helper/momentHelper';
 import {RateType, Record} from '../../swagger';
@@ -25,19 +25,12 @@ const RecordHistoryList = ({
   const startTime = convertEpochToDate(Number(epoch_start_time));
   const endTime = convertEpochToDate(Number(epoch_end_time));
   const total = getDiff(startTime, endTime);
-  const salary = (rate_type === RateType.Hourly) ? total! * rate! : rate;
-
-  const [isSelected, setIsSelected] = useState<boolean>(false);
+  const salary = (rate_type === RateType.Hourly) ? total! * Number(rate)! : rate;
+  const isSelected = rowSelected?.id === record.id;
 
   const rowStyle = {
     backgroundColor: isSelected ? COLORS.BLUE : COLORS.LIGHT_GREY,
   };
-
-  useEffect(() => {
-    if (!rowSelected) {
-      setIsSelected(false);
-    }
-  }, [rowSelected]);
 
   const onRowSelect = () => {
     if (isSelected) {
@@ -45,7 +38,6 @@ const RecordHistoryList = ({
     } else {
       setRowSelected(record);
     }
-    setIsSelected(!isSelected);
   };
 
   return (
@@ -71,7 +63,7 @@ const RecordHistoryList = ({
         </View>
         <View style={recordHistoryStyles.column}>
           <Text style={recordHistoryStyles.tableText}>
-            {`$${salary?.toFixed(2)}`}
+            {`$${Number(salary)?.toFixed(2)}`}
           </Text>
         </View>
       </View>
