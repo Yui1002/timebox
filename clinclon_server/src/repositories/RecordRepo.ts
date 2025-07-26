@@ -14,6 +14,7 @@ interface IRecordRepo {
     updateStartRecord(recordId: number, startTime: number): Promise<GetRecordRs>;
     deleteRecord(recordId: number): Promise<void>
     updateRecord(recordRq: UpdateRecordRq): Promise<void>;
+    addRecord(updateBy: string, startTimeEpoch: number, endTimeEpoch: number, userTransactionId: number): Promise<void>
 }
 
 class RecordRepo extends Repositories implements IRecordRepo  {
@@ -132,6 +133,22 @@ class RecordRepo extends Repositories implements IRecordRepo  {
                 return null;
             }
             return JSHelperInstance._converter.deserializeObject(data, GetRecordRs);
+        } catch (e: any) {
+            throw new ResponseException(e, 500, 'unable to insert into db');
+        }
+    }
+
+    async addRecord(updateBy: string, startTimeEpoch: number, endTimeEpoch: number, userTransactionId: number): Promise<void> {
+        try {
+            const sql = `INSERT INTO time_record (
+                            status, 
+                            update_date, 
+                            update_by, 
+                            id_user_transaction, 
+                            epoch_start_time, 
+                            epoch_end_time
+                        ) VALUES ('active', CURRENT_TIMESTAMP, $1, $2, $3, $4);`;
+            await this.queryDB(sql, [updateBy, userTransactionId, startTimeEpoch, endTimeEpoch]);
         } catch (e: any) {
             throw new ResponseException(e, 500, 'unable to insert into db');
         }

@@ -10,6 +10,7 @@ import {ResultModel} from '../../types';
 import {StatusModel} from '../../enums';
 import TableHeader from './TableHeader';
 import EditRecordModal from './EditRecordModal';
+import AddRecordModal from './AddRecordModal';
 
 interface RecordHistoryProps {
   route: {
@@ -29,7 +30,7 @@ const RecordHistory = ({
 }: RecordHistoryProps) => {
   const [records, setRecords] = useState<Record[]>([]);
   const [totalHours, setTotalHours] = useState<number>(0);
-  const [totalSalary, setTotalSalary] = useState<number>(0)
+  const [totalSalary, setTotalSalary] = useState<number>(0);
   const [rowSelected, setRowSelected] = useState<Record | null>(null);
   let centerText = TextStyle.createCenterTextStyle();
   const [result, setResult] = useState<ResultModel>({
@@ -37,11 +38,12 @@ const RecordHistory = ({
     message: '',
   });
   const headerContent = ['Date', 'In', 'Out', 'Total', 'Salary'];
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+  const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
 
   const enableEditMode = () => {
     if (rowSelected) {
-      setIsModalVisible(true);
+      setIsEditModalVisible(true);
     } else {
       setResult({
         status: StatusModel.ERROR,
@@ -74,12 +76,15 @@ const RecordHistory = ({
         setTotalSalary={setTotalSalary}
       />
       {records?.length > 0 && allowEdit > 0 && (
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            height: '4%',
-          }}>
+        <View style={styles.button}>
+          <Button
+            title="Add"
+            onPress={() => setIsAddModalVisible(true)}
+            buttonWidth={'20%'}
+            buttonHeight={'80%'}
+            buttonColor={COLORS.LIGHT_GREY}
+            style={{marginRight: 20}}
+          />
           <Button
             title="Edit"
             onPress={enableEditMode}
@@ -111,26 +116,36 @@ const RecordHistory = ({
         {records?.length > 0 && <Separator />}
         {records?.length > 0 && (
           <View style={styles.totalContainer}>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalValue}>{`${totalHours}h`}</Text>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total:</Text>
+              <Text style={styles.totalValue}>{`${totalHours}h`}</Text>
+            </View>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Salary:</Text>
+              <Text style={styles.totalValue}>{`$${totalSalary.toFixed(
+                2,
+              )}`}</Text>
+            </View>
           </View>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Salary:</Text>
-            <Text style={styles.totalValue}>{`$${totalSalary.toFixed(2)}`}</Text>
-          </View>
-        </View>
         )}
       </View>
       <EditRecordModal
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
+        isModalVisible={isEditModalVisible}
+        setIsModalVisible={setIsEditModalVisible}
         rowSelected={rowSelected}
         setRowSelected={setRowSelected}
         setResult={setResult}
         updateRecord={updateRecord}
         resetSelection={resetSelection}
         updatedBy={updatedBy}
+      />
+      <AddRecordModal
+        isModalVisible={isAddModalVisible}
+        setIsModalVisible={setIsAddModalVisible}
+        setResult={setResult}
+        employer={employer}
+        serviceProviderEmail={serviceProviderEmail}
+        updateRecord={updateRecord}
       />
     </TopContainer>
   );
@@ -139,7 +154,7 @@ const RecordHistory = ({
 const styles = StyleSheet.create({
   totalContainer: {
     alignItems: 'flex-end',
-    paddingRight: 20,      
+    paddingRight: 20,
     paddingVertical: 10,
     borderTopColor: '#dee2e6',
   },
@@ -147,21 +162,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 5,
-    minWidth: 150,         
+    minWidth: 150,
   },
   totalLabel: {
     fontSize: 14,
     fontWeight: '600',
     color: '#495057',
     marginRight: 10,
-    minWidth: 50,         
+    minWidth: 50,
   },
   totalValue: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#212529',
     textAlign: 'right',
-    flex: 1,          
+    flex: 1,
+  },
+  buttonContainer: {
+    display: 'flex',
+  },
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    height: '4%',
   },
 });
 

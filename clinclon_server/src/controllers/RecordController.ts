@@ -1,7 +1,7 @@
 import { Body, Get, Post, Put, Delete, Queries, Route, Security } from "tsoa";
 import RecordManager from '../managers/RecordManager'
 import SuperController from "./SuperController";
-import { GetRecordRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs } from "../models/Record";
+import { GetRecordRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs, AddRecordRq } from "../models/Record";
 import Validate from "../validators/CustomValidator";
 import { JWT } from "../config";
 
@@ -11,6 +11,7 @@ interface IRecordController {
     setRecord(rq: SetRecordRq): Promise<GetRecordRs>;
     updateRecord(rq: UpdateRecordRq): Promise<void>;
     deleteRecord(rq: DeleteRecordRq): Promise<void>;
+    addRecord(rq: AddRecordRq): Promise<void>
 }
 
 @Route('record')
@@ -50,6 +51,13 @@ export class RecordController extends SuperController implements IRecordControll
         return await this._recordManager.setRecord(request);
     }
 
+    @Post('/add')
+    @Security(JWT)
+    @Validate
+    public async addRecord(@Body() request: AddRecordRq): Promise<void> {
+        await this._recordManager.addRecord(request);
+    }
+ 
     @Put('/')
     @Security(JWT)
     @Validate
