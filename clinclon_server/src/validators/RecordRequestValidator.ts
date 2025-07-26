@@ -1,6 +1,6 @@
 import SuperValidator from "./SuperValidator";
 import JSHelperInstance from "../helpers/JsonConverterHelper";
-import { GetRecordRq, GetRecordByPeriodRq, SetRecordRq, UpdateRecordRq, DeleteRecordRq } from "../models/Record";
+import { GetRecordRq, GetRecordByPeriodRq, SetRecordRq, UpdateRecordRq, DeleteRecordRq, AddRecordRq } from "../models/Record";
 import {isEmail, isEmpty} from 'validator';
 
 class GetRecordRequestValidator extends SuperValidator {
@@ -62,6 +62,31 @@ class SetRecordRequestValidator extends SuperValidator {
     }
 }
 
+class AddRecordRequestValidator extends SuperValidator {
+    constructor() {
+        super(new AddRecordRq());
+    };
+
+    validateAndConvertRequest(request: any): AddRecordRq | null {
+        this.checkRequestEmpty(request);
+
+        let instance = JSHelperInstance._converter.deserializeObject(request, AddRecordRq);
+        if (!isEmail(instance.employerEmail) || !isEmail(instance.serviceProviderEmail)) {
+            this.throwError(null, 'Email is invalid')
+        }
+        if (!instance.updateBy) {
+            this.throwError(null, 'Update by must not be empty');
+        }
+        if (!instance.startTime) {
+            this.throwError(null, 'Start time must not be empty');
+        }
+        if (!instance.endTime) {
+            this.throwError(null, 'End time must not be empty');
+        }
+        return instance;
+    }
+}
+
 class UpdateRecordRequestValidator extends SuperValidator {
     constructor() {
         super(new UpdateRecordRq());
@@ -105,4 +130,4 @@ class DeleteRecordRequestValidator extends SuperValidator {
     }
 }
 
-export { GetRecordRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator, DeleteRecordRequestValidator }
+export { GetRecordRequestValidator, GetRecordByPeriodRequestValidator, SetRecordRequestValidator, UpdateRecordRequestValidator, DeleteRecordRequestValidator, AddRecordRequestValidator }

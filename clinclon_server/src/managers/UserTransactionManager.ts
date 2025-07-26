@@ -8,7 +8,7 @@ dotenv.config();
 interface IUserTransactionManager {
     getUserTransaction(userTransactionRq: GetUserTransactionRq): Promise<GetUserTransactionRs>;
     setUserTransaction(userTransactionRq: SetUserTransactionRq): Promise<void>;
-    //AMIT NOTE: updateUserTransaction
+    updateUserTransaction(userTransactionRq: UpdateUserTransactionRq): Promise<void>
 }
 
 class UserTransactionManager implements IUserTransactionManager {

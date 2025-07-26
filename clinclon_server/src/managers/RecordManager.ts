@@ -9,6 +9,7 @@ import {
   UpdateRecordRq,
   DeleteRecordRq,
   GetRecordChangeRs,
+  AddRecordRq,
 } from "../models/Record";
 import ResponseException from "../models/ResponseException";
 
@@ -19,6 +20,7 @@ interface IRecordManager {
   setRecord(record: SetRecordRq): Promise<GetRecordRs>;
   deleteRecord(record: DeleteRecordRq): Promise<void>;
   updateRecord(record: UpdateRecordRq): Promise<void>;
+  addRecord(recordRq: AddRecordRq): Promise<void>
 }
 
 class RecordManager implements IRecordManager {
@@ -133,6 +135,19 @@ class RecordManager implements IRecordManager {
     await this._recordRepo.deleteRecord(recordRq.recordId);
   }
 
+  async addRecord(recordRq: AddRecordRq): Promise<void> {
+    let transactionData = await this._userTransactionManager.getUserTransaction(
+      recordRq
+    );
+
+    if (!transactionData) {
+      throw new ResponseException(null, 400, "no data found");
+    }
+
+    let transactionId = transactionData.id;
+    await this._recordRepo.addRecord(recordRq.updateBy, recordRq.startTime, recordRq.endTime, transactionId);
+  }
+
   getTodayStartAndEndEpoch(): { startEpoch: number; endEpoch: number } {
     const now = new Date();
 
@@ -147,5 +162,6 @@ class RecordManager implements IRecordManager {
     return { startEpoch, endEpoch };
   }
 }
+
 
 export default RecordManager;

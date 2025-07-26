@@ -1,66 +1,54 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, View, Text, StyleSheet} from 'react-native';
 import {COLORS} from '../../styles/theme';
-import { DateDropdown } from '../Common/CustomDropdown';
+import {DateDropdown} from '../Common/CustomDropdown';
 import {convertDateToEpoch, convertEpochToDate} from '../../helper/DateUtils';
 import Button from '../Common/Button';
 import {AlignContainer} from '../Common/Container';
-import {DefaultApiFactory, Record} from '../../swagger';
+import {DefaultApiFactory, Employer, Record, TimeType} from '../../swagger';
 import {getAuthHeader} from '../../tokenUtils';
 import Validator from '../../validator/validator';
 import {ResultModel} from '../../types';
 import {StatusModel} from '../../enums';
 let api = DefaultApiFactory();
 
-interface EditRecordModalProps {
+interface AddRecordModalProps {
   isModalVisible: boolean;
   setIsModalVisible: (visible: boolean) => void;
-  rowSelected: Record | null;
   setResult: React.Dispatch<React.SetStateAction<ResultModel>>;
-  setRowSelected: React.Dispatch<React.SetStateAction<Record | null>>
-  updateRecord: any;
-  resetSelection: () => void;
-  updatedBy: string;
+  employer: Employer;
+  serviceProviderEmail: string;
+  updateRecord: (newRecord: Record) => void;
 }
 
-const EditRecordModal = ({
+const AddRecordModal = ({
   isModalVisible,
   setIsModalVisible,
-  rowSelected,
   setResult,
+  employer,
+  serviceProviderEmail,
   updateRecord,
-  setRowSelected,
-  resetSelection,
-  updatedBy
-}: EditRecordModalProps) => {
-  const startTime = rowSelected?.epoch_start_time;
-  const endTime = rowSelected?.epoch_end_time;
-
-  const [updatedStartTime, setUpdatedStartTime] = useState<Date>(new Date());
-  const [updatedEndTime, setUpdatedEndTime] = useState<Date>(new Date());
-  const [isStartDropdownOpen, setIsStartDropdownOpen] = useState<boolean>(false);
+}: AddRecordModalProps) => {
+  const [date, setDate] = useState<Date>(new Date());
+  const [startTime, setStartTime] = useState<Date>(new Date());
+  const [endTime, setEndTime] = useState<Date>(new Date());
+  const [isDateOpen, setIsDateOpen] = useState<boolean>(false);
+  const [isStartDropdownOpen, setIsStartDropdownOpen] =
+    useState<boolean>(false);
   const [isEndDropdownOpen, setIsEndDropdownOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    if (startTime) {
-      setUpdatedStartTime(convertEpochToDate(Number(startTime)));
-    }
-    if (endTime) {
-      setUpdatedEndTime(convertEpochToDate(Number(endTime)));
-    }
-  }, [rowSelected]);
-
-  useEffect(() => {
     if (!isModalVisible) {
-        setIsStartDropdownOpen(false);
-        setIsEndDropdownOpen(false)
+      setIsDateOpen(false);
+      setIsStartDropdownOpen(false);
+      setIsEndDropdownOpen(false);
     }
-  }, [isModalVisible])
+  }, [isModalVisible]);
 
   const validateInput = (): boolean => {
     const validateErr = Validator.validateWorkingRecordSelect(
-      updatedStartTime,
-      updatedEndTime,
+      startTime,
+      endTime,
     );
     if (validateErr) {
       setResult({
@@ -71,36 +59,43 @@ const EditRecordModal = ({
     return validateErr == null;
   };
 
-  const editRecord = async () => {
+  const addRecord = async () => {
     if (!validateInput()) return;
 
-    const updatedStartTimeInEpoch = convertDateToEpoch(updatedStartTime);
-    const updatedEndTimeInEpoch = convertDateToEpoch(updatedEndTime);
+    const combinedStartTime = combineDateTime(date, startTime);
+    const combinedEndTime = combineDateTime(date, endTime);
+
+    const startTimeInEpoch = convertDateToEpoch(combinedStartTime);
+    const endTimeInEpoch = convertDateToEpoch(combinedEndTime);
 
     try {
       const header = await getAuthHeader();
       if (!header) return null;
-      
-      await api.updateRecord(
+
+      await api.addRecord(
         {
-          recordId: rowSelected!.id,
-          startTime: updatedStartTimeInEpoch,
-          endTime: updatedEndTimeInEpoch,
-          updatedBy: updatedBy
+          employerEmail: employer.email,
+          serviceProviderEmail: serviceProviderEmail,
+          startTime: startTimeInEpoch,
+          endTime: endTimeInEpoch,
+          updateBy: serviceProviderEmail,
         },
         header,
       );
-      updateRecord({
-        ...rowSelected,
-        epoch_start_time: updatedStartTimeInEpoch,
-        epoch_end_time: updatedEndTimeInEpoch,
-      });
+      const newRecord: Record = {
+        epoch_start_time: startTimeInEpoch.toString(),
+        epoch_end_time: endTimeInEpoch.toString(),
+        rate: undefined,
+        rate_type: undefined,
+      };
+
+      updateRecord(newRecord);
+
       setResult({
         status: StatusModel.SUCCESS,
         message: 'Successfully updated record',
       });
-      setRowSelected(null);
-      resetSelection();
+      setIsModalVisible(false);
     } catch (e) {
       setResult({
         status: StatusModel.ERROR,
@@ -108,6 +103,17 @@ const EditRecordModal = ({
       });
     }
   };
+
+  const combineDateTime = (selectedDate: Date, selectedTime: Date): Date => {
+    const combineDateTime = new Date(selectedDate);
+    combineDateTime.setHours(
+        selectedTime.getHours(),
+        selectedTime.getMinutes(),
+        selectedTime.getSeconds(),
+        selectedTime.getMilliseconds()
+    );
+    return combineDateTime;
+  }
 
   return (
     <Modal
@@ -117,12 +123,33 @@ const EditRecordModal = ({
       onRequestClose={() => setIsModalVisible(false)}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Edit Record</Text>
-          <Text>{updatedStartTime.momentFormat('YYYY/MM/DD')}</Text>
-          <View style={{height: '30%'}}>
+          <Text style={styles.modalTitle}>Add Record</Text>
+          <View style={{height: '24%'}}>
+            <Text>Date</Text>
+            <DateDropdown
+              placeholder={`${date.momentFormat('YYYY-MM-DD')}`}
+              boxWidth={'100%'}
+              boxHeight={'70%'}
+              onPressDropdown={() => {
+                setIsDateOpen(!isDateOpen);
+              }}
+              isDisabled={false}
+              mode="date"
+              isOpen={isDateOpen}
+              date={date || new Date()}
+              onConfirm={(time: Date) => setDate(time)}
+              onCancel={() => {
+                setIsDateOpen(false);
+              }}
+              isArrowIconShown={true}
+              maximumDate={new Date()}
+              minimumDate={new Date('2022-01-01')}
+            />
+          </View>
+          <View style={{height: '24%'}}>
             <Text>Start time</Text>
             <DateDropdown
-              placeholder={`${updatedStartTime.momentFormat('LT')}`}
+              placeholder={`${startTime.momentFormat('LT')}`}
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
@@ -131,18 +158,18 @@ const EditRecordModal = ({
               isDisabled={false}
               mode="time"
               isOpen={isStartDropdownOpen}
-              date={updatedStartTime || new Date()}
-              onConfirm={(time: Date) => setUpdatedStartTime(time)}
+              date={startTime || new Date()}
+              onConfirm={(time: Date) => setStartTime(time)}
               onCancel={() => {
                 setIsStartDropdownOpen(false);
               }}
               isArrowIconShown={true}
             />
           </View>
-          <View style={{height: '30%'}}>
+          <View style={{height: '24%'}}>
             <Text>End time</Text>
             <DateDropdown
-              placeholder={`${updatedEndTime.momentFormat('LT')}`}
+              placeholder={`${endTime.momentFormat('LT')}`}
               boxWidth={'100%'}
               boxHeight={'70%'}
               onPressDropdown={() => {
@@ -151,8 +178,8 @@ const EditRecordModal = ({
               isDisabled={false}
               mode="time"
               isOpen={isEndDropdownOpen}
-              date={updatedEndTime || new Date()}
-              onConfirm={(time: Date) => setUpdatedEndTime(time)}
+              date={endTime || new Date()}
+              onConfirm={(time: Date) => setEndTime(time)}
               onCancel={() => {
                 setIsEndDropdownOpen(false);
               }}
@@ -168,11 +195,8 @@ const EditRecordModal = ({
               buttonColor={COLORS.LIGHT_GREY}
             />
             <Button
-              title="Save"
-              onPress={() => {
-                editRecord();
-                setIsModalVisible(false);
-              }}
+              title="Add"
+              onPress={addRecord}
               buttonWidth={'48%'}
               buttonHeight={'45%'}
             />
@@ -186,7 +210,7 @@ const EditRecordModal = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -196,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
-    height: '40%',
+    height: '50%',
   },
   modalTitle: {
     fontSize: 18,
@@ -230,4 +254,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditRecordModal;
+export default AddRecordModal;

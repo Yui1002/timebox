@@ -40,6 +40,20 @@ class SetRecordRq extends BaseRequest {
     type: TimeType = TimeType.START_TIME;
 }
 
+@JsonObject("AddRecordRq")
+class AddRecordRq extends BaseRequest {
+    @JsonProperty("employerEmail", String)
+    employerEmail: string = "";
+    @JsonProperty("serviceProviderEmail", String)
+    serviceProviderEmail: string = "";
+    @JsonProperty("startTime", Number)
+    startTime: number = 0;
+    @JsonProperty("endTime", Number)
+    endTime: number = 0;
+    @JsonProperty("updateBy")
+    updateBy: string = '';
+}
+
 @JsonObject("UpdateRecordRq") 
 class UpdateRecordRq extends BaseRequest {
     @JsonProperty("recordId", Number)
@@ -98,4 +112,4 @@ class GetRecordChangeRs {
 
 
 
-export {GetRecordRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs}
+export {GetRecordRq, GetRecordByPeriodRq, SetRecordRq, GetRecordRs, TimeType, UpdateRecordRq, DeleteRecordRq, GetRecordChangeRs, AddRecordRq}
