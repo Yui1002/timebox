@@ -2,10 +2,9 @@ import OTPRepo from "../repositories/OTPRepo";
 import { GetOTPRq, GetOTPRs, SetOTPRq } from "../models/OTP";
 import ResponseException from "../models/ResponseException";
 import dotenv from "dotenv";
-import sgMail from "@sendgrid/mail";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import { generateOTPEmail } from "../templates/emailTemplates";
 dotenv.config();
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 interface IOTPManager {
   getOTP(rq: GetOTPRq): Promise<GetOTPRs>;
@@ -17,9 +16,28 @@ interface IOTPManager {
 
 class OTPManager implements IOTPManager {
   private _OTPRepo: OTPRepo;
+  private mailerSend: MailerSend;
+  private sender: Sender;
 
   constructor() {
     this._OTPRepo = new OTPRepo();
+    this.initializeEmail();
+  }
+
+  initializeEmail() {
+    const apiToken = process.env.MAILERSEND_API_KEY;
+    if (!apiToken) {
+      throw new Error("Token is not configured");
+    }
+
+    this.mailerSend = new MailerSend({
+      apiKey: apiToken,
+    });
+
+    this.sender = new Sender(
+      process.env.MAILERSEND_SENDER,
+      process.env.MAILERSEND_SENDER_NAME
+    );
   }
 
   async getOTP(otpRq: GetOTPRq): Promise<GetOTPRs> {
@@ -63,17 +81,18 @@ class OTPManager implements IOTPManager {
   }
 
   async sendOTPViaMail(otpRq: SetOTPRq): Promise<void> {
-    const msg = {
-      to: otpRq.email,
-      from: process.env.SENDGRID_SENDER,
-      subject: "Sending One Time Password",
-      text: `Enter the following code when prompted: ${otpRq.otp}. It will be expired in 10 minutes.`,
-    };
-
     try {
-      await sgMail.send(msg);
-    } catch (error) {
-      throw new ResponseException(null, 500, "failed to send an OTP email");
+      const recipient = [new Recipient(otpRq.email)];
+      const htmlContent = generateOTPEmail(otpRq.otp);
+      const emailParams = new EmailParams()
+        .setFrom(this.sender)
+        .setTo(recipient)
+        .setSubject("One-time Password")
+        .setHtml(htmlContent)
+        .setText("");
+      await this.mailerSend.email.send(emailParams);
+    } catch (err) {
+      throw new ResponseException(null, 500, 'Sending email failed')
     }
   }
 }
