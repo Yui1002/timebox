@@ -272,7 +272,7 @@ export const generateRequestEmail = (data: UserRawDB) => {
                 <ol>
                   <li><strong>Open the Clockly app</strong> on your device</li>
                   <li><strong>Sign in</strong> to your account</li>
-                  <li><strong>Navigate to Notifications</strong>/li>
+                  <li><strong>Navigate to Notifications</strong></li>
                   <li><strong>Review the request details</strong> carefully</li>
                   <li><strong>Choose to Accept or Decline</strong> the request</li>
                 </ol>
@@ -290,10 +290,10 @@ export const generateRequestEmail = (data: UserRawDB) => {
             </div>
             
             <div class="footer">
-              <p><strong>Best regards,<br>The Clockly Team</strong></p>
+              <p><strong>Best regards,<br>The Clockly App Team</strong></p>
               <p>This is an automated message, please do not reply to this email.</p>
               <p style="margin-top: 20px; font-size: 12px; color: #adb5bd;">
-                © ${new Date().getFullYear()} Clockly. All rights reserved.
+                © ${new Date().getFullYear()} Clockly App. All rights reserved.
               </p>
             </div>
           </div>
