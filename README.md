@@ -105,7 +105,15 @@ This project is a timekeeping mobile app designed for employees. It enables user
 
 ### Running the Backend
 
-1. **Start the backend server:**
+1. **Generate OpenAPI specification and routes:**
+
+    ```sh
+    npm run build
+    npm run routes-gen
+    npm run swagger-gen
+    ```
+
+2. **Start the backend server:**
 
     ```sh
     npm start
