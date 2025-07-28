@@ -12,7 +12,7 @@ import {
 } from "../models/Request";
 import ResponseException from "../models/ResponseException";
 import dotenv from "dotenv";
-import sgMail from "@sendgrid/mail";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { ServiceProviderMiniRs } from "../models/ServiceProvider";
 import { RequestStatus, UserStatus } from "../helpers/enum";
 import UserTransactionRepo from "../repositories/UserTransactionRepo";
@@ -20,9 +20,8 @@ import UserTransactionManager from "./UserTransactionManager";
 import UserScheduleManager from "./UserScheduleManager";
 import { SetUserTransactionRq } from "../models/UserTransaction";
 import { SetUserScheduleRq } from "../models/UserSchedule";
+import { generateRequestEmail } from "../templates/emailTemplates";
 dotenv.config();
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 interface IRequestManager {
   getRequests(requestRq: GetRequestRq): Promise<GetRequestRs>;
@@ -41,6 +40,8 @@ class RequestManager implements IRequestManager {
   private _userTransactionRepo: UserTransactionRepo;
   private _userTransactionManager: UserTransactionManager;
   private _userScheduleManager: UserScheduleManager;
+  private mailerSend: MailerSend;
+  private sender: Sender;
 
   constructor() {
     this._requestRepo = new RequestRepo();
@@ -48,6 +49,23 @@ class RequestManager implements IRequestManager {
     this._userTransactionRepo = new UserTransactionRepo();
     this._userTransactionManager = new UserTransactionManager();
     this._userScheduleManager = new UserScheduleManager();
+    this.initializeEmail();
+  }
+
+  initializeEmail() {
+    const apiToken = process.env.MAILERSEND_API_KEY;
+    if (!apiToken) {
+      throw new Error("Token is not configured");
+    }
+
+    this.mailerSend = new MailerSend({
+      apiKey: apiToken,
+    });
+
+    this.sender = new Sender(
+      process.env.MAILERSEND_SENDER,
+      process.env.MAILERSEND_SENDER_NAME
+    );
   }
 
   async getRequests(requestRq: GetRequestRq): Promise<GetRequestRs> {
@@ -101,15 +119,18 @@ class RequestManager implements IRequestManager {
       throw new ResponseException(null, 400, "no data found");
     }
 
-    const msg = {
-      to: requestRq.receiverEmail,
-      from: process.env.SENDGRID_SENDER,
-      subject: `Action Needed: Service Request from ${sender.first_name} ${sender.last_name}`,
-      text: `${sender.first_name} ${sender.last_name} has requested you as a service provider. Please sign in and visit your notifications page to view the request details and choose to accept or decline.`,
-    };
-
     try {
-      await sgMail.send(msg);
+      const recipient = [new Recipient(requestRq.receiverEmail)];
+      const htmlContent = generateRequestEmail(sender);
+      const emailParams = new EmailParams()
+        .setFrom(this.sender)
+        .setTo(recipient)
+        .setSubject(
+          `Service Request from ${sender.first_name} ${sender.last_name}`
+        )
+        .setHtml(htmlContent)
+        .setText("");
+      await this.mailerSend.email.send(emailParams);
     } catch (error) {
       throw new ResponseException(null, 500, "failed to send an request");
     }
