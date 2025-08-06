@@ -33,7 +33,7 @@ export const storeToken = async (
   id: number,
   accessToken: string,
   refreshToken: string,
-  expiresIn: number = 3600,
+  expiresIn: number = 31536000,
 ): Promise<void> => {
   const now = Date.now();
   const tokenData: TokenData = {

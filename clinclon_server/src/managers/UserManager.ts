@@ -67,7 +67,7 @@ class UserManager implements IUserManager {
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
-      expiresIn: 3600, // 1 hour
+      expiresIn: 31536000, 
       user: new GetUserRs(user),
     };
   }
@@ -88,7 +88,7 @@ class UserManager implements IUserManager {
     return {
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
-      expiresIn: 3600,
+      expiresIn: 31536000,
       user: new GetUserRs(user)
     };
   }
@@ -106,7 +106,7 @@ class UserManager implements IUserManager {
       return {
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
-        expiresIn: 3600
+        expiresIn: 31536000
       }
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
@@ -153,13 +153,13 @@ class UserManager implements IUserManager {
     const accessToken = jwt.sign(
       { id: user.id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "365d" }
     );
 
     const refreshToken = jwt.sign(
       { id: user.id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "365d" }
     );
 
     return { accessToken, refreshToken };
